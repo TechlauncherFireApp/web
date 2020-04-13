@@ -18,7 +18,7 @@ This may take an hour or two.
 
 Hyper-V is a pre-requisite for docker and may need to be enabled.
 
-First, open the command prompt and run the command 'system info'.
+First, open the command prompt and run the command 'systeminfo'.
 At the bottom there should be a checklist of Hyper-V requirements.
 You may need to enable Hyper-V at the BIOS level before the Windows level.
 
