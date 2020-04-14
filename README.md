@@ -120,8 +120,19 @@ You can click on the 'Installing Dev container (details)' to see the steps being
 If you're worried that the process has hanged for some reason,
 it is safe to click the green button in the bottom left, select 'Close Remote Connection' and try to start the container again.
 
+The container has finished building/opening when the folders and files in the project explorer on the left can be opened and edited.
+If a terminal instance doesn't automatically open, you can right click in the project explorer view on the left and select open terminal.
+This will open a bash terminal within the project's linux docker container.
 
 # Running the App
 
+Once docker is running.
+To run the local React App (front-end), in the terminal:
+```
+cd ui
+npm start
+```
+Now you can navigate to the displayed 'local' web address to see the React Website.
 
+To close the React App webserver simply ctrl+c in the terminal.
 
