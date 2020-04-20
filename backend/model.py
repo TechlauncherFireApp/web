@@ -1,16 +1,8 @@
-#!/usr/bin/env python3.7
-
-# Copyright 2020, Gurobi Optimization, LLC
-
-# Assign workers to shifts; each worker may or may not be available on a
-# particular day. If the problem cannot be solved, use IIS to find a set of
-# conflicting constraints. Note that there may be additional conflicts besides
-# what is reported via IIS.
-
 import gurobipy as gp
 import random
 from gurobipy import GRB
 import sys
+from enum import Enum
 
 
 # returns a list populated with the the hours in a week to be scheduled
@@ -25,6 +17,11 @@ def shiftpopulator():
             list.append(i + str(j))
     return list
 
+#establishing the two types of Firefighters
+class FireFighter(Enum):
+    basic = "Basic"
+    advanced = "Advanced"
+
 
 # returns a list of volunteers named Volunteer0 to VolunteerN
 # name generator for testing
@@ -36,20 +33,33 @@ def volunteerList(volunteerNo):
 
 
 # each volunteer has an Name,Experience level, preferred Hours, Availability
-#is availability different
+# is availability different
 class Volunteer:
-    def __init__(self, name, Explvl,prefHours):
+    def __init__(self, name, Explvl, prefHours):
         self.name = name
         self.Explvl = Explvl
-        self.prefHours=prefHours
+        self.prefHours = prefHours
         AvailDict = {}
         for i in shiftpopulator():
-            #generates 1 every 1/12 shift
-            AvailDict[i]=(int)(random.randrange(0, 12, 2)/10)
-        self.Availability=AvailDict
-
-#John=Volunteer("John","Basic",10)
-for i in volunteerList(13):
-    print(i)
+            # generates 1 every 1/12 shift
+            AvailDict[i] = (int)(random.randrange(0, 12, 2) / 10)
+        self.Availability = AvailDict
 
 
+
+#Randomly generating a group of different Volunteers
+def volunteerGenerate(volunteerNo):
+    list = []
+    for i in range(volunteerNo):
+        expgenerator=random.randrange(0, 4, 1)
+        exp=FireFighter.advanced
+        if(expgenerator<3):
+            exp=FireFighter.basic
+
+        list.append(Volunteer("Volunteer" + str(i),exp,random.randrange(6,14,1)))
+    return list
+
+Volunteers=volunteerGenerate(25)
+
+# Model
+m = gp.Model("assignment")
