@@ -76,17 +76,21 @@ def SmarterAvailabilityGenerator():
     decisionThreshold=0
     #i is a string format Monx/x
     for i in shiftpopulator():
+        #equates to a True 2/7 on average
         decisionVar=random.randrange(0, 12, 2) / 10
         if(i[0:3]=="Mon" or i[0:3]=="Tue" or i[0:3]=="Wed" or i[0:3]=="Thu" or i[0:3]=="Fri"):
             #int(i[3:5] gives us the time in integer form
             if(int(i[3:5])>=17 and int(i[3:5])<=23):
+                #equates to a True 5/7 on average
                 decisionVar*=2.5
             elif(int(i[3:5])>=7 and int(i[3:5])<=16):
+                #equates to a True 4/7 on average
                 decisionVar*=2
             # for 0 to 8 a decision is made using the generated number without multipliers
         #covers Saturday and Sunday
         else:
             if (int(i[3:5]) >= 8 and int(i[3:5]) <= 23):
+                #equates to a True 5/7 on average
                 decisionVar *= 2.5
             #for 0 to 8 a decision is made using the generated number without multipliers so the else function
             #is implicit
