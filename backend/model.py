@@ -47,33 +47,43 @@ class FireFighter(Enum):
 # each volunteer has an Name,Experience level, preferred Hours, Availability
 # is availability different
 class Volunteer:
-    def __init__(self, name, Explvl, prefHours):
+    def __init__(self, name, Explvl, prefHours,phonenumber,Availability):
         self.name = name
         self.Explvl = Explvl
         self.prefHours = prefHours
-        AvailDict = {}
-        for i in shiftpopulator():
-          AvailDict[i] = False
-          #generates a 0 or 1 and that gets converted to true or false using an if function
-          if (int)(random.randrange(0, 12, 2) / 10)==1:
-              AvailDict[i] =True
-        tempnumber="04"
-        for i in range(8):
-            tempnumber+=str(random.randrange(0,10,1))
-        self.phonenumber=tempnumber
-        self.Availability = AvailDict
+        self.phonenumber=phonenumber
+        self.Availability = Availability
 
 #Randomly generating a group of different Volunteers
 def volunteerGenerate(volunteerNo):
     list = []
+    #generates twice as many advanced firefighters as basic
     for i in range(volunteerNo):
-        expgenerator=random.randrange(0, 4, 1)
+        #Generates a random name from the pool available
+        Name=firstNames[random.randint(0,32)]+" "+lastNames[random.randint(0,150)]
+        #Generates an experience at a ratio i.e how many more basic firefighters than advanced
+        ratio=3
+        expgenerator=random.randint(1, ratio)
         exp=FireFighter.advanced
-        if(expgenerator<3):
+        if(expgenerator<ratio):
             exp=FireFighter.basic
-    firstNamesNo=random.randrange(0,32,1)
-    lastNamesNo=random.randrange(0,150,1)
-    list.append(Volunteer(firstNames[firstNamesNo]+" "+lastNames[lastNamesNo], exp, random.randrange(6, 14, 1)))
+        #preferred hours between 6 and 14
+        prefnum=random.randint(6, 14)
+        #Generates an Availability
+        AvailDict = {}
+
+        for j in shiftpopulator():
+            AvailDict[j] = False
+
+            # generates a 0 or 1 and that gets converted to true or false using an if function
+            if (int)(random.randrange(0, 12, 2) / 10) == 1:
+                AvailDict[j] = True
+        #generates a random australian phone number
+        tempnumber = "04"
+        for j in range(8):
+            tempnumber += str(random.randint(0, 10))
+        #adds the volunteer to the list with all the generated data
+        list.append(Volunteer(Name, exp,prefnum,tempnumber,AvailDict))
     return list
 
 def VolunteerTest(number):
@@ -92,4 +102,4 @@ VolunteerTest(3)
 
 
 # Model
-m = gp.Model("assignment")
+#m = gp.Model("assignment")
