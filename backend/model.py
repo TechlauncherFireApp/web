@@ -3,33 +3,25 @@ import random
 from gurobipy import GRB
 import sys
 from enum import Enum
+#taken from https://gist.github.com/benhorgen/4494868
+firstNames = ["Adam", "Alex", "Aaron", "Ben", "Carl", "Dan", "David", "Edward", "Fred", "Frank", "George", "Hal", "Hank", "Ike",
+ "John", "Jack", "Joe", "Larry", "Monte", "Matthew", "Mark", "Nathan", "Otto", "Paul", "Peter", "Roger", "Roger",
+ "Steve", "Thomas", "Tim", "Ty", "Victor", "Walter"]
 
-
-#Randomly generating a group of different Volunteers
-def volunteerGenerate(volunteerNo):
-    list = []
-    for i in range(volunteerNo):
-        expgenerator=random.randrange(0, 4, 1)
-        exp=FireFighter.advanced
-        if(expgenerator<3):
-            exp=FireFighter.basic
-
-        list.append(Volunteer("Volunteer" + str(i),exp,random.randrange(6,14,1)))
-    return list
-
-def VolunteerTest(number):
-    Volunteers=volunteerGenerate(number)
-    for i in Volunteers:
-            print("preferred Hours: "+str(i.prefHours))
-            print("Experience level: "+str(i.Explvl))
-            print(i.name+" Availability: ")
-            for j in shiftpopulator():
-                print(j+": "+str(i.Availability[j]))
-
-            print("\n")
-
-VolunteerTest(3)
-
+lastNames =["Anderson", "Ashwoon", "Aikin", "Bateman", "Bongard", "Bowers", "Boyd", "Cannon", "Cast", "Deitz", "Dewalt", "Ebner",
+ "Frick", "Hancock", "Haworth", "Hesch", "Hoffman", "Kassing", "Knutson", "Lawless", "Lawicki", "Mccord", "McCormack",
+ "Miller", "Myers", "Nugent", "Ortiz", "Orwig", "Ory", "Paiser", "Pak", "Pettigrew", "Quinn", "Quizoz", "Ramachandran",
+ "Resnick", "Sagar", "Schickowski", "Schiebel", "Sellon", "Severson", "Shaffer", "Solberg", "Soloman", "Sonderling",
+ "Soukup", "Soulis", "Stahl", "Sweeney", "Tandy", "Trebil", "Trusela", "Trussel", "Turco", "Uddin", "Uflan", "Ulrich",
+ "Upson", "Vader", "Vail", "Valente", "Van Zandt", "Vanderpoel", "Ventotla", "Vogal", "Wagle", "Wagner", "Wakefield",
+ "Weinstein", "Weiss", "Woo", "Yang", "Yates", "Yocum", "Zeaser", "Zeller", "Ziegler", "Bauer", "Baxster", "Casal",
+ "Cataldi", "Caswell", "Celedon", "Chambers", "Chapman", "Christensen", "Darnell", "Davidson", "Davis", "DeLorenzo",
+ "Dinkins", "Doran", "Dugelman", "Dugan", "Duffman", "Eastman", "Ferro", "Ferry", "Fletcher", "Fietzer", "Hylan",
+ "Hydinger", "Illingsworth", "Ingram", "Irwin", "Jagtap", "Jenson", "Johnson", "Johnsen", "Jones", "Jurgenson",
+ "Kalleg", "Kaskel", "Keller", "Leisinger", "LePage", "Lewis", "Linde", "Lulloff", "Maki", "Martin", "McGinnis",
+ "Mills", "Moody", "Moore", "Napier", "Nelson", "Norquist", "Nuttle", "Olson", "Ostrander", "Reamer", "Reardon",
+ "Reyes", "Rice", "Ripka", "Roberts", "Rogers", "Root", "Sandstrom", "Sawyer", "Schlicht", "Schmitt", "Schwager",
+ "Schutz", "Schuster", "Tapia", "Thompson", "Tiernan", "Tisler"]
 
 
 # returns a list populated with the the hours in a week to be scheduled
@@ -65,9 +57,38 @@ class Volunteer:
           #generates a 0 or 1 and that gets converted to true or false using an if function
           if (int)(random.randrange(0, 12, 2) / 10)==1:
               AvailDict[i] =True
+        tempnumber="04"
+        for i in range(8):
+            tempnumber+=str(random.randrange(0,10,1))
+        self.phonenumber=tempnumber
         self.Availability = AvailDict
 
+#Randomly generating a group of different Volunteers
+def volunteerGenerate(volunteerNo):
+    list = []
+    for i in range(volunteerNo):
+        expgenerator=random.randrange(0, 4, 1)
+        exp=FireFighter.advanced
+        if(expgenerator<3):
+            exp=FireFighter.basic
+    firstNamesNo=random.randrange(0,32,1)
+    lastNamesNo=random.randrange(0,150,1)
+    list.append(Volunteer(firstNames[firstNamesNo]+" "+lastNames[lastNamesNo], exp, random.randrange(6, 14, 1)))
+    return list
 
+def VolunteerTest(number):
+    Volunteers=volunteerGenerate(number)
+    for i in Volunteers:
+            print("Name: "+ i.name)
+            print("preferred Hours: "+str(i.prefHours))
+            print("Experience level: "+str(i.Explvl))
+            print("Phone Number: "+i.phonenumber)
+            print("Availability: ")
+            for j in shiftpopulator():
+                print(j+": "+str(i.Availability[j]))
+            print("\n")
+
+VolunteerTest(3)
 
 
 # Model
