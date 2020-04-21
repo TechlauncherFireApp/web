@@ -54,6 +54,48 @@ class Volunteer:
         self.phonenumber=phonenumber
         self.Availability = Availability
 
+def NumberGenerator():
+    tempnumber = "04"
+    for j in range(8):
+        tempnumber += str(random.randint(0, 10))
+    return tempnumber
+#Generates a random Availability
+def randomAvailabilityGenerator():
+    AvailDict = {}
+    for i in shiftpopulator():
+        AvailDict[i] = False
+
+        # generates a 0 or 1 and that gets converted to true or false using an if function
+        if (int)(random.randrange(0, 12, 2) / 10) == 1:
+            AvailDict[i] = True
+    return AvailDict
+#A more realistic availability
+#an availability for all the timeblocks is returned
+def SmarterAvailabilityGenerator():
+    AvailDict = {}
+    decisionThreshold=0
+    #i is a string format Monx/x
+    for i in shiftpopulator():
+        decisionVar=random.randrange(0, 12, 2) / 10
+        if(i[0:3]=="Mon" or i[0:3]=="Tue" or i[0:3]=="Wed" or i[0:3]=="Thu" or i[0:3]=="Fri"):
+            #int(i[3:5] gives us the time in integer form
+            if(int(i[3:5])>=17 and int(i[3:5])<=23):
+                decisionVar*=2.5
+            elif(int(i[3:5])>=7 and int(i[3:5])<=16):
+                decisionVar*=2
+            # for 0 to 8 a decision is made using the generated number without multipliers
+        #covers Saturday and Sunday
+        else:
+            if (int(i[3:5]) >= 8 and int(i[3:5]) <= 23):
+                decisionVar *= 2.5
+            #for 0 to 8 a decision is made using the generated number without multipliers so the else function
+            #is implicit
+        #the dictionary is assigned True or False
+        if(decisionVar<1):
+            AvailDict[i]=False
+        else:
+            AvailDict[i]=True
+    return AvailDict
 #Randomly generating a group of different Volunteers
 def volunteerGenerate(volunteerNo):
     list = []
@@ -62,6 +104,7 @@ def volunteerGenerate(volunteerNo):
         #Generates a random name from the pool available
         Name=firstNames[random.randint(0,32)]+" "+lastNames[random.randint(0,150)]
         #Generates an experience at a ratio i.e how many more basic firefighters than advanced
+        #for example 3 means 3 times as many advanced firefighters are
         ratio=3
         expgenerator=random.randint(1, ratio)
         exp=FireFighter.advanced
@@ -70,18 +113,11 @@ def volunteerGenerate(volunteerNo):
         #preferred hours between 6 and 14
         prefnum=random.randint(6, 14)
         #Generates an Availability
-        AvailDict = {}
+        AvailDict = SmarterAvailabilityGenerator()
 
-        for j in shiftpopulator():
-            AvailDict[j] = False
 
-            # generates a 0 or 1 and that gets converted to true or false using an if function
-            if (int)(random.randrange(0, 12, 2) / 10) == 1:
-                AvailDict[j] = True
         #generates a random australian phone number
-        tempnumber = "04"
-        for j in range(8):
-            tempnumber += str(random.randint(0, 10))
+        tempnumber = NumberGenerator()
         #adds the volunteer to the list with all the generated data
         list.append(Volunteer(Name, exp,prefnum,tempnumber,AvailDict))
     return list
@@ -98,7 +134,7 @@ def VolunteerTest(number):
                 print(j+": "+str(i.Availability[j]))
             print("\n")
 
-VolunteerTest(3)
+VolunteerTest(2)
 
 
 # Model
