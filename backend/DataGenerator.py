@@ -101,6 +101,7 @@ def SmarterAvailabilityGenerator():
             AvailDict[i]=True
     return AvailDict
 #Randomly generating a group of different Volunteers
+#THIS FUNCTION OCCASIONALLY ATTEMPTS TO ACCESS AN OUT OF BOUNDS INDEX, around line 110
 def volunteerGenerate(volunteerNo):
     list = []
     #generates twice as many advanced firefighters as basic
