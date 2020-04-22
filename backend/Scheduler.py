@@ -1,8 +1,9 @@
 import gurobipy as gp
 from gurobipy import GRB
-import DataGenerator
+import DataGenerator as dg
+from DataGenerator import *
 
-Volunteers=volunteerGenerate(5)
+Volunteers = dg.volunteerGenerate(5)
 
 # Number of volunteers required for each shift. "time": (basic, advanced)
 shiftRequirements = {
