@@ -7,6 +7,8 @@ import VolunteersPage from "./components/volunteersPage";
 import HomePage from "./components/homePage";
 import AssetRequestPage from "./components/assetRequestPage";
 
+import NewAssetRequest from './NewAssetRequest/NewAssetRequest';
+
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 function App() {
@@ -16,10 +18,11 @@ function App() {
         <NavBar />
 
         <Switch>
-          <Route path="/" component={HomePage} exact />
+          <Route exact path="/" component={HomePage} exact />
           <Route path="/assetRequest" component={AssetRequestPage} />
           <Route path="/recommendation" component={RecommendationPage} />
           <Route path="/volunteers" component={VolunteersPage} />
+          <Route path="/nar" component={NewAssetRequest} />
         </Switch>
       </div>
     </BrowserRouter>

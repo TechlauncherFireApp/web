@@ -1,0 +1,81 @@
+@import "../main.scss";
+
+container, entry, insert, label, output {
+    display: block;
+}
+
+div.header-block {
+    @include display-flex;
+    height: 25%;
+    width: 100%;
+    @include align-items(center);
+    background-color: $red-light;
+
+    h1 {
+        color: white;
+        font-size: 25px;
+        font-weight: normal;
+        margin: 0 5%;
+        overflow: visible;
+    }
+}
+
+container {
+    height: auto;
+    width: 90%;
+    padding-top: 15px;
+    margin: 0 auto;
+
+    entry {
+        width: 100%;
+
+        div {
+            width: auto;
+            font-size: 18px;
+            display: inline-block;
+            margin-right: 15px;
+
+            label {
+                margin: 0 0 5px 0;
+            } input {
+                font-size: 15px;
+                margin-right: 5px;
+            } select {
+                height: 25px;
+                width: 150px;
+                font-size: 15px;
+                padding-left: 5px;
+            }
+        } insert {
+            display: inline-block;
+            height: 35px;
+            width: 35px;
+            background-color: $silver-light;
+            position: relative;
+            margin: 0;
+
+            &::before, &::after {
+                content: "";
+                display: block;
+                background-color: black;
+                position: absolute;
+            } &::before {
+                height: 10%;
+                width: 75%;
+                margin: 45% 0 0 12.5%;
+            } &::after {
+                height: 75%;
+                width: 10%;
+                margin: 12.5% 0 0 45%;
+            }
+        }
+    } output {
+        min-height: 250px;
+        color: black;
+    } hr {
+        margin: 25px 0;
+    } button {
+        font-size: 15px;
+        padding: 10px;
+    }
+}
