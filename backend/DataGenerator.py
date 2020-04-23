@@ -57,7 +57,7 @@ class Volunteer:
 def NumberGenerator():
     tempnumber = "04"
     for j in range(8):
-        tempnumber += str(random.randint(0, 9))
+        tempnumber += str(random.randint(0, 10))
     return tempnumber
 #Generates a random Availability
 def randomAvailabilityGenerator():
@@ -73,6 +73,7 @@ def randomAvailabilityGenerator():
 #an availability for all the timeblocks is returned
 def SmarterAvailabilityGenerator():
     AvailDict = {}
+    decisionThreshold=0
     #i is a string format Monx/x
     for i in shiftpopulator():
         #equates to a True 2/7 on average
@@ -83,9 +84,9 @@ def SmarterAvailabilityGenerator():
                 #equates to a True 5/7 on average
                 decisionVar*=2.5
             elif(int(i[3:5])>=7 and int(i[3:5])<=16):
-                #equates to a True 3/7 on average
-                decisionVar*=1.5
-            # for 0 to 6 a decision is made using the generated number without multipliers
+                #equates to a True 4/7 on average
+                decisionVar*=2
+            # for 0 to 8 a decision is made using the generated number without multipliers
         #covers Saturday and Sunday
         else:
             if (int(i[3:5]) >= 8 and int(i[3:5]) <= 23):
@@ -99,16 +100,14 @@ def SmarterAvailabilityGenerator():
         else:
             AvailDict[i]=True
     return AvailDict
-
 #Randomly generating a group of different Volunteers
-
+#THIS FUNCTION OCCASIONALLY ATTEMPTS TO ACCESS AN OUT OF BOUNDS INDEX, around line 110
 def volunteerGenerate(volunteerNo):
-    #the list to be populated
     list = []
     #generates twice as many advanced firefighters as basic
     for i in range(volunteerNo):
         #Generates a random name from the pool available
-        Name=firstNames[random.randint(0,len(firstNames))]+" "+lastNames[random.randint(0,len(lastNames))]
+        Name=firstNames[random.randint(0,32)]+" "+lastNames[random.randint(0,150)]
         #Generates an experience at a ratio i.e how many more basic firefighters than advanced
         #for example 3 means 3 times as many advanced firefighters are
         ratio=3
@@ -116,7 +115,6 @@ def volunteerGenerate(volunteerNo):
         exp=FireFighter.advanced
         if(expgenerator<ratio):
             exp=FireFighter.basic
-        
         #preferred hours between 6 and 14
         prefnum=random.randint(6, 14)
         #Generates an Availability
@@ -133,7 +131,7 @@ def VolunteerTest(number):
     Volunteers=volunteerGenerate(number)
     for i in Volunteers:
             print("Name: "+ i.name)
-            print("Preferred Hours: "+str(i.prefHours))
+            print("preferred Hours: "+str(i.prefHours))
             print("Experience level: "+str(i.Explvl))
             print("Phone Number: "+i.phonenumber)
             print("Availability: ")
@@ -141,7 +139,7 @@ def VolunteerTest(number):
                 print(j+": "+str(i.Availability[j]))
             print("\n")
 
-VolunteerTest(5)
+VolunteerTest(2)
 
 
 # Model
