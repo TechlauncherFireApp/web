@@ -119,8 +119,6 @@ def TimeConverter(DayHour):
         Timeblock += 6*blocksize
     Timeblock+=int(DayHour[3:5])
     return Timeblock
-for i in shiftpopulator():
-    print(TimeConverter(i))
 
 
 
