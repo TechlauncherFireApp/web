@@ -56,7 +56,7 @@ class Volunteer:
 def NumberGenerator():
     tempnumber = "04"
     for j in range(8):
-        tempnumber += str(random.randint(0, 10))
+        tempnumber += str(random.randint(0, 9))
     return tempnumber
 #Generates a random Availability
 def randomAvailabilityGenerator():

@@ -18,7 +18,7 @@ for volunteer in Volunteers:
 # Worker availability
 availability = gp.tuplelist()
 for volunteer in Volunteers:
-    for shift in shiftpopulator():
+    for shift in dg.shiftpopulator():
         if volunteer.Availability[shift]:
             availability.append((volunteer.name, shift))
 
