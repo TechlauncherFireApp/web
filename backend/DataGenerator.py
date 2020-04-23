@@ -107,7 +107,7 @@ def volunteerGenerate(volunteerNo):
     #generates twice as many advanced firefighters as basic
     for i in range(volunteerNo):
         #Generates a random name from the pool available
-        Name=firstNames[random.randint(0,32)]+" "+lastNames[random.randint(0,150)]
+        Name=firstNames[random.randint(0,len(firstNames))]+" "+lastNames[random.randint(0,len(lastNames))]
         #Generates an experience at a ratio i.e how many more basic firefighters than advanced
         #for example 3 means 3 times as many advanced firefighters are
         ratio=3
