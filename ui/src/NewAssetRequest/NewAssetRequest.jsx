@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import './NewAssetRequest.scss';
 import { contains } from '../main.js';
-import Request from './components/Request';
+import Request from './components/Request.jsx';
 
 class NewAssetRequest extends Component {
 

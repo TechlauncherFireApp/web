@@ -1,5 +1,5 @@
 import React from "react";
-import "./App.css";
+import "./App.scss";
 
 import NavBar from "./components/navbar";
 import RecommendationPage from "./components/recommendationPage";
@@ -7,7 +7,7 @@ import VolunteersPage from "./components/volunteersPage";
 import HomePage from "./components/homePage";
 import AssetRequestPage from "./components/assetRequestPage";
 
-import NewAssetRequest from './NewAssetRequest/NewAssetRequest';
+import NewAssetRequest from "./NewAssetRequest/NewAssetRequest.jsx";
 
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
@@ -16,7 +16,6 @@ function App() {
     <BrowserRouter>
       <div className="container">
         <NavBar />
-
         <Switch>
           <Route exact path="/" component={HomePage} exact />
           <Route path="/assetRequest" component={AssetRequestPage} />

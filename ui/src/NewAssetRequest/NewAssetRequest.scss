@@ -6,7 +6,7 @@ container, entry, insert, label, output {
 
 div.header-block {
     @include display-flex;
-    height: 25%;
+    height: 15%;
     width: 100%;
     @include align-items(center);
     background-color: $red-light;

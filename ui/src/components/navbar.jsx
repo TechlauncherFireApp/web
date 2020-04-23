@@ -9,7 +9,7 @@ class NavBar extends Component {
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand href="/">Fire App</Navbar.Brand>
         <Nav className="mr-auto">
-          <Nav.Link href="/assetRequest">New Asset Request</Nav.Link>
+          <Nav.Link href="/nar">New Asset Request</Nav.Link>
           <Nav.Link href="/recommendation">Recommendation (filler)</Nav.Link>
           <Nav.Link href="/volunteers">Volunteers</Nav.Link>
         </Nav>
