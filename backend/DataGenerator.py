@@ -23,7 +23,6 @@ lastNames =["Anderson", "Ashwoon", "Aikin", "Bateman", "Bongard", "Bowers", "Boy
  "Reyes", "Rice", "Ripka", "Roberts", "Rogers", "Root", "Sandstrom", "Sawyer", "Schlicht", "Schmitt", "Schwager",
  "Schutz", "Schuster", "Tapia", "Thompson", "Tiernan", "Tisler"]
 
-
 # returns a list populated with the the hours in a week to be scheduled
 def shiftpopulator():
     list = []
@@ -100,6 +99,32 @@ def SmarterAvailabilityGenerator():
         else:
             AvailDict[i]=True
     return AvailDict
+#turns shifts into minutes
+def TimeConverter(DayHour):
+    #Starts from monday
+    blocksize=24
+    #Starts from monday
+    Timeblock=0
+    if(DayHour[0:3]=="Tue"):
+        Timeblock+=1*blocksize
+    if (DayHour[0:3] == "Wed"):
+        Timeblock += 2*blocksize
+    if (DayHour[0:3] == "Thu"):
+        Timeblock += 3*blocksize
+    if (DayHour[0:3] == "Fri"):
+        Timeblock += 4*blocksize
+    if (DayHour[0:3] == "Sat"):
+        Timeblock += 5*blocksize
+    if (DayHour[0:3] == "Sun"):
+        Timeblock += 6*blocksize
+    Timeblock+=int(DayHour[3:5])
+    return Timeblock
+for i in shiftpopulator():
+    print(TimeConverter(i))
+
+
+
+
 #Randomly generating a group of different Volunteers
 #THIS FUNCTION OCCASIONALLY ATTEMPTS TO ACCESS AN OUT OF BOUNDS INDEX, around line 110
 def volunteerGenerate(volunteerNo):
