@@ -2,11 +2,9 @@ import React from "react";
 import "./App.scss";
 
 import NavBar from "./components/navbar";
-import VolunteersPage from "./components/volunteersPage";
-import HomePage from "./components/homePage";
-
-import NewAssetRequest from "./NewAssetRequest/NewAssetRequest";
+import Home from "./Home/Home";
 import AssetRequestContainer from "./NewAssetRequest/assetRequestContainer";
+import Volunteers from "./Volunteers/Volunteers";
 
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
@@ -16,9 +14,9 @@ function App() {
       <div className="container">
         <NavBar />
         <Switch>
-          <Route exact path="/" component={HomePage} exact />
-          <Route path="/volunteers" component={VolunteersPage} />
-          <Route path="/NewAssetRequest" component={AssetRequestContainer} />        
+          <Route exact path="/" component={Home} />
+          <Route path="/NewAssetRequest" component={AssetRequestContainer} />
+          <Route path="/volunteers" component={Volunteers} />
         </Switch>
       </div>
     </BrowserRouter>

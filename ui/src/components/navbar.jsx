@@ -13,7 +13,7 @@ class NavBar extends Component {
         <Nav className="ml-auto navbar-right">
           <Nav.Link href="/NewAssetRequest">New Asset Request</Nav.Link>
           <Nav.Link href="/recommendation">Recommendation (filler)</Nav.Link>
-          <Nav.Link href="/volunteers">Volunteers</Nav.Link>
+          <Nav.Link href="/Volunteers">Volunteers</Nav.Link>
         </Nav>
       </Navbar>
 

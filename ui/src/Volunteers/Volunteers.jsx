@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-class VolunteersPage extends Component {
+class Volunteers extends Component {
   //state = {};
   render() {
     return (
@@ -11,4 +11,4 @@ class VolunteersPage extends Component {
   }
 }
 
-export default VolunteersPage;
+export default Volunteers;
