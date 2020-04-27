@@ -18,8 +18,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={HomePage} exact />
           <Route path="/volunteers" component={VolunteersPage} />
-          <Route path="/NewAssetRequest" component={NewAssetRequest} />
-          <Route path="/nar" component={AssetRequestContainer} />        
+          <Route path="/NewAssetRequest" component={AssetRequestContainer} />        
         </Switch>
       </div>
     </BrowserRouter>
