@@ -9,7 +9,8 @@ class NewAssetRequest extends Component {
 
     // {assetType:"Heavy Tanker",startDate:"2020/06/01",startTime:"14:00:00",endDate:"2020/06/24",endTime:"14:00:00"}
     state = {
-        request_list: []
+        request_list: [],
+        dummyList: ["testing", "list", "of", "stuff"]
     };
 
     constructor(props) {
@@ -30,6 +31,7 @@ class NewAssetRequest extends Component {
             endDate : new Date(this.insert_endDateTime.current.value).toLocaleDateString(),
             endTime : new Date(this.insert_endDateTime.current.value).toLocaleTimeString()
         };
+
         // Validate Data
         for (let x in a) if (!contains(a[x]) || (a[x] === "Invalid Date")) { alert(x + " not entered"); return; }
         const o = this.state.request_list;
@@ -65,8 +67,6 @@ class NewAssetRequest extends Component {
         // Validated Successfully
         console.log(o);
     }
-
-    
 
     render() {
         return (
@@ -106,7 +106,14 @@ class NewAssetRequest extends Component {
                         }
                     </output>
                     <hr></hr>
-                    <button className="type-1" onClick={this.submit_onClick}>Submit Request</button>
+                    {/* AMAN CHANGE : onClick={this.submit_onClick} */}
+                    <button className="type-1" onClick={() => this.props.onDisplayRequest(this.state.dummyList)}>
+                        {/* this button will need to call the backend function to generate
+                          a recommendation, and then pass the list returned from the backend 
+                          to the assetRequestContainer via the onDisplayRequest function (as
+                          done above with a dummy list I insterted into the state)*/}
+                        Submit Request
+                    </button>
                 </container>
             </main-body>
         );

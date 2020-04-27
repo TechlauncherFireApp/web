@@ -5,10 +5,7 @@ class HomePage extends Component {
   render() {
     return (
       <div className="mt-2" /*d-flex justify-content-left"*/>
-        <h4>
-          Welcome to the RFS Asset Management application. This is the Home
-          page.
-        </h4>
+        <h4>stub home page</h4>
       </div>
     );
   }
