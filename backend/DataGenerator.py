@@ -28,9 +28,9 @@ def shiftpopulator():
     list = []
     # weeknumber can be added if need be by adding an extra forloop and the code could be very similar to the hours
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    hours = range(24)
+    blocks = range(48)
     for i in days:
-        for j in hours:
+        for j in blocks:
             # concatenating the day string with the hour to generate the label for an hour that is to be scheduled
             list.append(i + str(j))
     return list
@@ -72,23 +72,58 @@ def randomAvailabilityGenerator():
 #an availability for all the timeblocks is returned
 def SmarterAvailabilityGenerator():
     AvailDict = {}
+    #i is a string format Monx/x
+    for i in shiftpopulator():
+        #equates to a True 2/7 on average
+        decisionVar=random.randrange(0, 12, 2) / 10
+        if(i[0:3]=="Mon" or i[0:3]=="Tue" or i[0:3]=="Wed" or i[0:3]=="Thu" or i[0:3]=="Fri"):
+            #int(i[3:5] gives us the block number in integer form 34 coressponds to 5pm
+            #46 coressponds to 11pm
+            if(int(i[3:5])>=34 and int(i[3:5])<=46):
+                #equates to a True 5/7 on average
+                decisionVar*=2.5
+                #7am to 4:59
+            elif(int(i[3:5])>=14 and int(i[3:5])<=32):
+                #equates to a True 4/7 on average
+                decisionVar*=2
+            # for 0 to 8 a decision is made using the generated number without multipliers
+        #covers Saturday and Sunday
+        else:
+            #8am to 11pm
+            if (int(i[3:5]) >= 16 and int(i[3:5]) <= 46):
+                #equates to a True 5/7 on average
+                decisionVar *= 2.5
+            #for 0 to 8 a decision is made using the generated number without multipliers so the else function
+            #is implicit
+        #the dictionary is assigned True or False
+        if(decisionVar<1):
+            AvailDict[i]=False
+        else:
+            AvailDict[i]=True
+    return AvailDict
+#Generates Availability in chunks
+def AvailabilityGenerator():
+    AvailDict = {}
     decisionThreshold=0
     #i is a string format Monx/x
     for i in shiftpopulator():
         #equates to a True 2/7 on average
         decisionVar=random.randrange(0, 12, 2) / 10
         if(i[0:3]=="Mon" or i[0:3]=="Tue" or i[0:3]=="Wed" or i[0:3]=="Thu" or i[0:3]=="Fri"):
-            #int(i[3:5] gives us the time in integer form
-            if(int(i[3:5])>=17 and int(i[3:5])<=23):
+            #int(i[3:5] gives us the block number in integer form 34 coressponds to 5pm
+            #46 coressponds to 11pm
+            if(int(i[3:5])>=34 and int(i[3:5])<=46):
                 #equates to a True 5/7 on average
                 decisionVar*=2.5
-            elif(int(i[3:5])>=7 and int(i[3:5])<=16):
+                #7am to 4:59
+            elif(int(i[3:5])>=14 and int(i[3:5])<=32):
                 #equates to a True 4/7 on average
                 decisionVar*=2
             # for 0 to 8 a decision is made using the generated number without multipliers
         #covers Saturday and Sunday
         else:
-            if (int(i[3:5]) >= 8 and int(i[3:5]) <= 23):
+            #8am to 11pm
+            if (int(i[3:5]) >= 16 and int(i[3:5]) <= 46):
                 #equates to a True 5/7 on average
                 decisionVar *= 2.5
             #for 0 to 8 a decision is made using the generated number without multipliers so the else function
