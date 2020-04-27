@@ -89,7 +89,7 @@ class AssetRecommendation extends Component {
           {
             volunteer_id: 649,
             position_id: 2,
-            volunteer_name: "Arnold Maaaan",
+            volunteer_name: "John Connor",
             role: "Advanced",
             qualifications: ["advanced training", "crew leader training"],
             contact_info: "0412 490 340",

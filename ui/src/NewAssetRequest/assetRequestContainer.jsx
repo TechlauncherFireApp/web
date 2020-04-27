@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import NewAssetRequest from "./NewAssetRequest";
-import AssetRecommendation from "../components/assetRecommendation";
+import AssetRecommendation from "./components/assetRecommendation";
 
 class AssetRequestContainer extends Component {
   state = {

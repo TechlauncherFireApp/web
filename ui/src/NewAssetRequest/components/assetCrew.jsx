@@ -1,9 +1,16 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
-import { Button } from "react-bootstrap";
+import Volunteer from "./volunteer";
 
 class AssetCrew extends Component {
-  //state = {  }
+  state = {
+    showQualifications: false,
+  };
+
+  toggleQualificationsVisibility = () => {
+    const showQualifications = !this.state.showQualifications;
+    this.setState({ showQualifications });
+  };
 
   render() {
     const { recommendationInfo } = this.props;
@@ -18,15 +25,7 @@ class AssetCrew extends Component {
         </thead>
         <tbody>
           {recommendationInfo.volunteers.map((v) => (
-            <tr key={v.volunteer_id}>
-              <td>{v.role}</td>
-              <td>{v.volunteer_name}</td>
-              <td>[experience]</td>
-              <td>{v.contact_info}</td>
-              <td>
-                <Button className="btn-warning">Edit</Button>
-              </td>
-            </tr>
+            <Volunteer key={v.volunteer_id} volunteerInfo={v} />
           ))}
         </tbody>
       </Table>
