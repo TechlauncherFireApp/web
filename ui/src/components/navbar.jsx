@@ -1,19 +1,22 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
+import "./navbar.scss";
+// import { NavLink } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
 
 class NavBar extends Component {
   // state = {  }
   render() {
     return (
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="/">Fire App</Navbar.Brand>
-        <Nav className="mr-auto">
-          <Nav.Link href="/nar">New Asset Request</Nav.Link>
+      /* bg="dark" variant="dark" */
+      <Navbar>
+        <Navbar.Brand href="/">FireApp</Navbar.Brand>
+        <Nav className="ml-auto navbar-right">
+          <Nav.Link href="/NewAssetRequest">New Asset Request</Nav.Link>
           <Nav.Link href="/recommendation">Recommendation (filler)</Nav.Link>
           <Nav.Link href="/volunteers">Volunteers</Nav.Link>
         </Nav>
       </Navbar>
+
       /* <Navbar bg="dark">
         <Navbar.Brand>
           <NavLink className="text-white" to="/">
@@ -32,5 +35,4 @@ class NavBar extends Component {
     );
   }
 }
-
 export default NavBar;
