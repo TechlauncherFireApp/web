@@ -82,8 +82,8 @@ def SmarterAvailabilityGenerator():
             if(int(i[3:5])>=34 and int(i[3:5])<=46):
                 #equates to a True 5/7 on average
                 decisionVar*=2.5
-                #7am to 4:59
-            elif(int(i[3:5])>=14 and int(i[3:5])<=32):
+                #9am to 4:59pm
+            elif(int(i[3:5])>=18 and int(i[3:5])<=32):
                 #equates to a True 4/7 on average
                 decisionVar*=2
             # for 0 to 8 a decision is made using the generated number without multipliers
@@ -101,62 +101,89 @@ def SmarterAvailabilityGenerator():
         else:
             AvailDict[i]=True
     return AvailDict
-#Generates Availability in chunks
+#Splits the days into chunks and generates availabilities
 def AvailabilityGenerator():
     AvailDict = {}
-    decisionThreshold=0
-    #i is a string format Monx/x
-    for i in shiftpopulator():
-        #equates to a True 2/7 on average
-        decisionVar=random.randrange(0, 12, 2) / 10
-        if(i[0:3]=="Mon" or i[0:3]=="Tue" or i[0:3]=="Wed" or i[0:3]=="Thu" or i[0:3]=="Fri"):
-            #int(i[3:5] gives us the block number in integer form 34 coressponds to 5pm
-            #46 coressponds to 11pm
-            if(int(i[3:5])>=34 and int(i[3:5])<=46):
-                #equates to a True 5/7 on average
-                decisionVar*=2.5
-                #7am to 4:59
-            elif(int(i[3:5])>=14 and int(i[3:5])<=32):
-                #equates to a True 4/7 on average
-                decisionVar*=2
-            # for 0 to 8 a decision is made using the generated number without multipliers
-        #covers Saturday and Sunday
+    #arbitrary false declaration so the value assigned in the loop stays on
+    generatedbool=False
+    for j in shiftpopulator():
+        # i is timeblock
+        i=DayHourtoNumConverter(j)
+        # 240 corressponds to 12am on a saturday so i<240 represents weekdays
+        if(i<240):
+            if(i%48==0):
+                #at 12 am to 9am on weekdays generates a true 10% of the time for the set of volunteers generated
+                generatedbool=booleangenerator(10)
+            if (i % 48 == 18):
+                #at 9am to 5pm on weekdays generates a true 20% of the time for the set of volunteers
+                generatedbool = booleangenerator(20)
+            if (i % 48 == 34):
+                #  5pm onwards on weekdays generates a true 80% of the time for the set of volunteers
+                generatedbool = booleangenerator(80)
+        #weekdays
         else:
-            #8am to 11pm
-            if (int(i[3:5]) >= 16 and int(i[3:5]) <= 46):
-                #equates to a True 5/7 on average
-                decisionVar *= 2.5
-            #for 0 to 8 a decision is made using the generated number without multipliers so the else function
-            #is implicit
-        #the dictionary is assigned True or False
-        if(decisionVar<1):
-            AvailDict[i]=False
-        else:
-            AvailDict[i]=True
+            if (i % 48 == 0):
+                # at 12 am to 9am on weekends generates a true 10% of the time for the set of volunteers generated
+                generatedbool = booleangenerator(10)
+            if (i % 48 == 18):
+                # at 9am onwards on weekends generates a true 80% of the time for the set of volunteers
+                generatedbool = booleangenerator(80)
+        #weekends
+        #assigns the generated boolean
+        #converts to the string format for now
+        AvailDict[j]=generatedbool
+
     return AvailDict
-#turns shifts into minutes
-def TimeConverter(DayHour):
-    #Starts from monday
-    blocksize=24
+
+#turns shift strings into timeblocks
+def DayHourtoNumConverter(DayHour):
+    #totalblocks of time per day
+    totalblocks=48
     #Starts from monday
     Timeblock=0
     if(DayHour[0:3]=="Tue"):
-        Timeblock+=1*blocksize
+        Timeblock+=1*totalblocks
     if (DayHour[0:3] == "Wed"):
-        Timeblock += 2*blocksize
+        Timeblock += 2*totalblocks
     if (DayHour[0:3] == "Thu"):
-        Timeblock += 3*blocksize
+        Timeblock += 3*totalblocks
     if (DayHour[0:3] == "Fri"):
-        Timeblock += 4*blocksize
+        Timeblock += 4*totalblocks
     if (DayHour[0:3] == "Sat"):
-        Timeblock += 5*blocksize
+        Timeblock += 5*totalblocks
     if (DayHour[0:3] == "Sun"):
-        Timeblock += 6*blocksize
+        Timeblock += 6*totalblocks
     Timeblock+=int(DayHour[3:5])
     return Timeblock
+print(DayHourtoNumConverter("Fri47"))
+def NumtoDayHourConverter(Num):
+    #totalblocks of time per day
+    totalblocks=48
+    DayHour=""
+    #Starts from monday
+    if(Num<totalblocks*1):
+        DayHour += "Mon"
+    elif(Num<totalblocks*2):
+        DayHour += "Tue"
+    elif (Num < totalblocks * 3):
+        DayHour += "Wed"
+    elif (Num < totalblocks * 4):
+        DayHour += "Thu"
+    elif (Num < totalblocks * 5):
+        DayHour += "Fri"
+    elif (Num < totalblocks * 6):
+        DayHour += "Sat"
+    else:
+        DayHour += "Sun"
+    DayHour += str(Num%totalblocks)
 
-
-
+    return DayHour
+#returns true Percent% of the time
+def booleangenerator(Percent):
+    if(Percent>=random.randint(1, 100)):
+        return True
+    else:
+        return False
 
 #Randomly generating a group of different Volunteers
 #THIS FUNCTION OCCASIONALLY ATTEMPTS TO ACCESS AN OUT OF BOUNDS INDEX, around line 110
@@ -176,7 +203,7 @@ def volunteerGenerate(volunteerNo):
         #preferred hours between 6 and 14
         prefnum=random.randint(6, 14)
         #Generates an Availability
-        AvailDict = SmarterAvailabilityGenerator()
+        AvailDict = AvailabilityGenerator()
 
 
         #generates a random australian phone number
@@ -197,8 +224,8 @@ def VolunteerTest(number):
                 print(j+": "+str(i.Availability[j]))
             print("\n")
 
-VolunteerTest(2)
 
 
+VolunteerTest(3)
 # Model
 #m = gp.Model("assignment")
