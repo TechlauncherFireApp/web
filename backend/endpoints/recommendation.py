@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
-# from gurobi.DataGenerator import volunteerGenerate, NumberGenerator
-# from gurobi.Names import firstNames, lastNames
+from gurobi.DataGenerator import volunteerGenerate, NumberGenerator
+from gurobi.Names import firstNames, lastNames
 
 import random
 from ast import literal_eval # casts a string to a dict
@@ -97,12 +97,12 @@ def formatVolunteer(position, role):
     return {
         'volunteer_id': random.randint(0, 99),
         'position_id': position,
-        'volunteer_name': "John Doe", #firstNames[random.randint(0,len(firstNames)-1)]+" "+lastNames[random.randint(0,len(lastNames)-1)],
+        'volunteer_name': firstNames[random.randint(0,len(firstNames)-1)]+" "+lastNames[random.randint(0,len(lastNames)-1)],
         'role': role,
         'qualifications': "",
         'contact_info': [{
             'type': "phone",
-            'detail': "0449199796", #NumberGenerator(),
+            'detail': NumberGenerator(),
         }]
     }
 
@@ -112,6 +112,7 @@ class Recommendation(Resource):
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()
+        
         print(args)
         print(args["asset_list"][0])
 
