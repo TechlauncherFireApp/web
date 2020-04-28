@@ -1,9 +1,9 @@
 import gurobipy as gp
 from gurobipy import GRB
-import DataGenerator as dg
-from DataGenerator import *
 
-Volunteers = dg.volunteerGenerate(5)
+from backend.DataGenerator import *
+
+Volunteers = volunteerGenerate(5)
 
 # Number of volunteers required for each shift. "time": (basic, advanced)
 shiftRequirements = {
@@ -18,7 +18,7 @@ for volunteer in Volunteers:
 # Worker availability
 availability = gp.tuplelist()
 for volunteer in Volunteers:
-    for shift in dg.shiftpopulator():
+    for shift in shiftpopulator():
         if volunteer.Availability[shift]:
             availability.append((volunteer.name, shift))
 

@@ -1,10 +1,12 @@
 import random
 from enum import Enum
 import json
-from  Names import *
-#taken from https://gist.github.com/benhorgen/4494868
+
 
 # returns a list populated with the the hours in a week to be scheduled
+from backend.Names import firstNames, lastNames
+
+
 def shiftpopulator():
     list = []
     # weeknumber can be added if need be by adding an extra forloop and the code could be very similar to the hours
