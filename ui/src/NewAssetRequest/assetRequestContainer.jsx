@@ -36,7 +36,7 @@ class AssetRequestContainer extends Component {
         )}
         <br />
         <button onClick={this.handleShowState} className="btn-warning">
-          Log state
+          Log state [debugging]
         </button>
       </div>
     );

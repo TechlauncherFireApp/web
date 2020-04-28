@@ -1,65 +1,68 @@
-@import '../../main.scss';
+@import "../../main.scss";
 
 request-body {
-    display: block;
-    width: 400px;
-    border: 1px solid $skyblue-2;
-    margin: 15px 0;
-    padding: 15px;
+  display: block;
+  width: 400px;
+  border: 1px solid $skyblue-2;
+  margin: 15px 0;
+  padding: 15px;
+  position: relative;
+
+  img.close {
+    height: 0;
+    width: 0;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    transition: all 0.5s;
+  }
+  &:hover img.close {
+    height: 25px;
+    width: 25px;
+  }
+  div {
+    height: 100px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     position: relative;
 
-    img.close {
-        height: 0;
-        width: 0;
-        position: absolute;
-        top: 1px; right: 1px;
-        transition: all 0.5s;
-    } &:hover img.close {
-        height: 25px;
-        width: 25px;
-    } div {
-        height: 100px;
-        width: 100%;
+    img.poster {
+      height: 100%;
+      width: 100px;
+    }
+    div {
+      width: calc(100% - 100px);
+      color: $skyblue-2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      > span {
+        align-self: flex-end;
+        font-size: 20px;
+        font-weight: bold;
+        padding-right: 15px;
+        // color: red;
+      }
+      div {
+        height: auto;
+        width: 80%;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        position: relative;
+        align-self: flex-end;
 
-        img.poster {
-            height: 100%;
-            width: 100px;
-        } div {
-            width: calc(100% - 100px);
-            color: $skyblue-2;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-
-            > span {
-                align-self: flex-end;
-                font-size: 20px;
-                font-weight: bold;
-                padding-right: 15px;
-                // color: red;
-            } div {
-                height: auto;
-                width: 80%;
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                align-self: flex-end;
-                
-                span {
-                    font-size: 15px;
-                    font-weight: normal;
-                    padding: 0;
-                }
-            }
+        span {
+          font-size: 15px;
+          font-weight: normal;
+          padding: 0;
         }
+      }
     }
+  }
 }
-
-
 
 // <p>{this.props.assetType}</p>
 // &emsp;&emsp;-&emsp;&emsp;

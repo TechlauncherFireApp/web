@@ -20,7 +20,7 @@ class AssetCrew extends Component {
         <thead>
           <tr>
             <th width="20%">{recommendationInfo.asset_class}</th>
-            <th colSpan="4">[time slot]</th>
+            <th colSpan="5">[time slot]</th>
           </tr>
         </thead>
         <tbody>
