@@ -53,7 +53,7 @@ TimeBlock = fields.Integer
 
 position_field = {
     'position_id': fields.Integer,
-    'role': fields.String,
+    'role': fields.String, # driver | advanced | basic
     'qualifications': fields.String,
 }
 
@@ -61,17 +61,17 @@ volunteer_field = {
     'volunteer_id': fields.Integer,
     'position_id': fields.Integer,
     'volunteer_name': fields.String,
-    'role': fields.String,
+    'role': fields.String, # driver | advanced | basic
     'qualifications': fields.String,
     'contact_info': fields.List(fields.Nested({
-        'type': fields.String,
-        'detail': fields.String,
+        'type': fields.String, # email | phone
+        'detail': fields.String, # email_add | phone_no
     }))
 }
 
 volunteer_list_field = {
     'asset_id': fields.Integer,
-    'asset_class': fields.String,
+    'asset_class': fields.String, # Enum
     'start_time': TimeBlock,
     'end_time': TimeBlock,
     'position': fields.List(fields.Nested(position_field)),
@@ -112,7 +112,7 @@ class Recommendation(Resource):
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()
-        
+
         print(args)
         print(args["asset_list"][0])
 
