@@ -122,13 +122,14 @@ def AvailabilityGenerator():
                 generatedbool = booleangenerator(80)
         #weekdays
         else:
+        # weekends
             if (i % 48 == 0):
                 # at 12 am to 9am on weekends generates a true 10% of the time for the set of volunteers generated
                 generatedbool = booleangenerator(10)
             if (i % 48 == 18):
                 # at 9am onwards on weekends generates a true 80% of the time for the set of volunteers
                 generatedbool = booleangenerator(80)
-        #weekends
+
         #assigns the generated boolean
         #converts to the string format for now
         AvailDict[j]=generatedbool
