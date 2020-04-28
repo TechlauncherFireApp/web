@@ -1,8 +1,6 @@
-import gurobipy as gp
 import random
-from gurobipy import GRB
-import sys
 from enum import Enum
+import json
 #taken from https://gist.github.com/benhorgen/4494868
 firstNames = ["Adam", "Alex", "Aaron", "Ben", "Carl", "Dan", "David", "Edward", "Fred", "Frank", "George", "Hal", "Hank", "Ike",
  "John", "Jack", "Joe", "Larry", "Monte", "Matthew", "Mark", "Nathan", "Otto", "Paul", "Peter", "Roger", "Roger",
@@ -34,24 +32,6 @@ def shiftpopulator():
             # concatenating the day string with the hour to generate the label for an hour that is to be scheduled
             list.append(i + str(j))
     return list
-
-
-
-
-
-#establishing the two types of Firefighters
-class FireFighter(Enum):
-    basic = "Basic"
-    advanced = "Advanced"
-# each volunteer has an Name,Experience level, preferred Hours, Availability
-# is availability different
-class Volunteer:
-    def __init__(self, name, Explvl, prefHours,phonenumber,Availability):
-        self.name = name
-        self.Explvl = Explvl
-        self.prefHours = prefHours
-        self.phonenumber=phonenumber
-        self.Availability = Availability
 
 def NumberGenerator():
     tempnumber = "04"
@@ -156,7 +136,6 @@ def DayHourtoNumConverter(DayHour):
         Timeblock += 6*totalblocks
     Timeblock+=int(DayHour[3:5])
     return Timeblock
-print(DayHourtoNumConverter("Fri47"))
 def NumtoDayHourConverter(Num):
     #totalblocks of time per day
     totalblocks=48
@@ -186,6 +165,20 @@ def booleangenerator(Percent):
     else:
         return False
 
+#establishing the two types of Firefighters
+class FireFighter(Enum):
+    basic = "Basic"
+    advanced = "Advanced"
+# each volunteer has an Name,Experience level, preferred Hours, Availability
+# is availability different
+class Volunteer:
+    def __init__(self, name, Explvl, prefHours,phonenumber,Availability):
+        self.name = name
+        self.Explvl = Explvl
+        self.prefHours = prefHours
+        self.phonenumber=phonenumber
+        self.Availability = Availability
+
 #Randomly generating a group of different Volunteers
 #THIS FUNCTION OCCASIONALLY ATTEMPTS TO ACCESS AN OUT OF BOUNDS INDEX, around line 110
 def volunteerGenerate(volunteerNo):
@@ -198,9 +191,9 @@ def volunteerGenerate(volunteerNo):
         #for example 3 means 3 times as many advanced firefighters are
         ratio=3
         expgenerator=random.randint(1, ratio)
-        exp=FireFighter.advanced
+        exp="Advanced"
         if(expgenerator<ratio):
-            exp=FireFighter.basic
+            exp="Basic"
         #preferred hours between 6 and 14
         prefnum=random.randint(6, 14)
         #Generates an Availability
@@ -224,9 +217,20 @@ def VolunteerTest(number):
             for j in shiftpopulator():
                 print(j+": "+str(i.Availability[j]))
             print("\n")
+#generates number volunteers in the volunteers folder
+def VolunteerJson(number):
+    Volunteers=volunteerGenerate(number)
+    j=0
+    for i in Volunteers:
+        with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
+            json.dump(i.__dict__, fp)
+        j += 1
 
 
 
-VolunteerTest(3)
+
+VolunteerJson(3)
+
+
 # Model
 #m = gp.Model("assignment")
