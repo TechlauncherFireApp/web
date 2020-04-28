@@ -7,9 +7,10 @@ import Request from './components/Request';
 
 class NewAssetRequest extends Component {
 
-    // {assetType:"Heavy Tanker",startDate:"2020/06/01",startTime:"14:00:00",endDate:"2020/06/24",endTime:"14:00:00"}
     state = {
-        request_list: [],
+        request_list: [
+            // {assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50")}
+        ],
         dummyList: ["testing", "list", "of", "stuff"]
     };
 
@@ -26,14 +27,12 @@ class NewAssetRequest extends Component {
         console.clear();
         let a = {
             assetType : this.insert_assetType.current.value,
-            startDate : new Date(this.insert_startDateTime.current.value).toLocaleDateString(),
-            startTime : new Date(this.insert_startDateTime.current.value).toLocaleTimeString(),
-            endDate : new Date(this.insert_endDateTime.current.value).toLocaleDateString(),
-            endTime : new Date(this.insert_endDateTime.current.value).toLocaleTimeString()
+            startDateTime : new Date(this.insert_startDateTime.current.value),
+            endDateTime : new Date(this.insert_endDateTime.current.value)
         };
 
         // Validate Data
-        for (let x in a) if (!contains(a[x]) || (a[x] === "Invalid Date")) { alert(x + " not entered"); return; }
+        for (let x in a) if (!contains(a[x]) || (a[x] == "Invalid Date")) { alert(x + " not entered"); return; }
         const o = this.state.request_list;
         for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
 
@@ -98,10 +97,8 @@ class NewAssetRequest extends Component {
                         { this.state.request_list.map((t) =>
                             <Request
                                 assetType={t.assetType}
-                                startDate={t.startDate}
-                                startTime={t.startTime}
-                                endDate={t.endDate}
-                                endTime={t.endTime}
+                                startDateTime={t.startDateTime}
+                                endDateTime={t.endDateTime}
                                 Remove_Asset={this.Remove_Asset} />)
                         }
                     </output>
