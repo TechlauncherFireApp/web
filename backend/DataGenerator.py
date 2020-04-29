@@ -135,7 +135,7 @@ def volunteerGenerate(volunteerNo):
         Name=firstNames[random.randint(0,len(firstNames)-1)]+" "+lastNames[random.randint(0,len(lastNames)-1)]
         #Generates an experience at a ratio i.e how many more basic firefighters than advanced
         #for example 3 means 3 times as many advanced firefighters are
-        ratio=3
+        ratio=1
         expgenerator=random.randint(1, ratio)
         exp=FireFighter.advanced
         if(expgenerator<ratio):

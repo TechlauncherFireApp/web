@@ -27,12 +27,12 @@ class Request():
         self.StartTime = StartTime
         self.Duration = Duration
 
-#A List of Requests
-SampleRequest=[Request(LightUnit,0,12),Request(MediumTanker,0,24),Request(HeavyTanker,12,12)]
 
-#turns
+
+
 def RequesttoRequirements(Requests):
-    """Takes in a list of Requests as an input and then generates a dictionary with Timeblock as the key and """
+    """Takes in a list of Requests as an input and then generates a dictionary with Timeblock as the key and a tuple of
+     (TotalRequired,AdvancedRequired)"""
     TotalRequirementDict = {}
     AdvancedRequirementDict={}
     for l in Requests:
@@ -63,7 +63,17 @@ def RequesttoRequirements(Requests):
 
     return resultDict
 
-for i in range(25):
-    print(str(i)+": "+str(RequesttoRequirements(SampleRequest)[i]))
+#1700 monday onwards for 6.5hours
+SingleRequest=[Request(LightUnit, 34, 13)]
+#1700 monday onwards for 6.5hours but two asset types
+TwoAssetTypeRequest=[Request(LightUnit, 34, 13),Request(MediumTanker, 34, 13)]
+#Multiple Days
+MultipleDaysRequest = [Request(LightUnit, 34, 13),Request(MediumTanker, 34, 13)
+    , Request(MediumTanker, 82, 13), Request(HeavyTanker, 82, 13)]
+def Test():
+    # A List of Requests
+
+    for i in range(25):
+        print(str(i)+": "+str(RequesttoRequirements(MultipleDaysRequest)[i]))
 
 

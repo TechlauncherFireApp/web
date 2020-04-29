@@ -2,6 +2,7 @@ import gurobipy as gp
 from gurobipy import GRB
 
 from backend.DataGenerator import *
+from backend.AssetTypes import *
 
 #Takes a list of volunteers, returns a tupleList formatted for the constraint model
 def formatAvailability(Volunteers):
@@ -16,9 +17,10 @@ def formatAvailability(Volunteers):
 def Schedule(Volunteers, VehicleRequirements):
     
     # Number of volunteers required for each shift. "time": (total, advanced)
-    shiftRequirements = {
-        0:  (1,1)
-        }
+    shiftRequirements = RequesttoRequirements(MultipleDaysRequest)
+    # shiftRequirements = {
+    #     0: (1, 1)
+    # }
 
     # Amount of hours each volunteer wants to work over the entire week
     preferredHours = {}
