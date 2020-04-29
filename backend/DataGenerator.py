@@ -135,11 +135,42 @@ def VolunteerJson(number):
         with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
             json.dump(i.__dict__, fp)
         j += 1
+def AvailabilityGenerator():
+    AvailDict = {}
+    #arbitrary false declaration so the value assigned in the loop stays on
+    generatedbool=False
+    for j in shiftpopulator():
+        # i is timeblock
+        i=DayHourtoNumConverter(j)
+        # 240 corressponds to 12am on a saturday so i<240 represents weekdays
+        if(i<240):
+            if(i%48==0):
+                #at 12 am to 9am on weekdays generates a true 10% of the time for the set of volunteers generated
+                generatedbool=booleangenerator(10)
+            if (i % 48 == 18):
+                #at 9am to 5pm on weekdays generates a true 20% of the time for the set of volunteers
+                generatedbool = booleangenerator(20)
+            if (i % 48 == 34):
+                #  5pm onwards on weekdays generates a true 80% of the time for the set of volunteers
+                generatedbool = booleangenerator(80)
+        #weekdays
+        else:
+        # weekends
+            if (i % 48 == 0):
+                # at 12 am to 9am on weekends generates a true 10% of the time for the set of volunteers generated
+                generatedbool = booleangenerator(10)
+            if (i % 48 == 18):
+                # at 9am onwards on weekends generates a true 80% of the time for the set of volunteers
+                generatedbool = booleangenerator(80)
+
+        #assigns the generated boolean
+        #converts to the string format for now
+        AvailDict[j]=generatedbool
+
+    return AvailDict
 
 
-
-
-VolunteerJson(3)
+VolunteerTest(50)
 
 
 # Model
