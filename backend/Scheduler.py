@@ -7,7 +7,7 @@ Volunteers=volunteerGenerate(5)
 
 # Number of volunteers required for each shift. "time": (basic, advanced)
 shiftRequirements = {
-    0:  (1,1)
+    0:  (1,0)
     }
 
 # Amount of hours each volunteer wants to work over the entire week
@@ -36,7 +36,9 @@ for volunteer in Volunteers:
 
 #Constraints: each shift is exactly filled
 for shiftKey in shiftRequirements.keys():
-    constraints.append(model.addConstr(assigned.sum('*', shiftKey), GRB.EQUAL, preferredHours[volunteer.name], "ShiftFilled_" + str(shiftKey)))
+    numRequired = shiftRequirements[shiftKey][0] + shiftRequirements[shiftKey][1]
+    constraints.append(model.addConstr(assigned.sum('*', shiftKey), GRB.EQUAL, numRequired, "ShiftFilled_" + str(shiftKey)))
+
 
 # The objective is to minimise the hours worked by volunteers (while still filling all shifts)
 model.setObjective( gp.quicksum(assigned[v,s] for v, s in availability), GRB.MINIMIZE)
