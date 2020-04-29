@@ -66,5 +66,5 @@ def Schedule(Volunteers, VehicleRequirements):
 
     return (model, assigned)
 
-v=volunteerGenerate(5)
+v=volunteerGenerate(30)
 model, assignment = Schedule(v, [])

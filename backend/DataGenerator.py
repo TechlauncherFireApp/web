@@ -136,9 +136,9 @@ def volunteerGenerate(volunteerNo):
         #for example 3 means 3 times as many advanced firefighters are
         ratio=3
         expgenerator=random.randint(1, ratio)
-        exp="Advanced"
+        exp=FireFighter.advanced
         if(expgenerator<ratio):
-            exp="Basic"
+            exp=FireFighter.basic
         #preferred hours between 6 and 14
         prefnum=random.randint(6, 14)
         #Generates an Availability
@@ -163,16 +163,14 @@ def VolunteerTest(number):
                 print(j+": "+str(i.Availability[j]))
             print("\n")
 #generates number volunteers in the volunteers folder
-def VolunteerJson(number):
-    Volunteers=volunteerGenerate(number)
-    j=0
-    for i in Volunteers:
-        with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
-            json.dump(i.__dict__, fp)
-        j += 1
+# def VolunteerJson(number):
+#     Volunteers=volunteerGenerate(number)
+#     j=0
+#     for i in Volunteers:
+#         with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
+#             json.dump(i.__dict__, fp)
+#         j += 1
 
-
-VolunteerTest(200)
 
 
 # Model
