@@ -152,6 +152,8 @@ def volunteerGenerate(volunteerNo):
         list.append(Volunteer(Name, exp,prefnum,tempnumber,AvailDict))
     return list
 
+
+
 def VolunteerTest(number):
     Volunteers=volunteerGenerate(number)
     for i in Volunteers:
@@ -171,8 +173,3 @@ def VolunteerTest(number):
 #         with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
 #             json.dump(i.__dict__, fp)
 #         j += 1
-
-
-
-# Model
-#m = gp.Model("assignment")

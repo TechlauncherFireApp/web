@@ -17,7 +17,7 @@ def formatAvailability(Volunteers):
 def Schedule(Volunteers, VehicleRequirements):
     
     # Number of volunteers required for each shift. "time": (total, advanced)
-    shiftRequirements = RequesttoRequirements(MultipleDaysRequest)
+    shiftRequirements = RequesttoRequirements(EveryDayOfTheWeek)
     # shiftRequirements = {
     #     0: (1, 1)
     # }
@@ -68,5 +68,5 @@ def Schedule(Volunteers, VehicleRequirements):
 
     return (model, assigned)
 
-v=volunteerGenerate(30)
+v=volunteerGenerate(60)
 model, assignment = Schedule(v, [])

@@ -74,8 +74,23 @@ TwoAssetTypeRequest=[Request(LightUnit, 34, 13),Request(MediumTanker, 34, 13)]
 MultipleDaysRequest = [Request(LightUnit, 34, 13),Request(MediumTanker, 34, 13)
     , Request(MediumTanker, 82, 13), Request(HeavyTanker, 82, 13)]
 
+#OnlyWeekends
+OnlyWeekends = [Request(MediumTanker, 18+5*48, 24), Request(LightUnit, 18+5*48, 24),
+                       Request(MediumTanker, 18+6*48, 10), Request(LightUnit, 18+6*48, 24)]
+#All Weekdays
+EveryWeekday = [Request(LightUnit, 34, 13),Request(MediumTanker, 34, 13)
+    , Request(MediumTanker, 82, 13), Request(HeavyTanker, 82, 13),
+                       Request(MediumTanker, 34+2*48, 13), Request(HeavyTanker, 34+2*48, 13),
+                       Request(MediumTanker, 34+3*48, 13), Request(HeavyTanker, 34+3*48, 13),
+                       Request(MediumTanker, 34+4*48, 13), Request(LightUnit, 34+4*48, 13)
+                     ]
+#All Days of hte week
+##solves all but this one with 60 volunteers generated it solved with 90 though
+#This one is only weekends and EveryWeekday combined
+EveryDayOfTheWeek = OnlyWeekends+EveryWeekday
 
-
+OnlyWeekends = [Request(MediumTanker, 18+5*48, 24), Request(LightUnit, 18+5*48, 24),
+                       Request(MediumTanker, 18+6*48, 10), Request(LightUnit, 18+6*48, 24)]
 def Test():
     # A List of Requests
 
