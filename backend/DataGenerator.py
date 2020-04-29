@@ -79,6 +79,7 @@ class FireFighter(Enum):
     basic = "Basic"
     advanced = "Advanced"
 
+
 def AvailabilityGenerator():
     AvailDict = {}
     #arbitrary false declaration so the value assigned in the loop stays on
