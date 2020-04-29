@@ -63,13 +63,19 @@ def RequesttoRequirements(Requests):
 
     return resultDict
 
+#Request Scenarios
 #1700 monday onwards for 6.5hours
 SingleRequest=[Request(LightUnit, 34, 13)]
+
 #1700 monday onwards for 6.5hours but two asset types
 TwoAssetTypeRequest=[Request(LightUnit, 34, 13),Request(MediumTanker, 34, 13)]
+
 #Multiple Days
 MultipleDaysRequest = [Request(LightUnit, 34, 13),Request(MediumTanker, 34, 13)
     , Request(MediumTanker, 82, 13), Request(HeavyTanker, 82, 13)]
+
+
+
 def Test():
     # A List of Requests
 
