@@ -3,6 +3,16 @@ from gurobipy import GRB
 
 from backend.DataGenerator import *
 
+#Takes a list of volunteers, returns a tupleList formatted for the constraint model
+def formatAvailability(Volunteers):
+    availability = gp.tuplelist()
+    for volunteer in Volunteers:
+        for shift in shiftpopulator():
+            if volunteer.Availability[shift]:
+                availability.append((volunteer.name, DayHourtoNumConverter(shift)))
+    return availability
+
+#Takes a list of Volunteers and VehicleRequirements and returns a volunteer assignment and model
 def Schedule(Volunteers, VehicleRequirements):
     
     # Number of volunteers required for each shift. "time": (total, advanced)
@@ -16,15 +26,14 @@ def Schedule(Volunteers, VehicleRequirements):
         preferredHours[volunteer.name] = volunteer.prefHours
     
     # Worker availability
-    availability = gp.tuplelist()
+    availability = formatAvailability(Volunteers)
+    
+    # list qualified workers
     advancedQualified = []
     for volunteer in Volunteers:
-        for shift in shiftpopulator():
-            if volunteer.Availability[shift]:
-                availability.append((volunteer.name, DayHourtoNumConverter(shift)))
         if volunteer.Explvl == FireFighter.advanced:
             advancedQualified.append(volunteer)
-        
+    
     # Model
     model = gp.Model("assignment")
 
@@ -45,7 +54,7 @@ def Schedule(Volunteers, VehicleRequirements):
     for shiftKey in shiftRequirements.keys():
         numRequiredAdvanced = shiftRequirements[shiftKey][1]
         totalAdvanced = 0
-        for volunteer in Volunteers:
+        for volunteer in advancedQualified:
             totalAdvanced = totalAdvanced + assigned.sum(volunteer.name, shiftKey)
         constraints.append(model.addConstr(totalAdvanced, GRB.GREATER_EQUAL, numRequiredAdvanced, "ShiftQualified_" + str(shiftKey)))
 
