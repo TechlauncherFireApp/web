@@ -5,7 +5,7 @@ from backend.DataGenerator import *
 from backend.AssetTypes import *
 
 #Takes a list of volunteers, returns a tupleList formatted for the constraint model
-from backend.VolunteerGraph import Assignment, VolunteerPlot
+from backend.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
 
 
 def formatAvailability(Volunteers):
@@ -95,6 +95,10 @@ def Schedule(Volunteers, VehicleRequest):
     print(" ")
     for assignment in assignments:
         print(assignment)
+
+    #Plots the original Request in a GanttChart saved as Problem.png
+    RequestPlot(VehicleRequest)
+    # plots the solution in a ganttChart saved as Solution.png
     VolunteerPlot(plotList)
     return (model, assignedToVehicle)
 

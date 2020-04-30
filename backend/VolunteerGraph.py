@@ -58,7 +58,7 @@ def RequestPlot(Requests):
     gnt.set_yticks(yticklist)
 
     fig.set_size_inches(18.5, 10.5)
-    fig.savefig('RequestGanttCharts/OnlyWeekends.png', dpi=100)
+    fig.savefig('Problem.png', dpi=100)
 
 class Assignment():
     def __init__(self, VolunteerID, Start, Duration):
@@ -77,7 +77,7 @@ def VolunteerPlot(assignments):
     gnt.set_xlim(0, 48*7*widthScale)
     # Setting labels for x-axis and y-axis
     gnt.set_xlabel('TimeBlock')
-    gnt.set_ylabel('Asset')
+    gnt.set_ylabel('Volunteer ID')
 
     yticklist=[]
 
@@ -102,7 +102,7 @@ def VolunteerPlot(assignments):
         gnt.broken_barh([(i.Start*widthScale, i.Duration*widthScale)], (0 + i.VolunteerID * Ylim/len(assignments), 10),
                         facecolors=(
                         random.randint(10, 240) / 255, random.randint(10, 240) / 255, random.randint(10, 240) / 255))
-        yticklabels.append("Volunteer "+str(i.VolunteerID))
+        yticklabels.append(str(i.VolunteerID))
         yticklist.append(0 + i.VolunteerID * Ylim/len(assignments)+5)
 
     # Setting ticks on y-axis
@@ -114,4 +114,3 @@ def VolunteerPlot(assignments):
     # (30, 9) center and width
     fig.set_size_inches(36.5, 20.5)
     fig.savefig('Solution.png', dpi=100)
-RequestPlot(OnlyWeekends)
