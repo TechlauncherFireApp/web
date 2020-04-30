@@ -58,7 +58,7 @@ class Volunteer extends Component {
               id="availability"
               onClick={this.handleToggleColour}
             />
-            Available
+            Confirmed
           </td>
         </tr>
       </React.Fragment>
