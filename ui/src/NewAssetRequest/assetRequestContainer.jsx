@@ -6,6 +6,7 @@ import AssetRecommendation from "./components/assetRecommendation";
 class AssetRequestContainer extends Component {
   state = {
     assetsSubmitted: false,
+    request_list: [],
     volunteer_list: [
       {
         asset_id: 1,
@@ -100,6 +101,11 @@ class AssetRequestContainer extends Component {
     ],
   };
 
+  updateRequestList = (list) => {
+    const request_list = list;
+    this.setState({ request_list });
+  };
+
   handleDisplayRequest = (outputVolunteerList) => {
     const assetsSubmitted = !this.state.assetsSubmitted;
     const volunteerList = outputVolunteerList;
@@ -114,7 +120,7 @@ class AssetRequestContainer extends Component {
 
   debugging = () => {
     /* this is a testing funtion */
-    console.log(this.state.assetsSubmitted, this.state.volunteer_list);
+    console.log(this.state.request_list);
   };
 
   handleCrewUpdate = (assetId, newVolunteer) => {
@@ -132,7 +138,10 @@ class AssetRequestContainer extends Component {
             onCrewUpdate={this.handleCrewUpdate}
           />
         ) : (
-          <NewAssetRequest onDisplayRequest={this.handleDisplayRequest} />
+          <NewAssetRequest
+            onDisplayRequest={this.handleDisplayRequest}
+            updateRequestList={this.updateRequestList}
+          />
         )}
         <br />
         <button onClick={this.debugging} className="btn-warning">
