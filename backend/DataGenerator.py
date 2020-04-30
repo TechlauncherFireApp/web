@@ -118,7 +118,8 @@ def AvailabilityGenerator():
 # each volunteer has an Name,Experience level, preferred Hours, Availability
 # is availability different
 class Volunteer:
-    def __init__(self, name, Explvl, prefHours,phonenumber,Availability):
+    def __init__(self, id,name, Explvl, prefHours,phonenumber,Availability):
+        self.id=id
         self.name = name
         self.Explvl = Explvl
         self.prefHours = prefHours
@@ -149,7 +150,7 @@ def volunteerGenerate(volunteerNo):
         #generates a random australian phone number
         tempnumber = NumberGenerator()
         #adds the volunteer to the list with all the generated data
-        list.append(Volunteer(Name, exp,prefnum,tempnumber,AvailDict))
+        list.append(Volunteer(i,Name, exp,prefnum,tempnumber,AvailDict))
     return list
 
 
@@ -157,6 +158,7 @@ def volunteerGenerate(volunteerNo):
 def VolunteerTest(number):
     Volunteers=volunteerGenerate(number)
     for i in Volunteers:
+            print("ID: " + str(i.id))
             print("Name: "+ i.name)
             print("preferred Hours: "+str(i.prefHours))
             print("Experience level: "+str(i.Explvl))
@@ -173,3 +175,4 @@ def VolunteerTest(number):
 #         with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
 #             json.dump(i.__dict__, fp)
 #         j += 1
+VolunteerTest(8)

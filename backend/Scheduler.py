@@ -17,7 +17,7 @@ def formatAvailability(Volunteers):
 def Schedule(Volunteers, VehicleRequirements):
     
     # Number of volunteers required for each shift. "time": (total, advanced)
-    shiftRequirements = RequesttoRequirements(EveryDayOfTheWeek)
+    shiftRequirements = RequesttoRequirements(EveryWeekday)
     # shiftRequirements = {
     #     0: (1, 1)
     # }

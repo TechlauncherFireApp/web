@@ -10,15 +10,19 @@ from enum import Enum
 
 
 class Asset():
-    def __init__(self, name,TotalReq,AdvancedReq):
-        self.name = name
+    def __init__(self, type,TotalReq,AdvancedReq,LicenseNo):
+        self.LicenceNo = LicenseNo
+        #no use now just there for informations sake
+        self.type = type
         self.AdvancedReq = AdvancedReq
         self.TotalReq = TotalReq
+        self.LicenceNo=LicenseNo
 
-#the AssetTypes
-LightUnit = Asset("Light Unit",3,3)
-MediumTanker= Asset("Medium Tanker",3,2)
-HeavyTanker=Asset("Heavy Tanker",5,4)
+#The Fleet
+LightUnit = Asset(1,"Light Unit",3,3)
+LightUnit2 = Asset(2,"Light Unit",3,3)
+MediumTanker= Asset(3,"Medium Tanker",3,2)
+HeavyTanker=Asset(4,"Heavy Tanker",5,4)
 
 #StartTime and Duration in timeblocks
 class Request():
@@ -89,8 +93,6 @@ EveryWeekday = [Request(LightUnit, 34, 13),Request(MediumTanker, 34, 13)
 #This one is only weekends and EveryWeekday combined
 EveryDayOfTheWeek = OnlyWeekends+EveryWeekday
 
-OnlyWeekends = [Request(MediumTanker, 18+5*48, 24), Request(LightUnit, 18+5*48, 24),
-                       Request(MediumTanker, 18+6*48, 10), Request(LightUnit, 18+6*48, 24)]
 def Test():
     # A List of Requests
 
