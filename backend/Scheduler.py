@@ -5,6 +5,9 @@ from backend.DataGenerator import *
 from backend.AssetTypes import *
 
 #Takes a list of volunteers, returns a tupleList formatted for the constraint model
+from backend.VolunteerGraph import Assignment, VolunteerPlot
+
+
 def formatAvailability(Volunteers):
     availability = gp.tuplelist()
     for volunteer in Volunteers:
@@ -81,15 +84,18 @@ def Schedule(Volunteers, VehicleRequest):
     model.optimize()
 
     assignments = []
+    plotList=[]
     for volunteer in Volunteers:
         for request in VehicleRequest:
             value = assignedToVehicle[(volunteer.id, request.AssetType.LicenceNo, request.StartTime)].X
             if value > 0:
                 assignments.append("volunteer " + str(volunteer.id) + ", " + str(volunteer.name) + " assigned to " + str(request.AssetType.type) + ", ID " + str(request.AssetType.LicenceNo) + " for the shift starting " + str(request.StartTime))
+                plotList.append(Assignment(volunteer.id,request.StartTime,request.Duration))
+
     print(" ")
     for assignment in assignments:
         print(assignment)
-
+    VolunteerPlot(plotList)
     return (model, assignedToVehicle)
 
 v=volunteerGenerate(200)
