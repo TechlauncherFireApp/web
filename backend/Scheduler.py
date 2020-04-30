@@ -16,7 +16,7 @@ def formatAvailability(Volunteers):
                 availability.append((volunteer.id, DayHourtoNumConverter(shift)))
     return availability
 
-#Takes a list of Volunteers and VehicleRequirements and returns a volunteer assignment and model
+#Takes a list of Volunteers and Requests and returns a volunteer assignment and model
 def Schedule(Volunteers, VehicleRequest):
     
     # Number of volunteers required for each shift. "time": (total, advanced)
@@ -45,8 +45,11 @@ def Schedule(Volunteers, VehicleRequest):
 
     # Assignment variables: assigned[v,s] == 1 if volunteer v is assigned to shift s.
     assigned = model.addVars(availability, ub=1, lb=0, name="assigned")
+
+    # Assignment variables: assignedToVehicle[volunteerID, VehicleID, VehicleStart]
     assignedToVehicle = model.addVars(formattedRequests, ub=1, lb=0, name="assignedToVehicle")
 
+    #easy access to constraints, mostly for debugging
     constraints = []
 
     # Constraints: volunteer must be assigned to a vehicle for an entire shift
@@ -57,8 +60,31 @@ def Schedule(Volunteers, VehicleRequest):
                 time = request.StartTime + i
                 shiftSum = shiftSum + assigned.sum(volunteer.id, time)
             constraints.append(model.addGenConstrIndicator(assignedToVehicle[volunteer.id, request.AssetType.LicenceNo, request.StartTime], True, shiftSum, GRB.EQUAL, request.Duration))
-            constraints.append(model.addGenConstrIndicator(assignedToVehicle[volunteer.id, request.AssetType.LicenceNo, request.StartTime], False, shiftSum, GRB.EQUAL, 0))
 
+    # Constraints: Volunteers cannot be assigned to 2 vehicles at once
+    for i in range(len(VehicleRequest)):
+        for g in range(i+1,len(VehicleRequest)):
+            iRangeMin = VehicleRequest[i].StartTime
+            iRangeMax = VehicleRequest[i].StartTime + VehicleRequest[i].Duration
+            gRangeMin = VehicleRequest[g].StartTime
+            gRangeMax = VehicleRequest[g].StartTime + VehicleRequest[g].Duration
+
+            #if vehicle times overlap, a volunteer can only be assigned to one of them
+            if (iRangeMin <= gRangeMin and iRangeMax >= gRangeMin) or (gRangeMin <= iRangeMin and gRangeMax >= iRangeMin):
+                print(i, g)
+                for volunteer in Volunteers:
+                    sum = 0
+                    sum = sum + assignedToVehicle.sum(volunteer.id, VehicleRequest[i].AssetType.LicenceNo, VehicleRequest[i].StartTime)
+                    sum = sum + assignedToVehicle.sum(volunteer.id, VehicleRequest[g].AssetType.LicenceNo, VehicleRequest[g].StartTime)
+                    constraints.append(model.addConstr(sum, GRB.LESS_EQUAL, 1, "IncompatibleTrucks_" + str(i) + str(g)))
+
+    # Constraints: Each vehicle must be filled + Each vehicle must meet qualifications
+    for request in VehicleRequest:
+        constraints.append(model.addConstr(assignedToVehicle.sum('*', request.AssetType.LicenceNo, request.StartTime), GRB.EQUAL, request.AssetType.TotalReq, "TruckFilled_" + str(request.AssetType.LicenceNo)))
+        totalAdvancedOnVehicle = 0
+        for volunteer in advancedQualified:
+            totalAdvancedOnVehicle = totalAdvancedOnVehicle + assignedToVehicle.sum(volunteer.id, request.AssetType.LicenceNo, request.StartTime)
+        constraints.append(model.addConstr(totalAdvancedOnVehicle, GRB.GREATER_EQUAL, request.AssetType.AdvancedReq, "TruckQualified_" + str(request.AssetType.LicenceNo)))
 
     #Constraints: total hours worked <= preferred hours for each volunteer
     for volunteer in Volunteers:
@@ -78,13 +104,14 @@ def Schedule(Volunteers, VehicleRequest):
         constraints.append(model.addConstr(totalAdvanced, GRB.GREATER_EQUAL, numRequiredAdvanced, "ShiftQualified_" + str(shiftKey)))
 
     
-    # The objective is to minimise the hours worked by volunteers (while still filling all shifts)
+    # The objective is to minimise the hours worked by volunteers (while still filling all requirements)
     model.setObjective( gp.quicksum(assigned[v,s] for v, s in availability), GRB.MINIMIZE)
 
     model.optimize()
 
     assignments = []
     plotList=[]
+
     for volunteer in Volunteers:
         for request in VehicleRequest:
             value = assignedToVehicle[(volunteer.id, request.AssetType.LicenceNo, request.StartTime)].X
