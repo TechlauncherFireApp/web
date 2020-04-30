@@ -175,4 +175,3 @@ def VolunteerTest(number):
 #         with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
 #             json.dump(i.__dict__, fp)
 #         j += 1
-VolunteerTest(8)

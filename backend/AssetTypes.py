@@ -10,7 +10,7 @@ from enum import Enum
 
 
 class Asset():
-    def __init__(self, type,TotalReq,AdvancedReq,LicenseNo):
+    def __init__(self,LicenseNo,type,TotalReq,AdvancedReq):
         self.LicenceNo = LicenseNo
         #no use now just there for informations sake
         self.type = type
