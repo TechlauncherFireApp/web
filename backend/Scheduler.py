@@ -10,27 +10,28 @@ def formatAvailability(Volunteers):
     for volunteer in Volunteers:
         for shift in shiftpopulator():
             if volunteer.Availability[shift]:
-                availability.append((volunteer.name, DayHourtoNumConverter(shift)))
+                availability.append((volunteer.id, DayHourtoNumConverter(shift)))
     return availability
 
 #Takes a list of Volunteers and VehicleRequirements and returns a volunteer assignment and model
-def Schedule(Volunteers, VehicleRequirements):
+def Schedule(Volunteers, VehicleRequest):
     
     # Number of volunteers required for each shift. "time": (total, advanced)
-    shiftRequirements = RequesttoRequirements(EveryWeekday)
-    # shiftRequirements = {
-    #     0: (1, 1)
-    # }
+    shiftRequirements = RequesttoRequirements(VehicleRequest)
 
     # Amount of hours each volunteer wants to work over the entire week
     preferredHours = {}
     for volunteer in Volunteers:
-        preferredHours[volunteer.name] = volunteer.prefHours
+        preferredHours[volunteer.id] = volunteer.prefHours
     
-    # Worker availability
+    # Volunteer availability
     availability = formatAvailability(Volunteers)
+    formattedRequests = gp.tuplelist()
+    for volunteer in Volunteers:
+        for request in VehicleRequest:
+            formattedRequests.append((volunteer.id, request.AssetType.LicenceNo, request.StartTime))
     
-    # list qualified workers
+    # list qualified Volunteers
     advancedQualified = []
     for volunteer in Volunteers:
         if volunteer.Explvl == FireFighter.advanced:
@@ -41,11 +42,24 @@ def Schedule(Volunteers, VehicleRequirements):
 
     # Assignment variables: assigned[v,s] == 1 if volunteer v is assigned to shift s.
     assigned = model.addVars(availability, ub=1, lb=0, name="assigned")
+    assignedToVehicle = model.addVars(formattedRequests, ub=1, lb=0, name="assignedToVehicle")
+
+    constraints = []
+
+    # Constraints: volunteer must be assigned to a vehicle for an entire shift
+    for volunteer in Volunteers:
+        for request in VehicleRequest:
+            shiftSum = 0
+            for i in range(request.Duration):
+                time = request.StartTime + i
+                shiftSum = shiftSum + assigned.sum(volunteer.id, time)
+            constraints.append(model.addGenConstrIndicator(assignedToVehicle[volunteer.id, request.AssetType.LicenceNo, request.StartTime], True, shiftSum, GRB.EQUAL, request.Duration))
+            constraints.append(model.addGenConstrIndicator(assignedToVehicle[volunteer.id, request.AssetType.LicenceNo, request.StartTime], False, shiftSum, GRB.EQUAL, 0))
+
 
     #Constraints: total hours worked <= preferred hours for each volunteer
-    constraints = []
     for volunteer in Volunteers:
-        constraints.append(model.addConstr(assigned.sum(volunteer.name, '*'), GRB.LESS_EQUAL, preferredHours[volunteer.name], "prefHours_" + str(volunteer.name)))
+        constraints.append(model.addConstr(assigned.sum(volunteer.id, '*'), GRB.LESS_EQUAL, preferredHours[volunteer.id], "prefHours_" + str(volunteer.id)))
 
     #Constraints: total volunteers met for each shift
     for shiftKey in shiftRequirements.keys():
@@ -57,7 +71,7 @@ def Schedule(Volunteers, VehicleRequirements):
         numRequiredAdvanced = shiftRequirements[shiftKey][1]
         totalAdvanced = 0
         for volunteer in advancedQualified:
-            totalAdvanced = totalAdvanced + assigned.sum(volunteer.name, shiftKey)
+            totalAdvanced = totalAdvanced + assigned.sum(volunteer.id, shiftKey)
         constraints.append(model.addConstr(totalAdvanced, GRB.GREATER_EQUAL, numRequiredAdvanced, "ShiftQualified_" + str(shiftKey)))
 
     
@@ -66,7 +80,18 @@ def Schedule(Volunteers, VehicleRequirements):
 
     model.optimize()
 
-    return (model, assigned)
+    assignments = []
+    for volunteer in Volunteers:
+        for request in VehicleRequest:
+            value = assignedToVehicle[(volunteer.id, request.AssetType.LicenceNo, request.StartTime)].X
+            if value > 0:
+                assignments.append("volunteer " + str(volunteer.id) + ", " + str(volunteer.name) + " assigned to " + str(request.AssetType.type) + ", ID " + str(request.AssetType.LicenceNo) + " for the shift starting " + str(request.StartTime))
+    print(" ")
+    for assignment in assignments:
+        print(assignment)
 
-v=volunteerGenerate(60)
-model, assignment = Schedule(v, [])
+    return (model, assignedToVehicle)
+
+v=volunteerGenerate(200)
+
+model, assignment = Schedule(v, EveryWeekday)
