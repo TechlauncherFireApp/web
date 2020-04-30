@@ -14,7 +14,7 @@ class Asset():
 
 
 # The Fleet
-LightUnit = Asset(1, "Light Unit", 3, 3)
+LightUnit = Asset(1, "Light Unit", 2, 2)
 MediumTanker = Asset(2, "Medium Tanker", 3, 2)
 HeavyTanker = Asset(3, "Heavy Tanker", 5, 4)
 
