@@ -10,10 +10,8 @@ class Request extends Component {
     onClose = () => {
         this.props.Remove_Asset(JSON.stringify({
             assetType: this.props.assetType,
-            startDate: this.props.startDate,
-            startTime: this.props.startTime,
-            endDate: this.props.endDate,
-            endTime: this.props.endTime
+            startDateTime: this.props.startDateTime,
+            endDateTime: this.props.endDateTime
         }));
     }
 

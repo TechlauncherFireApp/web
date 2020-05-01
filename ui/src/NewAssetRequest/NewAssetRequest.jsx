@@ -9,7 +9,7 @@ import Request from "./components/Request";
 class NewAssetRequest extends Component {
   state = {
     request_list: [
-      {assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50")}
+      // {assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50")}
     ],
     // This list will get deleted once the interface is established, I was just using it to test my functions were working as expected .-Caleb
     volunteer_list: [
@@ -148,11 +148,9 @@ class NewAssetRequest extends Component {
     this.props.onDisplayRequest(list);
   };
 
-  toTimeblock = (date) => {
-    let day = date.getDay() * 48;
-    let hours = date.getHours() * 2;
-    let minutes = date.getMinutes() === 0 ? 0 : 1;
-    return day + hours + minutes;
+  toTimeblock = (d) => {
+    if (!contains(d) || (d == "Invalid Date")) return 0;
+    return (d.getDay() * 48) + (d.getHours() * 2) + (d.getMinutes() === 0 ? 0 : 1);
   };
 
   constructor(props) {
@@ -241,7 +239,6 @@ class NewAssetRequest extends Component {
         v.setMinutes(v.getMinutes() + 30);
       }
     }
-    console.log(v);
 
     // Modify Value
     v.setSeconds(0);
