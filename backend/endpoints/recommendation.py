@@ -2,6 +2,8 @@ from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
 from gurobi.DataGenerator import volunteerGenerate, NumberGenerator
 from gurobi.Names import firstNames, lastNames
+# from gurobi.Scheduler import Schedule
+from gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
 
 import random
 from ast import literal_eval # casts a string to a dict
@@ -20,13 +22,16 @@ def input_timeblock(timeblock, name):
 def input_asset_req(value, name):
     # Validate that asset_list contains dictionaries
     try:
-        cast_dict = literal_eval(value)
+        if type(value) is not dict:
+            cast_dict = literal_eval(value)
+        else:
+            cast_dict = value
     except:
         raise ValueError("The parameter '{}' is not a dictionary. You gave us: {}".format(name, value))
     if type(cast_dict) is dict:
         # Validate asset_id key
         if 'asset_id' in cast_dict:
-            inputs.positive(cast_dict['asset_id'])
+            cast_dict['asset_id'] = inputs.positive(cast_dict['asset_id'])
         else:
             raise ValueError("The parameter 'asset_id' does not exist in the dictionary: {}".format(value))
         # Validate start_time key
@@ -114,10 +119,20 @@ class Recommendation(Resource):
         args = parser.parse_args()
 
         print(args)
-        print(args["asset_list"][0])
+        # print(args["asset_list"][0])
+
+        asset_requests = []
+        for asset in args["asset_list"]:
+            asset_id = asset["asset_id"]
+            # asset_name = args["asset_list"]["asset_name"]
+            start_time = asset["start_time"]
+            end_time = asset["end_time"]
+            asset_requests.append(Request(HeavyTanker, start_time, start_time-end_time))
+            print(asset)
 
         # TODO Call a Gurobi function
         # args["asset_list"] =  [{'asset_id': '3', 'start_time': 24, 'end_time': 36}]
+        # Schedule(volunteerGenerate(20),asset_requests)
 
         first_req = args["asset_list"][0]
 
