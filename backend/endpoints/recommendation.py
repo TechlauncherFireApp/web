@@ -34,6 +34,12 @@ def input_asset_req(value, name):
             cast_dict['asset_id'] = inputs.positive(cast_dict['asset_id'])
         else:
             raise ValueError("The parameter 'asset_id' does not exist in the dictionary: {}".format(value))
+        # Validate asset_name key
+        if 'asset_name' in cast_dict:
+            if type(cast_dict['asset_name']) is not str:
+                raise ValueError("The parameter 'asset_name' is not a string. You gave us: {}".format(cast_dict['asset_name']))
+        else:
+            raise ValueError("The parameter 'asset_name' does not exist in the dictionary: {}".format(value))
         # Validate start_time key
         if 'start_time' in cast_dict:
             cast_dict['start_time'] = input_timeblock(cast_dict['start_time'], 'start_time')
@@ -124,7 +130,7 @@ class Recommendation(Resource):
         asset_requests = []
         for asset in args["asset_list"]:
             asset_id = asset["asset_id"]
-            # asset_name = args["asset_list"]["asset_name"]
+            asset_name = asset["asset_name"]
             start_time = asset["start_time"]
             end_time = asset["end_time"]
             asset_requests.append(Request(HeavyTanker, start_time, start_time-end_time))
