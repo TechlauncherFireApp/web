@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
 import "./NewAssetRequest.scss";
-import { contains } from "../main.js";
+import { contains, getDateSS } from "../main.js";
 import Request from "./components/Request";
 
 // https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
@@ -9,11 +9,12 @@ import Request from "./components/Request";
 class NewAssetRequest extends Component {
   state = {
     request_list: [
-      // {assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50")}
+      {assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50")}
     ],
   };
 
   processAssetRequest = () => {
+    console.clear();
     /* This function needs to: 
             1. convert this.state.request_list into a list of the form [{assetId, startDateTime, endDateTime}]
             2. Pass that list to the assetRequestContainer via this.state.updateRequestList
@@ -100,7 +101,7 @@ class NewAssetRequest extends Component {
     console.clear();
     const o = this.state.request_list;
 
-    // Find Element
+    // Find and Remove Element
     for (let x in o) {
       let s = JSON.stringify(o[x]);
       if (contains(s) && s === e) delete o[x];
@@ -125,6 +126,49 @@ class NewAssetRequest extends Component {
     console.log(o);
   };
 
+  ValidateDateTimeInput = (e) => {
+    console.clear();
+    e = e.target;
+
+    // Get & Check Value
+    let v = new Date(e.value);
+    if (!contains(v) || (v == "Invalid Date")) return;
+
+    // Check Start and End Input Range
+    if (e.getAttribute("name") === "start") {
+      let v2 = new Date(this.insert_endDateTime.current.value);
+      if ((contains(v2) && (v2 != "Invalid Date")) && (v >= v2)) {
+        v = new Date();
+        v.setMinutes(v.getMinutes() - 30);
+      }
+    } else {
+      let v2 = new Date(this.insert_startDateTime.current.value);
+      if ((contains(v2) && (v2 != "Invalid Date")) && (v <= v2)) {
+        v = new Date();
+        v.setMinutes(v.getMinutes() + 30);
+      }
+    }
+    console.log(v);
+
+    // Modify Value
+    v.setSeconds(0);
+    v.setMinutes(v.getMinutes() >= 30 ? 30 : 0);
+    v = getDateSS(v);
+    
+    // Set Value
+    e.value = v;
+  };
+
+  componentDidMount = () => {
+    // Assign Current Time
+    let t = new Date();
+    t.setSeconds(0);
+    t.setMinutes(t.getMinutes() >= 30 ? 30 : 0);
+    this.insert_startDateTime.current.value = getDateSS(t);
+    t.setMinutes(t.getMinutes() + 30);
+    this.insert_endDateTime.current.value = getDateSS(t);
+  };
+
   render() {
     return (
       <main-body>
@@ -144,11 +188,11 @@ class NewAssetRequest extends Component {
             </div>
             <div>
               <label>Start Time Date</label>
-              <input type="datetime-local" ref={this.insert_startDateTime} />
+              <input type="datetime-local" onChange={this.ValidateDateTimeInput} name="start" ref={this.insert_startDateTime} />
             </div>
             <div>
               <label>End Time Date</label>
-              <input type="datetime-local" ref={this.insert_endDateTime} />
+              <input type="datetime-local" onChange={this.ValidateDateTimeInput} name="end" ref={this.insert_endDateTime} />
             </div>
             <insert onClick={this.Insert_Asset}></insert>
           </entry>
