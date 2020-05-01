@@ -231,13 +231,13 @@ class NewAssetRequest extends Component {
     if (e.getAttribute("name") === "start") {
       let v2 = new Date(this.insert_endDateTime.current.value);
       if ((contains(v2) && (v2 != "Invalid Date")) && (v >= v2)) {
-        v = new Date();
+        v = v2;
         v.setMinutes(v.getMinutes() - 30);
       }
     } else {
       let v2 = new Date(this.insert_startDateTime.current.value);
       if ((contains(v2) && (v2 != "Invalid Date")) && (v <= v2)) {
-        v = new Date();
+        v = v2;
         v.setMinutes(v.getMinutes() + 30);
       }
     }
