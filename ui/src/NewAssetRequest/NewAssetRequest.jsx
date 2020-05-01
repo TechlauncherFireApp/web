@@ -11,6 +11,99 @@ class NewAssetRequest extends Component {
     request_list: [
       {assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50")}
     ],
+    // This list will get deleted once the interface is established, I was just using it to test my functions were working as expected .-Caleb
+    volunteer_list: [
+      {
+        asset_id: 1,
+        asset_class: "Medium Unit",
+        start_time: 24,
+        end_time: 34,
+        position: [
+          {
+            position_id: 1,
+            role: "Driver",
+            qualifications: [
+              "heavy rigid license",
+              "pump training",
+              "crew leader training",
+            ],
+          },
+          {
+            position_id: 2,
+            role: "Advanced",
+            qualifications: ["advanced training"],
+          },
+        ],
+        volunteers: [
+          {
+            volunteer_id: 5123,
+            position_id: 1,
+            volunteer_name: "Joe Blob",
+            role: "Driver",
+            qualifications: [
+              "heavy rigid license",
+              "pump training",
+              "crew leader training",
+              "advanced training",
+            ],
+            contact_info: "0412 490 340",
+          },
+          {
+            volunteer_id: 649,
+            position_id: 2,
+            volunteer_name: "Jane Doe",
+            role: "Advanced",
+            qualifications: ["advanced training", "crew leader training"],
+            contact_info: "0412 490 340",
+          },
+        ],
+      },
+      {
+        asset_id: 2,
+        asset_class: "Light Unit",
+        start_time: 24,
+        end_time: 34,
+        position: [
+          {
+            position_id: 1,
+            role: "Driver",
+            qualifications: [
+              "heavy rigid license",
+              "pump training",
+              "crew leader training",
+            ],
+          },
+          {
+            position_id: 2,
+            role: "Advanced",
+            qualifications: ["advanced training"],
+          },
+        ],
+        volunteers: [
+          {
+            volunteer_id: 5123,
+            position_id: 1,
+            volunteer_name: "Mary Blank",
+            role: "Driver",
+            qualifications: [
+              "heavy rigid license",
+              "pump training",
+              "crew leader training",
+              "advanced training",
+            ],
+            contact_info: "0412 490 340",
+          },
+          {
+            volunteer_id: 649,
+            position_id: 2,
+            volunteer_name: "John Connor",
+            role: "Advanced",
+            qualifications: ["advanced training", "crew leader training"],
+            contact_info: "0412 490 340",
+          },
+        ],
+      },
+    ],
   };
 
   processAssetRequest = () => {
@@ -18,7 +111,7 @@ class NewAssetRequest extends Component {
     /* This function needs to: 
             1. convert this.state.request_list into a list of the form [{assetId, startDateTime, endDateTime}]
             2. Pass that list to the assetRequestContainer via this.state.updateRequestList
-            3. convert this.state.request_list into the list expected by the backend [{id/timeblock/timeblock}] 
+            3. convert this.state.request_list into the list expected by the backend [{id/type/timeblock/timeblock}] 
             4. pass that list to the backend
             5. receive the recommendation list from the backend 
             6. Pass the recommendation list to the assetRequestContainer via onDisplayRequest(list)
@@ -36,6 +129,7 @@ class NewAssetRequest extends Component {
     // 2.
     this.props.updateRequestList(idDateList);
     // 3.
+    // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
     let asset_list = [];
     for (let i = 0; i < request_list.length; i++) {
       let temp = {};
@@ -45,14 +139,13 @@ class NewAssetRequest extends Component {
       temp["endTime"] = this.toTimeblock(request_list[i].endDateTime);
       asset_list.push(temp);
     }
-    console.log(asset_list);
     // 4. TODO
 
     // 5. TODO
-    let list = []; //should be the list returned by the backend
+    let list = this.state.volunteer_list; //should be the list returned by the backend, using dummy list for now
 
     // 6.
-    // this.props.onDisplayRequest(list);
+    this.props.onDisplayRequest(list);
   };
 
   toTimeblock = (date) => {
@@ -172,7 +265,7 @@ class NewAssetRequest extends Component {
   render() {
     return (
       <main-body>
-        <h1>New Asset Request</h1>
+        <h4 className="mt-2">New Asset Request</h4>
         <hr />
         <container>
           <entry>

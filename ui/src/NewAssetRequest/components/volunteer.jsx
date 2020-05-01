@@ -41,15 +41,15 @@ class Volunteer extends Component {
           }}
         >
           <td>{volunteerInfo.role}</td>
-          <td>{volunteerInfo.volunteer_name}</td>
-          <td>[experience]</td>
-          <td>{volunteerInfo.contact_info}</td>
+          <td width="20%">{volunteerInfo.volunteer_name}</td>
+          <td width="20%">[experience]</td>
+          <td width="20%">{volunteerInfo.contact_info}</td>
           <td>
             <Button
               className="btn-warning"
               onClick={this.toggleQualificationsVisibility}
             >
-              Edit
+              View
             </Button>
           </td>
           <td>

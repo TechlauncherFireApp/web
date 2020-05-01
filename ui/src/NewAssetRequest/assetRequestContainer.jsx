@@ -7,98 +7,7 @@ class AssetRequestContainer extends Component {
   state = {
     assetsSubmitted: false,
     request_list: [],
-    volunteer_list: [
-      {
-        asset_id: 1,
-        asset_class: "Medium Unit",
-        start_time: 24,
-        end_time: 34,
-        position: [
-          {
-            position_id: 1,
-            role: "Driver",
-            qualifications: [
-              "heavy rigid license",
-              "pump training",
-              "crew leader training",
-            ],
-          },
-          {
-            position_id: 2,
-            role: "Advanced",
-            qualifications: ["advanced training"],
-          },
-        ],
-        volunteers: [
-          {
-            volunteer_id: 5123,
-            position_id: 1,
-            volunteer_name: "Joe Blob",
-            role: "Driver",
-            qualifications: [
-              "heavy rigid license",
-              "pump training",
-              "crew leader training",
-              "advanced training",
-            ],
-            contact_info: "0412 490 340",
-          },
-          {
-            volunteer_id: 649,
-            position_id: 2,
-            volunteer_name: "Jane Doe",
-            role: "Advanced",
-            qualifications: ["advanced training", "crew leader training"],
-            contact_info: "0412 490 340",
-          },
-        ],
-      },
-      {
-        asset_id: 2,
-        asset_class: "Light Unit",
-        start_time: 24,
-        end_time: 34,
-        position: [
-          {
-            position_id: 1,
-            role: "Driver",
-            qualifications: [
-              "heavy rigid license",
-              "pump training",
-              "crew leader training",
-            ],
-          },
-          {
-            position_id: 2,
-            role: "Advanced",
-            qualifications: ["advanced training"],
-          },
-        ],
-        volunteers: [
-          {
-            volunteer_id: 5123,
-            position_id: 1,
-            volunteer_name: "Mary Blank",
-            role: "Driver",
-            qualifications: [
-              "heavy rigid license",
-              "pump training",
-              "crew leader training",
-              "advanced training",
-            ],
-            contact_info: "0412 490 340",
-          },
-          {
-            volunteer_id: 649,
-            position_id: 2,
-            volunteer_name: "John Connor",
-            role: "Advanced",
-            qualifications: ["advanced training", "crew leader training"],
-            contact_info: "0412 490 340",
-          },
-        ],
-      },
-    ],
+    volunteer_list: [],
   };
 
   updateRequestList = (list) => {
@@ -108,8 +17,8 @@ class AssetRequestContainer extends Component {
 
   handleDisplayRequest = (outputVolunteerList) => {
     const assetsSubmitted = !this.state.assetsSubmitted;
-    const volunteerList = outputVolunteerList;
-    this.setState({ assetsSubmitted, volunteerList });
+    const volunteer_list = outputVolunteerList;
+    this.setState({ assetsSubmitted, volunteer_list });
   };
 
   handleSaveRequest = () => {
