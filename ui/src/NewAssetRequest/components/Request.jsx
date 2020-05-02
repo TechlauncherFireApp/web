@@ -21,11 +21,11 @@ class Request extends Component {
                         <span>{this.props.assetType}</span>
                         <div>
                             <span>Start</span>
-                            <span>{this.props.startDateTime.toLocaleDateString()} | {this.props.startDateTime.toLocaleTimeString()}</span>
+                            <span>{this.props.startDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})} | {this.props.startDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</span>
                         </div>
                         <div>
                             <span>End</span>
-                            <span>{this.props.endDateTime.toLocaleDateString()} | {this.props.endDateTime.toLocaleTimeString()}</span>
+                            <span>{this.props.endDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})} | {this.props.endDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</span>
                         </div>
                     </div>
                 </div>

@@ -148,7 +148,6 @@ class NewAssetRequest extends Component {
 
     // Validated Successfully
     o.push(a);
-    console.log(o, "len", o.length);
     this.setState({ request_list: o });
   };
 
