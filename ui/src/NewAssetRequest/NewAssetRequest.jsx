@@ -16,24 +16,6 @@ class NewAssetRequest extends Component {
       {
         asset_id: 1,
         asset_class: "Medium Unit",
-        start_time: 24,
-        end_time: 34,
-        position: [
-          {
-            position_id: 1,
-            role: "Driver",
-            qualifications: [
-              "heavy rigid license",
-              "pump training",
-              "crew leader training",
-            ],
-          },
-          {
-            position_id: 2,
-            role: "Advanced",
-            qualifications: ["advanced training"],
-          },
-        ],
         volunteers: [
           {
             volunteer_id: 5123,
@@ -61,24 +43,6 @@ class NewAssetRequest extends Component {
       {
         asset_id: 2,
         asset_class: "Light Unit",
-        start_time: 24,
-        end_time: 34,
-        position: [
-          {
-            position_id: 1,
-            role: "Driver",
-            qualifications: [
-              "heavy rigid license",
-              "pump training",
-              "crew leader training",
-            ],
-          },
-          {
-            position_id: 2,
-            role: "Advanced",
-            qualifications: ["advanced training"],
-          },
-        ],
         volunteers: [
           {
             volunteer_id: 5123,
@@ -127,7 +91,7 @@ class NewAssetRequest extends Component {
       idDateList.push(temp);
     }
     // 2.
-    this.props.updateRequestList(idDateList);
+    this.props.updateVehicleList(idDateList);
     // 3.
     // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
     let asset_list = [];
@@ -149,8 +113,8 @@ class NewAssetRequest extends Component {
   };
 
   toTimeblock = (d) => {
-    if (!contains(d) || (d == "Invalid Date")) return 0;
-    return (d.getDay() * 48) + (d.getHours() * 2) + (d.getMinutes() === 0 ? 0 : 1);
+    if (!contains(d) || d == "Invalid Date") return 0;
+    return d.getDay() * 48 + d.getHours() * 2 + (d.getMinutes() === 0 ? 0 : 1);
   };
 
   constructor(props) {
@@ -223,18 +187,18 @@ class NewAssetRequest extends Component {
 
     // Get & Check Value
     let v = new Date(e.value);
-    if (!contains(v) || (v == "Invalid Date")) return;
+    if (!contains(v) || v == "Invalid Date") return;
 
     // Check Start and End Input Range
     if (e.getAttribute("name") === "start") {
       let v2 = new Date(this.insert_endDateTime.current.value);
-      if ((contains(v2) && (v2 != "Invalid Date")) && (v >= v2)) {
+      if (contains(v2) && v2 != "Invalid Date" && v >= v2) {
         v = v2;
         v.setMinutes(v.getMinutes() - 30);
       }
     } else {
       let v2 = new Date(this.insert_startDateTime.current.value);
-      if ((contains(v2) && (v2 != "Invalid Date")) && (v <= v2)) {
+      if (contains(v2) && v2 != "Invalid Date" && v <= v2) {
         v = v2;
         v.setMinutes(v.getMinutes() + 30);
       }
@@ -244,7 +208,7 @@ class NewAssetRequest extends Component {
     v.setSeconds(0);
     v.setMinutes(v.getMinutes() >= 30 ? 30 : 0);
     v = getDateSS(v);
-    
+
     // Set Value
     e.value = v;
   };
@@ -278,11 +242,21 @@ class NewAssetRequest extends Component {
             </div>
             <div>
               <label>Start Time Date</label>
-              <input type="datetime-local" onChange={this.ValidateDateTimeInput} name="start" ref={this.insert_startDateTime} />
+              <input
+                type="datetime-local"
+                onChange={this.ValidateDateTimeInput}
+                name="start"
+                ref={this.insert_startDateTime}
+              />
             </div>
             <div>
               <label>End Time Date</label>
-              <input type="datetime-local" onChange={this.ValidateDateTimeInput} name="end" ref={this.insert_endDateTime} />
+              <input
+                type="datetime-local"
+                onChange={this.ValidateDateTimeInput}
+                name="end"
+                ref={this.insert_endDateTime}
+              />
             </div>
             <insert onClick={this.Insert_Asset}></insert>
           </entry>

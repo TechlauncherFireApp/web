@@ -3,24 +3,28 @@ import AssetCrew from "./assetCrew";
 import { Button } from "react-bootstrap";
 
 class AssetRecommendation extends Component {
-  convertFromTimeblock = (timeblock) => {
-    // This processing can be completed avoided by passing the time and date directly from the request component?
-    const day = Math.floor(timeblock / 48);
-    let hour = Math.floor((timeblock % 48) / 2);
-    const halfhour = timeblock % 2 === 0 ? ":00" : ":30";
-    let isAM = hour >= 12 ? " PM" : " AM";
-    if (hour >= 13) {
-      hour = hour - 12;
-    }
-    console.log(day, hour + halfhour + isAM);
+  state = {
+    volunteer_list_complete: [],
   };
+
+  constructor(props) {
+    super(props);
+    const vehicle_list = props.vehicle_list;
+    let volunteer_list = props.volunteer_list;
+    for (let i = 0; i < vehicle_list.length; i++) {
+      volunteer_list[i].startDateTime = vehicle_list[i].startDateTime;
+      volunteer_list[i].endDateTime = vehicle_list[i].endDateTime;
+    }
+    this.state.volunteer_list_complete = volunteer_list;
+
+    console.log(this.state.volunteer_list_complete);
+  }
 
   render() {
     return (
-      //example format of a 'vehicle recommendation' component or something of the like
       <React.Fragment>
         <h4 className="mt-2">New Asset Request</h4>
-        {this.props.volunteer_list.map((vl) => (
+        {this.state.volunteer_list_complete.map((vl) => (
           <AssetCrew
             key={vl.asset_id}
             recommendationInfo={vl}

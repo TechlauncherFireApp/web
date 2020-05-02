@@ -14,7 +14,7 @@ class QualificationsModal extends Component {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            {this.props.volunteer.volunteer_name} - Qualifications
+            {this.props.volunteer.volunteer_name}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

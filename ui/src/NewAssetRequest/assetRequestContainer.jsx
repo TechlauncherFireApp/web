@@ -6,13 +6,13 @@ import AssetRecommendation from "./components/assetRecommendation";
 class AssetRequestContainer extends Component {
   state = {
     assetsSubmitted: false,
-    request_list: [],
+    vehicle_list: [],
     volunteer_list: [],
   };
 
-  updateRequestList = (list) => {
-    const request_list = list;
-    this.setState({ request_list });
+  updateVehicleList = (list) => {
+    const vehicle_list = list;
+    this.setState({ vehicle_list });
   };
 
   handleDisplayRequest = (outputVolunteerList) => {
@@ -27,11 +27,6 @@ class AssetRequestContainer extends Component {
     this.setState({ assetsSubmitted });
   };
 
-  debugging = () => {
-    /* this is a testing funtion */
-    console.log(this.state.request_list);
-  };
-
   handleCrewUpdate = (assetId, newVolunteer) => {
     console.log("handle update crew called", assetId, newVolunteer);
     // stub for prototype 2
@@ -44,18 +39,15 @@ class AssetRequestContainer extends Component {
           <AssetRecommendation
             onSaveRequest={this.handleSaveRequest}
             volunteer_list={this.state.volunteer_list}
+            vehicle_list={this.state.vehicle_list}
             onCrewUpdate={this.handleCrewUpdate}
           />
         ) : (
           <NewAssetRequest
             onDisplayRequest={this.handleDisplayRequest}
-            updateRequestList={this.updateRequestList}
+            updateVehicleList={this.updateVehicleList}
           />
         )}
-        <br />
-        <button onClick={this.debugging} className="btn-warning">
-          [debugging button]
-        </button>
       </div>
     );
   }
