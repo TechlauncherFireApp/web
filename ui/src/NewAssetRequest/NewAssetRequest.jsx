@@ -9,7 +9,7 @@ import Request from "./components/Request";
 class NewAssetRequest extends Component {
   state = {
     request_list: [
-      // {assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50")}
+      // { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50") }
     ],
     // This list will get deleted once the interface is established, I was just using it to test my functions were working as expected .-Caleb
     volunteer_list: [
@@ -70,6 +70,14 @@ class NewAssetRequest extends Component {
     ],
   };
 
+  constructor(props) {
+    super(props);
+    this.insert_assetType = React.createRef();
+    this.insert_startDateTime = React.createRef();
+    this.insert_endDateTime = React.createRef();
+    this.output = React.createRef();
+  }
+
   processAssetRequest = () => {
     console.clear();
     /* This function needs to: 
@@ -117,18 +125,12 @@ class NewAssetRequest extends Component {
     return d.getDay() * 48 + d.getHours() * 2 + (d.getMinutes() === 0 ? 0 : 1);
   };
 
-  constructor(props) {
-    super(props);
-    this.insert_assetType = React.createRef();
-    this.insert_startDateTime = React.createRef();
-    this.insert_endDateTime = React.createRef();
-    this.output = React.createRef();
-  }
-
   Insert_Asset = () => {
     // Get Data
     console.clear();
+    const o = this.state.request_list;
     let a = {
+      id: (o.length + 1),
       assetType: this.insert_assetType.current.value,
       startDateTime: new Date(this.insert_startDateTime.current.value),
       endDateTime: new Date(this.insert_endDateTime.current.value),
@@ -140,26 +142,27 @@ class NewAssetRequest extends Component {
         alert(x + " not entered");
         return;
       }
-    const o = this.state.request_list;
-    for (let x of o)
-      if (JSON.stringify(a) === JSON.stringify(x)) {
-        alert("Same Record already exists");
-        return;
-      }
+    
+    // Detect same records
+    // for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
 
     // Validated Successfully
     o.push(a);
+    console.log(o, "len", o.length);
     this.setState({ request_list: o });
   };
 
-  Remove_Asset = (e) => {
+  Remove_Asset = (i) => {
     console.clear();
     const o = this.state.request_list;
 
-    // Find and Remove Element
-    for (let x in o) {
-      let s = JSON.stringify(o[x]);
-      if (contains(s) && s === e) delete o[x];
+    // Find and Remove Element, then update id
+    for (let y=0;y<o.length;y++) {
+      if (o[y].id === i) {
+        o.splice(y, 1);
+        // Update id
+        for (let x=0;x<o.length;x++) o[x].id = (x+1);
+      }
     }
 
     // Update Data
@@ -264,6 +267,7 @@ class NewAssetRequest extends Component {
           <output ref={this.output}>
             {this.state.request_list.map((t) => (
               <Request
+                id={t.id}
                 assetType={t.assetType}
                 startDateTime={t.startDateTime}
                 endDateTime={t.endDateTime}
