@@ -23,7 +23,7 @@
     },
 
     // Specifies a command that should be run after the container has been created.
-    "postCreateCommand": "pip install -r backend/requirements.txt && cd ui && npm install",
+    "postCreateCommand": "cd ui && npm install",
 
     // Add the IDs of extensions you want installed when the container is created in the array below.
     "extensions": [
