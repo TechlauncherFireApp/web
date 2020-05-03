@@ -115,7 +115,7 @@ class NewAssetRequest extends Component {
     return d.getDay() * 48 + d.getHours() * 2 + (d.getMinutes() === 0 ? 0 : 1);
   };
 
-  Insert_Asset = () => {
+  insertAsset = () => {
     // Get Data
     console.clear();
     const o = this.state.request_list;
@@ -143,7 +143,7 @@ class NewAssetRequest extends Component {
     this.setState({ request_list: o });
   };
 
-  Remove_Asset = (i) => {
+  removeAsset = (i) => {
     console.clear();
     const o = this.state.request_list;
 
@@ -160,7 +160,7 @@ class NewAssetRequest extends Component {
     this.setState({ request_list: o });
   };
 
-  submit_onClick = () => {
+  submitData = () => {
     // Get Data
     console.clear();
     const o = this.state.request_list;
@@ -175,7 +175,7 @@ class NewAssetRequest extends Component {
     console.log(o);
   };
 
-  ValidateDateTimeInput = (e) => {
+  validateDateTimeInput = (e) => {
     console.clear();
     e = e.target;
 
@@ -225,7 +225,7 @@ class NewAssetRequest extends Component {
               <label>Start Time Date</label>
               <input
                 type="datetime-local"
-                onChange={this.ValidateDateTimeInput}
+                onChange={this.validateDateTimeInput}
                 name="start"
                 ref={this.insert_startDateTime}
               />
@@ -234,12 +234,12 @@ class NewAssetRequest extends Component {
               <label>End Time Date</label>
               <input
                 type="datetime-local"
-                onChange={this.ValidateDateTimeInput}
+                onChange={this.validateDateTimeInput}
                 name="end"
                 ref={this.insert_endDateTime}
               />
             </div>
-            <insert onClick={this.Insert_Asset}></insert>
+            <insert onClick={this.insertAsset}></insert>
           </entry>
           <hr></hr>
           <output ref={this.output}>
@@ -249,7 +249,7 @@ class NewAssetRequest extends Component {
                 assetType={t.assetType}
                 startDateTime={t.startDateTime}
                 endDateTime={t.endDateTime}
-                Remove_Asset={this.Remove_Asset}
+                removeAsset={this.removeAsset}
               />
             ))}
           </output>

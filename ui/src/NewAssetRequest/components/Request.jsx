@@ -8,7 +8,7 @@ class Request extends Component {
     }
 
     onClose = () => {
-        this.props.Remove_Asset(this.props.id);
+        this.props.removeAsset(this.props.id);
     }
 
     render() {
