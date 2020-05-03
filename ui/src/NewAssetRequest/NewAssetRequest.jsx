@@ -132,9 +132,11 @@ class NewAssetRequest extends Component {
         alert(x + " not entered");
         return;
       }
+    
+    // Detect same records --> for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
 
-    // Detect same records
-    // for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
+    // Check Start and End DateTime Range
+    if (a.startDateTime >= a.endDateTime) { alert("Start DateTime has to be earlier than End DateTime"); return; }
 
     // Validated Successfully
     o.push(a);
@@ -181,20 +183,7 @@ class NewAssetRequest extends Component {
     let v = new Date(e.value);
     if (!contains(v) || v == "Invalid Date") return;
 
-    // Check Start and End Input Range
-    if (e.getAttribute("name") === "start") {
-      let v2 = new Date(this.insert_endDateTime.current.value);
-      if (contains(v2) && v2 != "Invalid Date" && v >= v2) {
-        v = v2;
-        v.setMinutes(v.getMinutes() - 30);
-      }
-    } else {
-      let v2 = new Date(this.insert_startDateTime.current.value);
-      if (contains(v2) && v2 != "Invalid Date" && v <= v2) {
-        v = v2;
-        v.setMinutes(v.getMinutes() + 30);
-      }
-    }
+    // Check Start and End Input Range --> if (e.getAttribute("name") === "start") { let v2 = new Date(this.insert_endDateTime.current.value); if (contains(v2) && v2 != "Invalid Date" && v >= v2) { v = v2; v.setMinutes(v.getMinutes() - 30); } } else { let v2 = new Date(this.insert_startDateTime.current.value); if (contains(v2) && v2 != "Invalid Date" && v <= v2) { v = v2; v.setMinutes(v.getMinutes() + 30); } }
 
     // Modify Value
     v.setSeconds(0);
@@ -225,10 +214,10 @@ class NewAssetRequest extends Component {
             <div>
               <label>Asset Type</label>
               <select ref={this.insert_assetType}>
-                <option value="" selected disabled hidden>
+                <option value="" disabled hidden>
                   Select asset type
                 </option>
-                <option>Heavy Tanker</option>
+                <option selected>Heavy Tanker</option>
                 <option>Light Unit</option>
               </select>
             </div>
