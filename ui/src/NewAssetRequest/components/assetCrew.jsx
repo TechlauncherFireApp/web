@@ -43,7 +43,7 @@ class AssetCrew extends Component {
         str +
         ":" +
         (date2.getMinutes() === 30 ? "30 " : "00 ") +
-        (date2.getHours() > 11 ? "pm " : "am ") +
+        (date2.getHours() > 11 ? "pm, " : "am, ") +
         date2.toLocaleDateString();
     } else {
       //if the request spans multiple days

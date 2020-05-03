@@ -81,42 +81,32 @@ class NewAssetRequest extends Component {
   processAssetRequest = () => {
     console.clear();
     /* This function needs to: 
-            1. convert this.state.request_list into a list of the form [{assetId, startDateTime, endDateTime}]
-            2. Pass that list to the assetRequestContainer via this.state.updateRequestList
-            3. convert this.state.request_list into the list expected by the backend [{id/type/timeblock/timeblock}] 
-            4. pass that list to the backend
-            5. receive the recommendation list from the backend 
-            6. Pass the recommendation list to the assetRequestContainer via onDisplayRequest(list)
+            1. Pass the request list to the assetRequestContainer via this.state.updateRequestList
+            2. convert this.state.request_list into the list expected by the backend [{id/type/timeblock/timeblock}] 
+            3. pass that list to the backend
+            4. receive the recommendation list from the backend 
+            5. Pass the recommendation list to the assetRequestContainer via onDisplayRequest(list)
             */
     // 1.
     const request_list = this.state.request_list;
-    let idDateList = [];
-    for (let i = 0; i < request_list.length; i++) {
-      let temp = {};
-      temp["assetId"] = i + 1;
-      temp["startDateTime"] = request_list[i].startDateTime;
-      temp["endDateTime"] = request_list[i].endDateTime;
-      idDateList.push(temp);
-    }
+    this.props.updateVehicleList(request_list);
     // 2.
-    this.props.updateVehicleList(idDateList);
-    // 3.
     // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
     let asset_list = [];
     for (let i = 0; i < request_list.length; i++) {
       let temp = {};
-      temp["assetId"] = i + 1;
+      temp["assetId"] = request_list[i].id;
       temp["assetClass"] = request_list[i].assetType;
       temp["startTime"] = this.toTimeblock(request_list[i].startDateTime);
       temp["endTime"] = this.toTimeblock(request_list[i].endDateTime);
       asset_list.push(temp);
     }
-    // 4. TODO
+    // 3. TODO
 
-    // 5. TODO
+    // 4. TODO
     let list = this.state.volunteer_list; //should be the list returned by the backend, using dummy list for now
 
-    // 6.
+    // 5.
     this.props.onDisplayRequest(list);
   };
 
@@ -130,7 +120,7 @@ class NewAssetRequest extends Component {
     console.clear();
     const o = this.state.request_list;
     let a = {
-      id: (o.length + 1),
+      id: o.length + 1,
       assetType: this.insert_assetType.current.value,
       startDateTime: new Date(this.insert_startDateTime.current.value),
       endDateTime: new Date(this.insert_endDateTime.current.value),
@@ -142,7 +132,7 @@ class NewAssetRequest extends Component {
         alert(x + " not entered");
         return;
       }
-    
+
     // Detect same records
     // for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
 
@@ -156,11 +146,11 @@ class NewAssetRequest extends Component {
     const o = this.state.request_list;
 
     // Find and Remove Element, then update id
-    for (let y=0;y<o.length;y++) {
+    for (let y = 0; y < o.length; y++) {
       if (o[y].id === i) {
         o.splice(y, 1);
         // Update id
-        for (let x=0;x<o.length;x++) o[x].id = (x+1);
+        for (let x = 0; x < o.length; x++) o[x].id = x + 1;
       }
     }
 
