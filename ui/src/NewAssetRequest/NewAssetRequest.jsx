@@ -28,7 +28,7 @@ class NewAssetRequest extends Component {
               "crew leader training",
               "advanced training",
             ],
-            contact_info: "0412 490 340",
+            contact_info: [{detail: "0412 490 340"}],
           },
           {
             volunteer_id: 649,
@@ -36,7 +36,7 @@ class NewAssetRequest extends Component {
             volunteer_name: "Jane Doe",
             role: "Advanced",
             qualifications: ["advanced training", "crew leader training"],
-            contact_info: "0412 490 340",
+            contact_info: [{detail: "0412 490 340"}],
           },
         ],
       },
@@ -55,7 +55,7 @@ class NewAssetRequest extends Component {
               "crew leader training",
               "advanced training",
             ],
-            contact_info: "0412 490 340",
+            contact_info: [{detail: "0412 490 340"}],
           },
           {
             volunteer_id: 649,
@@ -63,7 +63,7 @@ class NewAssetRequest extends Component {
             volunteer_name: "John Connor",
             role: "Advanced",
             qualifications: ["advanced training", "crew leader training"],
-            contact_info: "0412 490 340",
+            contact_info: [{detail: "0412 490 340"}],
           },
         ],
       },
@@ -96,20 +96,32 @@ class NewAssetRequest extends Component {
     let postData = [];                                      // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
     for (let x of request_list) {
       postData.push({
-        "assetId": x.id,
-        "assetClass": x.assetType,
-        "startTime": this.toTimeblock(x.startDateTime),
-        "endTime": this.toTimeblock(x.endDateTime)
+        "asset_id": x.id,
+        "asset_name": x.assetType,
+        "start_time": this.toTimeblock(x.startDateTime),
+        "end_time": this.toTimeblock(x.endDateTime)
       });
     }
 
+    // Don't get recommendations for no assets requested
+    if (postData.length === 0){
+      console.log(postData.length)
+      return false;
+    }
+
     // 3. TODO
+    let asset_list = {"asset_list": postData}
 
-    // 4. TODO
-    let list = this.state.volunteer_list;                   //should be the list returned by the backend, using dummy list for now
+    const axios = require('axios');
+    axios.post(`http://localhost:5000/recommendation`, asset_list)
 
-    // 5.
-    this.props.onDisplayRequest(list);
+      // 4. response.data.volunteer_list
+      // 5.
+      .then(response => this.props.onDisplayRequest(response.data.volunteer_list))
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      })
   };
 
   toTimeblock = (d) => {
@@ -258,14 +270,14 @@ class NewAssetRequest extends Component {
           <hr></hr>
           <button
             className="type-1"
-            onClick={() => this.props.onDisplayRequest([])}
+            onClick={() => this.processAssetRequest()}
           >
             Submit Request
           </button>
 
-          <Button className="btn-med" onClick={this.processAssetRequest}>
+          {/* <Button className="btn-med" onClick={this.processAssetRequest}>
             Calls the WIP 'processAssetRequest' function
-          </Button>
+          </Button> */}
         </container>
       </main-body>
     );

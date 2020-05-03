@@ -43,7 +43,7 @@ class Volunteer extends Component {
           <td>{volunteerInfo.role}</td>
           <td width="20%">{volunteerInfo.volunteer_name}</td>
           <td width="20%">[experience]</td>
-          <td width="20%">{volunteerInfo.contact_info}</td>
+          <td width="20%">{volunteerInfo.contact_info[0].detail}</td>
           <td>
             <Button
               className="btn-warning"

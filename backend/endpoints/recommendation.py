@@ -45,8 +45,8 @@ def input_asset_req(value, name):
             if type(cast_dict['asset_name']) is not str:
                 raise ValueError("The parameter 'asset_name' is not a string. You gave us: {}".format(cast_dict['asset_name']))
             else:
-                if not input_enum(cast_dict['asset_name'], ["Heavy", "Medium", "Light"]):
-                    raise ValueError("The parameter 'asset_name' is not a valid asset like {}. You gave us: {}".format("[Heavy, Medium, Light]", cast_dict['asset_name']))
+                if not input_enum(cast_dict['asset_name'], ["Heavy Tanker", "Medium Unit", "Light Unit"]):
+                    raise ValueError("The parameter 'asset_name' is not a valid asset like {}. You gave us: {}".format("[Heavy Tanker, Medium Unit, Light Unit]", cast_dict['asset_name']))
         else:
             raise ValueError("The parameter 'asset_name' does not exist in the dictionary: {}".format(value))
         # Validate start_time key
@@ -132,9 +132,9 @@ class Recommendation(Resource):
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()
-
+        # if args["asset_list"] is None:
+        #     return
         print(args)
-        # print(args["asset_list"][0])
 
         asset_requests = []
         for asset_request in args["asset_list"]:
@@ -143,35 +143,39 @@ class Recommendation(Resource):
             start_time = asset_request["start_time"]
             end_time = asset_request["end_time"]
             # Select the asset
-            if asset_name == "Heavy":
+            if asset_name == "Heavy Tanker":
                 asset_type = HeavyTanker
-            elif asset_name == "Medium":
+            elif asset_name == "Medium Unit":
                 asset_type = MediumTanker
-            elif asset_name == "Light":
+            elif asset_name == "Light Unit":
                 asset_type = LightUnit
             asset_requests.append(Request(asset_type, start_time, end_time-start_time))
 
         # TODO Call a Gurobi function
-        Schedule(v,asset_requests)
+        (model, assignedToVehicle) = Schedule(v,asset_requests)
 
-        first_req = args["asset_list"][0]
+        # print(assignedToVehicle)
 
-        return_data = {
-            'asset_id': first_req['asset_id'],
-            'asset_class': "Heavy",
-            'start_time': first_req['start_time'],
-            'end_time': first_req['end_time'],
-            'position': [
-                formatPosition(1,"driver",""),
-                formatPosition(2,"advanced",""),
-                formatPosition(3,"advanced",""),
-                formatPosition(4,"basic",""),
-            ],
-            'volunteers': [
-                formatVolunteer(1,"driver"),
-                formatVolunteer(2,"advanced"),
-                formatVolunteer(3,"advanced"),
-                formatVolunteer(4,"basic")
-            ]
-        }
-        return {"volunteer_list" : [return_data]}
+        return_data = []
+        for asset in args["asset_list"]:
+            return_data.append({
+                'asset_id': asset['asset_id'],
+                'asset_class': asset['asset_name'],
+                'start_time': asset['start_time'],
+                'end_time': asset['end_time'],
+                'position': [
+                    formatPosition(1,"driver",""),
+                    formatPosition(2,"advanced",""),
+                    formatPosition(3,"advanced",""),
+                    formatPosition(4,"basic",""),
+                ],
+                'volunteers': [
+                    formatVolunteer(1,"driver"),
+                    formatVolunteer(2,"advanced"),
+                    formatVolunteer(3,"advanced"),
+                    formatVolunteer(4,"basic")
+                ]
+            })
+
+
+        return {"volunteer_list" : return_data}
