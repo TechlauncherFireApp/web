@@ -5,7 +5,7 @@ services:
     container_name: fire-app-container
     volumes:
     - ../:/workspace:cached
-    - node_modules:/workspace/node_modules
+    - node_modules:/workspace/ui/node_modules
     command: /bin/sh -c "while sleep 1000; do :; done"
 
 volumes:
