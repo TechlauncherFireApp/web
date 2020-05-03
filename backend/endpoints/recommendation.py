@@ -82,7 +82,7 @@ volunteer_field = {
     'position_id': fields.Integer,
     'volunteer_name': fields.String,
     'role': fields.String, # driver | advanced | basic
-    'qualifications': fields.String,
+    'qualifications': fields.List(fields.String),
     'contact_info': fields.List(fields.Nested({
         'type': fields.String, # email | phone
         'detail': fields.String, # email_add | phone_no
@@ -92,8 +92,8 @@ volunteer_field = {
 volunteer_list_field = {
     'asset_id': fields.Integer,
     'asset_class': fields.String, # Enum
-    'start_time': TimeBlock,
-    'end_time': TimeBlock,
+    # 'start_time': TimeBlock,
+    # 'end_time': TimeBlock,
     'position': fields.List(fields.Nested(position_field)),
     'volunteers': fields.List(fields.Nested(volunteer_field)),
 }
@@ -113,13 +113,13 @@ def formatPosition(position, role, qualifications):
 
 
 # Create and format a random Volunteer output data
-def formatVolunteer(position, role):
+def formatVolunteer(position, role, qualifications):
     return {
         'volunteer_id': random.randint(0, 99),
         'position_id': position,
         'volunteer_name': firstNames[random.randint(0,len(firstNames)-1)]+" "+lastNames[random.randint(0,len(lastNames)-1)],
         'role': role,
-        'qualifications': "",
+        'qualifications': qualifications,
         'contact_info': [{
             'type': "phone",
             'detail': NumberGenerator(),
@@ -149,33 +149,18 @@ class Recommendation(Resource):
                 asset_type = MediumTanker
             elif asset_name == "Light Unit":
                 asset_type = LightUnit
-            asset_requests.append(Request(asset_type, start_time, end_time-start_time))
+            asset_requests.append(Request(asset_type, start_time, end_time))
 
         # TODO Call a Gurobi function
-        (model, assignedToVehicle) = Schedule(v,asset_requests)
-
-        # print(assignedToVehicle)
-
-        return_data = []
-        for asset in args["asset_list"]:
-            return_data.append({
-                'asset_id': asset['asset_id'],
-                'asset_class': asset['asset_name'],
-                'start_time': asset['start_time'],
-                'end_time': asset['end_time'],
-                'position': [
-                    formatPosition(1,"driver",""),
-                    formatPosition(2,"advanced",""),
-                    formatPosition(3,"advanced",""),
-                    formatPosition(4,"basic",""),
-                ],
-                'volunteers': [
-                    formatVolunteer(1,"driver"),
-                    formatVolunteer(2,"advanced"),
-                    formatVolunteer(3,"advanced"),
-                    formatVolunteer(4,"basic")
-                ]
-            })
-
-
-        return {"volunteer_list" : return_data}
+        success = False
+        while not success:
+            try:
+                recommendation_list = Schedule(volunteerGenerate(400),asset_requests)
+                print()
+                print()
+                print("succeeded to optimise")
+                print(recommendation_list)
+                success = True
+                return {"volunteer_list" : recommendation_list}
+            except:
+                print("Failed to optimise")

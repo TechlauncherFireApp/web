@@ -19,9 +19,9 @@ class QualificationsModal extends Component {
         </Modal.Header>
         <Modal.Body>
           <div>
-            {/* {this.props.volunteer.qualifications.map((q) => (
+            {this.props.volunteer.qualifications.map((q) => (
               <p key={q}>- {q}</p>
-            ))} */}
+            ))}
           </div>
         </Modal.Body>
         <Modal.Footer>
