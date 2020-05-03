@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Button } from "react-bootstrap";
 import "./NewAssetRequest.scss";
 import { contains, getDateSS } from "../main.js";
 import Request from "./components/Request";
@@ -125,7 +124,7 @@ class NewAssetRequest extends Component {
   };
 
   toTimeblock = (d) => {
-    if (!contains(d) || d == "Invalid Date") return 0;
+    if (!contains(d) || d === "Invalid Date") return 0;
     return d.getDay() * 48 + d.getHours() * 2 + (d.getMinutes() === 0 ? 0 : 1);
   };
 
@@ -142,7 +141,7 @@ class NewAssetRequest extends Component {
 
     // Validate Data
     for (let x in a)
-      if (!contains(a[x]) || a[x] == "Invalid Date") {
+      if (!contains(a[x]) || a[x] === "Invalid Date") {
         alert(x + " not entered");
         return;
       }
@@ -195,7 +194,7 @@ class NewAssetRequest extends Component {
 
     // Get & Check Value
     let v = new Date(e.value);
-    if (!contains(v) || v == "Invalid Date") return;
+    if (!contains(v) || v === "Invalid Date") return;
 
     // Check Start and End Input Range --> if (e.getAttribute("name") === "start") { let v2 = new Date(this.insert_endDateTime.current.value); if (contains(v2) && v2 != "Invalid Date" && v >= v2) { v = v2; v.setMinutes(v.getMinutes() - 30); } } else { let v2 = new Date(this.insert_startDateTime.current.value); if (contains(v2) && v2 != "Invalid Date" && v <= v2) { v = v2; v.setMinutes(v.getMinutes() + 30); } }
 
@@ -274,10 +273,6 @@ class NewAssetRequest extends Component {
           >
             Submit Request
           </button>
-
-          {/* <Button className="btn-med" onClick={this.processAssetRequest}>
-            Calls the WIP 'processAssetRequest' function
-          </Button> */}
         </container>
       </main-body>
     );

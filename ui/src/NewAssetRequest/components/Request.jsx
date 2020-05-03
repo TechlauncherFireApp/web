@@ -3,9 +3,9 @@ import "./Request.scss";
 
 class Request extends Component {
 
-    constructor(props) {
-        super(props);
-    }
+    // constructor(props) {
+    //     super(props);
+    // }
 
     onClose = () => {
         this.props.removeAsset(this.props.id);
@@ -14,9 +14,9 @@ class Request extends Component {
     render() {
         return (
             <request-body>
-                <img className="close" src={require("../../assets/x.png")} onClick={this.onClose} />
+                <img className="close" alt="Asset" src={require("../../assets/x.png")} onClick={this.onClose} />
                 <div>
-                    <img className="poster" src={require("../../assets/nothing.png")} />
+                    <img className="poster" alt="Asset" src={require("../../assets/nothing.png")} />
                     <div>
                         <span>{this.props.assetType}</span>
                         <div>
