@@ -82,29 +82,31 @@ class NewAssetRequest extends Component {
     console.clear();
     /* This function needs to: 
             1. Pass the request list to the assetRequestContainer via this.state.updateRequestList
-            2. convert this.state.request_list into the list expected by the backend [{id/type/timeblock/timeblock}] 
+            2. convert this.state.request_list into the list that will be posted and expected by the backend [{id/type/timeblock/timeblock}] 
             3. pass that list to the backend
             4. receive the recommendation list from the backend 
             5. Pass the recommendation list to the assetRequestContainer via onDisplayRequest(list)
             */
+    
     // 1.
     const request_list = this.state.request_list;
     this.props.updateVehicleList(request_list);
+
     // 2.
-    // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
-    let asset_list = [];
-    for (let i = 0; i < request_list.length; i++) {
-      let temp = {};
-      temp["assetId"] = request_list[i].id;
-      temp["assetClass"] = request_list[i].assetType;
-      temp["startTime"] = this.toTimeblock(request_list[i].startDateTime);
-      temp["endTime"] = this.toTimeblock(request_list[i].endDateTime);
-      asset_list.push(temp);
+    let postData = [];                                      // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
+    for (let x of request_list) {
+      postData.push({
+        "assetId": x.id,
+        "assetClass": x.assetType,
+        "startTime": this.toTimeblock(x.startDateTime),
+        "endTime": this.toTimeblock(x.endDateTime)
+      });
     }
+
     // 3. TODO
 
     // 4. TODO
-    let list = this.state.volunteer_list; //should be the list returned by the backend, using dummy list for now
+    let list = this.state.volunteer_list;                   //should be the list returned by the backend, using dummy list for now
 
     // 5.
     this.props.onDisplayRequest(list);
