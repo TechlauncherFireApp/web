@@ -5,7 +5,7 @@ from gurobi.DataGenerator import *
 from gurobi.AssetTypes import *
 
 #Takes a list of volunteers, returns a tupleList formatted for the constraint model
-from backend.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
+from gurobi.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
 
 
 def formatAvailability(Volunteers):
@@ -112,23 +112,24 @@ def Schedule(Volunteers, VehicleRequest):
     assignments = []
     plotList=[]
 
-    for volunteer in Volunteers:
-        for request in VehicleRequest:
-            value = assignedToVehicle[(volunteer.id, request.AssetType.LicenceNo, request.StartTime)].X
-            if value > 0:
-                assignments.append("volunteer " + str(volunteer.id) + ", " + str(volunteer.name) + " assigned to " + str(request.AssetType.type) + ", ID " + str(request.AssetType.LicenceNo) + " for the shift starting " + str(request.StartTime))
-                plotList.append(Assignment(volunteer.id,request.StartTime,request.Duration))
+    # for volunteer in Volunteers:
+    #     for request in VehicleRequest:
+            # print(assignedToVehicle[(volunteer.id, request.AssetType.LicenceNo, request.StartTime)])
+            # value = assignedToVehicle[(volunteer.id, request.AssetType.LicenceNo, request.StartTime)].X
+    #         if value > 0:
+    #             assignments.append("volunteer " + str(volunteer.id) + ", " + str(volunteer.name) + " assigned to " + str(request.AssetType.type) + ", ID " + str(request.AssetType.LicenceNo) + " for the shift starting " + str(request.StartTime))
+    #             plotList.append(Assignment(volunteer.id,request.StartTime,request.Duration))
 
-    print(" ")
-    for assignment in assignments:
-        print(assignment)
+    # print(" ")
+    # for assignment in assignments:
+    #     print(assignment)
 
-    #Plots the original Request in a GanttChart saved as Problem.png
-    RequestPlot(VehicleRequest)
+    # #Plots the original Request in a GanttChart saved as Problem.png
+    # RequestPlot(VehicleRequest)
     # plots the solution in a ganttChart saved as Solution.png
     VolunteerPlot(plotList)
     return (model, assignedToVehicle)
 
 v=volunteerGenerate(200)
 
-model, assignment = Schedule(v, EveryWeekday)
+# model, assignment = Schedule(v, EveryWeekday)

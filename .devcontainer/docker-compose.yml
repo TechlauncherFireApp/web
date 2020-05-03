@@ -1,0 +1,12 @@
+version: '3'
+services:
+  fire-app:
+    image: "nikolaik/python-nodejs:python3.8-nodejs12"
+    container_name: fire-app-container
+    volumes:
+    - ../:/workspace:cached
+    - node_modules:/workspace/node_modules
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+volumes:
+  node_modules:

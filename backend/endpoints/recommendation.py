@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
 from gurobi.DataGenerator import volunteerGenerate, NumberGenerator
 from gurobi.Names import firstNames, lastNames
-# from gurobi.Scheduler import Schedule
+from gurobi.Scheduler import Schedule, v
 from gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
 
 import random
@@ -17,6 +17,12 @@ def input_timeblock(timeblock, name):
     if timeblock > max_timeblock:
         raise ValueError("The parameter '{}' is too large. Max is {}. You gave us: {}".format(name, max_timeblock, timeblock))
     return timeblock
+
+def input_enum(string, enum_values):
+    for value in enum_values:
+        if string == value:
+            return True
+    return False
 
 # Validate an asset request input
 def input_asset_req(value, name):
@@ -38,6 +44,9 @@ def input_asset_req(value, name):
         if 'asset_name' in cast_dict:
             if type(cast_dict['asset_name']) is not str:
                 raise ValueError("The parameter 'asset_name' is not a string. You gave us: {}".format(cast_dict['asset_name']))
+            else:
+                if not input_enum(cast_dict['asset_name'], ["Heavy", "Medium", "Light"]):
+                    raise ValueError("The parameter 'asset_name' is not a valid asset like {}. You gave us: {}".format("[Heavy, Medium, Light]", cast_dict['asset_name']))
         else:
             raise ValueError("The parameter 'asset_name' does not exist in the dictionary: {}".format(value))
         # Validate start_time key
@@ -128,17 +137,22 @@ class Recommendation(Resource):
         # print(args["asset_list"][0])
 
         asset_requests = []
-        for asset in args["asset_list"]:
-            asset_id = asset["asset_id"]
-            asset_name = asset["asset_name"]
-            start_time = asset["start_time"]
-            end_time = asset["end_time"]
-            asset_requests.append(Request(HeavyTanker, start_time, start_time-end_time))
-            print(asset)
+        for asset_request in args["asset_list"]:
+            asset_id = asset_request["asset_id"]
+            asset_name = asset_request["asset_name"]
+            start_time = asset_request["start_time"]
+            end_time = asset_request["end_time"]
+            # Select the asset
+            if asset_name == "Heavy":
+                asset_type = HeavyTanker
+            elif asset_name == "Medium":
+                asset_type = MediumTanker
+            elif asset_name == "Light":
+                asset_type = LightUnit
+            asset_requests.append(Request(asset_type, start_time, end_time-start_time))
 
         # TODO Call a Gurobi function
-        # args["asset_list"] =  [{'asset_id': '3', 'start_time': 24, 'end_time': 36}]
-        # Schedule(volunteerGenerate(20),asset_requests)
+        Schedule(v,asset_requests)
 
         first_req = args["asset_list"][0]
 
