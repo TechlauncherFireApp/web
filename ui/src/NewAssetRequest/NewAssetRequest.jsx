@@ -216,10 +216,10 @@ class NewAssetRequest extends Component {
             <div>
               <label>Asset Type</label>
               <select ref={this.insert_assetType}>
-                <option value="" disabled hidden>
+                <option value="" selected disabled hidden>
                   Select asset type
                 </option>
-                <option selected>Heavy Tanker</option>
+                <option>Heavy Tanker</option>
                 <option>Light Unit</option>
               </select>
             </div>
