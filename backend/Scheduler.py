@@ -71,7 +71,6 @@ def Schedule(Volunteers, VehicleRequest):
 
             #if vehicle times overlap, a volunteer can only be assigned to one of them
             if (iRangeMin <= gRangeMin and iRangeMax >= gRangeMin) or (gRangeMin <= iRangeMin and gRangeMax >= iRangeMin):
-                print(i, g)
                 for volunteer in Volunteers:
                     sum = 0
                     sum = sum + assignedToVehicle.sum(volunteer.id, VehicleRequest[i].AssetType.LicenceNo, VehicleRequest[i].StartTime)
@@ -109,26 +108,65 @@ def Schedule(Volunteers, VehicleRequest):
 
     model.optimize()
 
-    assignments = []
+    #assignments = []
     plotList=[]
-
-    for volunteer in Volunteers:
-        for request in VehicleRequest:
+    RecommendationList = []
+    for request in VehicleRequest:
+        vehicleDict = {}
+        vehicleDict["asset_id"] = request.AssetType.LicenceNo
+        vehicleDict["asset_class"] = request.AssetType.type
+        VolunteerListAdvanced = []
+        VolunteerListBasic = []
+        for volunteer in Volunteers:
             value = assignedToVehicle[(volunteer.id, request.AssetType.LicenceNo, request.StartTime)].X
             if value > 0:
-                assignments.append("volunteer " + str(volunteer.id) + ", " + str(volunteer.name) + " assigned to " + str(request.AssetType.type) + ", ID " + str(request.AssetType.LicenceNo) + " for the shift starting " + str(request.StartTime))
-                plotList.append(Assignment(volunteer.id,request.StartTime,request.Duration))
+                volunteerDict = {}
+                if volunteer.Explvl == FireFighter.advanced:
+                    volunteerDict["volunteer_id"] = volunteer.id
+                    volunteerDict["volunteer_name"] = volunteer.name
+                    volunteerDict["role"] = "Crew Member"
+                    qualifications = []
+                    qualifications.append("advanced training")
+                    volunteerDict["qualifications"] = qualifications
+                    volunteerDict["contact_info"] = volunteer.phonenumber
+                    VolunteerListAdvanced.append(volunteerDict)
+                else:
+                    volunteerDict["volunteer_id"] = volunteer.id
+                    volunteerDict["volunteer_name"] = volunteer.name
+                    volunteerDict["role"] = "Crew Member"
+                    volunteerDict["qualifications"] = []
+                    volunteerDict["contact_info"] = volunteer.phonenumber
+                    VolunteerListBasic.append(volunteerDict)
+        position = 1
+        VolunteerList = []
+        for volunteer in VolunteerListAdvanced:
+            if position == 1:
+                volunteer["role"] = "Driver"
+            volunteer["position"] = position
+            VolunteerList.append(volunteer)
+            position = position + 1
+        for volunteer in VolunteerListBasic:
+            volunteer["position"] = position
+            VolunteerList.append(volunteer)
+            position = position + 1
+        vehicleDict["volunteers"] = VolunteerList
+        RecommendationList.append(vehicleDict)
+
+                # assignments.append("volunteer " + str(volunteer.id) + ", " + str(volunteer.name) + " assigned to " + str(request.AssetType.type) + ", ID " + str(request.AssetType.LicenceNo) + " for the shift starting " + str(request.StartTime))
+                # plotList.append(Assignment(volunteer.id,request.StartTime,request.Duration))
+
+
 
     print(" ")
-    for assignment in assignments:
-        print(assignment)
+    #for assignment in assignments:
+        #print(assignment)
 
     #Plots the original Request in a GanttChart saved as Problem.png
-    RequestPlot(VehicleRequest)
+    #RequestPlot(VehicleRequest)
     # plots the solution in a ganttChart saved as Solution.png
-    VolunteerPlot(plotList)
-    return (model, assignedToVehicle)
+    #VolunteerPlot(plotList)
+    return (RecommendationList)
 
-v=volunteerGenerate(200)
+#v=volunteerGenerate(200)
 
-model, assignment = Schedule(v, EveryWeekday)
+#print(Schedule(v, EveryWeekday))
