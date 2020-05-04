@@ -155,11 +155,8 @@ class Recommendation(Resource):
         success = False
         while not success:
             try:
-                recommendation_list = Schedule(volunteerGenerate(400),asset_requests)
-                print()
-                print()
+                recommendation_list = Schedule(volunteerGenerate(50),asset_requests)
                 print("succeeded to optimise")
-                print(recommendation_list)
                 success = True
                 return {"volunteer_list" : recommendation_list}
             except:
