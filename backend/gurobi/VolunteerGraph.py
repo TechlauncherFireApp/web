@@ -5,9 +5,9 @@ from typing import List, Any
 
 import matplotlib.pyplot as plt
 
-from gurobi.AssetTypes import *
+from backend.gurobi.AssetTypes import *
 
-from gurobi.DataGenerator import NumtoDayHourConverter
+from backend.gurobi.DataGenerator import NumtoDayHourConverter
 
 EveryWeekday = [Request(LightUnit, 34, 13), Request(MediumTanker, 34, 13)
     , Request(MediumTanker, 82, 13), Request(HeavyTanker, 82, 13),

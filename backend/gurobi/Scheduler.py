@@ -1,11 +1,11 @@
 import gurobipy as gp
 from gurobipy import GRB
 
-from gurobi.DataGenerator import *
-from gurobi.AssetTypes import *
+from backend.gurobi.DataGenerator import *
+from backend.gurobi.AssetTypes import *
 
 #Takes a list of volunteers, returns a tupleList formatted for the constraint model
-from gurobi.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
+from backend.gurobi.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
 
 
 def formatAvailability(Volunteers):

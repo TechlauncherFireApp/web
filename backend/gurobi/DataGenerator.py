@@ -4,7 +4,7 @@ import json
 
 
 # returns a list populated with the the hours in a week to be scheduled
-from gurobi.Names import firstNames, lastNames
+import backend.gurobi.Names
 
 
 def shiftpopulator():
