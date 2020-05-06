@@ -10,7 +10,7 @@ class NewAssetRequest extends Component {
     request_list: [
       // { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50") }
     ],
-    // This list will get deleted once the interface is established, I was just using it to test my functions were working as expected .-Caleb
+    // Dummy list used to test recommendation UI without running the backend 
     volunteer_list: [
       {
         asset_id: 1,
@@ -27,7 +27,7 @@ class NewAssetRequest extends Component {
               "crew leader training",
               "advanced training",
             ],
-            contact_info: [{detail: "0412 490 340"}],
+            contact_info: [{ detail: "0412 490 340" }],
           },
           {
             volunteer_id: 649,
@@ -35,7 +35,7 @@ class NewAssetRequest extends Component {
             volunteer_name: "Jane Doe",
             role: "Advanced",
             qualifications: ["advanced training", "crew leader training"],
-            contact_info: [{detail: "0412 490 340"}],
+            contact_info: [{ detail: "0412 490 340" }],
           },
         ],
       },
@@ -54,7 +54,7 @@ class NewAssetRequest extends Component {
               "crew leader training",
               "advanced training",
             ],
-            contact_info: [{detail: "0412 490 340"}],
+            contact_info: [{ detail: "0412 490 340" }],
           },
           {
             volunteer_id: 649,
@@ -62,7 +62,7 @@ class NewAssetRequest extends Component {
             volunteer_name: "John Connor",
             role: "Advanced",
             qualifications: ["advanced training", "crew leader training"],
-            contact_info: [{detail: "0412 490 340"}],
+            contact_info: [{ detail: "0412 490 340" }],
           },
         ],
       },
@@ -86,10 +86,10 @@ class NewAssetRequest extends Component {
             4. receive the recommendation list from the backend 
             5. Pass the recommendation list to the assetRequestContainer via onDisplayRequest(list)
             */
-    
+
     // 1.
     const request_list = this.state.request_list;
-    this.props.updateVehicleList(request_list);
+    this.props.updateVehicleTimes(request_list);
 
     // 2.
     let postData = [];                                      // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
@@ -103,13 +103,13 @@ class NewAssetRequest extends Component {
     }
 
     // Don't get recommendations for no assets requested
-    if (postData.length === 0){
+    if (postData.length === 0) {
       console.log(postData.length)
       return false;
     }
 
     // 3. TODO
-    let asset_list = {"asset_list": postData}
+    let asset_list = { "asset_list": postData }
 
     const axios = require('axios');
     axios.post(`http://localhost:5000/recommendation`, asset_list)
@@ -122,6 +122,21 @@ class NewAssetRequest extends Component {
         console.log(error);
       })
   };
+
+  dummyProcessAssetRequest = () => {
+    console.clear();
+    /* A dummy function to display the recommendation screen using dummy data, so we can test without running the backend */
+    // 1.
+    const request_list = this.state.request_list;
+    this.props.updateVehicleTimes(request_list);
+    // 2.
+    // 3.
+    // 4.
+    let list = this.state.volunteer_list;                   //should be the list returned by the backend, using dummy list for now
+    // 5.
+    this.props.onDisplayRequest(list);
+  };
+
 
   toTimeblock = (d) => {
     if (!contains(d) || d === "Invalid Date") return 0;
@@ -145,7 +160,7 @@ class NewAssetRequest extends Component {
         alert(x + " not entered");
         return;
       }
-    
+
     // Detect same records --> for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
 
     // Check Start and End DateTime Range
@@ -273,6 +288,8 @@ class NewAssetRequest extends Component {
           >
             Submit Request
           </button>
+          {/* BELOW IS A TESTING BUTTON */}
+          <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button>
         </container>
       </main-body>
     );

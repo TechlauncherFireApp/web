@@ -6,19 +6,19 @@ import AssetRecommendation from "./components/assetRecommendation";
 class AssetRequestContainer extends Component {
   state = {
     assetsSubmitted: false,
-    vehicle_list: [],
-    volunteer_list: [],
+    vehicleTimes: [],
+    vehicleList: [],
   };
 
-  updateVehicleList = (list) => {
-    const vehicle_list = list;
-    this.setState({ vehicle_list });
+  updateVehicleTimes = (list) => {
+    const vehicleTimes = list;
+    this.setState({ vehicleTimes });
   };
 
-  handleDisplayRequest = (outputVolunteerList) => {
+  handleDisplayRequest = (outputVehicleList) => {
     const assetsSubmitted = !this.state.assetsSubmitted;
-    const volunteer_list = outputVolunteerList;
-    this.setState({ assetsSubmitted, volunteer_list });
+    const vehicleList = outputVehicleList;
+    this.setState({ assetsSubmitted, vehicleList });
   };
 
   handleSaveRequest = () => {
@@ -27,9 +27,18 @@ class AssetRequestContainer extends Component {
     this.setState({ assetsSubmitted });
   };
 
-  handleCrewUpdate = (assetId, newVolunteer) => {
-    console.log("handle update crew called", assetId, newVolunteer);
-    // stub for prototype 2
+  updateVehicleTimes = (newList) => {
+    const vehicleTimes = newList;
+    this.setState({ vehicleTimes });
+  }
+
+  updateVehicle = (newVehicle) => {
+
+    let vehicleList = this.state.vehicleList;
+    for (let i = 0; i < vehicleList.length; i++) {
+      if (vehicleList[i].asset_id === newVehicle.asset_id) vehicleList[i] = newVehicle;
+    }
+    this.setState({ vehicleList });
   };
 
   render() {
@@ -38,16 +47,16 @@ class AssetRequestContainer extends Component {
         {this.state.assetsSubmitted ? (
           <AssetRecommendation
             onSaveRequest={this.handleSaveRequest}
-            volunteer_list={this.state.volunteer_list}
-            vehicle_list={this.state.vehicle_list}
-            onCrewUpdate={this.handleCrewUpdate}
+            vehicleList={this.state.vehicleList}
+            vehicleTimes={this.state.vehicleTimes}
+            updateVehicle={(vehicle) => this.updateVehicle(vehicle)}
           />
         ) : (
-          <NewAssetRequest
-            onDisplayRequest={this.handleDisplayRequest}
-            updateVehicleList={this.updateVehicleList}
-          />
-        )}
+            <NewAssetRequest
+              onDisplayRequest={this.handleDisplayRequest}
+              updateVehicleTimes={this.updateVehicleTimes}
+            />
+          )}
       </div>
     );
   }
