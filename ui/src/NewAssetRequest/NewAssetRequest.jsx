@@ -13,7 +13,7 @@ class NewAssetRequest extends Component {
   state = {
     startDateTime: null,
     endDateTime: null,
-    request_list: [
+    requestList: [
       // { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50") }
     ],
     // This list will get deleted once the interface is established, I was just using it to test my functions were working as expected .-Caleb
@@ -75,8 +75,6 @@ class NewAssetRequest extends Component {
     ],
   };
 
-  // dateTimeField = require("react-bootstrap-datetimepicker");
-
   constructor(props) {
     super(props);
     this.insert_assetType = React.createRef();
@@ -91,19 +89,19 @@ class NewAssetRequest extends Component {
     console.clear();
     /* This function needs to: 
             1. Pass the request list to the assetRequestContainer via this.state.updateRequestList
-            2. convert this.state.request_list into the list that will be posted and expected by the backend [{id/type/timeblock/timeblock}] 
+            2. convert this.state.requestList into the list that will be posted and expected by the backend [{id/type/timeblock/timeblock}] 
             3. pass that list to the backend
             4. receive the recommendation list from the backend 
             5. Pass the recommendation list to the assetRequestContainer via onDisplayRequest(list)
             */
     
     // 1.
-    const request_list = this.state.request_list;
-    this.props.updateVehicleList(request_list);
+    const requestList = this.state.requestList;
+    this.props.updateVehicleList(requestList);
 
     // 2.
     let postData = [];                                      // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
-    for (let x of request_list) {
+    for (let x of requestList) {
       postData.push({
         "assetId": x.id,
         "assetClass": x.assetType,
@@ -129,12 +127,12 @@ class NewAssetRequest extends Component {
   insertAsset = () => {
     // Get Data
     console.clear();
-    const o = this.state.request_list;
+    const o = this.state.requestList;
     let a = {
       id: o.length + 1,
       assetType: this.insert_assetType.current.value,
-      startDateTime: new Date(this.insert_startDateTime.current.value),
-      endDateTime: new Date(this.insert_endDateTime.current.value),
+      startDateTime: new Date(this.state.startDateTime),
+      endDateTime: new Date(this.state.endDateTime),
     };
 
     // Validate Data
@@ -151,12 +149,12 @@ class NewAssetRequest extends Component {
 
     // Validated Successfully
     o.push(a);
-    this.setState({ request_list: o });
+    this.setState({ requestList: o });
   };
 
   removeAsset = (i) => {
     console.clear();
-    const o = this.state.request_list;
+    const o = this.state.requestList;
 
     // Find and Remove Element, then update id
     for (let y = 0; y < o.length; y++) {
@@ -169,13 +167,13 @@ class NewAssetRequest extends Component {
     }
 
     // Update Data
-    this.setState({ request_list: o });
+    this.setState({ requestList: o });
   };
 
   submitData = () => {
     // Get Data
     console.clear();
-    const o = this.state.request_list;
+    const o = this.state.requestList;
 
     // Validate Data
     if (o.length === 0) {
@@ -187,83 +185,49 @@ class NewAssetRequest extends Component {
     console.log(o);
   };
 
-  validateDateTimeInput = (e) => {
-    console.clear();
-    e = e.target;
-
-    // Get & Check Value
-    let v = new Date(e.value);
-    if (!contains(v) || v == "Invalid Date") return;
-
-    // Check Start and End Input Range --> if (e.getAttribute("name") === "start") { let v2 = new Date(this.insert_endDateTime.current.value); if (contains(v2) && v2 != "Invalid Date" && v >= v2) { v = v2; v.setMinutes(v.getMinutes() - 30); } } else { let v2 = new Date(this.insert_startDateTime.current.value); if (contains(v2) && v2 != "Invalid Date" && v <= v2) { v = v2; v.setMinutes(v.getMinutes() + 30); } }
-
-    // Modify Value
-    v.setSeconds(0);
-    v.setMinutes(v.getMinutes() >= 30 ? 30 : 0);
-    v = getDateSS(v);
-
-    // Set Value
-    e.value = v;
-  };
-
   componentDidMount = () => {
     console.clear();
     // Assign Current Time
     let t1 = new Date();
-    t1.setSeconds(0);
-    t1.setMinutes(t1.getMinutes() >= 30 ? 30 : 0);
-    this.insert_startDateTime.current.value = getDateSS(t1);           // Remove
-
     let t2 = new Date();
+    t1.setSeconds(0);
     t2.setSeconds(0);
+    t1.setMinutes(t1.getMinutes() >= 30 ? 30 : 0);
     t2.setMinutes(t2.getMinutes() >= 30 ? 30 : 0);
     t2.setMinutes(t2.getMinutes() + 30);
-    this.insert_endDateTime.current.value = getDateSS(t2);             // Remove
 
-    console.log(t1, t2);
     this.setState({ startDateTime: t1, endDateTime: t2 });
   };
 
-  setDateTime = (d, t) => {
+  setDateTime = (v, t) => {
     console.clear();
-    d = new Date(d);
+    v = new Date(v);
 
-    console.log(d, t);
+    // Get & Check Value
+    if (!contains(v) || v == "Invalid Date") return;
 
+    // Modify Value
+    v.setSeconds(0);
+    v.setMinutes(v.getMinutes() >= 30 ? 30 : 0);
+    
+    // Set Value
     if (t === "start") {
-      this.setState({ startDateTime: d });
+      // if (v <= (new Date())) return;  
+      this.setState({ startDateTime: v });
     } else if (t === "end") {
-      this.setState({ endDateTime: d });
+      if (v <= this.state.startDateTime) return;
+      this.setState({ endDateTime: v });
     }
   };
 
   render() {
     return (
       <main-body>
-
-        <div className="test-div">
-          <DatePicker
-            selected={this.state.startDateTime}
-            onChange={ (i) => { this.setDateTime(i, "start"); }}
-            showTimeSelect
-            timeIntervals={30}
-            timeCaption="Time"
-            dateFormat="d MMMM yyyy h:mm aa" />
-          <hr/>
-          <DatePicker
-            selected={this.state.endDateTime}
-            onChange={ (i) => { this.setDateTime(i, "end"); }}
-            showTimeSelect
-            timeIntervals={30}
-            timeCaption="Time"
-            dateFormat="d MMMM yyyy h:mm aa" />
-        </div>
-
         <h4 className="mt-2">New Asset Request</h4>
         <hr />
         <container>
           <entry>
-            <div>
+            <div className="con">
               <label>Asset Type</label>
               <select ref={this.insert_assetType}>
                 <option value="" selected disabled hidden>Select asset type</option>
@@ -271,29 +235,31 @@ class NewAssetRequest extends Component {
                 <option>Light Unit</option>
               </select>
             </div>
-            <div>
+            <div className="con">
               <label>Start Time Date</label>
-              <input
-                type="datetime-local"
-                onChange={this.validateDateTimeInput}
-                name="start"
-                ref={this.insert_startDateTime}
-              />
+              <DatePicker
+                selected={this.state.startDateTime}
+                onChange={ (i) => { this.setDateTime(i, "start"); }}
+                showTimeSelect
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="d MMMM yyyy h:mm aa" />
             </div>
-            <div>
+            <div className="con">
               <label>End Time Date</label>
-              <input
-                type="datetime-local"
-                onChange={this.validateDateTimeInput}
-                name="end"
-                ref={this.insert_endDateTime}
-              />
+              <DatePicker
+                selected={this.state.endDateTime}
+                onChange={ (i) => { this.setDateTime(i, "end"); }}
+                showTimeSelect
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="d MMMM yyyy h:mm aa" />
             </div>
             <insert onClick={this.insertAsset}></insert>
           </entry>
           <hr></hr>
           <output ref={this.output}>
-            {this.state.request_list.map((t) => (
+            {this.state.requestList.map((t) => (
               <Request
                 id={t.id}
                 assetType={t.assetType}
