@@ -1,13 +1,18 @@
+// import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
 import "./NewAssetRequest.scss";
 import { contains, getDateSS } from "../main.js";
 import Request from "./components/Request";
 
-// https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
+import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-datepicker";
 
+// https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
 class NewAssetRequest extends Component {
   state = {
+    startDateTime: null,
+    endDateTime: null,
     request_list: [
       // { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50") }
     ],
@@ -70,12 +75,16 @@ class NewAssetRequest extends Component {
     ],
   };
 
+  // dateTimeField = require("react-bootstrap-datetimepicker");
+
   constructor(props) {
     super(props);
     this.insert_assetType = React.createRef();
     this.insert_startDateTime = React.createRef();
     this.insert_endDateTime = React.createRef();
     this.output = React.createRef();
+
+    this.test_datetimepicker = React.createRef();
   }
 
   processAssetRequest = () => {
@@ -155,6 +164,7 @@ class NewAssetRequest extends Component {
         o.splice(y, 1);
         // Update id
         for (let x = 0; x < o.length; x++) o[x].id = x + 1;
+        break;
       }
     }
 
@@ -197,18 +207,58 @@ class NewAssetRequest extends Component {
   };
 
   componentDidMount = () => {
+    console.clear();
     // Assign Current Time
-    let t = new Date();
-    t.setSeconds(0);
-    t.setMinutes(t.getMinutes() >= 30 ? 30 : 0);
-    this.insert_startDateTime.current.value = getDateSS(t);
-    t.setMinutes(t.getMinutes() + 30);
-    this.insert_endDateTime.current.value = getDateSS(t);
+    let t1 = new Date();
+    t1.setSeconds(0);
+    t1.setMinutes(t1.getMinutes() >= 30 ? 30 : 0);
+    this.insert_startDateTime.current.value = getDateSS(t1);           // Remove
+
+    let t2 = new Date();
+    t2.setSeconds(0);
+    t2.setMinutes(t2.getMinutes() >= 30 ? 30 : 0);
+    t2.setMinutes(t2.getMinutes() + 30);
+    this.insert_endDateTime.current.value = getDateSS(t2);             // Remove
+
+    console.log(t1, t2);
+    this.setState({ startDateTime: t1, endDateTime: t2 });
+  };
+
+  setDateTime = (d, t) => {
+    console.clear();
+    d = new Date(d);
+
+    console.log(d, t);
+
+    if (t === "start") {
+      this.setState({ startDateTime: d });
+    } else if (t === "end") {
+      this.setState({ endDateTime: d });
+    }
   };
 
   render() {
     return (
       <main-body>
+
+        <div className="test-div">
+          <DatePicker
+            selected={this.state.startDateTime}
+            onChange={ (i) => { this.setDateTime(i, "start"); }}
+            showTimeSelect
+            timeIntervals={30}
+            timeCaption="Time"
+            dateFormat="d MMMM yyyy h:mm aa" />
+          <hr/>
+          <DatePicker
+            selected={this.state.endDateTime}
+            onChange={ (i) => { this.setDateTime(i, "end"); }}
+            showTimeSelect
+            timeIntervals={30}
+            timeCaption="Time"
+            dateFormat="d MMMM yyyy h:mm aa" />
+        </div>
+
         <h4 className="mt-2">New Asset Request</h4>
         <hr />
         <container>
@@ -216,9 +266,7 @@ class NewAssetRequest extends Component {
             <div>
               <label>Asset Type</label>
               <select ref={this.insert_assetType}>
-                <option value="" selected disabled hidden>
-                  Select asset type
-                </option>
+                <option value="" selected disabled hidden>Select asset type</option>
                 <option>Heavy Tanker</option>
                 <option>Light Unit</option>
               </select>

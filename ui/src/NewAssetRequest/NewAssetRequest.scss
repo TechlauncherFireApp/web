@@ -4,6 +4,12 @@ container, entry, insert, label, output {
     display: block;
 }
 
+div.test-div {
+    height: auto;
+    width: 75%;
+    margin: 25px auto;
+}
+
 h1 {
     width: 300px;
     color: $blue-2;
