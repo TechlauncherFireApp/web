@@ -68,9 +68,6 @@ class EditScreenModal extends Component {
             <input type="text" placeholder="Search Volunteer via Name" onChange={this.insertSearch}/>
             <hr/>
             <div className="con-vols">
-              {(this.state.searchResults === "") &&
-                <p>Nothing found</p>
-              }
               {((typeof this.state.searchResults === "object") && this.state.searchResults.length > 0) &&
                 <Table striped bordered hover size="sm">
                   <thead>
@@ -90,6 +87,9 @@ class EditScreenModal extends Component {
                     ))}
                   </tbody>
                 </Table>
+              }
+              {(this.state.searchResults === "") &&
+                <p>Nothing found</p>
               }
             </div>
           </form>
