@@ -1,13 +1,17 @@
 import React, { Component } from "react";
 import "./NewAssetRequest.scss";
-import { contains, getDateSS } from "../main.js";
+import { contains } from "../main.js";
 import Request from "./components/Request";
 
-// https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
+import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-datepicker";              // -> PACKAGE FROM : npm i --save react-datepicker
 
+// https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
 class NewAssetRequest extends Component {
   state = {
-    request_list: [
+    startDateTime: null,
+    endDateTime: null,
+    requestList: [
       // { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50") }
     ],
     // Dummy list used to test recommendation UI without running the backend 
@@ -72,28 +76,25 @@ class NewAssetRequest extends Component {
   constructor(props) {
     super(props);
     this.insert_assetType = React.createRef();
-    this.insert_startDateTime = React.createRef();
-    this.insert_endDateTime = React.createRef();
-    this.output = React.createRef();
   }
 
   processAssetRequest = () => {
     console.clear();
     /* This function needs to: 
             1. Pass the request list to the assetRequestContainer via this.state.updateRequestList
-            2. convert this.state.request_list into the list that will be posted and expected by the backend [{id/type/timeblock/timeblock}] 
+            2. convert this.state.requestList into the list that will be posted and expected by the backend [{id/type/timeblock/timeblock}] 
             3. pass that list to the backend
             4. receive the recommendation list from the backend 
             5. Pass the recommendation list to the assetRequestContainer via onDisplayRequest(list)
             */
 
     // 1.
-    const request_list = this.state.request_list;
-    this.props.updateVehicleTimes(request_list);
+    const requestList = this.state.requestList;
+    this.props.updateVehicleTimes(requestList);
 
     // 2.
     let postData = [];                                      // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
-    for (let x of request_list) {
+    for (let x of requestList) {
       postData.push({
         "asset_id": x.id,
         "asset_name": x.assetType,
@@ -104,15 +105,15 @@ class NewAssetRequest extends Component {
 
     // Don't get recommendations for no assets requested
     if (postData.length === 0) {
-      console.log(postData.length)
+      alert("At least one asset needs to be selected");
       return false;
     }
 
     // 3. TODO
-    let asset_list = { "asset_list": postData }
+    postData = { "asset_list": postData }
 
     const axios = require('axios');
-    axios.post(`http://localhost:5000/recommendation`, asset_list)
+    axios.post('http://localhost:5000/recommendation', postData)
 
       // 4. response.data.volunteer_list
       // 5.
@@ -127,8 +128,8 @@ class NewAssetRequest extends Component {
     console.clear();
     /* A dummy function to display the recommendation screen using dummy data, so we can test without running the backend */
     // 1.
-    const request_list = this.state.request_list;
-    this.props.updateVehicleTimes(request_list);
+    const requestList = this.state.requestList;
+    this.props.updateVehicleTimes(requestList);
     // 2.
     // 3.
     // 4.
@@ -146,12 +147,12 @@ class NewAssetRequest extends Component {
   insertAsset = () => {
     // Get Data
     console.clear();
-    const o = this.state.request_list;
+    const o = this.state.requestList;
     let a = {
       id: o.length + 1,
       assetType: this.insert_assetType.current.value,
-      startDateTime: new Date(this.insert_startDateTime.current.value),
-      endDateTime: new Date(this.insert_endDateTime.current.value),
+      startDateTime: new Date(this.state.startDateTime),
+      endDateTime: new Date(this.state.endDateTime),
     };
 
     // Validate Data
@@ -164,16 +165,17 @@ class NewAssetRequest extends Component {
     // Detect same records --> for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
 
     // Check Start and End DateTime Range
-    if (a.startDateTime >= a.endDateTime) { alert("Start DateTime has to be earlier than End DateTime"); return; }
+    if (a.startDateTime.valueOf() < (new Date()).valueOf()) { alert("Start DateTime has to be in the future"); return; }
+    if (a.startDateTime.valueOf() >= a.endDateTime.valueOf()) { alert("Start DateTime has to be earlier than End DateTime"); return; }
 
     // Validated Successfully
     o.push(a);
-    this.setState({ request_list: o });
+    this.setState({ requestList: o });
   };
 
   removeAsset = (i) => {
     console.clear();
-    const o = this.state.request_list;
+    const o = this.state.requestList;
 
     // Find and Remove Element, then update id
     for (let y = 0; y < o.length; y++) {
@@ -181,55 +183,42 @@ class NewAssetRequest extends Component {
         o.splice(y, 1);
         // Update id
         for (let x = 0; x < o.length; x++) o[x].id = x + 1;
+        break;
       }
     }
 
     // Update Data
-    this.setState({ request_list: o });
+    this.setState({ requestList: o });
   };
 
-  submitData = () => {
-    // Get Data
+  componentDidMount = () => {
     console.clear();
-    const o = this.state.request_list;
+    // Assign Current Time
+    let t1 = new Date();
+    let t2 = new Date();
+    t1.setSeconds(0);
+    t2.setSeconds(0);
+    t1.setMinutes(t1.getMinutes() >= 30 ? 30 : 0);
+    t2.setMinutes(t2.getMinutes() >= 30 ? 30 : 0);
+    t2.setMinutes(t2.getMinutes() + 30);
 
-    // Validate Data
-    if (o.length === 0) {
-      alert("At least one asset needs to be selected");
-      return;
-    }
-
-    // Validated Successfully
-    console.log(o);
+    this.setState({ startDateTime: t1, endDateTime: t2 });
   };
 
-  validateDateTimeInput = (e) => {
+  setDateTime = (v, t) => {
     console.clear();
-    e = e.target;
+    v = new Date(v);
 
     // Get & Check Value
-    let v = new Date(e.value);
-    if (!contains(v) || v === "Invalid Date") return;
-
-    // Check Start and End Input Range --> if (e.getAttribute("name") === "start") { let v2 = new Date(this.insert_endDateTime.current.value); if (contains(v2) && v2 != "Invalid Date" && v >= v2) { v = v2; v.setMinutes(v.getMinutes() - 30); } } else { let v2 = new Date(this.insert_startDateTime.current.value); if (contains(v2) && v2 != "Invalid Date" && v <= v2) { v = v2; v.setMinutes(v.getMinutes() + 30); } }
+    if (!contains(v) || v == "Invalid Date") return;
 
     // Modify Value
     v.setSeconds(0);
     v.setMinutes(v.getMinutes() >= 30 ? 30 : 0);
-    v = getDateSS(v);
-
+    
     // Set Value
-    e.value = v;
-  };
-
-  componentDidMount = () => {
-    // Assign Current Time
-    let t = new Date();
-    t.setSeconds(0);
-    t.setMinutes(t.getMinutes() >= 30 ? 30 : 0);
-    this.insert_startDateTime.current.value = getDateSS(t);
-    t.setMinutes(t.getMinutes() + 30);
-    this.insert_endDateTime.current.value = getDateSS(t);
+    if (t === "start") this.setState({ startDateTime: v });
+    else if (t === "end") this.setState({ endDateTime: v });
   };
 
   render() {
@@ -239,39 +228,39 @@ class NewAssetRequest extends Component {
         <hr />
         <container>
           <entry>
-            <div>
+            <div className="con">
               <label>Asset Type</label>
               <select ref={this.insert_assetType}>
-                <option value="" disabled hidden>
-                  Select asset type
-                </option>
+                <option value="" disabled hidden>Select asset type</option>
                 <option selected>Heavy Tanker</option>
                 <option>Light Unit</option>
               </select>
             </div>
-            <div>
+            <div className="con">
               <label>Start Time Date</label>
-              <input
-                type="datetime-local"
-                onChange={this.validateDateTimeInput}
-                name="start"
-                ref={this.insert_startDateTime}
-              />
+              <DatePicker
+                selected={this.state.startDateTime}
+                onChange={ (i) => { this.setDateTime(i, "start"); }}
+                showTimeSelect
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="d MMMM yyyy h:mm aa" />
             </div>
-            <div>
+            <div className="con">
               <label>End Time Date</label>
-              <input
-                type="datetime-local"
-                onChange={this.validateDateTimeInput}
-                name="end"
-                ref={this.insert_endDateTime}
-              />
+              <DatePicker
+                selected={this.state.endDateTime}
+                onChange={ (i) => { this.setDateTime(i, "end"); }}
+                showTimeSelect
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="d MMMM yyyy h:mm aa" />
             </div>
             <insert onClick={this.insertAsset}></insert>
           </entry>
           <hr></hr>
-          <output ref={this.output}>
-            {this.state.request_list.map((t) => (
+          <output>
+            {this.state.requestList.map((t) => (
               <Request
                 id={t.id}
                 assetType={t.assetType}
