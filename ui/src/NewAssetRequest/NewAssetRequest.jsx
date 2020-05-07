@@ -6,7 +6,7 @@ import { contains, getDateSS } from "../main.js";
 import Request from "./components/Request";
 
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
+import DatePicker from "react-datepicker";  // -> PACKAGE FROM : npm i --save react-widgets
 
 // https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
 class NewAssetRequest extends Component {
