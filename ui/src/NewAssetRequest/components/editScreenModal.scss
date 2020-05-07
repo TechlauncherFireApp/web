@@ -1,0 +1,38 @@
+@import "../../main.scss";
+
+div.modal-body {
+    
+    form {
+        height: auto;
+        border: 1px solid black;
+        border-radius: 5px;
+
+        input[type="text"] {
+            height: 25px;
+            width: 50%;
+            font-size: 15px;
+            border: 1px solid black;
+            border-radius: 2.5px;
+            margin: 5px;
+            padding-left: 5px;
+        } hr {
+            background-color: silver;
+            margin: 5px;
+        } div.con-vols {
+            height: 200px;
+            padding: 0 5px;
+            overflow-y: auto;
+
+            p {
+                text-align: center;
+            }
+        }
+    } div.con-vol {
+        height: auto;
+        padding: 5px;
+
+        p, table {
+            margin: 5px 0;
+        }
+    }
+}

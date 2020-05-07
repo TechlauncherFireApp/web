@@ -12,7 +12,8 @@ class NewAssetRequest extends Component {
     startDateTime: null,
     endDateTime: null,
     requestList: [
-      // { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-04-28T17:50"),endDateTime:new Date("2020-05-01T14:50") }
+      { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-10-28T17:50"),endDateTime:new Date("2020-12-01T14:50") },
+      { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-10-28T17:50"),endDateTime:new Date("2020-12-01T14:50") }
     ],
     // Dummy list used to test recommendation UI without running the backend 
     volunteer_list: [
@@ -75,6 +76,7 @@ class NewAssetRequest extends Component {
 
   constructor(props) {
     super(props);
+    this.dummyProcessAssetRequest();
     this.insert_assetType = React.createRef();
   }
 
