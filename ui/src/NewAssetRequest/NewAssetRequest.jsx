@@ -194,13 +194,14 @@ class NewAssetRequest extends Component {
   componentDidMount = () => {
     console.clear();
     // Assign Current Time
-    let t1 = new Date();
-    let t2 = new Date();
+    let t1 = new Date(),
+        t2 = new Date();
     t1.setSeconds(0);
     t2.setSeconds(0);
+    t1.setMinutes(t1.getMinutes() + 30);
     t1.setMinutes(t1.getMinutes() >= 30 ? 30 : 0);
+    t2.setMinutes(t2.getMinutes() + 60);
     t2.setMinutes(t2.getMinutes() >= 30 ? 30 : 0);
-    t2.setMinutes(t2.getMinutes() + 30);
 
     this.setState({ startDateTime: t1, endDateTime: t2 });
   };
