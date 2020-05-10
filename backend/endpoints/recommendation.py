@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
-from backend.gurobi.DataGenerator import volunteerGenerate, NumberGenerator
-from backend.gurobi.Names import firstNames, lastNames
-from backend.gurobi.Scheduler import Schedule, v
-from backend.gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
+from gurobi.DataGenerator import volunteerGenerate, NumberGenerator
+from gurobi.Names import firstNames, lastNames
+from gurobi.Scheduler import Schedule, v
+from gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
 
 import random
 from ast import literal_eval # casts a string to a dict

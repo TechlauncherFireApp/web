@@ -1,11 +1,11 @@
 import gurobipy as gp
 from gurobipy import GRB
 
-from backend.gurobi.DataGenerator import *
-from backend.gurobi.AssetTypes import *
+from gurobi.DataGenerator import *
+from gurobi.AssetTypes import *
 
 # Takes a list of volunteers, returns a tupleList formatted for the constraint model
-from backend.gurobi.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
+from gurobi.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
 
 
 def formatAvailability(Volunteers):
@@ -176,5 +176,3 @@ def Schedule(Volunteers, VehicleRequest):
 
 
 v = volunteerGenerate(200)
-
-print(Schedule(v, EveryWeekday))
