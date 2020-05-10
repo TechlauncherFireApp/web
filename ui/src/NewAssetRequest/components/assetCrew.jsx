@@ -98,11 +98,17 @@ class AssetCrew extends Component {
             <th width="20%">{vehicle.asset_class}</th>
             <td colSpan="6">
               <span>
-                {/*
-                  Maybe use this get Date :- vehicle.startDateTime.toLocaleDateString("en-GB")
-                  And get Time :-            vehicle.startDateTime.toLocaleTimeString("en-US",{hour12:true,hour:"numeric",minute:"numeric"})
-                  Note sure about Browser Compatibility though
+                {/* MAYBE use this code instead:
+                
+                  {vehicle.startDateTime.toLocaleTimeString("en-US",{hour12:true,hour:"numeric",minute:"numeric"})}
+                  &nbsp;
+                  {vehicle.startDateTime.toLocaleDateString("en-GB")}
+                  &nbsp;-&nbsp;
+                  {vehicle.endDateTime.toLocaleTimeString("en-US",{hour12:true,hour:"numeric",minute:"numeric"})}
+                  &nbsp;
+                  {vehicle.endDateTime.toLocaleDateString("en-GB")}
                 */}
+
                 {this.parseDateTime(
                   vehicle.startDateTime,
                   vehicle.endDateTime
