@@ -153,10 +153,12 @@ class Recommendation(Resource):
 
         # TODO Call a Gurobi function
         success = False
+        tries = 0
         while not success:
             try:
+                tries += 1
                 recommendation_list = Schedule(volunteerGenerate(50),asset_requests)
-                print("succeeded to optimise")
+                print("succeeded to optimise after " + str(tries) + " tries.")
                 success = True
                 return {"volunteer_list" : recommendation_list}
             except:
