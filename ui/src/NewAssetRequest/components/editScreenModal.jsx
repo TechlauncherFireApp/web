@@ -5,7 +5,15 @@ import { Modal, Button, Table } from "react-bootstrap";
 
 class EditScreenModal extends Component {
   state = {
-    dummyNewVol: {
+    searchDummyData: [
+      {name:"aman", experiance:"[Experiace]", phNo:"0000-000-000"},
+      {name:"cyrus", experiance:"[Experiace]", phNo:"0000-000-000"},
+      {name:"caleb", experiance:"[Experiace]", phNo:"0000-000-000"},
+      {name:"stavros", experiance:"[Experiace]", phNo:"0000-000-000"},
+      {name:"tom", experiance:"[Experiace]", phNo:"0000-000-000"}
+    ],
+    searchResults: [],
+    selectedVolunteer: {
       volunteer_id: 762,
       position_id: 0,
       volunteer_name: "Changed Volunteer",
@@ -15,16 +23,7 @@ class EditScreenModal extends Component {
         "other quals",
       ],
       contact_info: [{ detail: "09172342413" }],
-    },
-    searchDummyData: [
-      {name:"aman", experiance:"[Experiace]", phNo:"0000-000-000"},
-      {name:"cyrus", experiance:"[Experiace]", phNo:"0000-000-000"},
-      {name:"caleb", experiance:"[Experiace]", phNo:"0000-000-000"},
-      {name:"stavros", experiance:"[Experiace]", phNo:"0000-000-000"},
-      {name:"tom", experiance:"[Experiace]", phNo:"0000-000-000"}
-    ],
-    searchResults: [],
-    selectedVolunteer: null
+    }
   };
 
   insertSearch = (e) => {
@@ -109,7 +108,7 @@ class EditScreenModal extends Component {
           }
         </Modal.Body>
         <Modal.Footer>
-          <Button className="danger" onClick={() => this.props.onSave(this.state.dummyNewVol)}>
+          <Button className="danger" onClick={() => this.props.onSave(this.state.selectedVolunteer)}>
             Save
           </Button>
           <Button className="danger" onClick={this.props.onHide}>
