@@ -3,7 +3,7 @@ import "./editScreenModal.scss";
 import { contains } from "../../main.js";
 import { Modal, Button, Table } from "react-bootstrap";
 
-class EditScreenModal extends Component {
+class EditScreenModal extends Component { 
   state = {
     searchDummyData: [
       {name:"aman", experiance:"[Experiace]", phNo:"0000-000-000"},
