@@ -76,7 +76,7 @@ class NewAssetRequest extends Component {
 
   constructor(props) {
     super(props);
-    this.dummyProcessAssetRequest();
+    // this.dummyProcessAssetRequest();
     this.insert_assetType = React.createRef();
   }
 
