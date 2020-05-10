@@ -215,7 +215,7 @@ class NewAssetRequest extends Component {
     v = new Date(v);
 
     // Get & Check Value
-    if (!contains(v) || v == "Invalid Date") return;
+    if (!contains(v) || v === "Invalid Date") return;
 
     // Modify Value
     v.setSeconds(0);
