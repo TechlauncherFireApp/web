@@ -5,9 +5,9 @@ from typing import List, Any
 
 import matplotlib.pyplot as plt
 
-from backend.gurobi.AssetTypes import *
+from gurobi.AssetTypes import *
 
-from backend.gurobi.DataGenerator import NumtoDayHourConverter
+from gurobi.DataGenerator import NumtoDayHourConverter
 
 
 

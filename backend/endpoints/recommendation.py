@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
-from backend.gurobi.DataGenerator import volunteerGenerate, NumberGenerator
-from backend.gurobi.Names import firstNames, lastNames
-from backend.gurobi.Scheduler import Schedule, v
-from backend.gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
+from gurobi.DataGenerator import volunteerGenerate, NumberGenerator
+from gurobi.Names import firstNames, lastNames
+from gurobi.Scheduler import Schedule, v
+from gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
 
 import random
 from ast import literal_eval # casts a string to a dict
@@ -153,10 +153,12 @@ class Recommendation(Resource):
 
         # TODO Call a Gurobi function
         success = False
+        tries = 0
         while not success:
             try:
+                tries += 1
                 recommendation_list = Schedule(volunteerGenerate(50),asset_requests)
-                print("succeeded to optimise")
+                print("succeeded to optimise after " + str(tries) + " tries.")
                 success = True
                 return {"volunteer_list" : recommendation_list}
             except:
