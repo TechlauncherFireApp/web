@@ -12,16 +12,18 @@ class Asset():
         self.TotalReq = TotalReq
 
 class Vehicle():
-    def __init__(self, type, TotalReq, AdvancedReq):
+    def __init__(self, type, TotalReq, AdvancedReq,CrewLeaderReq,DriverReq):
         # no use now just there for informations sake
         self.type = type
         self.AdvancedReq = AdvancedReq
         self.TotalReq = TotalReq
+        self.CrewLeaderReq=CrewLeaderReq
+        self.DriverReq=DriverReq
 
 # The Fleet
-LightUnit = Vehicle( "Light Unit", 2, 2)
-MediumTanker = Vehicle( "Medium Tanker", 3, 2)
-HeavyTanker = Vehicle( "Heavy Tanker", 5, 4)
+LightUnit = Vehicle( "Light Unit", 2, 1,1,0)
+MediumTanker = Vehicle( "Medium Tanker", 3, 0,1,1)
+HeavyTanker = Vehicle( "Heavy Tanker", 5, 2,1,1)
 
 
 # StartTime and Duration in timeblocks
@@ -40,6 +42,8 @@ def RequesttoRequirements(Requests):
      (TotalRequired,AdvancedRequired)"""
     TotalRequirementDict = {}
     AdvancedRequirementDict = {}
+    CrewLeaderRequirementDict={}
+    DriverRequirementDict={}
     for l in Requests:
         # This ensures we fill up all the hours that run between the starttime and the duration with the information
         # about the advanced and basic requirements
@@ -59,8 +63,26 @@ def RequesttoRequirements(Requests):
                 # print("gets here")
                 AdvancedRequirementDict[k] += l.AssetType.AdvancedReq
 
+    for l in Requests:
+        for k in range(l.StartTime, l.EndTime):
+            # checks if
+            if k not in CrewLeaderRequirementDict:
+                CrewLeaderRequirementDict[k] = l.AssetType.CrewLeaderReq
+            else:
+                # print("gets here")
+                CrewLeaderRequirementDict[k] += l.AssetType.CrewLeaderReq
+
+    for l in Requests:
+        for k in range(l.StartTime, l.EndTime):
+            # checks if
+            if k not in DriverRequirementDict:
+                DriverRequirementDict[k] = l.AssetType.DriverReq
+            else:
+                # print("gets here")
+                DriverRequirementDict[k] += l.AssetType.DriverReq
+
     # the following code combines the two dictionaries and gives us the tuple form
-    ds = [TotalRequirementDict, AdvancedRequirementDict]
+    ds = [TotalRequirementDict, AdvancedRequirementDict,CrewLeaderRequirementDict,DriverRequirementDict]
     resultDict = {}
     for k in TotalRequirementDict.keys():
         resultDict[k] = tuple(d[k] for d in ds)
@@ -100,4 +122,3 @@ def Test(Request):
     for i in RequesttoRequirements(Request).keys():
         print(str(i) + ": " + str(RequesttoRequirements(Request)[i]))
 
-Test(EveryWeekday)

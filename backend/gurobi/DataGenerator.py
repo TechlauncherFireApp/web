@@ -76,8 +76,10 @@ def booleangenerator(Percent):
 
 #establishing the two types of Firefighters
 class FireFighter(Enum):
-    basic = "Basic"
     advanced = "Advanced"
+    basic = "Basic"
+    crewleader="Crew Leader"
+    driver="Driver"
 
 
 def AvailabilityGenerator():
@@ -134,13 +136,18 @@ def volunteerGenerate(volunteerNo):
     for i in range(volunteerNo):
         #Generates a random name from the pool available
         Name=firstNames[random.randint(0,len(firstNames)-1)]+" "+lastNames[random.randint(0,len(lastNames)-1)]
-        #Generates an experience at a ratio i.e how many more basic firefighters than advanced
-        #for example 3 means 3 times as many advanced firefighters are
-        ratio=1
-        expgenerator=random.randint(1, ratio)
-        exp=FireFighter.advanced
-        if(expgenerator<ratio):
+        #50% are basic
+        if(booleangenerator(50)):
             exp=FireFighter.basic
+        #30% are just advanced
+        elif(booleangenerator(60)):
+            exp=FireFighter.advanced
+        #14% are drivers
+        elif(booleangenerator(70)):
+            exp=FireFighter.driver
+        #6% are crewleaders
+        else:
+            exp=FireFighter.crewleader
         #preferred hours between 6 and 14
         prefnum=random.randint(6, 14)
         #Generates an Availability
@@ -151,6 +158,7 @@ def volunteerGenerate(volunteerNo):
         tempnumber = NumberGenerator()
         #adds the volunteer to the list with all the generated data
         list.append(Volunteer(i,Name, exp,prefnum,tempnumber,AvailDict))
+    VolunteerJson(list)
     return list
 
 
@@ -167,11 +175,32 @@ def VolunteerTest(number):
             for j in shiftpopulator():
                 print(j+": "+str(i.Availability[j]))
             print("\n")
+
+
+def deleteContents(path):
+    import os, shutil
+    folder = path
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 #generates number volunteers in the volunteers folder
-# def VolunteerJson(number):
-#     Volunteers=volunteerGenerate(number)
-#     j=0
-#     for i in Volunteers:
-#         with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
-#             json.dump(i.__dict__, fp)
-#         j += 1
+def VolunteerJson(Volunteers):
+    #Converting the enums into strings for JSon
+    for i in Volunteers:
+        i.Explvl=i.Explvl.value
+    j=0
+    #this is to ensure that the volunteers from previous runs of the file are being deleted
+    deleteContents('Volunteers')
+
+    for i in Volunteers:
+        with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
+            json.dump(i.__dict__, fp)
+        j += 1
+
+VolunteerTest(200)
