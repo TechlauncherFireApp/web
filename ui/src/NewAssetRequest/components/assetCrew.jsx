@@ -95,7 +95,7 @@ class AssetCrew extends Component {
       <Table className="mt-4" striped bordered hover size="sm">
         <thead>
           <tr>
-            <th width="20%">{vehicle.asset_class}</th>
+            <th width="15%">{vehicle.asset_class}</th>
             <td colSpan="6">
               <span>
                 {/* MAYBE use this code instead:

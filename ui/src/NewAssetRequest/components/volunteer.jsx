@@ -1,19 +1,14 @@
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
-import QualificationsModal from "./qualificationsModal";
 import EditScreenModal from "./editScreenModal";
 import "./Request.scss";
+import "./assetCrew.scss";
 
 class Volunteer extends Component {
   state = {
-    showQualifications: false,
     showEditScreen: false,
     availablilityConfirmed: false,
-  };
-
-  toggleQualificationsVisibility = () => {
-    const showQualifications = !this.state.showQualifications;
-    this.setState({ showQualifications });
+    qualificationsVisible: false,
   };
 
   toggleEditScreenVisibility = () => {
@@ -33,6 +28,11 @@ class Volunteer extends Component {
     this.props.updateVolunteer(newVolunteerInfo);
   }
 
+  showHideQualifications = () => {
+    const qualificationsVisible = !this.state.qualificationsVisible;
+    this.setState({ qualificationsVisible });
+  }
+
   render() {
     const { volunteerInfo, vehicleType } = this.props;
     const bgColourNotConfirmed = "#ececec";
@@ -40,11 +40,6 @@ class Volunteer extends Component {
 
     return (
       <React.Fragment>
-        <QualificationsModal
-          show={this.state.showQualifications}
-          onHide={this.toggleQualificationsVisibility}
-          volunteer={volunteerInfo}
-        />
 
         <EditScreenModal
           show={this.state.showEditScreen}
@@ -56,6 +51,7 @@ class Volunteer extends Component {
 
         <tr
           key={volunteerInfo.volunteer_id}
+          class="body"
           style={{
             backgroundColor: this.state.availablilityConfirmed
               ? bgColourConfirmed
@@ -64,17 +60,14 @@ class Volunteer extends Component {
         >
           <td>{volunteerInfo.role}</td>
           <td width="15%">{volunteerInfo.volunteer_name}</td>
-          <td width="15%">[experience]</td>
-          <td width="15%">{volunteerInfo.contact_info[0].detail}</td>
-          <td>
-            <Button
-              className="btn-warning"
-              onClick={this.toggleQualificationsVisibility}
-            >
-              View
-            </Button>
+          <td width="15%" onClick={this.showHideQualifications}>
+            {this.state.qualificationsVisible ?
+              volunteerInfo.qualifications.map((q) => (
+                <div>- {q}<br></br></div>
+              )) : "view"}
           </td>
-          <td>
+          <td width="10%">{volunteerInfo.contact_info[0].detail}</td>
+          <td width="1%">
             <Button
               className="btn-warning"
               onClick={this.toggleEditScreenVisibility}
@@ -82,13 +75,15 @@ class Volunteer extends Component {
               Change
             </Button>
           </td>
-          <td>
-            <input
-              type="checkbox"
-              id="availability"
-              onClick={this.handleToggleColour}
-            />
+          <td width="10%">
+            <div>
+              <input
+                type="checkbox"
+                id="availability"
+                onClick={this.handleToggleColour}
+              />
             Confirmed
+            </div>
           </td>
         </tr>
       </React.Fragment>

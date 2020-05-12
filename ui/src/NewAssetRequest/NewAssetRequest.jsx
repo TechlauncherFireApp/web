@@ -12,14 +12,14 @@ class NewAssetRequest extends Component {
     startDateTime: null,
     endDateTime: null,
     requestList: [
-      { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-10-28T17:50"),endDateTime:new Date("2020-12-01T14:50") },
-      { id:1,assetType:"Heavy Tanker",startDateTime:new Date("2020-10-28T17:50"),endDateTime:new Date("2020-12-01T14:50") }
+      { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:50"), endDateTime: new Date("2020-12-01T14:50") },
+      { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:50"), endDateTime: new Date("2020-12-01T14:50") }
     ],
     // Dummy list used to test recommendation UI without running the backend 
     volunteer_list: [
       {
         asset_id: 1,
-        asset_class: "Medium Unit",
+        asset_class: "Heavy Tanker",
         volunteers: [
           {
             volunteer_id: 5123,
@@ -38,6 +38,30 @@ class NewAssetRequest extends Component {
             volunteer_id: 649,
             position_id: 2,
             volunteer_name: "Jane Doe",
+            role: "Advanced",
+            qualifications: ["advanced training", "crew leader training"],
+            contact_info: [{ detail: "0412 490 340" }],
+          },
+          {
+            volunteer_id: 5342,
+            position_id: 3,
+            volunteer_name: "person three",
+            role: "Advanced",
+            qualifications: ["advanced training", "crew leader training"],
+            contact_info: [{ detail: "0412 490 340" }],
+          },
+          {
+            volunteer_id: 423,
+            position_id: 4,
+            volunteer_name: "person four",
+            role: "Advanced",
+            qualifications: ["advanced training", "crew leader training"],
+            contact_info: [{ detail: "0412 490 340" }],
+          },
+          {
+            volunteer_id: 123,
+            position_id: 5,
+            volunteer_name: "person five",
             role: "Advanced",
             qualifications: ["advanced training", "crew leader training"],
             contact_info: [{ detail: "0412 490 340" }],
@@ -197,7 +221,7 @@ class NewAssetRequest extends Component {
     console.clear();
     // Assign Current Time
     let t1 = new Date(),
-        t2 = new Date();
+      t2 = new Date();
     t1.setSeconds(0);
     t2.setSeconds(0);
     t1.setMinutes(t1.getMinutes() + 30);
@@ -218,7 +242,7 @@ class NewAssetRequest extends Component {
     // Modify Value
     v.setSeconds(0);
     v.setMinutes(v.getMinutes() >= 30 ? 30 : 0);
-    
+
     // Set Value
     if (t === "start") this.setState({ startDateTime: v });
     else if (t === "end") this.setState({ endDateTime: v });
@@ -243,7 +267,7 @@ class NewAssetRequest extends Component {
               <label>Start Time Date</label>
               <DatePicker
                 selected={this.state.startDateTime}
-                onChange={ (i) => { this.setDateTime(i, "start"); }}
+                onChange={(i) => { this.setDateTime(i, "start"); }}
                 showTimeSelect
                 timeIntervals={30}
                 timeCaption="Time"
@@ -253,7 +277,7 @@ class NewAssetRequest extends Component {
               <label>End Time Date</label>
               <DatePicker
                 selected={this.state.endDateTime}
-                onChange={ (i) => { this.setDateTime(i, "end"); }}
+                onChange={(i) => { this.setDateTime(i, "end"); }}
                 showTimeSelect
                 timeIntervals={30}
                 timeCaption="Time"
