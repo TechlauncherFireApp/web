@@ -1,6 +1,7 @@
 import random
 from enum import Enum
 import json
+import os, shutil
 
 
 # returns a list populated with the the hours in a week to be scheduled
@@ -8,15 +9,15 @@ from gurobi.Names import *
 
 
 def shiftpopulator():
-    list = []
+    results = []
     # weeknumber can be added if need be by adding an extra forloop and the code could be very similar to the hours
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     blocks = range(48)
     for i in days:
         for j in blocks:
             # concatenating the day string with the hour to generate the label for an hour that is to be scheduled
-            list.append(i + str(j))
-    return list
+            results.append(i + str(j))
+    return results
 
 def NumberGenerator():
     tempnumber = "04"
@@ -130,8 +131,8 @@ class Volunteer:
 
 #Randomly generating a group of different Volunteers
 #THIS FUNCTION OCCASIONALLY ATTEMPTS TO ACCESS AN OUT OF BOUNDS INDEX, around line 110
-def volunteerGenerate(volunteerNo):
-    list = []
+def VolunteerGenerate(volunteerNo, folder_path):
+    list_volunteers = []
     #generates twice as many advanced firefighters as basic
     for i in range(volunteerNo):
         #Generates a random name from the pool available
@@ -157,28 +158,12 @@ def volunteerGenerate(volunteerNo):
         #generates a random australian phone number
         tempnumber = NumberGenerator()
         #adds the volunteer to the list with all the generated data
-        list.append(Volunteer(i,Name, exp,prefnum,tempnumber,AvailDict))
-    VolunteerJson(list)
-    return list
-
-
-
-def VolunteerTest(number):
-    Volunteers=volunteerGenerate(number)
-    for i in Volunteers:
-            print("ID: " + str(i.id))
-            print("Name: "+ i.name)
-            print("preferred Hours: "+str(i.prefHours))
-            print("Experience level: "+str(i.Explvl))
-            print("Phone Number: "+i.phonenumber)
-            print("Availability: ")
-            for j in shiftpopulator():
-                print(j+": "+str(i.Availability[j]))
-            print("\n")
+        list_volunteers.append(Volunteer(i,Name, exp,prefnum,tempnumber,AvailDict))
+    VolunteerJson(list_volunteers, folder_path)
+    return list_volunteers
 
 
 def deleteContents(path):
-    import os, shutil
     folder = path
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -190,17 +175,41 @@ def deleteContents(path):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 #generates number volunteers in the volunteers folder
-def VolunteerJson(Volunteers):
+def VolunteerJson(Volunteers, folder_path):
     #Converting the enums into strings for JSon
     for i in Volunteers:
         i.Explvl=i.Explvl.value
     j=0
     #this is to ensure that the volunteers from previous runs of the file are being deleted
-    deleteContents('Volunteers')
+    deleteContents(folder_path)
 
     for i in Volunteers:
-        with open('Volunteers/'+'Volunteer'+str(j)+'.json', 'w') as fp:
+        with open(folder_path + '/volunteer'+str(j)+'.json', 'w') as fp:
             json.dump(i.__dict__, fp)
         j += 1
 
-VolunteerTest(200)
+# For each saved volunteer json file, compile their details into a Volunteer object, return a list of all these Volunteer objects
+def LoadVolunteers(folder_path):
+    list_volunteers = []
+    # Get all files in path
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        # Load file, Convert to Volunteer, and append to list
+        with open(file_path, 'r') as f:
+            contents = json.load(f)
+            file_volunteer = Volunteer(
+                contents['id'], 
+                contents['name'], 
+                contents['Explvl'], 
+                contents['prefHours'], 
+                contents['phonenumber'], 
+                contents['Availability']
+            )
+            list_volunteers.append(file_volunteer)
+    return list_volunteers
+
+def SetVolunteerNumber(folder_path, number):
+    number_volunteers = len(os.listdir(folder_path))
+    if number_volunteers is not number:
+        VolunteerGenerate(number, folder_path)
+        print("Generated new volunteers")

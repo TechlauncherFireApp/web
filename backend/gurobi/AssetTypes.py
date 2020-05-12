@@ -115,10 +115,3 @@ EveryWeekday = [Request(1,LightUnit, 34, 47), Request(2,MediumTanker, 34, 47)
 ##solves all but this one with 60 volunteers generated it solved with 90 though
 # This one is only weekends and EveryWeekday combined
 EveryDayOfTheWeek = EveryWeekday+OnlyWeekends
-
-
-def Test(Request):
-    # A List of Requests
-    for i in RequesttoRequirements(Request).keys():
-        print(str(i) + ": " + str(RequesttoRequirements(Request)[i]))
-
