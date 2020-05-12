@@ -11,9 +11,18 @@ class AssetRecommendation extends Component {
     super(props);
     const vehicleTimes = props.vehicleTimes;
     let vehicleList = props.vehicleList;
+    let map = new Map()
     for (let i = 0; i < vehicleTimes.length; i++) {
       vehicleList[i].startDateTime = vehicleTimes[i].startDateTime;
       vehicleList[i].endDateTime = vehicleTimes[i].endDateTime;
+      if (map.has(vehicleList[i].asset_class)) {
+        const old = map.get(vehicleList[i].asset_class)
+        map.set(vehicleList[i].asset_class, old + 1);
+      } else {
+        map.set(vehicleList[i].asset_class, 1)
+
+      }
+      vehicleList[i].number = map.get(vehicleList[i].asset_class);
     }
     this.state.vehicleListComplete = vehicleList;
   }

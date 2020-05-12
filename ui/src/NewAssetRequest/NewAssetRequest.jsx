@@ -70,7 +70,7 @@ class NewAssetRequest extends Component {
       },
       {
         asset_id: 2,
-        asset_class: "Light Unit",
+        asset_class: "Heavy Tanker",
         volunteers: [
           {
             volunteer_id: 5123,
