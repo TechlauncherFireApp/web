@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
 import EditScreenModal from "./editScreenModal";
-import "./Request.scss";
-import "./assetCrew.scss";
+import "./volunteer.scss";
 
 class Volunteer extends Component {
   state = {
@@ -33,6 +32,15 @@ class Volunteer extends Component {
     this.setState({ qualificationsVisible });
   }
 
+  displayQualsList = (quals) => {
+    let result = [];
+    for (let i = 0; i < quals.length - 1; i++) {
+      result.push(<div>- {quals[i]}</div>)
+    }
+    result.push(<div>- {quals[quals.length - 1]} <img src={require("../../assets/collapse.png")} /></div>)
+    return result;
+  }
+
   render() {
     const { volunteerInfo, vehicleType } = this.props;
     const bgColourNotConfirmed = "#ececec";
@@ -60,11 +68,12 @@ class Volunteer extends Component {
         >
           <td>{volunteerInfo.role}</td>
           <td width="15%">{volunteerInfo.volunteer_name}</td>
-          <td width="15%" onClick={this.showHideQualifications}>
+          <td width="15%" onClick={this.showHideQualifications} className="view">
+
             {this.state.qualificationsVisible ?
-              volunteerInfo.qualifications.map((q) => (
-                <div>- {q}<br></br></div>
-              )) : "view"}
+              this.displayQualsList(volunteerInfo.qualifications)
+              : <div>view <img src={require("../../assets/expand.png")} /></div>}
+
           </td>
           <td width="10%">{volunteerInfo.contact_info[0].detail}</td>
           <td width="1%">
