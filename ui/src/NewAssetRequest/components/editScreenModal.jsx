@@ -58,6 +58,14 @@ class EditScreenModal extends Component {
     this.setState({ qualificationsVisible });
   }
 
+  saveChange = () => {
+    if (this.state.selectedVolunteer.id === this.props.volunteer.volunteer_id) {
+      alert("You can't change this volunteer to themselves")
+    } else {
+      this.props.onSave(this.state.selectedVolunteer)
+    }
+  }
+
 
   render() {
     return (
@@ -134,7 +142,7 @@ class EditScreenModal extends Component {
           }
         </Modal.Body>
         <Modal.Footer>
-          <Button className="danger" onClick={() => this.props.onSave(this.state.selectedVolunteer)}>
+          <Button className="danger" onClick={this.saveChange}>
             Save
           </Button>
           <Button className="danger" onClick={this.props.onHide}>
