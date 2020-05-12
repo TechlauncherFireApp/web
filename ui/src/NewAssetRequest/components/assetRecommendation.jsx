@@ -16,8 +16,6 @@ class AssetRecommendation extends Component {
       vehicleList[i].endDateTime = vehicleTimes[i].endDateTime;
     }
     this.state.vehicleListComplete = vehicleList;
-
-    console.log(this.state.vehicleListComplete);
   }
 
   render() {
@@ -29,6 +27,7 @@ class AssetRecommendation extends Component {
             key={v.asset_id}
             vehicle={v}
             updateVehicle={(v) => this.props.updateVehicle(v)}
+            volunteerList={this.props.volunteerList}
           />
         ))}
         <Button onClick={this.props.onSaveRequest} className="btn-med">

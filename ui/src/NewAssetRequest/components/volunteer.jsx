@@ -20,11 +20,18 @@ class Volunteer extends Component {
     this.setState({ availablilityConfirmed });
   };
 
-  updateVolunteer = (newVolunteerInfo) => {
-    newVolunteerInfo.role = this.props.volunteerInfo.role;
-    newVolunteerInfo.position_id = this.props.volunteerInfo.position_id;
+  updateVolunteer = (v) => {
+    let result = {
+      volunteer_id: v.id,
+      position_id: this.props.volunteerInfo.position_id,
+      volunteer_name: v.name,
+      role: this.props.volunteerInfo.role,
+      qualifications: v.qualifications,
+      contact_info: v.contact_info,
+    };
     this.state.availablilityConfirmed = false;
-    this.props.updateVolunteer(newVolunteerInfo);
+    console.log("volunteer: ", result);
+    this.props.updateVolunteer(result);
   }
 
   showHideQualifications = () => {
@@ -55,6 +62,7 @@ class Volunteer extends Component {
           onSave={(newVolunteerInfo) => this.updateVolunteer(newVolunteerInfo)}
           volunteer={volunteerInfo}
           vehicleType={vehicleType}
+          volunteerList={this.props.volunteerList}
         />
 
         <tr

@@ -8,6 +8,37 @@ class AssetRequestContainer extends Component {
     assetsSubmitted: false,
     vehicleTimes: [],
     vehicleList: [],
+    volunteerList: [{
+      id: 1,
+      name: "Cyrus",
+      role: "Advanced",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    }, {
+      id: 2,
+      name: "Caleb",
+      role: "Basic",
+      qualifications: ["village firefighter training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    }, {
+      id: 3,
+      name: "Stavros",
+      role: "Advanced",
+      qualifications: ["advanced training", "heavy rigid license", "pump training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    }, {
+      id: 4,
+      name: "Aman",
+      role: "Crew Leader",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    }, {
+      id: 5,
+      name: "Tom",
+      role: "Driver",
+      qualifications: ["advanced training", "crew leader training", "heavy rigid license"],
+      contact_info: [{ detail: "0412 490 340" }],
+    },],
   };
 
   updateVehicleTimes = (list) => {
@@ -38,6 +69,8 @@ class AssetRequestContainer extends Component {
     for (let i = 0; i < vehicleList.length; i++) {
       if (vehicleList[i].asset_id === newVehicle.asset_id) vehicleList[i] = newVehicle;
     }
+
+    console.log("assetRequestContainer: ", vehicleList);
     this.setState({ vehicleList });
   };
 
@@ -50,6 +83,7 @@ class AssetRequestContainer extends Component {
             vehicleList={this.state.vehicleList}
             vehicleTimes={this.state.vehicleTimes}
             updateVehicle={(vehicle) => this.updateVehicle(vehicle)}
+            volunteerList={this.state.volunteerList}
           />
         ) : (
             <NewAssetRequest

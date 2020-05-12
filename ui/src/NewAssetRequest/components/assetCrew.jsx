@@ -85,6 +85,7 @@ class AssetCrew extends Component {
     }
     let vehicle = this.props.vehicle;
     vehicle.volunteers = volunteers;
+    console.log("assetCrew: ", vehicle);
     this.props.updateVehicle(vehicle);
   }
 
@@ -119,7 +120,7 @@ class AssetCrew extends Component {
         </thead>
         <tbody>
           {vehicle.volunteers.map((v) => (
-            <Volunteer key={v.volunteer_id} volunteerInfo={v} vehicleType={vehicle.asset_class} updateVolunteer={(details) => this.updateVolunteer(details)} />
+            <Volunteer key={v.volunteer_id} volunteerInfo={v} vehicleType={vehicle.asset_class} volunteerList={this.props.volunteerList} updateVolunteer={(details) => this.updateVolunteer(details)} />
           ))}
         </tbody>
       </Table>

@@ -3,41 +3,37 @@ import "./editScreenModal.scss";
 import { contains } from "../../main.js";
 import { Modal, Button, Table } from "react-bootstrap";
 
-class EditScreenModal extends Component { 
+class EditScreenModal extends Component {
   state = {
-    searchDummyData: [
-      {name:"aman", experiance:"[Experiace]", phNo:"0000-000-000"},
-      {name:"cyrus", experiance:"[Experiace]", phNo:"0000-000-000"},
-      {name:"caleb", experiance:"[Experiace]", phNo:"0000-000-000"},
-      {name:"stavros", experiance:"[Experiace]", phNo:"0000-000-000"},
-      {name:"tom", experiance:"[Experiace]", phNo:"0000-000-000"}
-    ],
+    volunteerList: [],
     searchResults: [],
     selectedVolunteer: {
-      volunteer_id: 762,
-      position_id: 0,
-      volunteer_name: "Changed Volunteer",
-      role: "??",
-      qualifications: [
-        "some quals",
-        "other quals",
-      ],
-      contact_info: [{ detail: "09172342413" }],
-    }
+      id: null,
+      name: "",
+      role: null,
+      qualifications: [""],
+      contact_info: [{ detail: "" }],
+    },
   };
+
+  constructor(props) {
+    super(props);
+    const volunteerList = props.volunteerList;
+    this.state.volunteerList = volunteerList;
+  }
 
   insertSearch = (e) => {
     console.clear();
     // Get Value
     e = e.target.value;
-    
+
     // Validate Value
     if (!contains(e)) { this.setState({ searchResults: [] }); return; }
     e = e.toLowerCase();
 
     // Search Value
     let a = [];
-    for (let x of this.state.searchDummyData) {
+    for (let x of this.state.volunteerList) {
       if (x.name.toLowerCase().indexOf(e) >= 0) a.push(x);
     }
 
@@ -64,8 +60,8 @@ class EditScreenModal extends Component {
             {this.props.volunteer.volunteer_name}
           </div>
           <form>
-            <input type="text" placeholder="Search Volunteer via Name" onChange={this.insertSearch}/>
-            <hr/>
+            <input type="text" placeholder="Search Volunteer via Name" onChange={this.insertSearch} />
+            <hr />
             <div className="con-vols">
               {((typeof this.state.searchResults === "object") && this.state.searchResults.length > 0) &&
                 <Table striped bordered hover size="sm">
@@ -76,12 +72,12 @@ class EditScreenModal extends Component {
                       <th>Phone No</th>
                     </tr>
                   </thead>
-                 <tbody>
+                  <tbody>
                     {this.state.searchResults.map((t) => (
                       <tr onClick={() => { this.setState({ selectedVolunteer: t }); }}>
                         <th>{t.name}</th>
-                        <th>{t.experiance}</th>
-                        <th>{t.phNo}</th>
+                        <th>view</th>
+                        <th>{t.contact_info[0].detail}</th>
                       </tr>
                     ))}
                   </tbody>
@@ -100,8 +96,8 @@ class EditScreenModal extends Component {
               <Table striped bordered hover size="sm">
                 <tr>
                   <th>{this.state.selectedVolunteer.name}</th>
-                  <th>{this.state.selectedVolunteer.experiance}</th>
-                  <th>{this.state.selectedVolunteer.phNo}</th>
+                  <th>view</th>
+                  <th>{this.state.selectedVolunteer.contact_info[0].detail}</th>
                 </tr>
               </Table>
             </div>
