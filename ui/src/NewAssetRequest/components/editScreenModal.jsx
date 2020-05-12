@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./editScreenModal.scss";
 import { contains } from "../../main.js";
 import { Modal, Button, Table } from "react-bootstrap";
+import "./volunteer.scss"
 
 class EditScreenModal extends Component {
   state = {
@@ -11,9 +12,10 @@ class EditScreenModal extends Component {
       id: null,
       name: "",
       role: null,
-      qualifications: [""],
+      qualifications: [],
       contact_info: [{ detail: "" }],
     },
+    qualificationsVisible: false,
   };
 
   constructor(props) {
@@ -42,6 +44,21 @@ class EditScreenModal extends Component {
     else this.setState({ searchResults: "" });
   };
 
+  displayQualsList = (quals) => {
+    let result = [];
+    for (let i = 0; i < quals.length - 1; i++) {
+      result.push(<div>- {quals[i]}</div>)
+    }
+    result.push(<div>- {quals[quals.length - 1]} <img src={require("../../assets/collapse.png")} /></div>)
+    return result;
+  }
+
+  showHideQualifications = () => {
+    const qualificationsVisible = !this.state.qualificationsVisible;
+    this.setState({ qualificationsVisible });
+  }
+
+
   render() {
     return (
       <Modal
@@ -56,9 +73,18 @@ class EditScreenModal extends Component {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div>
+          <b>
             {this.props.volunteer.volunteer_name}
+          </b>
+
+          <div className="view" onClick={this.showHideQualifications} >
+            {this.state.qualificationsVisible ?
+              this.displayQualsList(this.props.volunteer.qualifications)
+              : <div>View qualifications <img src={require("../../assets/expand.png")} /></div>}
           </div>
+
+          <br />
+
           <form>
             <input type="text" placeholder="Search Volunteer via Name" onChange={this.insertSearch} />
             <hr />
@@ -68,16 +94,18 @@ class EditScreenModal extends Component {
                   <thead>
                     <tr>
                       <th>Name</th>
-                      <th>Experiance</th>
+                      <th>Qualifications</th>
                       <th>Phone No</th>
                     </tr>
                   </thead>
                   <tbody>
                     {this.state.searchResults.map((t) => (
-                      <tr onClick={() => { this.setState({ selectedVolunteer: t }); }}>
-                        <th>{t.name}</th>
-                        <th>view</th>
-                        <th>{t.contact_info[0].detail}</th>
+                      <tr className="view" onClick={() => { this.setState({ selectedVolunteer: t }); }}>
+                        <td>{t.name}</td>
+                        <td>
+                          {t.qualifications.map((q) => <div>- {q}</div>)}
+                        </td>
+                        <td>{t.contact_info[0].detail}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -95,9 +123,11 @@ class EditScreenModal extends Component {
               </p>
               <Table striped bordered hover size="sm">
                 <tr>
-                  <th>{this.state.selectedVolunteer.name}</th>
-                  <th>view</th>
-                  <th>{this.state.selectedVolunteer.contact_info[0].detail}</th>
+                  <td>{this.state.selectedVolunteer.name}</td>
+                  <td>
+                    {this.state.selectedVolunteer.qualifications.map((q) => <div>- {q}</div>)}
+                  </td>
+                  <td>{this.state.selectedVolunteer.contact_info[0].detail}</td>
                 </tr>
               </Table>
             </div>
