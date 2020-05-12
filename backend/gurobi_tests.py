@@ -19,7 +19,7 @@ def Test(Request):
 
 # For DataGenerator
 def VolunteerTest(number):
-    Volunteers=VolunteerGenerate(number, 'volunteer')
+    Volunteers=VolunteerGenerate(number, 'volunteers')
     for i in Volunteers:
             print("ID: " + str(i.id))
             print("Name: "+ i.name)
@@ -31,5 +31,5 @@ def VolunteerTest(number):
             #     print(j+": "+str(i.Availability[j]))
             print("\n")
 
-VolunteerTest(200)
+# VolunteerTest(200)
 # LoadVolunteers('volunteers')

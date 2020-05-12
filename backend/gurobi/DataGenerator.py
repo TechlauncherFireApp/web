@@ -208,8 +208,12 @@ def LoadVolunteers(folder_path):
             list_volunteers.append(file_volunteer)
     return list_volunteers
 
-def SetVolunteerNumber(folder_path, number):
-    number_volunteers = len(os.listdir(folder_path))
-    if number_volunteers is not number:
+def SetVolunteerNumber(folder_path, number, regenerate):
+    if regenerate:
         VolunteerGenerate(number, folder_path)
         print("Generated new volunteers")
+    else:
+        number_volunteers = len(os.listdir(folder_path))
+        if number_volunteers is not number:
+            VolunteerGenerate(number, folder_path)
+            print("Generated new volunteers")

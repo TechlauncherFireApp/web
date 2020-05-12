@@ -14,7 +14,12 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 api = Api(app)
 
 # Ensure volunteers have been generated
-SetVolunteerNumber('volunteers', 200)
+# Inputs
+#   string: file path to save volunteers
+#   int: number of volunteers to generate
+#   boolean: whether to regenerate volunteers on every interface restart
+#
+SetVolunteerNumber('volunteers', 200, True)
 
 # Define the api's endpoints
 api.add_resource(HelloWorld, '/hello-world')
