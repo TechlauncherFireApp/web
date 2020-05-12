@@ -217,17 +217,17 @@ def Schedule(Volunteers, VehicleRequest):
             if position == 1:
                 if request.AssetType == LightUnit:
                     volunteer["role"] = "CrewLeader/Driver"
-                if request.AssetType == HeavyTanker:
+                if (request.AssetType == HeavyTanker) or (request.AssetType == MediumTanker):
                     volunteer["role"] = "CrewLeader"
             if position == 2:
-                if request.AssetType == HeavyTanker:
+                if (request.AssetType == HeavyTanker) or (request.AssetType == MediumTanker):
                     volunteer["role"] = "Driver"
             volunteer["position"] = position
             VolunteerList.append(volunteer)
             position = position + 1
         for volunteer in VolunteerListDriver:
             if position == 2:
-                if request.AssetType == HeavyTanker:
+                if (request.AssetType == HeavyTanker) or (request.AssetType == MediumTanker):
                     volunteer["role"] = "Driver"
             volunteer["position"] = position
             VolunteerList.append(volunteer)
