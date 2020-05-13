@@ -13,7 +13,7 @@ class NewAssetRequest extends Component {
     endDateTime: null,
     requestList: [
       { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:50"), endDateTime: new Date("2020-12-01T14:50") },
-      { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:50"), endDateTime: new Date("2020-12-01T14:50") }
+      { id: 2, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:50"), endDateTime: new Date("2020-12-01T14:50") }
     ],
     // Dummy list used to test recommendation UI without running the backend 
     volunteer_list: [
@@ -73,7 +73,7 @@ class NewAssetRequest extends Component {
         asset_class: "Heavy Tanker",
         volunteers: [
           {
-            volunteer_id: 5123,
+            volunteer_id: 32,
             position_id: 1,
             volunteer_name: "Mary Blank",
             role: "Driver",
@@ -86,7 +86,7 @@ class NewAssetRequest extends Component {
             contact_info: [{ detail: "0412 490 340" }],
           },
           {
-            volunteer_id: 649,
+            volunteer_id: 89,
             position_id: 2,
             volunteer_name: "John Connor",
             role: "Advanced",

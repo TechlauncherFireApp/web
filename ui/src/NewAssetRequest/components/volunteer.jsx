@@ -62,11 +62,12 @@ class Volunteer extends Component {
           volunteer={volunteerInfo}
           vehicleType={vehicleType}
           volunteerList={this.props.volunteerList}
+          assignedVolunteers={this.props.assignedVolunteers}
         />
 
         <tr
           key={volunteerInfo.volunteer_id}
-          class="body"
+          className="body"
           style={{
             backgroundColor: this.state.availablilityConfirmed
               ? bgColourConfirmed

@@ -37,6 +37,7 @@ class AssetRecommendation extends Component {
             vehicle={v}
             updateVehicle={(v) => this.props.updateVehicle(v)}
             volunteerList={this.props.volunteerList}
+            assignedVolunteers={this.props.assignedVolunteers}
           />
         ))}
         <Button onClick={this.props.onSaveRequest} className="btn-med">

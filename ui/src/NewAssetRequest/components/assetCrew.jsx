@@ -119,7 +119,12 @@ class AssetCrew extends Component {
         </thead>
         <tbody>
           {vehicle.volunteers.map((v) => (
-            <Volunteer key={v.volunteer_id} volunteerInfo={v} vehicleType={vehicle.asset_class} volunteerList={this.props.volunteerList} updateVolunteer={(details) => this.updateVolunteer(details)} />
+            <Volunteer key={v.volunteer_id}
+              volunteerInfo={v}
+              vehicleType={vehicle.asset_class}
+              volunteerList={this.props.volunteerList}
+              assignedVolunteers={this.props.assignedVolunteers}
+              updateVolunteer={(details) => this.updateVolunteer(details)} />
           ))}
         </tbody>
       </Table>
