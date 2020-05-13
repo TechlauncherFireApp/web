@@ -116,7 +116,7 @@ class EditScreenModal extends Component {
                   <tbody>
                     {this.state.searchResults.map((t) => (
                       <tr className="view" onClick={() => { this.setState({ selectedVolunteer: t }); }}>
-                        <td>{t.name}{" "}{this.props.assignedVolunteers.has(t.id) ? <img src={require("../../assets/assigned.png")} /> : ""}</td>
+                        <td>{this.props.assignedVolunteers.has(t.id) ? <div title="Already assigned">{t.name}{" "}<img src={require("../../assets/assigned.png")} /></div> : <div>{t.name}</div>}</td>
                         <td>
                           {t.qualifications.map((q) => <div>- {q}</div>)}
                         </td>
