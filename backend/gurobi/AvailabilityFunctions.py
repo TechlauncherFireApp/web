@@ -1,6 +1,6 @@
 #Generates a random Availability
 import random
-import gurobi.DataGenerator as dg
+import backend.gurobi.DataGenerator as dg
 
 def randomAvailabilityGenerator():
     AvailDict = {}

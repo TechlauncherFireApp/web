@@ -1,24 +1,37 @@
+from enum import Enum
 
-# TO-DO
-# Pass the asset request Number into LicenseNo and change the name to something more instructive perhaps
+#establishing the  types of Firefighters
+class FireFighter(Enum):
+    advanced = "Advanced"
+    basic = "Basic"
+    crewleader="Crew Leader"
+    driver="Driver"
 
-
-class Asset():
-    def __init__(self, LicenseNo, type, TotalReq, AdvancedReq):
-        self.LicenceNo = LicenseNo
-        # no use now just there for informations sake
-        self.type = type
-        self.AdvancedReq = AdvancedReq
-        self.TotalReq = TotalReq
-
+#A class representing the requirement of the vehicles
 class Vehicle():
     def __init__(self, type, TotalReq, AdvancedReq,CrewLeaderReq,DriverReq):
-        # no use now just there for informations sake
         self.type = type
         self.AdvancedReq = AdvancedReq
         self.TotalReq = TotalReq
         self.CrewLeaderReq=CrewLeaderReq
         self.DriverReq=DriverReq
+
+
+# Converts the qualifications and years of experiences into roles they can perform
+def QualificationtoRoleqaulification(Years, QualificationBoolean):
+    if (Years >= 3 and QualificationBoolean["Advanced Firefighting Qualification"]):
+        if (Years >= 4 and QualificationBoolean["Crew Leader Course"]):
+            if (QualificationBoolean["Heavy Rigid Vehicle License"]
+                    and QualificationBoolean["Tanker Driving training"]
+                    and QualificationBoolean["Urgent Duty Driving Training"]
+                    and QualificationBoolean["Advanced Pumping Skills"]):
+                return FireFighter.driver
+            else:
+                return FireFighter.crewleader
+        return FireFighter.advanced
+    else:
+        return FireFighter.basic
+
 
 # The Fleet
 LightUnit = Vehicle( "Light Unit", 2, 1,1,0)
@@ -111,8 +124,7 @@ EveryWeekday = [Request(1,LightUnit, 34, 47), Request(2,MediumTanker, 34, 47)
                 Request(7,MediumTanker, 34 + 3 * 48, 34 + 3 * 48 + 13), Request(8,HeavyTanker, 34 + 3 * 48, 34 + 3 * 48 + 13),
                 Request(9,MediumTanker, 34 + 4 * 48, 34 + 4 * 48 + 13), Request(10,LightUnit, 34 + 4 * 48, 34 + 4 * 48 + 13)
                 ]
-# All Days of hte week
-##solves all but this one with 60 volunteers generated it solved with 90 though
+# All Days of the week
 # This one is only weekends and EveryWeekday combined
 EveryDayOfTheWeek = EveryWeekday+OnlyWeekends
 
