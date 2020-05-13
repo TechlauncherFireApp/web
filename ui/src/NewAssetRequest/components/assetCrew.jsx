@@ -13,69 +13,21 @@ class AssetCrew extends Component {
   };
 
   parseDateTime = (date1, date2) => {
-    let str = "";
+    let str = date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
     if (
       date1.getMonth() === date2.getMonth() &&
       date1.getDate() === date2.getDate() &&
       date1.getFullYear() === date2.getFullYear()
     ) {
       //if the request starts and ends on the same day
-      str =
-        str +
-        (date1.getHours() === 0
-          ? "12"
-          : date1.getHours() > 12
-            ? date1.getHours() - 12
-            : date1.getHours());
-      str =
-        str +
-        ":" +
-        (date1.getMinutes() === 30 ? "30 " : "00 ") +
-        (date1.getHours() > 11 ? "pm - " : "am - ");
-      str =
-        str +
-        (date2.getHours() === 0
-          ? "12"
-          : date2.getHours() > 12
-            ? date2.getHours() - 12
-            : date2.getHours());
-      str =
-        str +
-        ":" +
-        (date2.getMinutes() === 30 ? "30 " : "00 ") +
-        (date2.getHours() > 11 ? "pm, " : "am, ") +
-        date2.toLocaleDateString();
+      str = str + " - " + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
+        + date2.toLocaleDateString("en-GB");
     } else {
-      //if the request spans multiple days
-      str =
-        str +
-        (date1.getHours() === 0
-          ? "12"
-          : date1.getHours() > 12
-            ? date1.getHours() - 12
-            : date1.getHours());
-      str =
-        str +
-        ":" +
-        (date1.getMinutes() === 30 ? "30 " : "00 ") +
-        (date1.getHours() > 11 ? "pm " : "am ") +
-        date1.toLocaleDateString() +
-        " - ";
-      str =
-        str +
-        (date2.getHours() === 0
-          ? "12"
-          : date2.getHours() > 12
-            ? date2.getHours() - 12
-            : date2.getHours());
-      str =
-        str +
-        ":" +
-        (date2.getMinutes() === 30 ? "30 " : "00 ") +
-        (date2.getHours() > 11 ? "pm " : "am ") +
-        date2.toLocaleDateString();
+      str = str + " " + date1.toLocaleDateString("en-GB") + " - "
+        + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
+        + date2.toLocaleDateString("en-GB");
     }
-    return str;
+    return str.toLowerCase();
   };
 
   updateVolunteer = (newVolunteer) => {
@@ -98,17 +50,6 @@ class AssetCrew extends Component {
             <th width="15%">{vehicle.asset_class + " " + vehicle.number} </th>
             <td colSpan="6">
               <span>
-                {/* MAYBE use this code instead:
-                
-                  {vehicle.startDateTime.toLocaleTimeString("en-US",{hour12:true,hour:"numeric",minute:"numeric"})}
-                  &nbsp;
-                  {vehicle.startDateTime.toLocaleDateString("en-GB")}
-                  &nbsp;-&nbsp;
-                  {vehicle.endDateTime.toLocaleTimeString("en-US",{hour12:true,hour:"numeric",minute:"numeric"})}
-                  &nbsp;
-                  {vehicle.endDateTime.toLocaleDateString("en-GB")}
-                */}
-
                 {this.parseDateTime(
                   vehicle.startDateTime,
                   vehicle.endDateTime
