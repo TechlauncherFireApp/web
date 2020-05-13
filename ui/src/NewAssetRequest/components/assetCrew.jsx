@@ -85,7 +85,6 @@ class AssetCrew extends Component {
     }
     let vehicle = this.props.vehicle;
     vehicle.volunteers = volunteers;
-    console.log("assetCrew: ", vehicle);
     this.props.updateVehicle(vehicle);
   }
 

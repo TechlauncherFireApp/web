@@ -42,14 +42,12 @@ class AssetRequestContainer extends Component {
   };
 
   updateVehicleTimes = (list) => {
-    const vehicleTimes = list;
-    this.setState({ vehicleTimes });
+    this.setState({ vehicleTimes: list });
   };
 
   handleDisplayRequest = (outputVehicleList) => {
     const assetsSubmitted = !this.state.assetsSubmitted;
-    const vehicleList = outputVehicleList;
-    this.setState({ assetsSubmitted, vehicleList });
+    this.setState({ assetsSubmitted, vehicleList: outputVehicleList });
   };
 
   handleSaveRequest = () => {
@@ -58,19 +56,12 @@ class AssetRequestContainer extends Component {
     this.setState({ assetsSubmitted });
   };
 
-  updateVehicleTimes = (newList) => {
-    const vehicleTimes = newList;
-    this.setState({ vehicleTimes });
-  }
-
   updateVehicle = (newVehicle) => {
 
     let vehicleList = this.state.vehicleList;
     for (let i = 0; i < vehicleList.length; i++) {
       if (vehicleList[i].asset_id === newVehicle.asset_id) vehicleList[i] = newVehicle;
     }
-
-    console.log("assetRequestContainer: ", vehicleList);
     this.setState({ vehicleList });
   };
 

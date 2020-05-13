@@ -30,7 +30,6 @@ class Volunteer extends Component {
       contact_info: v.contact_info,
     };
     this.state.availablilityConfirmed = false;
-    console.log("volunteer: ", result);
     this.props.updateVolunteer(result);
   }
 
