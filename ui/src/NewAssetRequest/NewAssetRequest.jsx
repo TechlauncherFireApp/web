@@ -12,8 +12,8 @@ class NewAssetRequest extends Component {
     startDateTime: null,
     endDateTime: null,
     requestList: [
-      { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:50"), endDateTime: new Date("2020-12-01T14:50") },
-      { id: 2, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:50"), endDateTime: new Date("2020-12-01T14:50") }
+      { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:00"), endDateTime: new Date("2020-12-01T14:30") },
+      { id: 2, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:30"), endDateTime: new Date("2020-12-01T14:00") }
     ],
     // Dummy list used to test recommendation UI without running the backend 
     volunteer_list: [
