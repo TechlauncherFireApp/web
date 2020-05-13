@@ -6,6 +6,7 @@ import "./volunteer.scss"
 
 class EditScreenModal extends Component {
   state = {
+    searchValue: "",
     volunteerList: [],
     searchResults: [],
     selectedVolunteer: {
@@ -22,15 +23,17 @@ class EditScreenModal extends Component {
     super(props);
     const volunteerList = props.volunteerList;
     this.state.volunteerList = volunteerList;
+    this.state.searchResults = volunteerList;
   }
 
   insertSearch = (e) => {
     console.clear();
     // Get Value
     e = e.target.value;
+    this.state.searchValue = e;
 
     // Validate Value
-    if (!contains(e)) { this.setState({ searchResults: [] }); return; }
+    if (!contains(e)) { this.setState({ searchResults: this.state.volunteerList }); return; }
     e = e.toLowerCase();
 
     // Search Value
@@ -98,7 +101,7 @@ class EditScreenModal extends Component {
           <br />
 
           <form>
-            <input type="text" placeholder="Search Volunteer via Name" onChange={this.insertSearch} />
+            <input type="text" placeholder="Search Volunteer via Name" value={this.state.searchValue} onChange={this.insertSearch} />
             <hr />
             <div className="con-vols">
               {((typeof this.state.searchResults === "object") && this.state.searchResults.length > 0) &&
