@@ -127,10 +127,3 @@ EveryWeekday = [Request(1,LightUnit, 34, 47), Request(2,MediumTanker, 34, 47)
 # All Days of the week
 # This one is only weekends and EveryWeekday combined
 EveryDayOfTheWeek = EveryWeekday+OnlyWeekends
-
-
-def Test(Request):
-    # A List of Requests
-    for i in RequesttoRequirements(Request).keys():
-        print(str(i) + ": " + str(RequesttoRequirements(Request)[i]))
-
