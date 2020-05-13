@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
-from gurobi.DataGenerator import volunteerGenerate, NumberGenerator
+from gurobi.DataGenerator import NumberGenerator, LoadVolunteers, shiftpopulator
 from gurobi.Names import firstNames, lastNames
-from gurobi.Scheduler import Schedule, v
+from gurobi.Scheduler import Schedule
 from gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
 
 import random
@@ -89,7 +89,7 @@ volunteer_field = {
     }))
 }
 
-volunteer_list_field = {
+recommendation_list_field = {
     'asset_id': fields.Integer,
     'asset_class': fields.String, # Enum
     # 'start_time': TimeBlock,
@@ -98,7 +98,24 @@ volunteer_list_field = {
     'volunteers': fields.List(fields.Nested(volunteer_field)),
 }
 
+def availability_field():
+    list_times = shiftpopulator()
+    dict_times = {}
+    for time in list_times:
+        dict_times[time] = fields.Boolean
+    return dict_times
+
+volunteer_list_field = {
+    'id': fields.Integer,
+    'name': fields.String,
+    'Explvl': fields.String,
+    'prefHours': fields.Integer,
+    'phonenumber':fields.Integer,
+    'Availability':fields.Nested(availability_field()),
+}
+
 resource_fields = {
+    'recommendation_list': fields.List(fields.Nested(recommendation_list_field)),
     'volunteer_list': fields.List(fields.Nested(volunteer_list_field)),
 }
 
@@ -112,23 +129,12 @@ def formatPosition(position, role, qualifications):
     }
 
 
-# Create and format a random Volunteer output data
-def formatVolunteer(position, role, qualifications):
-    return {
-        'volunteer_id': random.randint(0, 99),
-        'position_id': position,
-        'volunteer_name': firstNames[random.randint(0,len(firstNames)-1)]+" "+lastNames[random.randint(0,len(lastNames)-1)],
-        'role': role,
-        'qualifications': qualifications,
-        'contact_info': [{
-            'type': "phone",
-            'detail': NumberGenerator(),
-        }]
-    }
-
-
 # Handle the Recommendation endpoint
 class Recommendation(Resource):
+    def __init__(self, **kwargs):
+        # smart_engine is a black box dependency
+        self.volunteer_list = kwargs['volunteer_list']
+
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()
@@ -149,15 +155,16 @@ class Recommendation(Resource):
                 asset_type = MediumTanker
             elif asset_name == "Light Unit":
                 asset_type = LightUnit
-            asset_requests.append(Request(asset_type, start_time, end_time))
+            asset_requests.append(Request(asset_id,asset_type, start_time, end_time))
 
-        # TODO Call a Gurobi function
-        success = False
-        while not success:
-            try:
-                recommendation_list = Schedule(volunteerGenerate(50),asset_requests)
-                print("succeeded to optimise")
-                success = True
-                return {"volunteer_list" : recommendation_list}
-            except:
-                print("Failed to optimise")
+        try:
+            recommendation_list, volunteer_list_out = Schedule(self.volunteer_list, asset_requests)
+            print("succeeded to optimise")
+            # print(str(volunteer_list_out[0].qualifications))
+
+            return {
+                "recommendation_list" : recommendation_list,
+                "volunteer_list" : volunteer_list_out
+            }
+        except:
+            print("Failed to optimise")

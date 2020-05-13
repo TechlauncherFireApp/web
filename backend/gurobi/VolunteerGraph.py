@@ -9,12 +9,7 @@ from gurobi.AssetTypes import *
 
 from gurobi.DataGenerator import NumtoDayHourConverter
 
-EveryWeekday = [Request(LightUnit, 34, 13), Request(MediumTanker, 34, 13)
-    , Request(MediumTanker, 82, 13), Request(HeavyTanker, 82, 13),
-                Request(MediumTanker, 34 + 2 * 48, 13), Request(HeavyTanker, 34 + 2 * 48, 13),
-                Request(MediumTanker, 34 + 3 * 48, 13), Request(HeavyTanker, 34 + 3 * 48, 13),
-                Request(MediumTanker, 34 + 4 * 48, 13), Request(LightUnit, 34 + 4 * 48, 13)
-                ]
+
 
 def RequestPlot(Requests):
     fig, gnt = plt.subplots()
