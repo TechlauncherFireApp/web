@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "./NewAssetRequest.scss";
 import { contains } from "../main.js";
-import Request from "./components/Request";
 
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";              // -> PACKAGE FROM : npm i --save react-datepicker
@@ -342,6 +341,10 @@ class NewAssetRequest extends Component {
     else if (t === "end") this.setState({ endDateTime: v });
   };
 
+  testFun(i) {
+    console.log(i);
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -382,12 +385,24 @@ class NewAssetRequest extends Component {
         <hr/>
         <div className="output">
           {this.state.requestList.map((t) => (
-            <Request
-              id={t.id}
-              assetType={t.assetType}
-              startDateTime={t.startDateTime}
-              endDateTime={t.endDateTime}
-              removeAsset={this.removeAsset} />
+            <request-body id={t.id}>
+                <img className="close" src={require("../assets/x.png")} onClick={() => { this.removeAsset(t.id); }} />
+                <h2>{t.assetType}</h2>
+                <div className="cont-1">
+                    <div className="cont-2">
+                        <label>Start</label>
+                        <br/>
+                        <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                        <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
+                    </div>
+                    <div className="cont-2">
+                        <label>End</label>
+                        <br/>
+                        <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                        <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
+                    </div>
+                </div>
+            </request-body>
           ))}
         </div>
         <hr/>
