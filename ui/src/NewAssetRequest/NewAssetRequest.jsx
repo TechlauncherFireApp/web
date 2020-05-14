@@ -344,7 +344,7 @@ class NewAssetRequest extends Component {
 
   render() {
     return (
-      <div className="main-body">
+      <div className="container">
         <h4 className="mt-2">New Asset Request</h4>
         <hr />
         <container>
