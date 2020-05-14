@@ -344,7 +344,7 @@ class NewAssetRequest extends Component {
 
   render() {
     return (
-      <div className="container">
+      <React.Fragment>
         <h4 className="mt-2">New Asset Request</h4>
         <hr />
         <container>
@@ -401,7 +401,7 @@ class NewAssetRequest extends Component {
           {/* TO TOM - can remove this button once you link up the back end*/}
           <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button>
         </container>
-      </div>
+      </React.Fragment>
     );
   }
 }

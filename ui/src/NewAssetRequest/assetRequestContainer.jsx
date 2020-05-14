@@ -59,7 +59,7 @@ class AssetRequestContainer extends Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         {this.state.assetsSubmitted ? (
           <AssetRecommendation
             onSaveRequest={this.handleSaveRequest}
@@ -75,7 +75,7 @@ class AssetRequestContainer extends Component {
               updateVehicleTimes={this.updateVehicleTimes}
             />
           )}
-      </div>
+      </React.Fragment>
     );
   }
 }
