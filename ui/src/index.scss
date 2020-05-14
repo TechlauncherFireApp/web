@@ -1,4 +1,4 @@
-html, body, div.container, div#root, main-body {
+html, body, div#root, div.container, div.main-body {
     height: 100%;
     width: 100%;
     padding: 0;
@@ -10,8 +10,6 @@ html, body, div.container, div#root, main-body {
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-} main-body {
-    display: block;
 } div.container {
     margin: 0 auto;
 }
