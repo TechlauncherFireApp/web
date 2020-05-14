@@ -11,11 +11,12 @@ class NewAssetRequest extends Component {
   state = {
     startDateTime: null,
     endDateTime: null,
+    // TO TOM - can change requestList to [] after you link the back end
     requestList: [
       { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:00"), endDateTime: new Date("2020-12-01T14:30") },
       { id: 2, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:30"), endDateTime: new Date("2020-12-01T14:00") }
     ],
-    // Dummy list used to test recommendation UI without running the backend 
+    // TO TOM - can delete volunteer_list from the state after you link the back end
     volunteer_list: [
       {
         asset_id: 1,
@@ -100,7 +101,6 @@ class NewAssetRequest extends Component {
 
   constructor(props) {
     super(props);
-    // this.dummyProcessAssetRequest();
     this.insert_assetType = React.createRef();
   }
 
@@ -135,7 +135,7 @@ class NewAssetRequest extends Component {
       return false;
     }
 
-    // 3. TODO
+    // 3.
     postData = { "asset_list": postData }
 
     const axios = require('axios');
@@ -143,6 +143,8 @@ class NewAssetRequest extends Component {
 
       // 4. response.data.volunteer_list
       // 5.
+
+      // TO TOM - onDisplayRequest now takes two params, (the assignment, the full volunteer list) to reflect what the backend passes out
       .then(response => this.props.onDisplayRequest(response.data.volunteer_list))
       .catch(function (error) {
         // handle error
@@ -150,6 +152,7 @@ class NewAssetRequest extends Component {
       })
   };
 
+  // TO TOM - can remove this function completely once you link up the back end
   dummyProcessAssetRequest = () => {
     console.clear();
     /* A dummy function to display the recommendation screen using dummy data, so we can test without running the backend */
@@ -304,7 +307,7 @@ class NewAssetRequest extends Component {
           >
             Submit Request
           </button>
-          {/* BELOW IS A TESTING BUTTON */}
+          {/* TO TOM - can remove this button once you link up the back end*/}
           <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button>
         </container>
       </main-body>

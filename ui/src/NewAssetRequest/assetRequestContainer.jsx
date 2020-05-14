@@ -8,6 +8,7 @@ class AssetRequestContainer extends Component {
     assetsSubmitted: false,
     vehicleTimes: [],
     vehicleList: [],
+    // TO TOM - can change volunteerList to [] after you link the back end
     volunteerList: [{
       id: 1,
       name: "Cyrus",
@@ -114,10 +115,10 @@ class AssetRequestContainer extends Component {
     this.setState({ vehicleList });
   };
 
-  handleDisplayRequest = (outputVehicleList) => {
+  handleDisplayRequest = (outputVehicleList, outputVolunteerList) => {
     this.identifyAssignedVolunteers(outputVehicleList);
     const assetsSubmitted = !this.state.assetsSubmitted;
-    this.setState({ assetsSubmitted, vehicleList: outputVehicleList });
+    this.setState({ assetsSubmitted, vehicleList: outputVehicleList, volunteerList: outputVolunteerList });
 
   };
 
