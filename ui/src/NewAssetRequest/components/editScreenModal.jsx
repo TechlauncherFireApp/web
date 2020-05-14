@@ -137,13 +137,15 @@ class EditScreenModal extends Component {
                 {this.props.volunteer.volunteer_name} will change to:
               </p>
               <Table striped bordered hover size="sm">
-                <tr>
-                  <td>{this.state.selectedVolunteer.name}</td>
-                  <td>
-                    {this.state.selectedVolunteer.qualifications.map((q) => <div>- {q}</div>)}
-                  </td>
-                  <td>{this.state.selectedVolunteer.contact_info[0].detail}</td>
-                </tr>
+                <tbody>
+                  <tr>
+                    <td>{this.state.selectedVolunteer.name}</td>
+                    <td>
+                      {this.state.selectedVolunteer.qualifications.map((q) => <div>- {q}</div>)}
+                    </td>
+                    <td>{this.state.selectedVolunteer.contact_info[0].detail}</td>
+                  </tr>
+                </tbody>
               </Table>
             </div>
           }

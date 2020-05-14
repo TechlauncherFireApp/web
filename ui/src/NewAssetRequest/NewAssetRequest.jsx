@@ -1,3 +1,4 @@
+// import PropTypes from "prop-types";
 import React, { Component } from "react";
 import "./NewAssetRequest.scss";
 import { contains } from "../main.js";
@@ -141,9 +142,11 @@ class NewAssetRequest extends Component {
     const axios = require('axios');
     axios.post('http://localhost:5000/recommendation', postData)
 
-      // 4. response.data.volunteer_list
+      // 4.
+      //  response.data.recommendation_list is the list of assets with volunteer recommendations
+      //  response.data.volunteer_list is a list of all volunteers and all their stored data
       // 5.
-      .then(response => this.props.onDisplayRequest(response.data.volunteer_list))
+      .then(response => this.props.onDisplayRequest(response.data.recommendation_list))
       .catch(function (error) {
         // handle error
         console.log(error);
@@ -237,7 +240,7 @@ class NewAssetRequest extends Component {
     v = new Date(v);
 
     // Get & Check Value
-    if (!contains(v) || v == "Invalid Date") return;
+    if (!contains(v) || v === "Invalid Date") return;
 
     // Modify Value
     v.setSeconds(0);
