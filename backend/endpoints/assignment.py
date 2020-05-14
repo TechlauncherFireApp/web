@@ -4,16 +4,16 @@ from endpoints.helpers.input_validation import *
 
 # Define data input
 # {
-# volunteer_list : [{
-#   asset_id: Integer,
-#   asset_name: String,
-#   start_time: TimeBlock,
-#   end_time: TimeBlock,
-#   volunteers: [{
-#     volunteer_id: Integer,
-#     position_id: Integer,
+#   assignment_list : [{
+#     asset_id: Integer,
+#     asset_name: String,
+#     start_time: TimeBlock,
+#     end_time: TimeBlock,
+#     volunteers: [{
+#       volunteer_id: Integer,
+#       position_id: Integer,
+#     }]
 #   }]
-# }]
 # }
 
 # Validate an asset request input
