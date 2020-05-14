@@ -1,6 +1,7 @@
 from gurobi.AssetTypes import *
 from gurobi.Scheduler import *
 from gurobi.DataGenerator import *
+from gurobi.ManualAdditionCheck import *
 
 # File for testing guobi backend functions
 # Moved the test code here so that the api interface doesn't run it
@@ -33,3 +34,7 @@ def VolunteerTest(number):
 
 # VolunteerTest(200)
 # LoadVolunteers('volunteers')
+
+# Reco,Volly=Schedule(VolunteerGenerate(1000,"volunteers"),EveryWeekday)
+# ManualAdditionCheck(Reco)
+# print(EveryWeekday)

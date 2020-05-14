@@ -172,6 +172,7 @@ def Schedule(Volunteers, VehicleRequest):
             value = assignedToVehicle[(volunteer.id, request.RequestNo)].X
             if value > 0:
                 volunteerDict = {}
+                volunteerDict["volunteer_explvl"] = volunteer.Explvl
                 if volunteer.Explvl == "Advanced":
                     volunteerDict["volunteer_id"] = volunteer.id
                     volunteerDict["volunteer_name"] = volunteer.name
@@ -244,6 +245,7 @@ def Schedule(Volunteers, VehicleRequest):
         RecommendationList.append(vehicleDict)
 
     return RecommendationList, Volunteers
+
 
 
 #Test Code
