@@ -5,6 +5,7 @@ import Request from "./components/Request";
 
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";              // -> PACKAGE FROM : npm i --save react-datepicker
+import { Button } from "react-bootstrap";
 
 // https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
 class NewAssetRequest extends Component {
@@ -158,13 +159,103 @@ class NewAssetRequest extends Component {
     /* A dummy function to display the recommendation screen using dummy data, so we can test without running the backend */
     // 1.
     const requestList = this.state.requestList;
+    const v = [{
+      id: 1,
+      name: "Cyrus",
+      role: "Advanced",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    }, {
+      id: 2,
+      name: "Caleb",
+      role: "Basic",
+      qualifications: ["village firefighter training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    }, {
+      id: 3,
+      name: "Stavros",
+      role: "Advanced",
+      qualifications: ["advanced training", "heavy rigid license", "pump training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    }, {
+      id: 4,
+      name: "Aman",
+      role: "Crew Leader",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    }, {
+      id: 5,
+      name: "Tom",
+      role: "Driver",
+      qualifications: ["advanced training", "crew leader training", "heavy rigid license"],
+      contact_info: [{ detail: "0412 490 340" }],
+    },
+    {
+      id: 5123,
+      name: "Joe Blob",
+      role: "Driver",
+      qualifications: [
+        "heavy rigid license",
+        "pump training",
+        "crew leader training",
+        "advanced training",
+      ],
+      contact_info: [{ detail: "0412 490 340" }],
+    },
+    {
+      id: 649,
+      name: "Jane Doe",
+      role: "Advanced",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    },
+    {
+      id: 5342,
+      name: "person three",
+      role: "Advanced",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    },
+    {
+      id: 423,
+      name: "person four",
+      role: "Advanced",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    },
+    {
+      id: 123,
+      name: "person five",
+      role: "Advanced",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    },
+    {
+      id: 32,
+      name: "Mary Blank",
+      role: "Driver",
+      qualifications: [
+        "heavy rigid license",
+        "pump training",
+        "crew leader training",
+        "advanced training",
+      ],
+      contact_info: [{ detail: "0412 490 340" }],
+    },
+    {
+      id: 89,
+      name: "John Connor",
+      role: "Advanced",
+      qualifications: ["advanced training", "crew leader training"],
+      contact_info: [{ detail: "0412 490 340" }],
+    },];
     this.props.updateVehicleTimes(requestList);
     // 2.
     // 3.
     // 4.
     let list = this.state.volunteer_list;                   //should be the list returned by the backend, using dummy list for now
     // 5.
-    this.props.onDisplayRequest(list);
+    this.props.onDisplayRequest(list, v);
   };
 
 
@@ -301,12 +392,12 @@ class NewAssetRequest extends Component {
             ))}
           </output>
           <hr></hr>
-          <button
-            className="type-1"
+          <Button
+            className="btn-med"
             onClick={() => this.processAssetRequest()}
           >
             Submit Request
-          </button>
+          </Button>
           {/* TO TOM - can remove this button once you link up the back end*/}
           <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button>
         </container>

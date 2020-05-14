@@ -93,8 +93,9 @@ class Volunteer extends Component {
             </Button>
           </td>
           <td width="10%">
-            <div>
+            <div >
               <input
+                className="confirm"
                 type="checkbox"
                 id="availability"
                 onClick={this.handleToggleColour}

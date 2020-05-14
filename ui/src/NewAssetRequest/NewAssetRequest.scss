@@ -54,6 +54,7 @@ h1 {
             } select {
                 width: 200px;
                 z-index: 0;
+                cursor:pointer;
 
                 &::before, &::after {
                     content: "";
@@ -72,7 +73,8 @@ h1 {
                     right: 10px;
                     transform: rotate(-45deg);
                 }
-            }
+
+            } 
         } insert {
             display: inline-block;
             height: 35px;
@@ -80,6 +82,7 @@ h1 {
             background-color: $skyblue-1;
             position: relative;
             margin: 0;
+            cursor:pointer;
 
             &::before, &::after {
                 content: "";
