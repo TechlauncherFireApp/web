@@ -152,25 +152,21 @@ def VolunteerGenerate(volunteerNo, folder_path):
         Name=firstNames[random.randint(0,len(firstNames)-1)]+" "+lastNames[random.randint(0,len(lastNames)-1)]
         #50% are basic
         if(booleangenerator(50)):
-            exp=FireFighter.basic
             years=random.randint(0,2)
 
         #30% are just advanced
         elif(booleangenerator(60)):
-            exp=FireFighter.advanced
             years = random.randint(3, 10)
 
             #corresponds to the advanced firefighting qualifications
             QualDict[QualificationList[5]]=True
         #14% are drivers
         elif(booleangenerator(70)):
-            exp=FireFighter.driver
             years = random.randint(7, 20)
             for j in range(len(QualificationList)):
                 QualDict[QualificationList[j]]=True
         #6% are crewleaders
         else:
-            exp=FireFighter.crewleader
             years = random.randint(4, 15)
             for j in range(len(QualificationList)):
                 #Corresponds to the Advanced firefighter qualification and the Crew Leader course
@@ -181,6 +177,7 @@ def VolunteerGenerate(volunteerNo, folder_path):
             if (QualDict[k] == True):
                VolunteerQualificationList.append(k)
 
+        exp=QualificationtoRoleqaulification(years,QualDict)
         #preferred hours between 6 and 14
         prefnum=random.randint(6, 14)
         #Generates an Availability
@@ -197,7 +194,7 @@ def VolunteerGenerate(volunteerNo, folder_path):
 
 
 def VolunteerTest(number):
-    Volunteers=volunteerGenerate(number,"Volunteers")
+    Volunteers=VolunteerGenerate(number,"Volunteers")
     for i in Volunteers:
             print("ID: " + str(i.id))
             print("Name: "+ i.name)
