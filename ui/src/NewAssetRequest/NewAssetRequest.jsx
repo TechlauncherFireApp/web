@@ -345,7 +345,8 @@ class NewAssetRequest extends Component {
   render() {
     return (
       <React.Fragment>
-        <h4 className="mt-2">New Asset Request</h4>
+        {/* <h4 className="mt-2">New Asset Request</h4> */}
+        <h1>New Asset Request</h1>
         <hr/>
         <div className="entry">
           <div className="con">
@@ -390,14 +391,15 @@ class NewAssetRequest extends Component {
           ))}
         </div>
         <hr/>
+        {/* className="btn-med" */}
         <Button
-          className="btn-med"
+          className="type-1"
           onClick={() => this.processAssetRequest()}
         >
           Submit Request
         </Button>
         {/* TO TOM - can remove this button once you link up the back end*/}
-        <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button>
+        {/* <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button> */}
       </React.Fragment>
     );
   }

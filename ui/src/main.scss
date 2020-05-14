@@ -134,40 +134,30 @@ $imported-url-once-files: ();
 
 /* -------------- Main Variables ------------- */
 
-$blue-1: rgb(20, 55, 125);
-$blue-2: rgb(45, 45, 115);
-
 $black-1: rgb(35, 35, 35);
 $black-2: rgb(15, 15, 15);
 
-$brown-1: rgb(45, 10, 10);
+$red-1: rgb(205, 30, 30);
+$red-2: rgb(160, 35, 35);
+$red-3: rgb(115, 5, 0);
 
-$red-1: rgb(180, 30, 25);
-$red-2: rgb(200, 30, 30);
-
-$silver-1: rgb(200, 200, 200);
-$silver-2: rgb(190, 190, 190);
-$silver-3: rgb(175, 175, 175);
-
-$skyblue-1: rgb(185, 215, 250);
-$skyblue-2: rgb(95, 170, 220);
-$skyblue-3: rgb(55, 165, 235);
+$silver-1: rgb(165, 165, 165);
+$silver-2: rgb(105, 105, 105);
 
 /* -------------- Custom Button ------------- */
 
 button.type-1 {
     padding: 15px 25px;
     color: white;
-    font-size: 18px;
-    background-color: $blue-2;
+    font-size: 20px;
+    background-color: $red-1;
     border: none;
     appearance: none;
     transition: all 0.5s;
 
-    &:hover {
-        transform: scale(1.05);
-        color: $blue-2;
+    &:hover, &:focus {
+        color: $red-3;
         background-color: white;
-        border: 1px solid $blue-2;
+        border: 1px solid $red-1;
     }
 }
