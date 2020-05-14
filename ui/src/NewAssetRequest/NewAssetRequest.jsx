@@ -346,61 +346,58 @@ class NewAssetRequest extends Component {
     return (
       <React.Fragment>
         <h4 className="mt-2">New Asset Request</h4>
-        <hr />
-        <container>
-          <entry>
-            <div className="con">
-              <label>Asset Type</label>
-              <select ref={this.insert_assetType}>
-                <option value="" disabled hidden>Select asset type</option>
-                <option selected>Heavy Tanker</option>
-                <option>Light Unit</option>
-              </select>
-            </div>
-            <div className="con">
-              <label>Start Time Date</label>
-              <DatePicker
-                selected={this.state.startDateTime}
-                onChange={(i) => { this.setDateTime(i, "start"); }}
-                showTimeSelect
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="d MMMM yyyy h:mm aa" />
-            </div>
-            <div className="con">
-              <label>End Time Date</label>
-              <DatePicker
-                selected={this.state.endDateTime}
-                onChange={(i) => { this.setDateTime(i, "end"); }}
-                showTimeSelect
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="d MMMM yyyy h:mm aa" />
-            </div>
-            <insert onClick={this.insertAsset}></insert>
-          </entry>
-          <hr></hr>
-          <output>
-            {this.state.requestList.map((t) => (
-              <Request
-                id={t.id}
-                assetType={t.assetType}
-                startDateTime={t.startDateTime}
-                endDateTime={t.endDateTime}
-                removeAsset={this.removeAsset}
-              />
-            ))}
-          </output>
-          <hr></hr>
-          <Button
-            className="btn-med"
-            onClick={() => this.processAssetRequest()}
-          >
-            Submit Request
-          </Button>
-          {/* TO TOM - can remove this button once you link up the back end*/}
-          <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button>
-        </container>
+        <hr/>
+        <div className="entry">
+          <div className="con">
+            <label>Asset Type</label>
+            <select ref={this.insert_assetType}>
+              <option value="" disabled hidden>Select asset type</option>
+              <option selected>Heavy Tanker</option>
+              <option>Light Unit</option>
+            </select>
+          </div>
+          <div className="con">
+            <label>Start Time Date</label>
+            <DatePicker
+              selected={this.state.startDateTime}
+              onChange={(i) => { this.setDateTime(i, "start"); }}
+              showTimeSelect
+              timeIntervals={30}
+              timeCaption="Time"
+              dateFormat="d MMMM yyyy h:mm aa" />
+          </div>
+          <div className="con">
+            <label>End Time Date</label>
+            <DatePicker
+              selected={this.state.endDateTime}
+              onChange={(i) => { this.setDateTime(i, "end"); }}
+              showTimeSelect
+              timeIntervals={30}
+              timeCaption="Time"
+              dateFormat="d MMMM yyyy h:mm aa" />
+          </div>
+          <insert onClick={this.insertAsset}></insert>
+        </div>
+        <hr/>
+        <div className="output">
+          {this.state.requestList.map((t) => (
+            <Request
+              id={t.id}
+              assetType={t.assetType}
+              startDateTime={t.startDateTime}
+              endDateTime={t.endDateTime}
+              removeAsset={this.removeAsset} />
+          ))}
+        </div>
+        <hr/>
+        <Button
+          className="btn-med"
+          onClick={() => this.processAssetRequest()}
+        >
+          Submit Request
+        </Button>
+        {/* TO TOM - can remove this button once you link up the back end*/}
+        <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button>
       </React.Fragment>
     );
   }
