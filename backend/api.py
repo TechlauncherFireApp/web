@@ -6,7 +6,7 @@ from flask_restful import Api, Resource
 from endpoints.hello_world import HelloWorld
 from endpoints.recommendation import Recommendation
 # Gurobi
-from gurobi.DataGenerator import LoadVolunteers, SetVolunteerNumber
+from gurobi.DataGenerator import LoadVolunteers, LoadVolunteer, SetVolunteerNumber
 
 app = Flask(__name__)
 cors = CORS(app)
