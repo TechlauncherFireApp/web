@@ -76,8 +76,10 @@ volunteer_list_field = {
     'name': fields.String,
     'Explvl': fields.String,
     'prefHours': fields.Integer,
-    'phonenumber':fields.Integer,
-    'Availability':fields.Nested(availability_field()),
+    'phonenumber': fields.Integer,
+    'Qualifications': fields.List(fields.String),
+    'YearsOfExperience': fields.Integer,
+    'Availability': fields.Nested(availability_field()),
 }
 
 resource_fields = {
@@ -126,7 +128,8 @@ class Recommendation(Resource):
         try:
             recommendation_list, volunteer_list_out = Schedule(self.volunteer_list, asset_requests)
             print("succeeded to optimise")
-            # print(str(volunteer_list_out[0].qualifications))
+            print(str(volunteer_list_out[0].Qualifications))
+            print(str(volunteer_list_out[0].YearsOfExperience))
 
             return {
                 "recommendation_list" : recommendation_list,
