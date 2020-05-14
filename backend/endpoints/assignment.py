@@ -71,12 +71,8 @@ class Assignment(Resource):
         #     return
         print(args)
 
-        # Pass to backend function that
-        # Takes an asset request (or a list), and the volunteers being assigned to asset request
-        # And decided whether the volunteers can be assigned
-        # Is the Schedule function appropriate here?
-
         for asset_request in args["assignment_list"]:
+            # Turn the dictionary into a Request object
             asset_id = asset_request["asset_id"]
             asset_type = NameToAsset(asset_request["asset_name"])
             start_time = asset_request["start_time"]
@@ -85,17 +81,15 @@ class Assignment(Resource):
 
             assigned_volunteers = []
             volunteers = asset_request["volunteers"]
+            # Load the requested volunteers
             for volunteer in volunteers:
                 volunteer_id = volunteer["volunteer_id"]
                 loaded_volunteer = LoadVolunteer('volunteers',volunteer_id)
                 loaded_volunteer.role = volunteer["role"]
                 assigned_volunteers.append(loaded_volunteer)
-            # try:
-                # recommendation_list, volunteer_list_out = Schedule(assigned_volunteers, [asset_request_test])
-            success, message = ManualAdditionCheck(asset_request_test, assigned_volunteers)
-            return { "success" : True, "errors" : errors }
-            # except:
-            #     errors.append("Model is infeasible")
 
+            # Is assignment valid
+            success, message = ManualAdditionCheck(asset_request_test, assigned_volunteers)
+            return { "success" : success, "errors" : [message] }
 
         return { "success" : False, "errors" : errors }

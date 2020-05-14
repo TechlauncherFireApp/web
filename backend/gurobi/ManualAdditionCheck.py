@@ -19,14 +19,12 @@ def ManualAdditionCheck(asset_request, assigned_volunteers):
     DriverNum=0
     CrewLeaderNum=0
 
-    print("starting")
-
     for Vol in assigned_volunteers:
-
 
         #adds one to the total
         TotalNum+=1
         if (Vol.Explvl == FireFighter.basic.value):
+            print(Vol.Explvl)
             #if Volunteer assigned to a job they're not qualified for
             if(Vol.role!="Crew Member"):
                 print(Vol.name+ " id "+str(Vol.id)+" not qualified for "+Vol.role)
