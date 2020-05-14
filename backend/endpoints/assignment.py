@@ -1,5 +1,11 @@
+# Flask
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
+# Gurobi
+from gurobi.DataGenerator import LoadVolunteer
+from gurobi.Scheduler import Schedule
+from gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
+# Helpers
 from endpoints.helpers.input_validation import *
 
 # Define data input
@@ -34,7 +40,7 @@ def input_assignment_req(value, name):
         # Validate each volunteer
         for num, volunteer in enumerate(value['volunteers']):
             volunteer = input_key_natural(volunteer, 'volunteer_id')
-            volunteer = input_key_natural(volunteer, 'position_id')
+            # volunteer = input_key_natural(volunteer, 'position_id')
             value['volunteers'][num] = volunteer
     return value
 
@@ -56,8 +62,42 @@ class Assignment(Resource):
 
     @marshal_with(resource_fields)
     def post(self):
+        errors = []
         args = parser.parse_args()
         # if args["asset_list"] is None:
         #     return
         print(args)
-        return { "success" : False }
+
+        # Pass to backend function that
+        # Takes an asset request (or a list), and the volunteers being assigned to asset request
+        # And decided whether the volunteers can be assigned
+        # Is the Schedule function appropriate here?
+
+        for asset_request in args["assignment_list"]:
+            asset_id = asset_request["asset_id"]
+            asset_name = asset_request["asset_name"]
+            start_time = asset_request["start_time"]
+            end_time = asset_request["end_time"]
+            # Select the asset
+            # This could probably be done better
+            if asset_name == "Heavy Tanker":
+                asset_type = HeavyTanker
+            elif asset_name == "Medium Unit":
+                asset_type = MediumTanker
+            elif asset_name == "Light Unit":
+                asset_type = LightUnit
+            asset_request_test = [Request(asset_id, asset_type, start_time, end_time)]
+
+            assigned_volunteers = []
+            volunteers = asset_request["volunteers"]
+            for volunteer in volunteers:
+                volunteer_id = volunteer["volunteer_id"]
+                assigned_volunteers.append(LoadVolunteer('volunteers',volunteer_id))
+            try:
+                recommendation_list, volunteer_list_out = Schedule(assigned_volunteers, asset_request_test)
+                return { "success" : True, "errors" : errors }
+            except:
+                errors.append("Model is infeasible")
+
+
+        return { "success" : False, "errors" : errors }

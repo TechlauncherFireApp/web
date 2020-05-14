@@ -1,9 +1,12 @@
+# Flask
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
+# Gurobi
 from gurobi.DataGenerator import NumberGenerator, LoadVolunteers, shiftpopulator
 from gurobi.Names import firstNames, lastNames
 from gurobi.Scheduler import Schedule
 from gurobi.AssetTypes import Request, LightUnit, MediumTanker, HeavyTanker
+# Helpers
 from endpoints.helpers.input_validation import *
 
 # Define data input
@@ -117,6 +120,7 @@ class Recommendation(Resource):
             start_time = asset_request["start_time"]
             end_time = asset_request["end_time"]
             # Select the asset
+            # This could probably be done better
             if asset_name == "Heavy Tanker":
                 asset_type = HeavyTanker
             elif asset_name == "Medium Unit":
@@ -128,8 +132,6 @@ class Recommendation(Resource):
         try:
             recommendation_list, volunteer_list_out = Schedule(self.volunteer_list, asset_requests)
             print("succeeded to optimise")
-            print(str(volunteer_list_out[0].Qualifications))
-            print(str(volunteer_list_out[0].YearsOfExperience))
 
             return {
                 "recommendation_list" : recommendation_list,
