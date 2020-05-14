@@ -2,10 +2,10 @@ import random
 import json
 import os, shutil
 
-from backend.gurobi.AssetTypes import *
+from gurobi.AssetTypes import *
 
 # returns a list populated with the the hours in a week to be scheduled
-from backend.gurobi.Names import *
+from gurobi.Names import *
 
 
 def shiftpopulator():
@@ -237,26 +237,43 @@ def VolunteerJson(Volunteers, folder_path):
             json.dump(i.__dict__, fp)
         j += 1
 
-# For each saved volunteer json file, compile their details into a Volunteer object, return a list of all these Volunteer objects
-def LoadVolunteers(folder_path):
-    list_volunteers = []
-    # Get all files in path
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
-        # Load file, Convert to Volunteer, and append to list
+# Load a single volunteer by file name
+def LoadVolunteerFile(folder_path, file_name):
+    try:
+        file_path = os.path.join(folder_path, file_name)
         with open(file_path, 'r') as f:
             contents = json.load(f)
+            # compile their details into a Volunteer object
             file_volunteer = Volunteer(
                 contents['id'],
                 contents['name'],
                 contents['Explvl'],
                 contents['prefHours'],
                 contents['phonenumber'],
-                contents['Availability']
+                contents['Availability'],
+                contents['Qualifications'],
+                contents['YearsOfExperience'],
             )
-            list_volunteers.append(file_volunteer)
+            return file_volunteer
+    except:
+        print("Could not open file: {}".format(str(folder_path) + str(file_name)))
+
+# Load every volunteer. Return a list of all these Volunteer objects
+def LoadVolunteers(folder_path):
+    list_volunteers = []
+    # Get all files in path
+    for file_name in os.listdir(folder_path):
+        list_volunteers.append(LoadVolunteerFile(folder_path, file_name))
     return list_volunteers
 
+# Load a single volunteer by id
+def LoadVolunteer(folder_path, id):
+    file_name = 'volunteer'+str(id)+'.json'
+    return LoadVolunteerFile(folder_path, file_name)
+    
+
+# Ensure the correct number of volunteers have been generated
+# If regenerate is True, force generate new volunteers
 def SetVolunteerNumber(folder_path, number, regenerate):
     if regenerate:
         VolunteerGenerate(number, folder_path)
