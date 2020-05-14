@@ -48,7 +48,7 @@ position_field = {
 
 volunteer_field = {
     'volunteer_id': fields.Integer,
-    'position_id': fields.Integer,
+    'position_id': fields.Integer(attribute='position'),
     'volunteer_name': fields.String,
     'role': fields.String, # driver | advanced | basic
     'qualifications': fields.List(fields.String),
@@ -77,12 +77,16 @@ def availability_field():
 volunteer_list_field = {
     'id': fields.Integer,
     'name': fields.String,
-    'Explvl': fields.String,
-    'prefHours': fields.Integer,
-    'phonenumber': fields.Integer,
-    'Qualifications': fields.List(fields.String),
-    'YearsOfExperience': fields.Integer,
-    'Availability': fields.Nested(availability_field()),
+    'role': fields.String(attribute='Explvl'),
+    # 'prefHours': fields.Integer,
+    # 'phonenumber': fields.Integer,
+    'qualifications': fields.List(fields.String, attribute='Qualifications'),
+    # 'YearsOfExperience': fields.Integer,
+    'contact_info': fields.List(fields.Nested({
+        'type': fields.String(default='phone'), # email | phone
+        'detail': fields.String, # email_add | phone_no
+    })),
+    # 'Availability': fields.Nested(availability_field()),
 }
 
 resource_fields = {
@@ -132,6 +136,14 @@ class Recommendation(Resource):
         try:
             recommendation_list, volunteer_list_out = Schedule(self.volunteer_list, asset_requests)
             print("succeeded to optimise")
+
+
+            # Fix the contact details output
+            for volunteer in volunteer_list_out:
+                volunteer.contact_info = {
+                    "type":"phone",
+                    "detail": volunteer.phonenumber,
+                }
 
             return {
                 "recommendation_list" : recommendation_list,

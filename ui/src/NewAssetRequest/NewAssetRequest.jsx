@@ -6,102 +6,18 @@ import Request from "./components/Request";
 
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";              // -> PACKAGE FROM : npm i --save react-datepicker
+import { Button } from "react-bootstrap";
 
 // https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
 class NewAssetRequest extends Component {
   state = {
     startDateTime: null,
     endDateTime: null,
-    requestList: [
-      { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:00"), endDateTime: new Date("2020-12-01T14:30") },
-      { id: 2, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:30"), endDateTime: new Date("2020-12-01T14:00") }
-    ],
-    // Dummy list used to test recommendation UI without running the backend 
-    volunteer_list: [
-      {
-        asset_id: 1,
-        asset_class: "Heavy Tanker",
-        volunteers: [
-          {
-            volunteer_id: 5123,
-            position_id: 1,
-            volunteer_name: "Joe Blob",
-            role: "Driver",
-            qualifications: [
-              "heavy rigid license",
-              "pump training",
-              "crew leader training",
-              "advanced training",
-            ],
-            contact_info: [{ detail: "0412 490 340" }],
-          },
-          {
-            volunteer_id: 649,
-            position_id: 2,
-            volunteer_name: "Jane Doe",
-            role: "Advanced",
-            qualifications: ["advanced training", "crew leader training"],
-            contact_info: [{ detail: "0412 490 340" }],
-          },
-          {
-            volunteer_id: 5342,
-            position_id: 3,
-            volunteer_name: "person three",
-            role: "Advanced",
-            qualifications: ["advanced training", "crew leader training"],
-            contact_info: [{ detail: "0412 490 340" }],
-          },
-          {
-            volunteer_id: 423,
-            position_id: 4,
-            volunteer_name: "person four",
-            role: "Advanced",
-            qualifications: ["advanced training", "crew leader training"],
-            contact_info: [{ detail: "0412 490 340" }],
-          },
-          {
-            volunteer_id: 123,
-            position_id: 5,
-            volunteer_name: "person five",
-            role: "Advanced",
-            qualifications: ["advanced training", "crew leader training"],
-            contact_info: [{ detail: "0412 490 340" }],
-          },
-        ],
-      },
-      {
-        asset_id: 2,
-        asset_class: "Heavy Tanker",
-        volunteers: [
-          {
-            volunteer_id: 32,
-            position_id: 1,
-            volunteer_name: "Mary Blank",
-            role: "Driver",
-            qualifications: [
-              "heavy rigid license",
-              "pump training",
-              "crew leader training",
-              "advanced training",
-            ],
-            contact_info: [{ detail: "0412 490 340" }],
-          },
-          {
-            volunteer_id: 89,
-            position_id: 2,
-            volunteer_name: "John Connor",
-            role: "Advanced",
-            qualifications: ["advanced training", "crew leader training"],
-            contact_info: [{ detail: "0412 490 340" }],
-          },
-        ],
-      },
-    ],
+    requestList: [],
   };
 
   constructor(props) {
     super(props);
-    // this.dummyProcessAssetRequest();
     this.insert_assetType = React.createRef();
   }
 
@@ -136,7 +52,7 @@ class NewAssetRequest extends Component {
       return false;
     }
 
-    // 3. TODO
+    // 3.
     postData = { "asset_list": postData }
 
     const axios = require('axios');
@@ -146,27 +62,13 @@ class NewAssetRequest extends Component {
       //  response.data.recommendation_list is the list of assets with volunteer recommendations
       //  response.data.volunteer_list is a list of all volunteers and all their stored data
       // 5.
-      .then(response => this.props.onDisplayRequest(response.data.recommendation_list))
+
+      .then(response => this.props.onDisplayRequest(response.data.recommendation_list, response.data.volunteer_list))
       .catch(function (error) {
         // handle error
         console.log(error);
       })
   };
-
-  dummyProcessAssetRequest = () => {
-    console.clear();
-    /* A dummy function to display the recommendation screen using dummy data, so we can test without running the backend */
-    // 1.
-    const requestList = this.state.requestList;
-    this.props.updateVehicleTimes(requestList);
-    // 2.
-    // 3.
-    // 4.
-    let list = this.state.volunteer_list;                   //should be the list returned by the backend, using dummy list for now
-    // 5.
-    this.props.onDisplayRequest(list);
-  };
-
 
   toTimeblock = (d) => {
     if (!contains(d) || d === "Invalid Date") return 0;
@@ -253,64 +155,59 @@ class NewAssetRequest extends Component {
 
   render() {
     return (
-      <main-body>
+      <React.Fragment>
         <h4 className="mt-2">New Asset Request</h4>
-        <hr />
-        <container>
-          <entry>
-            <div className="con">
-              <label>Asset Type</label>
-              <select ref={this.insert_assetType}>
-                <option value="" disabled hidden>Select asset type</option>
-                <option selected>Heavy Tanker</option>
-                <option>Light Unit</option>
-              </select>
-            </div>
-            <div className="con">
-              <label>Start Time Date</label>
-              <DatePicker
-                selected={this.state.startDateTime}
-                onChange={(i) => { this.setDateTime(i, "start"); }}
-                showTimeSelect
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="d MMMM yyyy h:mm aa" />
-            </div>
-            <div className="con">
-              <label>End Time Date</label>
-              <DatePicker
-                selected={this.state.endDateTime}
-                onChange={(i) => { this.setDateTime(i, "end"); }}
-                showTimeSelect
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="d MMMM yyyy h:mm aa" />
-            </div>
-            <insert onClick={this.insertAsset}></insert>
-          </entry>
-          <hr></hr>
-          <output>
-            {this.state.requestList.map((t) => (
-              <Request
-                id={t.id}
-                assetType={t.assetType}
-                startDateTime={t.startDateTime}
-                endDateTime={t.endDateTime}
-                removeAsset={this.removeAsset}
-              />
-            ))}
-          </output>
-          <hr></hr>
-          <button
-            className="type-1"
-            onClick={() => this.processAssetRequest()}
-          >
-            Submit Request
-          </button>
-          {/* BELOW IS A TESTING BUTTON */}
-          <button onClick={() => this.dummyProcessAssetRequest()}>Go to recommendation screen with dummy data</button>
-        </container>
-      </main-body>
+        <hr/>
+        <div className="entry">
+          <div className="con">
+            <label>Asset Type</label>
+            <select ref={this.insert_assetType}>
+              <option value="" disabled hidden>Select asset type</option>
+              <option selected>Heavy Tanker</option>
+              <option>Light Unit</option>
+            </select>
+          </div>
+          <div className="con">
+            <label>Start Time Date</label>
+            <DatePicker
+              selected={this.state.startDateTime}
+              onChange={(i) => { this.setDateTime(i, "start"); }}
+              showTimeSelect
+              timeIntervals={30}
+              timeCaption="Time"
+              dateFormat="d MMMM yyyy h:mm aa" />
+          </div>
+          <div className="con">
+            <label>End Time Date</label>
+            <DatePicker
+              selected={this.state.endDateTime}
+              onChange={(i) => { this.setDateTime(i, "end"); }}
+              showTimeSelect
+              timeIntervals={30}
+              timeCaption="Time"
+              dateFormat="d MMMM yyyy h:mm aa" />
+          </div>
+          <insert onClick={this.insertAsset}></insert>
+        </div>
+        <hr/>
+        <div className="output">
+          {this.state.requestList.map((t) => (
+            <Request
+              id={t.id}
+              assetType={t.assetType}
+              startDateTime={t.startDateTime}
+              endDateTime={t.endDateTime}
+              removeAsset={this.removeAsset} />
+          ))}
+        </div>
+        <hr/>
+        <Button
+          className="btn-med"
+          onClick={() => this.processAssetRequest()}
+        >
+          Submit Request
+        </Button>
+      </React.Fragment>
     );
   }
 }

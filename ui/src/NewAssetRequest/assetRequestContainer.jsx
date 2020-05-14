@@ -8,96 +8,7 @@ class AssetRequestContainer extends Component {
     assetsSubmitted: false,
     vehicleTimes: [],
     vehicleList: [],
-    volunteerList: [{
-      id: 1,
-      name: "Cyrus",
-      role: "Advanced",
-      qualifications: ["advanced training", "crew leader training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    }, {
-      id: 2,
-      name: "Caleb",
-      role: "Basic",
-      qualifications: ["village firefighter training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    }, {
-      id: 3,
-      name: "Stavros",
-      role: "Advanced",
-      qualifications: ["advanced training", "heavy rigid license", "pump training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    }, {
-      id: 4,
-      name: "Aman",
-      role: "Crew Leader",
-      qualifications: ["advanced training", "crew leader training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    }, {
-      id: 5,
-      name: "Tom",
-      role: "Driver",
-      qualifications: ["advanced training", "crew leader training", "heavy rigid license"],
-      contact_info: [{ detail: "0412 490 340" }],
-    },
-    {
-      id: 5123,
-      name: "Joe Blob",
-      role: "Driver",
-      qualifications: [
-        "heavy rigid license",
-        "pump training",
-        "crew leader training",
-        "advanced training",
-      ],
-      contact_info: [{ detail: "0412 490 340" }],
-    },
-    {
-      id: 649,
-      name: "Jane Doe",
-      role: "Advanced",
-      qualifications: ["advanced training", "crew leader training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    },
-    {
-      id: 5342,
-      name: "person three",
-      role: "Advanced",
-      qualifications: ["advanced training", "crew leader training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    },
-    {
-      id: 423,
-      name: "person four",
-      role: "Advanced",
-      qualifications: ["advanced training", "crew leader training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    },
-    {
-      id: 123,
-      name: "person five",
-      role: "Advanced",
-      qualifications: ["advanced training", "crew leader training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    },
-    {
-      id: 32,
-      name: "Mary Blank",
-      role: "Driver",
-      qualifications: [
-        "heavy rigid license",
-        "pump training",
-        "crew leader training",
-        "advanced training",
-      ],
-      contact_info: [{ detail: "0412 490 340" }],
-    },
-    {
-      id: 89,
-      name: "John Connor",
-      role: "Advanced",
-      qualifications: ["advanced training", "crew leader training"],
-      contact_info: [{ detail: "0412 490 340" }],
-    },],
+    volunteerList: [],
     assignedVolunteers: new Map(),
   };
 
@@ -114,10 +25,10 @@ class AssetRequestContainer extends Component {
     this.setState({ vehicleList });
   };
 
-  handleDisplayRequest = (outputVehicleList) => {
+  handleDisplayRequest = (outputVehicleList, outputVolunteerList) => {
     this.identifyAssignedVolunteers(outputVehicleList);
     const assetsSubmitted = !this.state.assetsSubmitted;
-    this.setState({ assetsSubmitted, vehicleList: outputVehicleList });
+    this.setState({ assetsSubmitted, vehicleList: outputVehicleList, volunteerList: outputVolunteerList });
 
   };
 
@@ -147,7 +58,7 @@ class AssetRequestContainer extends Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         {this.state.assetsSubmitted ? (
           <AssetRecommendation
             onSaveRequest={this.handleSaveRequest}
@@ -163,7 +74,7 @@ class AssetRequestContainer extends Component {
               updateVehicleTimes={this.updateVehicleTimes}
             />
           )}
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -1,110 +1,94 @@
 @import "../main.scss";
 
-container, entry, insert, label, output {
-    display: block;
+div.main-body {
+    padding: 0 15px;
 }
 
-h1 {
-    width: 300px;
-    color: $blue-2;
-    white-space: nowrap;
-    font-family: Segoe UI;
-    text-align: center;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 30px;
-    border-bottom: 2px solid $blue-2;
-    position: relative;
-    margin: 15px auto 5px auto;
-    padding-bottom: 10px;
-} hr {
+hr {
     background-color: $blue-2;
-} container {
-    height: auto;
-    width: 90%;
-    padding-top: 15px;
-    margin: 0 auto;
+} div.entry {
+    width: 100%;
 
-    entry {
-        width: 100%;
+    div.con {
+        height: 75px;
+        width: auto;
+        font-size: 17px;
+        display: inline-block;
+        margin: 0 15px 5px 0;
+        // border: 1px solid black;
 
-        div.con {
-            height: 75px;
-            width: auto;
-            font-size: 17px;
-            display: inline-block;
-            margin: 0 15px 5px 0;
-            // border: 1px solid black;
-
-            label {
-                color: $skyblue-2;
-                margin: 0 0 5px 2px;
-                position: relative;
-            } input, select {
-                color: $skyblue-2;
-                font-size: 20px;
-                border: none;
-                border: 1px solid $skyblue-2;
-                border-radius: 0;
-                padding: 5px;
-                position: relative;
-                bottom: 0;
-            } input {
-                width: auto;
-            } select {
-                width: 200px;
-                z-index: 0;
-
-                &::before, &::after {
-                    content: "";
-                    display: block;
-                    height: 2px;
-                    width: 10px;
-                    background-color: $skyblue-2;
-                    position: absolute;
-                    top: calc(50% - 1px);
-                    transition: all 0.5s;
-                    z-index: 1;
-                } &::before {
-                    right: 16px;
-                    transform: rotate(45deg);
-                } &::after {
-                    right: 10px;
-                    transform: rotate(-45deg);
-                }
-            }
-        } insert {
-            display: inline-block;
-            height: 35px;
-            width: 35px;
-            background-color: $skyblue-1;
+        label {
+            display: block;
+            color: $skyblue-2;
+            margin: 0 0 5px 2px;
             position: relative;
-            margin: 0;
+        } input, select {
+            color: $skyblue-2;
+            font-size: 20px;
+            border: none;
+            border: 1px solid $skyblue-2;
+            border-radius: 0;
+            padding: 5px;
+            position: relative;
+            bottom: 0;
+        } input {
+            width: auto;
+        } select {
+            width: 200px;
+            z-index: 0;
+            cursor: pointer;
 
             &::before, &::after {
                 content: "";
                 display: block;
-                background-color: $skyblue-3;
-                border-radius: 50px;
+                height: 2px;
+                width: 10px;
+                background-color: $skyblue-2;
                 position: absolute;
+                top: calc(50% - 1px);
+                transition: all 0.5s;
+                z-index: 1;
             } &::before {
-                height: 10%;
-                width: 75%;
-                margin: 45% 0 0 12.5%;
+                right: 16px;
+                transform: rotate(45deg);
             } &::after {
-                height: 75%;
-                width: 10%;
-                margin: 12.5% 0 0 45%;
+                right: 10px;
+                transform: rotate(-45deg);
             }
+
+        } 
+    } insert {
+        display: inline-block;
+        height: 35px;
+        width: 35px;
+        background-color: $skyblue-1;
+        position: relative;
+        margin: 0;
+        cursor:pointer;
+
+        &::before, &::after {
+            content: "";
+            display: block;
+            background-color: $skyblue-3;
+            border-radius: 50px;
+            position: absolute;
+        } &::before {
+            height: 10%;
+            width: 75%;
+            margin: 45% 0 0 12.5%;
+        } &::after {
+            height: 75%;
+            width: 10%;
+            margin: 12.5% 0 0 45%;
         }
-    } output {
-        min-height: 250px;
-        color: black;
-    } hr {
-        background-color: $blue-1;
-        margin: 25px 0;
-    } button {
-        font-size: 15px;
-        padding: 10px;
     }
+} div.output {
+    min-height: 250px;
+    color: black;
+} hr {
+    background-color: $blue-1;
+    margin: 25px 0;
+} button {
+    font-size: 15px;
+    padding: 10px;
 }

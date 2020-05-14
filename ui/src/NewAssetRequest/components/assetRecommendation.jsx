@@ -31,6 +31,7 @@ class AssetRecommendation extends Component {
     return (
       <React.Fragment>
         <h4 className="mt-2">New Asset Request</h4>
+        <hr />
         {this.state.vehicleListComplete.map((v) => (
           <AssetCrew
             key={v.asset_id}

@@ -65,9 +65,9 @@ class EditScreenModal extends Component {
     const map = this.props.assignedVolunteers;
     const vol = this.state.selectedVolunteer;
     if (vol.id === this.props.volunteer.volunteer_id) {
-      alert("You can't change this volunteer to themselves")
+      alert("You can't change a volunteer to themselves")
     } else if (map.has(vol.id)) {
-      alert("That volunteer is already assigned to asset " + map.get(vol.id).asset_id + " position " + map.get(vol.id).position)
+      alert(vol.name + " is already assigned to asset " + map.get(vol.id).asset_id + " position " + map.get(vol.id).position)
     } else {
       this.props.onSave(this.state.selectedVolunteer)
     }
