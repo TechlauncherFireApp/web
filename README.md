@@ -6,6 +6,10 @@ A web app to assist with firefighting scheduling activities
 
 https://redmine.cecs.anu.edu.au/redmine/projects/bushfire-volunteer-management-application
 
+Fire-app is a Techlauncher project for the Client Accenture.
+
+Here is our project [landing page](https://docs.google.com/document/d/1VTIfrLQDojY8VdxfnAeQHJnm1f4dmMVVjPfmVvs3oQs/edit?usp=sharing).
+
 
 # Development Environment Setup
 
@@ -15,9 +19,9 @@ The backend cannot be hosted by a Docker container because Gurobi with an acadme
 
 Here are the two links for setting these environments up:
 
-[Install Docker and VScode](https://gitlab.cecs.anu.edu.au/u6377372/fire-app/wikis/Install-Docker)
+[Install Docker and VScode](https://gitlab.cecs.anu.edu.au/u6377372/fire-app/wikis/Install-Docker).
 
-[Install Gurobi and setup a Python virtual environment](https://gitlab.cecs.anu.edu.au/u6377372/fire-app/wikis/Install-Gurobi-and-Setup-Backend)
+[Install Gurobi and setup a Python virtual environment](https://gitlab.cecs.anu.edu.au/u6377372/fire-app/wikis/Install-Gurobi-and-Setup-Backend).
 
 # Running the App
 
