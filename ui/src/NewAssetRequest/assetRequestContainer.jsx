@@ -6,20 +6,47 @@ import AssetRecommendation from "./components/assetRecommendation";
 class AssetRequestContainer extends Component {
   state = {
     assetsSubmitted: false,
-    vehicle_list: [],
-    volunteer_list: [],
+    vehicleTimes: [],
+    vehicleList: [],
+    volunteerList: [],
+    assignedVolunteers: new Map(),
   };
 
-  updateVehicleList = (list) => {
-    const vehicle_list = list;
-    this.setState({ vehicle_list });
+  updateVehicleTimes = (list) => {
+    this.setState({ vehicleTimes: list });
   };
 
-  handleDisplayRequest = (outputVolunteerList) => {
+  updateVehicle = (newVehicle) => {
+    let vehicleList = this.state.vehicleList;
+    for (let i = 0; i < vehicleList.length; i++) {
+      if (vehicleList[i].asset_id === newVehicle.asset_id) vehicleList[i] = newVehicle;
+    }
+    this.identifyAssignedVolunteers(vehicleList);
+    this.setState({ vehicleList });
+  };
+
+  handleDisplayRequest = (outputVehicleList, outputVolunteerList) => {
+    this.identifyAssignedVolunteers(outputVehicleList);
     const assetsSubmitted = !this.state.assetsSubmitted;
-    const volunteer_list = outputVolunteerList;
-    this.setState({ assetsSubmitted, volunteer_list });
+    this.setState({ assetsSubmitted, vehicleList: outputVehicleList, volunteerList: outputVolunteerList });
+
   };
+
+  identifyAssignedVolunteers = (list) => {
+    //create a new map
+    let map = new Map();
+    // for each vehicle in the request
+    list.map((v) => {
+      // for each volunteer in the vehicle
+      v.volunteers.map((vol) => {
+        // create a map entry for them
+        map.set(vol.volunteer_id, { asset_id: v.asset_id, position: vol.position_id })
+      })
+    })
+    //set the state to the new map
+    this.setState({ assignedVolunteers: map });
+    console.log(map);
+  }
 
   handleSaveRequest = () => {
     /* Stub function for now, just takes you back to the asset request screen */
@@ -27,28 +54,27 @@ class AssetRequestContainer extends Component {
     this.setState({ assetsSubmitted });
   };
 
-  handleCrewUpdate = (assetId, newVolunteer) => {
-    console.log("handle update crew called", assetId, newVolunteer);
-    // stub for prototype 2
-  };
+
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         {this.state.assetsSubmitted ? (
           <AssetRecommendation
             onSaveRequest={this.handleSaveRequest}
-            volunteer_list={this.state.volunteer_list}
-            vehicle_list={this.state.vehicle_list}
-            onCrewUpdate={this.handleCrewUpdate}
+            vehicleList={this.state.vehicleList}
+            vehicleTimes={this.state.vehicleTimes}
+            updateVehicle={(vehicle) => this.updateVehicle(vehicle)}
+            volunteerList={this.state.volunteerList}
+            assignedVolunteers={this.state.assignedVolunteers}
           />
         ) : (
-          <NewAssetRequest
-            onDisplayRequest={this.handleDisplayRequest}
-            updateVehicleList={this.updateVehicleList}
-          />
-        )}
-      </div>
+            <NewAssetRequest
+              onDisplayRequest={this.handleDisplayRequest}
+              updateVehicleTimes={this.updateVehicleTimes}
+            />
+          )}
+      </React.Fragment>
     );
   }
 }

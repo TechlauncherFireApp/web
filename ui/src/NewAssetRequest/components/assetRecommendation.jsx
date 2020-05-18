@@ -4,31 +4,41 @@ import { Button } from "react-bootstrap";
 
 class AssetRecommendation extends Component {
   state = {
-    volunteer_list_complete: [],
+    vehicleListComplete: [],
   };
 
   constructor(props) {
     super(props);
-    const vehicle_list = props.vehicle_list;
-    let volunteer_list = props.volunteer_list;
-    for (let i = 0; i < vehicle_list.length; i++) {
-      volunteer_list[i].startDateTime = vehicle_list[i].startDateTime;
-      volunteer_list[i].endDateTime = vehicle_list[i].endDateTime;
-    }
-    this.state.volunteer_list_complete = volunteer_list;
+    const vehicleTimes = props.vehicleTimes;
+    let vehicleList = props.vehicleList;
+    let map = new Map()
+    for (let i = 0; i < vehicleTimes.length; i++) {
+      vehicleList[i].startDateTime = vehicleTimes[i].startDateTime;
+      vehicleList[i].endDateTime = vehicleTimes[i].endDateTime;
+      if (map.has(vehicleList[i].asset_class)) {
+        const old = map.get(vehicleList[i].asset_class)
+        map.set(vehicleList[i].asset_class, old + 1);
+      } else {
+        map.set(vehicleList[i].asset_class, 1)
 
-    console.log(this.state.volunteer_list_complete);
+      }
+      vehicleList[i].number = map.get(vehicleList[i].asset_class);
+    }
+    this.state.vehicleListComplete = vehicleList;
   }
 
   render() {
     return (
       <React.Fragment>
         <h4 className="mt-2">New Asset Request</h4>
-        {this.state.volunteer_list_complete.map((vl) => (
+        <hr />
+        {this.state.vehicleListComplete.map((v) => (
           <AssetCrew
-            key={vl.asset_id}
-            recommendationInfo={vl}
-            onUpdateCrew={this.onCrewUpdate}
+            key={v.asset_id}
+            vehicle={v}
+            updateVehicle={(v) => this.props.updateVehicle(v)}
+            volunteerList={this.props.volunteerList}
+            assignedVolunteers={this.props.assignedVolunteers}
           />
         ))}
         <Button onClick={this.props.onSaveRequest} className="btn-med">

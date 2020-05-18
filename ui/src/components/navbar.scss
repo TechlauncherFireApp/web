@@ -1,33 +1,29 @@
 @import "../main.scss";
 
 nav.navbar {
-  // max-width: 1080px;
-  background-color: $red-1;
+  background-color: $red-2;
 
-  a.navbar-brand,
-  div.navbar-nav a.nav-link {
-    white-space: nowrap;
-    font-family: Segoe UI;
-    font-style: normal;
-    font-weight: normal;
-    transition: all 0.5s;
-  }
-  a.navbar-brand {
-    color: rgb(255, 255, 255);
-    font-size: 20px;
+  div.navbar-collapse {
+    max-width: 1080px;
+    margin: 0 auto;
 
-    &:hover {
+    a.navbar-brand, div.navbar-nav a.nav-link {
+      white-space: nowrap;
+      font-family: Segoe UI;
+      font-style: normal;
+      font-weight: normal;
+      transition: all 0.5s;
+    } a.navbar-brand {
       color: rgb(255, 255, 255);
-      transform: scale(1.05);
-    }
-  }
-  div.navbar-nav a.nav-link {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 15px;
-
-    &:hover {
-      color: rgb(255, 255, 255);
-      background-color: $red-2;
+      font-size: 20px;
+    } div.navbar-nav a.nav-link {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 15px;
+  
+      &:hover {
+        color: rgb(255, 255, 255);
+        background-color: $red-3;
+      }
     }
   }
 }

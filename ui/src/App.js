@@ -11,8 +11,8 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 function App() {
   return (
     <BrowserRouter>
-      <div className="container">
-        <NavBar />
+      <NavBar />
+      <div className="main-body">
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/NewAssetRequest" component={AssetRequestContainer} />
@@ -22,5 +22,4 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;

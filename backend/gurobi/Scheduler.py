@@ -5,7 +5,7 @@ from gurobi.DataGenerator import *
 from gurobi.AssetTypes import *
 
 # Takes a list of volunteers, returns a tupleList formatted for the constraint model
-from gurobi.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
+#from gurobi.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
 
 
 def formatAvailability(Volunteers):
@@ -172,43 +172,30 @@ def Schedule(Volunteers, VehicleRequest):
             value = assignedToVehicle[(volunteer.id, request.RequestNo)].X
             if value > 0:
                 volunteerDict = {}
+                volunteerDict["qualifications"] = volunteer.Qualifications
+                volunteerDict["volunteer_explvl"] = volunteer.Explvl
                 if volunteer.Explvl == "Advanced":
                     volunteerDict["volunteer_id"] = volunteer.id
                     volunteerDict["volunteer_name"] = volunteer.name
                     volunteerDict["role"] = "Crew Member"
-                    qualifications = []
-                    qualifications.append("Advanced Training")
-                    volunteerDict["qualifications"] = qualifications
                     volunteerDict["contact_info"] = {"type": "phone", "detail": volunteer.phonenumber}
                     VolunteerListAdvanced.append(volunteerDict)
                 elif volunteer.Explvl == "Crew Leader":
                     volunteerDict["volunteer_id"] = volunteer.id
                     volunteerDict["volunteer_name"] = volunteer.name
                     volunteerDict["role"] = "Crew Member"
-                    qualifications = []
-                    qualifications.append("Advanced Training")
-                    qualifications.append("Driver")
-                    qualifications.append("Crew Leader")
-                    volunteerDict["qualifications"] = qualifications
                     volunteerDict["contact_info"] = {"type": "phone", "detail": volunteer.phonenumber}
                     VolunteerListCrewLeader.append(volunteerDict)
                 elif volunteer.Explvl == "Driver":
                     volunteerDict["volunteer_id"] = volunteer.id
                     volunteerDict["volunteer_name"] = volunteer.name
                     volunteerDict["role"] = "Crew Member"
-                    qualifications = []
-                    qualifications.append("Advanced Training")
-                    qualifications.append("Driver")
-                    volunteerDict["qualifications"] = qualifications
                     volunteerDict["contact_info"] = {"type": "phone", "detail": volunteer.phonenumber}
                     VolunteerListDriver.append(volunteerDict)
                 else:
                     volunteerDict["volunteer_id"] = volunteer.id
                     volunteerDict["volunteer_name"] = volunteer.name
                     volunteerDict["role"] = "Crew Member"
-                    qualifications = []
-                    qualifications.append("Basic Training")
-                    volunteerDict["qualifications"] = []
                     volunteerDict["contact_info"] = {"type": "phone", "detail": volunteer.phonenumber}
                     VolunteerListBasic.append(volunteerDict)
         position = 1
@@ -244,6 +231,8 @@ def Schedule(Volunteers, VehicleRequest):
         RecommendationList.append(vehicleDict)
 
     return RecommendationList, Volunteers
+
+
 
 #Test Code
 #v = VolunteerGenerate(200, 'volunteers')

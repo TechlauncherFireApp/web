@@ -1,3 +1,11 @@
-@import "../../main.scss";
+.view:hover {
+    cursor: pointer;
+}
 
-/*  stub for now */
+img {
+    opacity: 65%;
+}
+
+.confirm {
+    cursor:pointer;
+}
