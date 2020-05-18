@@ -75,12 +75,6 @@ def booleangenerator(Percent):
     else:
         return False
 
-#establishing the two types of Firefighters
-class FireFighter(Enum):
-    advanced = "Advanced"
-    basic = "Basic"
-    crewleader="Crew Leader"
-    driver="Driver"
 
 
 def AvailabilityGenerator():
