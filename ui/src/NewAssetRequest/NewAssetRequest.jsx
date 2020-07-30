@@ -7,6 +7,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";              // -> PACKAGE FROM : npm i --save react-datepicker
 import { Button } from "react-bootstrap";
 
+/*
+  User Story Map references (Ctrl + F the following reference numbers to find associated code)
+*/
+
 // https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
 class NewAssetRequest extends Component {
   state = {
@@ -160,6 +164,7 @@ class NewAssetRequest extends Component {
         <hr />
         <div className="entry">
           <div className="con">
+            {/* 1.2.1 I want to select the asset types required (two asset types) */}
             <label>Asset Type</label>
             <select ref={this.insert_assetType}>
               <option value="" disabled hidden>Select asset type</option>
@@ -167,6 +172,7 @@ class NewAssetRequest extends Component {
               <option>Light Unit</option>
             </select>
           </div>
+          {/* 1.2.2 I want to select the time frame each asset is required for */}
           <div className="con">
             <label>Start Time Date</label>
             <DatePicker
