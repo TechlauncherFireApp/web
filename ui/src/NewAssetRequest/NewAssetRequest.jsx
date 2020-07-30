@@ -152,16 +152,12 @@ class NewAssetRequest extends Component {
     else if (t === "end") this.setState({ endDateTime: v });
   };
 
-  testFun(i) {
-    console.log(i);
-  }
-
   render() {
     return (
       <React.Fragment>
         {/* <h4 className="mt-2">New Asset Request</h4> */}
         <h1>New Asset Request</h1>
-        <hr/>
+        <hr />
         <div className="entry">
           <div className="con">
             <label>Asset Type</label>
@@ -193,30 +189,30 @@ class NewAssetRequest extends Component {
           </div>
           <insert onClick={this.insertAsset}></insert>
         </div>
-        <hr/>
+        <hr />
         <div className="output">
           {this.state.requestList.map((t) => (
             <request-body id={t.id}>
-                <img className="close" src={require("../assets/x.png")} onClick={() => { this.removeAsset(t.id); }} />
-                <h2>{t.assetType}</h2>
-                <div className="cont-1">
-                    <div className="cont-2">
-                        <label>Start</label>
-                        <br/>
-                        <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                        <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
-                    </div>
-                    <div className="cont-2">
-                        <label>End</label>
-                        <br/>
-                        <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                        <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
-                    </div>
+              <img className="close" src={require("../assets/x.png")} onClick={() => { this.removeAsset(t.id); }} />
+              <h2>{t.assetType}</h2>
+              <div className="cont-1">
+                <div className="cont-2">
+                  <label>Start</label>
+                  <br />
+                  <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</div>
+                  <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</div>
                 </div>
+                <div className="cont-2">
+                  <label>End</label>
+                  <br />
+                  <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</div>
+                  <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</div>
+                </div>
+              </div>
             </request-body>
           ))}
         </div>
-        <hr/>
+        <hr />
         {/* className="btn-med" */}
         <Button
           className="type-1"
