@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import { Table } from "react-bootstrap";
 import Volunteer from "./volunteer";
 
+/* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
+ 1.3.5 - I want to be able to manually add, remove, and swap volunteers to assets. 
+ 1.2.3 - I want to be shown a list of recommended volunteers with their respective vehicle assignments, contact info, and qualifications */
+
 class AssetCrew extends Component {
   state = {
     showQualifications: false,
@@ -12,6 +16,7 @@ class AssetCrew extends Component {
     this.setState({ showQualifications });
   };
 
+  // handles display of date/time info
   parseDateTime = (date1, date2) => {
     let str = date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
     if (
@@ -30,6 +35,7 @@ class AssetCrew extends Component {
     return str.toLowerCase();
   };
 
+  // 1.3.5, if a volunteer is changed update the relevant fields and propogate the change up through parent components
   updateVolunteer = (newVolunteer) => {
     let volunteers = this.props.vehicle.volunteers;
     for (let i = 0; i < volunteers.length; i++) {
@@ -40,6 +46,7 @@ class AssetCrew extends Component {
     this.props.updateVehicle(vehicle);
   }
 
+  // 1.2.3
   render() {
     const { vehicle } = this.props;
 
@@ -65,7 +72,7 @@ class AssetCrew extends Component {
               vehicleType={vehicle.asset_class}
               volunteerList={this.props.volunteerList}
               assignedVolunteers={this.props.assignedVolunteers}
-              updateVolunteer={(details) => this.updateVolunteer(details)} />
+              updateVolunteer={(details) => this.updateVolunteer(details)} /> //1.3.5
           ))}
         </tbody>
       </Table>

@@ -2,11 +2,16 @@ import React, { Component } from "react";
 import AssetCrew from "./assetCrew";
 import { Button } from "react-bootstrap";
 
+/* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
+ 1.3.5 - I want to be able to manually add, remove, and swap volunteers to assets. 
+ 1.2.3 - I want to be shown a list of recommended volunteers with their respective vehicle assignments, contact info, and qualifications */
+
 class AssetRecommendation extends Component {
   state = {
     vehicleListComplete: [],
   };
 
+  // 1.2.3, merges the vehicle times and vehicle list to create one central list with all relevant info for display
   constructor(props) {
     super(props);
     const vehicleTimes = props.vehicleTimes;
@@ -27,6 +32,7 @@ class AssetRecommendation extends Component {
     this.state.vehicleListComplete = vehicleList;
   }
 
+  //1.2.3, handles display
   render() {
     return (
       <React.Fragment>
@@ -36,7 +42,7 @@ class AssetRecommendation extends Component {
           <AssetCrew
             key={v.asset_id}
             vehicle={v}
-            updateVehicle={(v) => this.props.updateVehicle(v)}
+            updateVehicle={(v) => this.props.updateVehicle(v)} //1.3.5
             volunteerList={this.props.volunteerList}
             assignedVolunteers={this.props.assignedVolunteers}
           />
