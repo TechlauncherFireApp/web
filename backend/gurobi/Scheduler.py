@@ -33,7 +33,6 @@ def Schedule(Volunteers, VehicleRequest):
     for volunteer in Volunteers:
         for request in VehicleRequest:
             formattedRequests.append((volunteer.id, request.RequestNo))
-
     # list qualified Volunteers
     advancedQualified = []
     crewLeaderQualified = []
@@ -48,19 +47,18 @@ def Schedule(Volunteers, VehicleRequest):
         elif volunteer.Explvl == "Driver":
             driverQualified.append(volunteer)
             advancedQualified.append(volunteer)
-
+    
     # Model
     model = gp.Model("assignment")
-
+    
     # Assignment variables: assigned[v,s] == 1 if volunteer v is assigned to shift s.
     assigned = model.addVars(availability, ub=1, lb=0, name="assigned")
-
+    
     # Assignment variables: assignedToVehicle[volunteerID, VehicleID, VehicleStart]
     assignedToVehicle = model.addVars(formattedRequests, ub=1, lb=0, name="assignedToVehicle")
 
     # easy access to constraints, mostly for debugging
     constraints = []
-
     # Constraints: volunteer must be assigned to a vehicle for an entire shift
     for volunteer in Volunteers:
         for request in VehicleRequest:
