@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
-import EditScreenModal from "./editScreenModal";
+import EditModal from "./editModal";
 import "./volunteer.scss";
 
 /* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
@@ -10,15 +10,24 @@ import "./volunteer.scss";
 
 class Volunteer extends Component {
   state = {
-    showEditScreen: false,
+    showEditModal: false,
     availablilityConfirmed: false,
     qualificationsVisible: false,
   };
 
   // 1.3.5
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+  toggleEditModalVisibility = () => {
+    const showEditModal = !this.state.showEditModal;
+    this.setState({ showEditModal });
+=======
+>>>>>>> Stashed changes
   toggleEditScreenVisibility = () => {
     const showEditScreen = !this.state.showEditScreen;
     this.setState({ showEditScreen });
+>>>>>>> sprint-1-frontend
   };
 
   // 1.5.4
@@ -41,6 +50,26 @@ class Volunteer extends Component {
     this.props.updateVolunteer(result);
   }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+  removeVolunteer = () => {
+    let result = {
+      volunteer_id: undefined,
+      position_id: this.props.volunteerInfo.position_id,
+      volunteer_name: undefined,
+      role: this.props.volunteerInfo.role,
+      qualifications: undefined,
+      contact_info: undefined,
+    };
+    this.state.availablilityConfirmed = false;
+    this.props.updateVolunteer(result)
+
+  }
+
+=======
+>>>>>>> sprint-1-frontend
+>>>>>>> Stashed changes
   // 1.2.3, toggles the visibility of qualifications for this volunteer
   showHideQualifications = () => {
     const qualificationsVisible = !this.state.qualificationsVisible;
@@ -66,10 +95,20 @@ class Volunteer extends Component {
     return (
       <React.Fragment>
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        <EditModal //1.3.5
+          show={this.state.showEditModal}
+          onHide={this.toggleEditModalVisibility}
+=======
+>>>>>>> Stashed changes
         <EditScreenModal //1.3.5
           show={this.state.showEditScreen}
           onHide={this.toggleEditScreenVisibility}
+>>>>>>> sprint-1-frontend
           onSave={(newVolunteerInfo) => this.updateVolunteer(newVolunteerInfo)}
+          removeVolunteer={this.removeVolunteer}
           volunteer={volunteerInfo}
           vehicleType={vehicleType}
           volunteerList={this.props.volunteerList}
@@ -98,7 +137,7 @@ class Volunteer extends Component {
           <td width="1%">
             <Button //1.3.5
               className="btn-warning"
-              onClick={this.toggleEditScreenVisibility}
+              onClick={this.toggleEditModalVisibility}
             >
               Change
             </Button>

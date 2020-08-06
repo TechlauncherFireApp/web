@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
 import Volunteer from "./volunteer";
+import EmptyVolunteer from "./emptyVolunteer";
+
+/* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
+ 1.3.5 - I want to be able to manually add, remove, and swap volunteers to assets. 
+ 1.2.3 - I want to be shown a list of recommended volunteers with their respective vehicle assignments, contact info, and qualifications */
 
 /* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
  1.3.5 - I want to be able to manually add, remove, and swap volunteers to assets. 
@@ -66,6 +71,23 @@ class AssetCrew extends Component {
           </tr>
         </thead>
         <tbody>
+<<<<<<< HEAD
+          {vehicle.volunteers.map((v) =>
+            v.volunteer_id === undefined
+              ? (<EmptyVolunteer key={v.volunteer_id}
+                volunteerInfo={v}
+                vehicleType={vehicle.asset_class}
+                volunteerList={this.props.volunteerList}
+                assignedVolunteers={this.props.assignedVolunteers}
+                updateVolunteer={(details) => this.updateVolunteer(details)} />)
+              : (<Volunteer key={v.volunteer_id}
+                volunteerInfo={v}
+                vehicleType={vehicle.asset_class}
+                volunteerList={this.props.volunteerList}
+                assignedVolunteers={this.props.assignedVolunteers}
+                updateVolunteer={(details) => this.updateVolunteer(details)} />
+              ))}
+=======
           {vehicle.volunteers.map((v) => (
             <Volunteer key={v.volunteer_id}
               volunteerInfo={v}
@@ -74,6 +96,7 @@ class AssetCrew extends Component {
               assignedVolunteers={this.props.assignedVolunteers}
               updateVolunteer={(details) => this.updateVolunteer(details)} /> //1.3.5
           ))}
+>>>>>>> sprint-1-frontend
         </tbody>
       </Table>
     );

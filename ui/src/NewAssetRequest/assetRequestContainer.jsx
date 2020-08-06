@@ -47,7 +47,7 @@ class AssetRequestContainer extends Component {
       // for each volunteer in the vehicle
       v.volunteers.map((vol) => {
         // create a map entry for them
-        map.set(vol.volunteer_id, { asset_id: v.asset_id, position: vol.position_id })
+        vol.volunteer_id !== undefined && map.set(vol.volunteer_id, { asset_id: v.asset_id, position: vol.position_id })
       })
     })
     //set the state to the new map
