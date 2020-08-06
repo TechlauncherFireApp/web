@@ -2,6 +2,7 @@
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
 # Gurobi
+import gurobipy as gp
 from gurobi.DataGenerator import NumberGenerator, LoadVolunteers, shiftpopulator
 from gurobi.Names import firstNames, lastNames
 from gurobi.Scheduler import Schedule
@@ -149,5 +150,6 @@ class Recommendation(Resource):
                 "recommendation_list" : recommendation_list,
                 "volunteer_list" : volunteer_list_out
             }
-        except:
+        except gp.GurobiError as e:
+            print('Error code ' + str(e.errno) + ': ' + str(e))
             print("Failed to optimise")
