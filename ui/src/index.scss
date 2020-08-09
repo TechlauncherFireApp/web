@@ -1,3 +1,5 @@
+@import "./variables.scss";
+
 html, body, div#root, div.main-body {
     height: 100%;
     width: 100%;
@@ -10,4 +12,22 @@ html, body, div#root, div.main-body {
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* -------------- Custom Button ------------- */
+
+button.type-1 {
+    padding: 15px 25px;
+    color: white;
+    font-size: 20px;
+    background-color: var(--red-1);
+    border: none;
+    appearance: none;
+    transition: all 0.5s;
+
+    &:hover, &:focus {
+        color: var(--red-3);
+        background-color: white;
+        border: 1px solid var(--red-1);
+    }
 }

@@ -102,6 +102,9 @@ class NewAssetRequest extends Component {
     if (a.startDateTime.valueOf() < (new Date()).valueOf()) { alert("Start DateTime has to be in the future"); return; }
     if (a.startDateTime.valueOf() >= a.endDateTime.valueOf()) { alert("Start DateTime has to be earlier than End DateTime"); return; }
 
+    // Check Shift Length
+    if ((Math.abs(a.startDateTime - a.endDateTime) / 3600000) > 14) alert("This request exceeds the maximum shift length, consider breaking down into multiple shifts");
+
     // Validated Successfully
     o.push(a);
     this.setState({ requestList: o });
@@ -167,8 +170,8 @@ class NewAssetRequest extends Component {
             {/* 1.2.1 I want to select the asset types required (two asset types) */}
             <label>Asset Type</label>
             <select ref={this.insert_assetType}>
-              <option value="" disabled hidden>Select asset type</option>
-              <option selected>Heavy Tanker</option>
+              <option selected value="" disabled hidden>Select asset type</option>
+              <option>Heavy Tanker</option>
               <option>Light Unit</option>
             </select>
           </div>
