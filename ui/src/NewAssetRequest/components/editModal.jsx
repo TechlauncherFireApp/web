@@ -7,11 +7,7 @@ import "./volunteer.scss"
 /* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
 entire class relates to 1.3.5 - I want to be able to manually add, remove, and swap volunteers to assets. */
 
-<<<<<<< HEAD:ui/src/NewAssetRequest/components/editModal.jsx
 class EditModal extends Component {
-=======
-class EditScreenModal extends Component {
->>>>>>> sprint-1-frontend:ui/src/NewAssetRequest/components/editScreenModal.jsx
   state = {
     searchValue: "",
     volunteerList: [],

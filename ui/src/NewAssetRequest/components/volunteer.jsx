@@ -16,18 +16,9 @@ class Volunteer extends Component {
   };
 
   // 1.3.5
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
   toggleEditModalVisibility = () => {
     const showEditModal = !this.state.showEditModal;
     this.setState({ showEditModal });
-=======
->>>>>>> Stashed changes
-  toggleEditScreenVisibility = () => {
-    const showEditScreen = !this.state.showEditScreen;
-    this.setState({ showEditScreen });
->>>>>>> sprint-1-frontend
   };
 
   // 1.5.4
@@ -50,9 +41,6 @@ class Volunteer extends Component {
     this.props.updateVolunteer(result);
   }
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
   removeVolunteer = () => {
     let result = {
       volunteer_id: undefined,
@@ -67,9 +55,6 @@ class Volunteer extends Component {
 
   }
 
-=======
->>>>>>> sprint-1-frontend
->>>>>>> Stashed changes
   // 1.2.3, toggles the visibility of qualifications for this volunteer
   showHideQualifications = () => {
     const qualificationsVisible = !this.state.qualificationsVisible;
@@ -95,18 +80,9 @@ class Volunteer extends Component {
     return (
       <React.Fragment>
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
         <EditModal //1.3.5
           show={this.state.showEditModal}
           onHide={this.toggleEditModalVisibility}
-=======
->>>>>>> Stashed changes
-        <EditScreenModal //1.3.5
-          show={this.state.showEditScreen}
-          onHide={this.toggleEditScreenVisibility}
->>>>>>> sprint-1-frontend
           onSave={(newVolunteerInfo) => this.updateVolunteer(newVolunteerInfo)}
           removeVolunteer={this.removeVolunteer}
           volunteer={volunteerInfo}

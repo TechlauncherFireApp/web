@@ -71,7 +71,6 @@ class AssetCrew extends Component {
           </tr>
         </thead>
         <tbody>
-<<<<<<< HEAD
           {vehicle.volunteers.map((v) =>
             v.volunteer_id === undefined
               ? (<EmptyVolunteer key={v.volunteer_id}
@@ -87,16 +86,6 @@ class AssetCrew extends Component {
                 assignedVolunteers={this.props.assignedVolunteers}
                 updateVolunteer={(details) => this.updateVolunteer(details)} />
               ))}
-=======
-          {vehicle.volunteers.map((v) => (
-            <Volunteer key={v.volunteer_id}
-              volunteerInfo={v}
-              vehicleType={vehicle.asset_class}
-              volunteerList={this.props.volunteerList}
-              assignedVolunteers={this.props.assignedVolunteers}
-              updateVolunteer={(details) => this.updateVolunteer(details)} /> //1.3.5
-          ))}
->>>>>>> sprint-1-frontend
         </tbody>
       </Table>
     );
