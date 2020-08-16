@@ -9,6 +9,7 @@ entire class relates to 1.3.5 - I want to be able to manually add, remove, and s
 
 class EditModal extends Component {
   state = {
+    emptyVolunteer: null,
     searchValue: "",
     volunteerList: [],
     searchResults: [],
@@ -27,6 +28,7 @@ class EditModal extends Component {
     const volunteerList = props.volunteerList;
     this.state.volunteerList = volunteerList;
     this.state.searchResults = volunteerList;
+    this.state.emptyVolunteer = props.emptyVolunteer;
   }
 
   insertSearch = (e) => {
@@ -65,15 +67,20 @@ class EditModal extends Component {
   }
 
   saveChange = () => {
-    const map = this.props.assignedVolunteers;
-    const vol = this.state.selectedVolunteer;
-    if (vol.id === this.props.volunteer.volunteer_id) {
-      alert("You can't change a volunteer to themselves")
-    } else if (map.has(vol.id)) {
-      alert(vol.name + " is already assigned to asset " + map.get(vol.id).asset_id + " position " + map.get(vol.id).position)
+    if (this.state.selectedVolunteer.id != null) {
+      const map = this.props.assignedVolunteers;
+      const vol = this.state.selectedVolunteer;
+      if (vol.id === this.props.volunteer.volunteer_id) {
+        alert("You can't change a volunteer to themselves")
+      } else if (map.has(vol.id)) {
+        alert(vol.name + " is already assigned to asset " + map.get(vol.id).asset_id + " position " + map.get(vol.id).position)
+      } else {
+        this.props.onSave(this.state.selectedVolunteer)
+      }
     } else {
-      this.props.onSave(this.state.selectedVolunteer)
+      this.props.onHide();
     }
+
   }
 
 
@@ -91,15 +98,15 @@ class EditModal extends Component {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <b>
-            {this.props.volunteer.volunteer_name}
-          </b>
-
-          <div className="view" onClick={this.showHideQualifications} >
-            {this.state.qualificationsVisible ?
-              this.displayQualsList(this.props.volunteer.qualifications)
-              : <div>View qualifications <img src={require("../../assets/expand.png")} /></div>}
-          </div>
+          {this.state.emptyVolunteer ?
+            <i>This position is currently unassigned</i> :
+            <div><b>{this.props.volunteer.volunteer_name}</b>
+              <div className="view" onClick={this.showHideQualifications} >
+                {this.state.qualificationsVisible ?
+                  this.displayQualsList(this.props.volunteer.qualifications)
+                  : <div>View qualifications <img src={require("../../assets/expand.png")} /></div>}
+              </div></div>
+          }
 
           <br />
 
@@ -157,9 +164,10 @@ class EditModal extends Component {
           <Button className="danger" onClick={this.saveChange}>
             Save Changes
           </Button>
-          <Button className="danger" onClick={this.props.removeVolunteer}>
-            Remove Volunteer
-          </Button>
+          {this.state.emptyVolunteer ? <div></div> :
+            <Button className="danger" onClick={this.props.removeVolunteer}>
+              Remove Volunteer
+          </Button>}
           <Button className="danger" onClick={this.props.onHide}>
             Cancel
           </Button>

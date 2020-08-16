@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
-import AddModal from "./addModal";
+import EditModal from "./editModal";
 import "./volunteer.scss";
 
 /* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
@@ -10,12 +10,12 @@ import "./volunteer.scss";
 
 class EmptyVolunteer extends Component {
   state = {
-    showAddModal: false,
+    showEditModal: false,
   };
 
-  toggleAddModalVisibility = () => {
-    const showAddModal = !this.state.showAddModal;
-    this.setState({ showAddModal });
+  toggleEditModalVisibility = () => {
+    const showEditModal = !this.state.showEditModal;
+    this.setState({ showEditModal });
   };
 
   // 1.3.5, if a volunteer is changed update the relevant fields and propogate the change up through parent components
@@ -41,15 +41,16 @@ class EmptyVolunteer extends Component {
     return (
       <React.Fragment>
 
-        <AddModal //1.3.5
-          show={this.state.showAddModal}
-          onHide={this.toggleAddModalVisibility}
+        <EditModal //1.3.5
+          show={this.state.showEditModal}
+          onHide={this.toggleEditModalVisibility}
           onSave={(newVolunteerInfo) => this.updateVolunteer(newVolunteerInfo)}
           removeVolunteer={this.removeVolunteer}
           volunteer={volunteerInfo}
           vehicleType={vehicleType}
           volunteerList={this.props.volunteerList}
           assignedVolunteers={this.props.assignedVolunteers}
+          emptyVolunteer={true}
         />
 
         <tr
@@ -63,7 +64,7 @@ class EmptyVolunteer extends Component {
           <td width="1%">
             <Button //1.3.5
               className="btn-warning"
-              onClick={this.toggleAddModalVisibility}
+              onClick={this.toggleEditModalVisibility}
             >
               Add
             </Button>

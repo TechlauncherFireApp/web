@@ -89,6 +89,7 @@ class Volunteer extends Component {
           vehicleType={vehicleType}
           volunteerList={this.props.volunteerList}
           assignedVolunteers={this.props.assignedVolunteers}
+          emptyVolunteer={false}
         />
 
         <tr
