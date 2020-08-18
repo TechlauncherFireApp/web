@@ -1,0 +1,19 @@
+# Use the official MiniZinc image as parent
+FROM minizinc/minizinc:2.4.3
+
+#
+# The parent image is the oficial MiniZinc Docker image version 2.4.3 (latest at time of creation)
+# MiniZinc requires both Pythons versions 2.3.2 (or higher) and version 3.6 (or higher installed)
+# I have also installed Python version 3.8, which we have been working with until now
+#
+
+
+# Install Python3.8 and nodejs12, also git
+RUN \
+    apt update && \
+    apt install -yqq wget git gnupg curl && \
+    wget -qO- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
+    wget -qO- https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    apt install -yqq nodejs yarn python3.8 python3-pip && \
+    rm -rf /var/lib/apt/lists/*
