@@ -1,6 +1,11 @@
 # Use the official MiniZinc image as parent
 FROM minizinc/minizinc:2.4.3
 
+# Parent from:
+# https://hub.docker.com/r/minizinc/minizinc 
+# Modifications based off of:
+# https://hub.docker.com/r/nikolaik/python-nodejs/dockerfile
+
 #
 # The parent image is the oficial MiniZinc Docker image version 2.4.3 (latest at time of creation)
 # MiniZinc requires both Pythons versions 2.3.2 (or higher) and version 3.6 (or higher installed)

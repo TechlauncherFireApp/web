@@ -1,7 +1,8 @@
 version: '3'
 services:
   fire-app:
-    build: .
+    # build: .
+    image: "repo.treescale.com/tomwillisgd/minizinc-python-nodejs:latest"
     # image: "minizinc/minizinc:latest"
     # image: "nikolaik/python-nodejs:python3.8-nodejs12"
     container_name: fire-app-container
