@@ -4,6 +4,16 @@ import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      // Page :- NewAssetRequest
+      insert: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "request-body": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

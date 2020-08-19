@@ -4,18 +4,19 @@ import "./NewAssetRequest.scss";
 import { contains } from "../main.js";
 
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";              // -> PACKAGE FROM : npm i --save react-datepicker
+import DatePicker from "react-datepicker"; // TYPESCRIPT -> npm i @types/react-datepicker
 import { Button } from "react-bootstrap";
 
 // https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
-class NewAssetRequest extends Component {
-  state = {
+class NewAssetRequest extends Component<any, any> {
+  state: any = {
     startDateTime: null,
     endDateTime: null,
     requestList: [],
   };
+  insert_assetType: any;
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.insert_assetType = React.createRef();
   }
@@ -35,7 +36,7 @@ class NewAssetRequest extends Component {
     this.props.updateVehicleTimes(requestList);
 
     // 2.
-    let postData = [];                                      // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
+    let postData: any = [];                                      // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
     for (let x of requestList) {
       postData.push({
         "asset_id": x.id,
@@ -62,14 +63,14 @@ class NewAssetRequest extends Component {
       //  response.data.volunteer_list is a list of all volunteers and all their stored data
       // 5.
 
-      .then(response => this.props.onDisplayRequest(response.data.recommendation_list, response.data.volunteer_list))
-      .catch(function (error) {
+      .then((response: any) => this.props.onDisplayRequest(response.data.recommendation_list, response.data.volunteer_list))
+      .catch(function (error: any) {
         // handle error
         console.log(error);
       })
   };
 
-  toTimeblock = (d) => {
+  toTimeblock = (d: any) => {
     if (!contains(d) || d === "Invalid Date") return 0;
     return d.getDay() * 48 + d.getHours() * 2 + (d.getMinutes() === 0 ? 0 : 1);
   };
@@ -78,7 +79,7 @@ class NewAssetRequest extends Component {
     // Get Data
     console.clear();
     const o = this.state.requestList;
-    let a = {
+    let a: any = {
       id: o.length + 1,
       assetType: this.insert_assetType.current.value,
       startDateTime: new Date(this.state.startDateTime),
@@ -103,7 +104,7 @@ class NewAssetRequest extends Component {
     this.setState({ requestList: o });
   };
 
-  removeAsset = (i) => {
+  removeAsset = (i: any) => {
     console.clear();
     const o = this.state.requestList;
 
@@ -136,7 +137,7 @@ class NewAssetRequest extends Component {
     this.setState({ startDateTime: t1, endDateTime: t2 });
   };
 
-  setDateTime = (v, t) => {
+  setDateTime = (v: any, t: any) => {
     console.clear();
     v = new Date(v);
 
@@ -152,7 +153,7 @@ class NewAssetRequest extends Component {
     else if (t === "end") this.setState({ endDateTime: v });
   };
 
-  testFun(i) {
+  testFun(i: any) {
     console.log(i);
   }
 
@@ -195,7 +196,7 @@ class NewAssetRequest extends Component {
         </div>
         <hr/>
         <div className="output">
-          {this.state.requestList.map((t) => (
+          {this.state.requestList.map((t: any) => (
             <request-body id={t.id}>
                 <img className="close" src={require("../assets/x.png")} onClick={() => { this.removeAsset(t.id); }} />
                 <h2>{t.assetType}</h2>
