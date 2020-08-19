@@ -1,25 +1,52 @@
-// import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React from "react";
 import "./NewAssetRequest.scss";
-import { contains } from "../main.js";
+import { contains, toTimeblock, getValidDate } from "../functions";
 
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker"; // TYPESCRIPT -> npm i @types/react-datepicker
 import { Button } from "react-bootstrap";
 
-// https://xd.adobe.com/view/2856aec3-f800-48bc-5922-bdfc629bf833-5e67/?fullscreen
-class NewAssetRequest extends Component<any, any> {
-  state: any = {
-    startDateTime: null,
-    endDateTime: null,
+// Local Types
+interface RequestType {
+  id: number;
+  assetType: string;
+  startDateTime: Date;
+  endDateTime: Date;
+}
+
+// State Type
+interface State {
+  startDateTime: Date;
+  endDateTime: Date;
+  requestList: RequestType[];
+}
+
+export default class NewAssetRequest extends React.Component<any, State> {
+  state: State = {
+    startDateTime: getValidDate(new Date()),
+    endDateTime: getValidDate(new Date()),
     requestList: [],
   };
-  insert_assetType: any;
+  insert_assetType: React.RefObject<HTMLSelectElement>;
 
   constructor(props: any) {
     super(props);
     this.insert_assetType = React.createRef();
   }
+
+  componentDidMount = () => {
+    console.clear();
+    // Assign Current Time
+    let t1: Date = getValidDate(new Date()),
+        t2: Date = getValidDate(new Date());
+
+    t1.setMinutes(t1.getMinutes() + 30);
+    t1 = getValidDate(t1);
+    t2.setMinutes(t2.getMinutes() + 60);
+    t2 = getValidDate(t2);
+
+    this.setState({ startDateTime: t1, endDateTime: t2 });
+  };
 
   processAssetRequest = () => {
     console.clear();
@@ -41,8 +68,8 @@ class NewAssetRequest extends Component<any, any> {
       postData.push({
         "asset_id": x.id,
         "asset_name": x.assetType,
-        "start_time": this.toTimeblock(x.startDateTime),
-        "end_time": this.toTimeblock(x.endDateTime)
+        "start_time": toTimeblock(x.startDateTime),
+        "end_time": toTimeblock(x.endDateTime)
       });
     }
 
@@ -70,34 +97,28 @@ class NewAssetRequest extends Component<any, any> {
       })
   };
 
-  toTimeblock = (d: any) => {
-    if (!contains(d) || d === "Invalid Date") return 0;
-    return d.getDay() * 48 + d.getHours() * 2 + (d.getMinutes() === 0 ? 0 : 1);
-  };
-
   insertAsset = () => {
     // Get Data
     console.clear();
-    const o = this.state.requestList;
-    let a: any = {
+
+    const o: RequestType[] = this.state.requestList;
+    let a: RequestType = {
       id: o.length + 1,
-      assetType: this.insert_assetType.current.value,
-      startDateTime: new Date(this.state.startDateTime),
-      endDateTime: new Date(this.state.endDateTime),
+      assetType: this.insert_assetType.current ? this.insert_assetType.current.value : "",
+      startDateTime: this.state.startDateTime,
+      endDateTime: this.state.endDateTime,
     };
 
-    // Validate Data
-    for (let x in a)
-      if (!contains(a[x]) || a[x] === "Invalid Date") {
-        alert(x + " not entered");
-        return;
-      }
+    // Validate Data :- Asset Type
+    if (!contains(a.assetType)) { alert("Asset Type has not been selected"); return; }
+
+    // Validate Data :- Start and End DateTime
+    if (!contains(a.startDateTime)) { alert("Start DateTime has not been selected"); return; }
+    else if (!contains(a.endDateTime)) { alert("End DateTime has not been selected"); return; }
+    else if (a.startDateTime.valueOf() < (new Date()).valueOf()) { alert("Start DateTime has to be in the future"); return; }
+    else if (a.startDateTime.valueOf() >= a.endDateTime.valueOf()) { alert("Start DateTime has to be earlier than End DateTime"); return; }
 
     // Detect same records --> for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
-
-    // Check Start and End DateTime Range
-    if (a.startDateTime.valueOf() < (new Date()).valueOf()) { alert("Start DateTime has to be in the future"); return; }
-    if (a.startDateTime.valueOf() >= a.endDateTime.valueOf()) { alert("Start DateTime has to be earlier than End DateTime"); return; }
 
     // Validated Successfully
     o.push(a);
@@ -106,7 +127,7 @@ class NewAssetRequest extends Component<any, any> {
 
   removeAsset = (i: any) => {
     console.clear();
-    const o = this.state.requestList;
+    const o: RequestType[] = this.state.requestList;
 
     // Find and Remove Element, then update id
     for (let y = 0; y < o.length; y++) {
@@ -122,40 +143,19 @@ class NewAssetRequest extends Component<any, any> {
     this.setState({ requestList: o });
   };
 
-  componentDidMount = () => {
+  setDateTime = (v: Date, t: ("start" | "end")) => {
     console.clear();
-    // Assign Current Time
-    let t1 = new Date(),
-      t2 = new Date();
-    t1.setSeconds(0);
-    t2.setSeconds(0);
-    t1.setMinutes(t1.getMinutes() + 30);
-    t1.setMinutes(t1.getMinutes() >= 30 ? 30 : 0);
-    t2.setMinutes(t2.getMinutes() + 60);
-    t2.setMinutes(t2.getMinutes() >= 30 ? 30 : 0);
-
-    this.setState({ startDateTime: t1, endDateTime: t2 });
-  };
-
-  setDateTime = (v: any, t: any) => {
-    console.clear();
-    v = new Date(v);
 
     // Get & Check Value
-    if (!contains(v) || v === "Invalid Date") return;
+    if (!contains(v)) return;
 
     // Modify Value
-    v.setSeconds(0);
-    v.setMinutes(v.getMinutes() >= 30 ? 30 : 0);
+    v = getValidDate(v);
 
     // Set Value
     if (t === "start") this.setState({ startDateTime: v });
     else if (t === "end") this.setState({ endDateTime: v });
   };
-
-  testFun(i: any) {
-    console.log(i);
-  }
 
   render() {
     return (
@@ -176,7 +176,7 @@ class NewAssetRequest extends Component<any, any> {
             <label>Start Time Date</label>
             <DatePicker
               selected={this.state.startDateTime}
-              onChange={(i) => { this.setDateTime(i, "start"); }}
+              onChange={(i: Date): void => { this.setDateTime(i, "start"); }}
               showTimeSelect
               timeIntervals={30}
               timeCaption="Time"
@@ -186,7 +186,7 @@ class NewAssetRequest extends Component<any, any> {
             <label>End Time Date</label>
             <DatePicker
               selected={this.state.endDateTime}
-              onChange={(i) => { this.setDateTime(i, "end"); }}
+              onChange={(i: Date): void => { this.setDateTime(i, "end"); }}
               showTimeSelect
               timeIntervals={30}
               timeCaption="Time"
@@ -229,4 +229,3 @@ class NewAssetRequest extends Component<any, any> {
     );
   }
 }
-export default NewAssetRequest;
