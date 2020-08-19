@@ -1,4 +1,4 @@
-@import "./variables.css";
+@import "./variables.css", "./functions.scss";
 
 html, body, div#root, div.main-body {
     height: 100%;
@@ -30,6 +30,19 @@ button {
         color: var(--red-3);
         background-color: white;
         border: 1px solid var(--red-1);
+    }
+  }
+}
+
+svg {
+
+  // Circle Close
+  &[type="close"] {
+    g {
+      @include transform(translate(-1380px, -2830px));
+      circle { @include transform(translate(1380px, 2830px)); }
+      ellipse { @include transform(translate(1406px, 2857px)); }
+      path { @include transform(translate(-15.33px, -14.478px)); }
     }
   }
 }

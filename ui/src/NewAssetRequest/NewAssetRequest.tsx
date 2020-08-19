@@ -45,7 +45,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     t2 = getValidDate(t2);
 
     this.setState({ startDateTime: t1, endDateTime: t2 });
-  };
+  }
 
   processAssetRequest(): void {
     console.clear();
@@ -88,7 +88,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     }).catch((err: AxiosError): void => {
       console.log(err);
     });
-  };
+  }
 
   insertAsset(): void {
     // Get Data
@@ -116,7 +116,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     // Validated Successfully
     o.push(a);
     this.setState({ requestList: o });
-  };
+  }
 
   removeAsset(i: number): void {
     console.clear();
@@ -134,7 +134,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
 
     // Update Data
     this.setState({ requestList: o });
-  };
+  }
 
   setDateTime(v: Date, t: ("start" | "end")): void {
     console.clear();
@@ -148,7 +148,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     // Set Value
     if (t === "start") this.setState({ startDateTime: v });
     else if (t === "end") this.setState({ endDateTime: v });
-  };
+  }
 
   render() {
     return (
@@ -185,13 +185,13 @@ export default class NewAssetRequest extends React.Component<any, State> {
               timeCaption="Time"
               dateFormat="d MMMM yyyy h:mm aa" />
           </div>
-          <insert onClick={this.insertAsset}></insert>
+          <insert onClick={()=>this.insertAsset()}></insert>
         </div>
         <hr/>
         <div className="output">
           {this.state.requestList.map((t: any) => (
             <request-body id={t.id}>
-                <img className="close" src={require("../assets/x.png")} onClick={() => { this.removeAsset(t.id); }} />
+                <svg type="close" viewBox="0 0 282 282" onClick={() => { this.removeAsset(t.id); }}> <g> <circle cx="141" cy="141" r="141"/> <ellipse cx="114" cy="114.5" rx="114" ry="114.5"/> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z"/> </g> </svg>
                 <h2>{t.assetType}</h2>
                 <div className="cont-1">
                     <div className="cont-2">

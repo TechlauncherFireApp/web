@@ -85,17 +85,22 @@ div.main-body {
             position: relative;
             margin: 15px;
           
-            img.close {
-              height: 0;
-              width: 0;
-              position: absolute;
-              top: 3px;
-              right: 3px;
-              transition: all 0.5s;
-              cursor:pointer;
-            } &:hover img.close {
+            svg[type="close"] {
+              display: none;
               height: 25px;
               width: 25px;
+              position: absolute;
+              top: -12.5px;
+              right: -10px;
+              opacity: 0.5;
+              cursor: pointer;
+              @include transition(0.5s);
+
+              circle, path { fill: var(--black-2); }
+              ellipse { fill:#ffffff; }
+            } &:hover svg[type="close"] {
+              display: block;
+              opacity: 1;
             } h2 {
               color: var(--black-2);
               text-align: center;
