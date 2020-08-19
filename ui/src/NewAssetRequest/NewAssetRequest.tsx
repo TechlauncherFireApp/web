@@ -1,10 +1,9 @@
 import React from "react";
 import "./NewAssetRequest.scss";
-import { contains, toTimeblock, getValidDate } from "../functions";
-
-import "react-datepicker/dist/react-datepicker.css";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import DatePicker from "react-datepicker"; // TYPESCRIPT -> npm i @types/react-datepicker
 import { Button } from "react-bootstrap";
+import { contains, toTimeblock, getValidDate } from "../functions";
 
 // Local Types
 interface RequestType {
@@ -34,7 +33,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     this.insert_assetType = React.createRef();
   }
 
-  componentDidMount = () => {
+  componentDidMount(): void {
     console.clear();
     // Assign Current Time
     let t1: Date = getValidDate(new Date()),
@@ -48,7 +47,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     this.setState({ startDateTime: t1, endDateTime: t2 });
   };
 
-  processAssetRequest = () => {
+  processAssetRequest(): void {
     console.clear();
     /* This function needs to: 
             1. Pass the request list to the assetRequestContainer via this.state.updateRequestList
@@ -59,11 +58,11 @@ export default class NewAssetRequest extends React.Component<any, State> {
             */
 
     // 1.
-    const requestList = this.state.requestList;
+    const requestList: RequestType[] = this.state.requestList;
     this.props.updateVehicleTimes(requestList);
 
     // 2.
-    let postData: any = [];                                      // [ { assetId: int, assetClass: String, startTime: int, endTime: int } ]
+    let postData: any = [];
     for (let x of requestList) {
       postData.push({
         "asset_id": x.id,
@@ -74,30 +73,24 @@ export default class NewAssetRequest extends React.Component<any, State> {
     }
 
     // Don't get recommendations for no assets requested
-    if (postData.length === 0) {
-      alert("At least one asset needs to be selected");
-      return false;
-    }
+    if (postData.length === 0) { alert("At least one asset needs to be selected"); return; }
 
-    // 3.
-    postData = { "asset_list": postData }
-
-    const axios = require('axios');
-    axios.post('http://localhost:5000/recommendation', postData)
-
-      // 4.
-      //  response.data.recommendation_list is the list of assets with volunteer recommendations
-      //  response.data.volunteer_list is a list of all volunteers and all their stored data
-      // 5.
-
-      .then((response: any) => this.props.onDisplayRequest(response.data.recommendation_list, response.data.volunteer_list))
-      .catch(function (error: any) {
-        // handle error
-        console.log(error);
-      })
+    axios.request({
+      url: "recommendation",
+      baseURL: "http://localhost:5000/",
+      method: "POST",
+      data: { "asset_list": postData },
+      timeout: 15000,
+      withCredentials: true,
+      headers: { "X-Requested-With": "XMLHttpRequest" }
+    }).then((res: AxiosResponse): void => {
+      this.props.onDisplayRequest(res.data.recommendation_list, res.data.volunteer_list);
+    }).catch((err: AxiosError): void => {
+      console.log(err);
+    });
   };
 
-  insertAsset = () => {
+  insertAsset(): void {
     // Get Data
     console.clear();
 
@@ -125,7 +118,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     this.setState({ requestList: o });
   };
 
-  removeAsset = (i: any) => {
+  removeAsset(i: number): void {
     console.clear();
     const o: RequestType[] = this.state.requestList;
 
@@ -143,7 +136,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     this.setState({ requestList: o });
   };
 
-  setDateTime = (v: Date, t: ("start" | "end")) => {
+  setDateTime(v: Date, t: ("start" | "end")): void {
     console.clear();
 
     // Get & Check Value
