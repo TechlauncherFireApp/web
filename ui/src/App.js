@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.scss";
 
 import NavBar from "./components/navbar";
 import Home from "./Home/Home";
@@ -12,13 +11,13 @@ function App() {
   return (
     <BrowserRouter>
       <NavBar />
-      <div className="main-body">
+      <main-body>
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/NewAssetRequest" component={AssetRequestContainer} />
           <Route path="/volunteers" component={Volunteers} />
         </Switch>
-      </div>
+      </main-body>
     </BrowserRouter>
   );
 }

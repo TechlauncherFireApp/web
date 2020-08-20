@@ -7,6 +7,8 @@ import * as serviceWorker from './serviceWorker';
 declare global {
   namespace JSX {
     interface IntrinsicElements {
+      // Main
+      "main-body": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
       // Page :- NewAssetRequest
       insert: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
       "request-body": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
@@ -18,7 +20,7 @@ ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.querySelector("app-root")
 );
 
 // If you want your app to work offline and load faster, you can change
