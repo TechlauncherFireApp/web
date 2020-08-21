@@ -1,10 +1,14 @@
 # Flask
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from flask_restful import Api, Resource
+from includes.main import message_return, contains
+import json
 # Endpoints
 from endpoints.hello_world import HelloWorld
 from endpoints.NewAssetRequest import NewAssetRequest
+from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
+
 # from endpoints.recommendation import Recommendation
 # from endpoints.assignment import Assignment
 # Gurobi
@@ -13,6 +17,7 @@ from endpoints.NewAssetRequest import NewAssetRequest
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+# app.config['Access-Control-Allow-Credentials'] = 'true'
 api = Api(app)
 
 # Ensure volunteers have been generated
@@ -31,8 +36,13 @@ api.add_resource(HelloWorld, '/hello-world')
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
 # api.add_resource(Assignment, '/assignment',
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
-
 api.add_resource(NewAssetRequest, "/NewAssetRequest")
+
+@app.route("/AssetRequestVehicle/initial", methods=["POST"])
+def method():
+    d = json.loads(request.data)
+    if (type(d) is dict) and contains(d["id"]): return AssetRequestVehicle_initial.get(d["id"])
+    return message_return()
 
 if __name__ == '__main__':
     app.run(debug=True)
