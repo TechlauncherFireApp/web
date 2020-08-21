@@ -34,7 +34,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
   }
 
   componentDidMount(): void {
-    console.clear();
+    // console.clear();
     // Assign Current Time
     let t1: Date = getValidDate(new Date()),
         t2: Date = getValidDate(new Date());

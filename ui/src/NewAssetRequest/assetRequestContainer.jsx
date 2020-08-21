@@ -57,6 +57,7 @@ class AssetRequestContainer extends Component {
 
 
   render() {
+    console.log(this.props);
     return (
       <React.Fragment>
         {this.state.assetsSubmitted ? (

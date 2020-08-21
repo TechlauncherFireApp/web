@@ -18,8 +18,8 @@ class NewAssetRequest(Resource):
                 cur.execute("INSERT INTO `asset-request`(`id`,`idAdmin`) VALUES (%s,%s);", [id, idAdmin])
                 conn.commit()                       # Commit
                 cur_conn_close(cur, conn)
-                return "1"
+                return { "status": 1, "id": id }    # Success Message
             except:
                 conn.rollback()                     # RollBack
                 cur_conn_close(cur, conn)
-        return message_return()
+        return message_return()                     # Fail Message
