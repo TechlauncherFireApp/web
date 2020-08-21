@@ -24,7 +24,7 @@ export default class Home extends React.Component<any, State> {
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
-        if ((typeof res.data === "object") && (res.data["status"] === 1)) window.open(`./assetRequest/asset/${res.data["id"]}`, "_self", "", false);
+        if ((typeof res.data === "object") && (res.data["status"] === 1)) window.open(`./assetRequest/vehicle/${res.data["id"]}`, "_self", "", false);
         else if (typeof res.data === "string") {
           alert(res.data);
           this.setState({ allow_makeNewRequest: true });
