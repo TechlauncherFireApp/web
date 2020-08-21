@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 from flask_restful import Api, Resource
 # Endpoints
 from endpoints.hello_world import HelloWorld
+from endpoints.NewAssetRequest import NewAssetRequest
 # from endpoints.recommendation import Recommendation
 # from endpoints.assignment import Assignment
 # Gurobi
@@ -31,6 +32,7 @@ api.add_resource(HelloWorld, '/hello-world')
 # api.add_resource(Assignment, '/assignment',
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
 
+api.add_resource(NewAssetRequest, "/NewAssetRequest")
 
 if __name__ == '__main__':
     app.run(debug=True)

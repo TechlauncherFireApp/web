@@ -17,16 +17,16 @@ export default class Home extends React.Component<any, State> {
       this.setState({ allow_makeNewRequest: false });
       
       axios.request({
-        url: "recommendation",
+        url: "NewAssetRequest",
         baseURL: "http://localhost:5000/",
-        method: "POST",
-        data: { "asset_list": "" },
+        method: "GET",
         timeout: 15000,
-        withCredentials: true,
+        // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
-        
+        console.log(res.data);
       }).catch((err: AxiosError): void => {
+        alert(err.message);
         this.setState({ allow_makeNewRequest: true });
       });
     }
