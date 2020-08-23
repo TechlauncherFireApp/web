@@ -1,238 +1,324 @@
-import gurobipy as gp
-from gurobipy import GRB
+from datetime import *
+from minizinc import *
 
-from gurobi.DataGenerator import *
-from gurobi.AssetTypes import *
-
-# Takes a list of volunteers, returns a tupleList formatted for the constraint model
-#from gurobi.VolunteerGraph import Assignment, VolunteerPlot, RequestPlot
-
-
-def formatAvailability(Volunteers):
-    availability = gp.tuplelist()
-    for volunteer in Volunteers:
-        for shift in shiftpopulator():
-            if volunteer.Availability[shift]:
-                availability.append((volunteer.id, DayHourtoNumConverter(shift)))
-    return availability
+def rangeOverlaps(range1, range2):
+    start1 = range1[0]
+    start2 = range2[0]
+    end1 = range1[1]
+    end2 = range2[1]
+    if (end1 < start2) or (end2 < start1):
+        return False
+    else:
+        return True
 
 
-# Takes a list of Volunteers and Requests and returns a volunteer assignment and model
+def rangeSurrounds(range1, range2):
+    start1 = range1[0]
+    start2 = range2[0]
+    end1 = range1[1]
+    end2 = range2[1]
+    if start1 <= start2 and end1 >= end2:
+        return True
+    else:
+        return False
+
+def getDuration(start, end):
+    diff = end - start
+    hours = int(diff.total_seconds()/3600)
+    return hours
+
+def addLightUnitToOutput(seats, currentRequest):
+    output = []
+    for i in range(2):
+        voldict = {}
+        role = []
+        voldict["ID"] = seats[i][currentRequest]
+        voldict["positionID"] = i
+        if i == 0:
+            role.append("driver")
+            role.append("crewLeader")
+        if i == 1:
+            role.append("advanced")
+        voldict["role"] = role
+        output.append(voldict)
+    return output
+
+
+def addMediumTankerToOutput(seats, currentRequest):
+    output = []
+    for i in range(3):
+        voldict = {}
+        role = []
+        voldict["ID"] = seats[i][currentRequest]
+        voldict["positionID"] = i
+        if i == 0:
+            role.append("driver")
+        if i == 1:
+            role.append("crewLeader")
+        if i == 2:
+            role.append("basic")
+        voldict["role"] = role
+        output.append(voldict)
+    return output
+
+
+def addHeavyTankerToOutput(seats, currentRequest):
+    output = []
+    for i in range(5):
+        voldict = {}
+        role = []
+        voldict["ID"] = seats[i][currentRequest]
+        voldict["positionID"] = i
+        if i == 0:
+            role.append("driver")
+        if i == 1:
+            role.append("crewLeader")
+        if i > 1 and i < 4:
+            role.append("advanced")
+        if i == 4:
+            role.append("basic")
+        voldict["role"] = role
+        output.append(voldict)
+    return output
+
+
+
+'''
+this code is for testing purposes:
+
+Volunteers = []
+for i in range(12):
+    volunteer = {}
+    volunteer["ID"] = i
+    volunteer["prefHours"] = 10
+    volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
+    start = datetime.min
+    end = datetime.max
+    volunteer["availabilities"] = [(start,end)]
+    Volunteers.append(volunteer)
+    
+AssetRequests = []
+for i in range(2):
+    assetrequest = {}
+    assetrequest["shiftID"] = i
+    assetrequest["assetClass"] = "lightUnit"
+    start = datetime.now()
+    end = datetime.max
+    assetrequest["timeframe"] = (start,end)
+    AssetRequests.append(assetrequest)
+
+for i in range(1):
+    assetrequest = {}
+    assetrequest["shiftID"] = i
+    assetrequest["assetClass"] = "heavyTanker"
+    start = datetime.now()
+    end = datetime.max
+    assetrequest["timeframe"] = (start,end)
+    AssetRequests.append(assetrequest)
+'''
+
+
+#Takes a list of Volunteers and Requests and returns a volunteer assignment and model
 def Schedule(Volunteers, VehicleRequest):
-    # Number of volunteers required for each shift. "time": (total, advanced)
-    shiftRequirements = RequesttoRequirements(VehicleRequest)
 
-    # Amount of hours each volunteer wants to work over the entire week
-    preferredHours = {}
+    #create an array of preferredHours
+    preferredHours = []
     for volunteer in Volunteers:
-        preferredHours[volunteer.id] = volunteer.prefHours
+        preferredHours.append(volunteer["prefHours"])
 
-    # Volunteer availability
-    availability = formatAvailability(Volunteers)
-    formattedRequests = gp.tuplelist()
-    for volunteer in Volunteers:
-        for request in VehicleRequest:
-            formattedRequests.append((volunteer.id, request.RequestNo))
-    # list qualified Volunteers
-    advancedQualified = []
-    crewLeaderQualified = []
-    driverQualified = []
-    for volunteer in Volunteers:
-        if volunteer.Explvl == "Advanced":
-            advancedQualified.append(volunteer)
-        elif volunteer.Explvl == "Crew Leader":
-            crewLeaderQualified.append(volunteer)
-            driverQualified.append(volunteer)
-            advancedQualified.append(volunteer)
-        elif volunteer.Explvl == "Driver":
-            driverQualified.append(volunteer)
-            advancedQualified.append(volunteer)
-    
-    # Model
-    model = gp.Model("assignment")
-    
-    # Assignment variables: assigned[v,s] == 1 if volunteer v is assigned to shift s.
-    assigned = model.addVars(availability, ub=1, lb=0, name="assigned")
-    
-    # Assignment variables: assignedToVehicle[volunteerID, VehicleID, VehicleStart]
-    assignedToVehicle = model.addVars(formattedRequests, ub=1, lb=0, name="assignedToVehicle")
-
-    # easy access to constraints, mostly for debugging
-    constraints = []
-    # Constraints: volunteer must be assigned to a vehicle for an entire shift
-    for volunteer in Volunteers:
-        for request in VehicleRequest:
-            shiftSum = 0
-            for i in range(request.Duration):
-                time = request.StartTime + i
-                shiftSum = shiftSum + assigned.sum(volunteer.id, time)
-            constraints.append(
-                model.addGenConstrIndicator(assignedToVehicle[volunteer.id, request.RequestNo], True, shiftSum,
-                                            GRB.EQUAL, request.Duration))
-
-    # Constraints: Volunteers cannot be assigned to 2 vehicles at once
-    for i in range(len(VehicleRequest)):
-        for g in range(i + 1, len(VehicleRequest)):
-            iRangeMin = VehicleRequest[i].StartTime
-            iRangeMax = VehicleRequest[i].StartTime + VehicleRequest[i].Duration
-            gRangeMin = VehicleRequest[g].StartTime
-            gRangeMax = VehicleRequest[g].StartTime + VehicleRequest[g].Duration
-
-            # if vehicle times overlap, a volunteer can only be assigned to one of them
-            if (iRangeMin <= gRangeMin and iRangeMax >= gRangeMin) or (
-                    gRangeMin <= iRangeMin and gRangeMax >= iRangeMin):
-                for volunteer in Volunteers:
-                    sum = 0
-                    sum = sum + assignedToVehicle.sum(volunteer.id, VehicleRequest[i].RequestNo)
-                    sum = sum + assignedToVehicle.sum(volunteer.id, VehicleRequest[g].RequestNo)
-                    constraints.append(model.addConstr(sum, GRB.LESS_EQUAL, 1, "IncompatibleTrucks_" + str(i) + str(g)))
-
-    # Constraints: Each vehicle must be filled + Each vehicle must meet qualifications
+    shiftLengths = []
     for request in VehicleRequest:
-        constraints.append(
-            model.addConstr(assignedToVehicle.sum('*', request.RequestNo), GRB.EQUAL,
-                            request.AssetType.TotalReq, "TruckFilled_" + str(request.RequestNo)))
+        start = request["timeframe"][0]
+        end = request["timeframe"][1]
+        shiftLengths.append(getDuration(start,end))
 
-        totalAdvancedOnVehicle = 0
-        for volunteer in advancedQualified:
-            totalAdvancedOnVehicle = totalAdvancedOnVehicle + assignedToVehicle.sum(volunteer.id, request.RequestNo)
-        advancedTarget = request.AssetType.AdvancedReq + request.AssetType.CrewLeaderReq + request.AssetType.DriverReq
-        constraints.append(model.addConstr(totalAdvancedOnVehicle, GRB.GREATER_EQUAL, advancedTarget,"TruckQualifiedAdvanced_" + str(request.RequestNo)))
-
-        totalCrewLeadersOnVehicle = 0
-        for volunteer in crewLeaderQualified:
-            totalCrewLeadersOnVehicle = totalCrewLeadersOnVehicle + assignedToVehicle.sum(volunteer.id, request.RequestNo)
-        crewLeaderTarget = request.AssetType.CrewLeaderReq
-        constraints.append(model.addConstr(totalCrewLeadersOnVehicle, GRB.GREATER_EQUAL, crewLeaderTarget,
-                                           "TruckQualifiedCrewLeader_" + str(request.RequestNo)))
-        totalDriversOnVehicle = 0
-        for volunteer in driverQualified:
-            totalDriversOnVehicle = totalDriversOnVehicle + assignedToVehicle.sum(volunteer.id, request.RequestNo)
-        driverTarget = request.AssetType.CrewLeaderReq + request.AssetType.DriverReq
-        constraints.append(model.addConstr(totalDriversOnVehicle, GRB.GREATER_EQUAL, driverTarget,
-                            "TruckQualifiedDriver_" + str(request.RequestNo)))
-
-
-    # Constraints: total hours worked <= preferred hours for each volunteer
-    for volunteer in Volunteers:
-        constraints.append(
-            model.addConstr(assigned.sum(volunteer.id, '*'), GRB.LESS_EQUAL, preferredHours[volunteer.id],
-                            "prefHours_" + str(volunteer.id)))
-
-    # Constraints: total volunteers met for each shift
-    for shiftKey in shiftRequirements.keys():
-        numRequired = shiftRequirements[shiftKey][0]
-        constraints.append(
-            model.addConstr(assigned.sum('*', shiftKey), GRB.EQUAL, numRequired, "ShiftFilled_" + str(shiftKey)))
-
-    # Constraints: qualifications met for each shift
-    for shiftKey in shiftRequirements.keys():
-        numRequiredAdvanced = shiftRequirements[shiftKey][1] + shiftRequirements[shiftKey][2] + shiftRequirements[shiftKey][3]
-        totalAdvanced = 0
-        for volunteer in advancedQualified:
-            totalAdvanced = totalAdvanced + assigned.sum(volunteer.id, shiftKey)
-        constraints.append(
-            model.addConstr(totalAdvanced, GRB.GREATER_EQUAL, numRequiredAdvanced, "ShiftQualifiedAdvanced_" + str(shiftKey)))
-
-        numRequiredCrewLeaders = shiftRequirements[shiftKey][2]
-        totalCrewLeaders = 0
-        for volunteer in crewLeaderQualified:
-            totalCrewLeaders = totalCrewLeaders + assigned.sum(volunteer.id, shiftKey)
-        constraints.append(
-            model.addConstr(totalCrewLeaders, GRB.GREATER_EQUAL, numRequiredCrewLeaders,
-                            "ShiftQualifiedCrewLeaders_" + str(shiftKey)))
-
-        numRequiredDrivers = shiftRequirements[shiftKey][3] + shiftRequirements[shiftKey][2]
-        totalDrivers = 0
-        for volunteer in driverQualified:
-            totalDrivers = totalDrivers + assigned.sum(volunteer.id, shiftKey)
-        constraints.append(
-            model.addConstr(totalDrivers, GRB.GREATER_EQUAL, numRequiredDrivers,
-                            "ShiftQualifiedDrivers_" + str(shiftKey)))
-
-    # The objective is to minimise the hours worked by volunteers (while still filling all requirements)
-    model.setObjective(gp.quicksum(assigned[v, s] for v, s in availability), GRB.MINIMIZE)
-
-    model.optimize()
-
-    # assignments = []
-    plotList = []
-    RecommendationList = []
+    compatible = []
     for request in VehicleRequest:
-        vehicleDict = {}
-        vehicleDict["asset_id"] = request.RequestNo
-        vehicleDict["asset_class"] = request.AssetType.type
-        VolunteerListAdvanced = []
-        VolunteerListBasic = []
-        VolunteerListDriver = []
-        VolunteerListCrewLeader = []
+        requestRow = []
+        requestTime = request["timeframe"]
         for volunteer in Volunteers:
-            value = assignedToVehicle[(volunteer.id, request.RequestNo)].X
-            if value > 0:
-                volunteerDict = {}
-                volunteerDict["qualifications"] = volunteer.Qualifications
-                volunteerDict["volunteer_explvl"] = volunteer.Explvl
-                if volunteer.Explvl == "Advanced":
-                    volunteerDict["volunteer_id"] = volunteer.id
-                    volunteerDict["volunteer_name"] = volunteer.name
-                    volunteerDict["role"] = "Crew Member"
-                    volunteerDict["contact_info"] = {"type": "phone", "detail": volunteer.phonenumber}
-                    VolunteerListAdvanced.append(volunteerDict)
-                elif volunteer.Explvl == "Crew Leader":
-                    volunteerDict["volunteer_id"] = volunteer.id
-                    volunteerDict["volunteer_name"] = volunteer.name
-                    volunteerDict["role"] = "Crew Member"
-                    volunteerDict["contact_info"] = {"type": "phone", "detail": volunteer.phonenumber}
-                    VolunteerListCrewLeader.append(volunteerDict)
-                elif volunteer.Explvl == "Driver":
-                    volunteerDict["volunteer_id"] = volunteer.id
-                    volunteerDict["volunteer_name"] = volunteer.name
-                    volunteerDict["role"] = "Crew Member"
-                    volunteerDict["contact_info"] = {"type": "phone", "detail": volunteer.phonenumber}
-                    VolunteerListDriver.append(volunteerDict)
-                else:
-                    volunteerDict["volunteer_id"] = volunteer.id
-                    volunteerDict["volunteer_name"] = volunteer.name
-                    volunteerDict["role"] = "Crew Member"
-                    volunteerDict["contact_info"] = {"type": "phone", "detail": volunteer.phonenumber}
-                    VolunteerListBasic.append(volunteerDict)
-        position = 1
-        VolunteerList = []
-        for volunteer in VolunteerListCrewLeader:
-            if position == 1:
-                if request.AssetType == LightUnit:
-                    volunteer["role"] = "CrewLeader/Driver"
-                if (request.AssetType == HeavyTanker) or (request.AssetType == MediumTanker):
-                    volunteer["role"] = "CrewLeader"
-            if position == 2:
-                if (request.AssetType == HeavyTanker) or (request.AssetType == MediumTanker):
-                    volunteer["role"] = "Driver"
-            volunteer["position"] = position
-            VolunteerList.append(volunteer)
-            position = position + 1
-        for volunteer in VolunteerListDriver:
-            if position == 2:
-                if (request.AssetType == HeavyTanker) or (request.AssetType == MediumTanker):
-                    volunteer["role"] = "Driver"
-            volunteer["position"] = position
-            VolunteerList.append(volunteer)
-            position = position + 1
-        for volunteer in VolunteerListAdvanced:
-            volunteer["position"] = position
-            VolunteerList.append(volunteer)
-            position = position + 1
-        for volunteer in VolunteerListBasic:
-            volunteer["position"] = position
-            VolunteerList.append(volunteer)
-            position = position + 1
-        vehicleDict["volunteers"] = VolunteerList
-        RecommendationList.append(vehicleDict)
+            temp = False
+            for availability in volunteer["availabilities"]:
+                if(rangeSurrounds(availability, requestTime)):
+                    temp = True
+            requestRow.append(temp)
+        compatible.append(requestRow)
 
-    return RecommendationList, Volunteers
+    clashing = []
+    for request1 in VehicleRequest:
+        currentRequestClashes = []
+        for request2 in VehicleRequest:
+            currentRequestClashes.append(rangeOverlaps(request1["timeframe"], request2["timeframe"]))
+        clashing.append(currentRequestClashes)
+    for i in range(len(VehicleRequest)):
+        clashing[i][i] = False
 
+    isHeavy = []
+    isMedium = []
+    isLight = []
+    for request in VehicleRequest:
+        if request["assetClass"] == "heavyTanker":
+            isHeavy.append(True)
+            isMedium.append(False)
+            isLight.append(False)
+        if request["assetClass"] == "mediumTanker":
+            isHeavy.append(False)
+            isMedium.append(True)
+            isLight.append(False)
+        if request["assetClass"] == "lightUnit":
+            isHeavy.append(False)
+            isMedium.append(False)
+            isLight.append(True)
 
+    isDriver = []
+    isCrewLeader = []
+    isAdvanced = []
+    isBasic = []
+    for volunteer in Volunteers:
+        basic = False
+        advanced = False
+        crewLeader = False
+        driver = False
+        for qualification in volunteer["possibleRoles"]:
+            if qualification == "basic":
+                basic = True
+            if qualification == "advanced":
+                advanced = True
+            if qualification == "crewLeader":
+                crewLeader = True
+            if qualification == "driver":
+                driver = True
+        isBasic.append(basic)
+        isAdvanced.append(advanced)
+        isCrewLeader.append(crewLeader)
+        isDriver.append(driver)
 
-#Test Code
-#v = VolunteerGenerate(200, 'volunteers')
-#request = [Request(1,LightUnit, 34, 35)]
-#print(Schedule(v, request))
+    gecode = Solver.lookup("gecode")
+    model = Model()
+    model.add_string(
+        """
+        int: V;
+        int: S;
+        set of int: Volunteers = 1..V;
+        set of int: Shifts = 1..S;
+        
+        array[Shifts,Volunteers] of bool: compatible;
+        array[Shifts,Shifts] of bool: clashing;
+        array[Shifts,Volunteers] of var bool: assignments;
+        array[Volunteers] of int: preferredHours;
+        array[Shifts] of int: shiftLength;
+        
+        array[Shifts] of bool: isHeavy;
+        array[Shifts] of bool: isMedium;
+        array[Shifts] of bool: isLight;
+        
+        array[Volunteers] of bool: isBasic;
+        array[Volunteers] of bool: isAdvanced;
+        array[Volunteers] of bool: isCrewLeader;
+        array[Volunteers] of bool: isDriver;
+        
+        array[Shifts] of var Volunteers: seat1;
+        array[Shifts] of var Volunteers: seat2;
+        array[Shifts] of var Volunteers: seat3;
+        array[Shifts] of var Volunteers: seat4;
+        array[Shifts] of var Volunteers: seat5;
+        
+        array[Volunteers,Shifts] of var int: hoursOnAssignment;
+        array[Volunteers] of var int: totalHours;
+        
+        %volunteer availability check
+        constraint forall(s in Shifts)(forall(v in Volunteers)(if compatible[s,v] == false then assignments[s,v] == false endif));
+        
+        %volunteers cannot be assigned to 2 shifts at once
+        constraint forall(s1 in Shifts)(forall(s2 in Shifts)(forall(v in Volunteers)(if clashing[s1,s2] /\ assignments[s1,v] then assignments[s2,v] == false endif)));
+        
+        %all vehicles are filled
+        constraint forall(s in Shifts)(if isHeavy[s] then sum(v in Volunteers)(assignments[s,v]) = 5 endif);
+        constraint forall(s in Shifts)(if isMedium[s] then sum(v in Volunteers)(assignments[s,v]) = 3 endif);
+        constraint forall(s in Shifts)(if isLight[s] then sum(v in Volunteers)(assignments[s,v]) = 2 endif);
+        
+        %Seat1 Requirements
+        constraint forall(s in Shifts)(forall(v in Volunteers) (if seat1[s] == v then assignments[s,v] = true endif));
+        constraint forall(s in Shifts)(forall(v in Volunteers)(if seat1[s] == v then isDriver[v] = true endif));
+        constraint forall(s in Shifts)(if isLight[s] then forall(v in Volunteers)(if seat1[s] == v then isCrewLeader[v] = true endif) endif);
+        
+        %seat2 Requirements
+        constraint forall(s in Shifts)(forall(v in Volunteers) (if seat2[s] == v then assignments[s,v] = true endif));
+        constraint forall(s in Shifts)(if isLight[s] then forall(v in Volunteers)(if seat2[s] == v then isAdvanced[v] = true endif) endif);
+        constraint forall(s in Shifts)(if isMedium[s] then forall(v in Volunteers)(if seat2[s] == v then isCrewLeader[v] = true endif) endif);
+        constraint forall(s in Shifts)(if isHeavy[s] then forall(v in Volunteers)(if seat2[s] == v then isCrewLeader[v] = true endif) endif);
+        
+        %seat3 Requirements
+        constraint forall(s in Shifts)(forall(v in Volunteers) (if seat3[s] == v then assignments[s,v] = true endif));
+        constraint forall(s in Shifts)(if isLight[s] then seat3[s] == seat2[s] endif);
+        constraint forall(s in Shifts)(if isMedium[s] then forall(v in Volunteers)(if seat3[s] == v then isBasic[v] = true endif) endif);
+        constraint forall(s in Shifts)(if isHeavy[s] then forall(v in Volunteers)(if seat3[s] == v then isAdvanced[v] = true endif) endif);
+        
+        %seat4 Requirements
+        constraint forall(s in Shifts)(forall(v in Volunteers) (if seat4[s] == v then assignments[s,v] = true endif));
+        constraint forall(s in Shifts)(if isLight[s] then seat4[s] == seat2[s] endif);
+        constraint forall(s in Shifts)(if isMedium[s] then seat4[s] == seat3[s] endif);
+        constraint forall(s in Shifts)(if isHeavy[s] then forall(v in Volunteers)(if seat4[s] == v then isAdvanced[v] = true endif) endif);
+        
+        %seat5 Requirements
+        constraint forall(s in Shifts)(forall(v in Volunteers) (if seat5[s] == v then assignments[s,v] = true endif));
+        constraint forall(s in Shifts)(if isLight[s] then seat5[s] == seat2[s] endif);
+        constraint forall(s in Shifts)(if isMedium[s] then seat5[s] == seat3[s] endif);
+        constraint forall(s in Shifts)(if isHeavy[s] then forall(v in Volunteers)(if seat5[s] == v then isBasic[v] = true endif) endif);
+        
+        %if a volunteer is not on any seats of a shift, they are not on the shift
+        constraint forall(s in Shifts)(forall(v in Volunteers) (if seat5[s] != v /\ seat4[s] != v /\ seat3[s] != v /\ seat2[s] != v /\ seat1[s] != v then assignments[s,v] = false endif));
+        
+        
+        %maps shifts to hours worked
+        constraint forall(v in Volunteers)(forall(s in Shifts)(if assignments[s,v] then hoursOnAssignment[v,s] = shiftLength[s] else hoursOnAssignment[v,s] = 0 endif));
+        
+        %defines total hours for each volunteer
+        constraint forall(v in Volunteers)(totalHours[v] == sum(s in Shifts)(hoursOnAssignment[v,s]));
+        
+        %ensures no one is overworked
+        constraint forall(v in Volunteers)(totalHours[v] <= preferredHours[v])
+        
+        %minimise for the sum of squares difference between preferred work and actual work
+        %solve minimize sum(v in Volunteers)((preferredHours[v] - totalHours[v])*(preferredHours[v] - totalHours[v]))
+        solve satisfy
+        """
+    )
+
+    instance = Instance(gecode, model)
+    instance["V"] = len(Volunteers)
+    instance["S"] = len(VehicleRequest)
+    instance["preferredHours"] = preferredHours
+    instance["shiftLength"] = shiftLengths
+    instance["compatible"] = compatible
+    instance["clashing"] = clashing
+    instance["isHeavy"] = isHeavy
+    instance["isMedium"] = isMedium
+    instance["isLight"] = isLight
+    instance["isBasic"] = isBasic
+    instance["isAdvanced"] = isAdvanced
+    instance["isCrewLeader"] = isCrewLeader
+    instance["isDriver"] = isDriver
+    result = instance.solve()
+
+    output = []
+    for i in range(len(VehicleRequest)):
+        vehicledict = {}
+        vehicledict["shiftID"] = VehicleRequest[i]["shiftID"]
+        vehicledict["assetClass"] = VehicleRequest[i]["assetClass"]
+        seats = []
+        seats.append(result["seat1"])
+        seats.append(result["seat2"])
+        seats.append(result["seat3"])
+        seats.append(result["seat4"])
+        seats.append(result["seat5"])
+        if vehicledict["assetClass"] == "lightUnit":
+            volunteers = addLightUnitToOutput(seats, i)
+        if vehicledict["assetClass"] == "mediumTanker":
+            volunteers = addMediumTankerToOutput(seats, i)
+        if vehicledict["assetClass"] == "heavyTanker":
+            volunteers = addHeavyTankerToOutput(seats, i)
+        vehicledict["volunteers"] = volunteers
+        output.append(vehicledict)
+    return output
+
