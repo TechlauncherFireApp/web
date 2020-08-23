@@ -301,24 +301,28 @@ def Schedule(Volunteers, VehicleRequest):
     instance["isDriver"] = isDriver
     result = instance.solve()
 
-    output = []
-    for i in range(len(VehicleRequest)):
-        vehicledict = {}
-        vehicledict["shiftID"] = VehicleRequest[i]["shiftID"]
-        vehicledict["assetClass"] = VehicleRequest[i]["assetClass"]
-        seats = []
-        seats.append(result["seat1"])
-        seats.append(result["seat2"])
-        seats.append(result["seat3"])
-        seats.append(result["seat4"])
-        seats.append(result["seat5"])
-        if vehicledict["assetClass"] == "lightUnit":
-            volunteers = addLightUnitToOutput(seats, i)
-        if vehicledict["assetClass"] == "mediumTanker":
-            volunteers = addMediumTankerToOutput(seats, i)
-        if vehicledict["assetClass"] == "heavyTanker":
-            volunteers = addHeavyTankerToOutput(seats, i)
-        vehicledict["volunteers"] = volunteers
-        output.append(vehicledict)
+    if result.solution:
+        output = []
+        for i in range(len(VehicleRequest)):
+            vehicledict = {}
+            vehicledict["shiftID"] = VehicleRequest[i]["shiftID"]
+            vehicledict["assetClass"] = VehicleRequest[i]["assetClass"]
+            seats = []
+            seats.append(result["seat1"])
+            seats.append(result["seat2"])
+            seats.append(result["seat3"])
+            seats.append(result["seat4"])
+            seats.append(result["seat5"])
+            if vehicledict["assetClass"] == "lightUnit":
+                volunteers = addLightUnitToOutput(seats, i)
+            if vehicledict["assetClass"] == "mediumTanker":
+                volunteers = addMediumTankerToOutput(seats, i)
+            if vehicledict["assetClass"] == "heavyTanker":
+                volunteers = addHeavyTankerToOutput(seats, i)
+            vehicledict["volunteers"] = volunteers
+            output.append(vehicledict)
+    else:
+        print("failed to solve, invalid model")
+        output = []
     return output
 
