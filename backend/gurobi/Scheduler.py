@@ -90,7 +90,7 @@ Volunteers = []
 for i in range(12):
     volunteer = {}
     volunteer["ID"] = i
-    volunteer["prefHours"] = 10
+    volunteer["prefHours"] = 69945585 + 1
     volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
     start = datetime.min
     end = datetime.max
@@ -277,7 +277,7 @@ def Schedule(Volunteers, VehicleRequest):
         constraint forall(v in Volunteers)(totalHours[v] == sum(s in Shifts)(hoursOnAssignment[v,s]));
         
         %ensures no one is overworked
-        constraint forall(v in Volunteers)(totalHours[v] <= preferredHours[v])
+        constraint forall(v in Volunteers)(totalHours[v] <= preferredHours[v]);
         
         %minimise for the sum of squares difference between preferred work and actual work
         %solve minimize sum(v in Volunteers)((preferredHours[v] - totalHours[v])*(preferredHours[v] - totalHours[v]))
