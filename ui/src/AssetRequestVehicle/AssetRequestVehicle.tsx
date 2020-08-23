@@ -3,11 +3,13 @@ import "./AssetRequestVehicle.scss";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import DatePicker from "react-datepicker";
 import { Button } from "react-bootstrap";
-import { contains, toTimeblock, getValidDate } from "../functions";
+import { contains, getValidDate, toPythonDate, makeid } from "../functions";
+import { type } from "os";
 
 interface RequestType {
-  id: number;
-  assetType: string;
+  id: string;
+  idVehicle: string;
+  type: string;
   startDateTime: Date;
   endDateTime: Date;
 }
@@ -46,25 +48,33 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     t2 = getValidDate(t2);
 
     this.setState({ startDateTime: t1, endDateTime: t2 });
+    this.getInitialData();
   }
 
   getInitialData(): void {
     if (this.state.allow_getInitialData) {
       this.setState({ allow_getInitialData: false });
-      // axios.request({
-      //   url: "AssetRequestVehicle/initial",
-      //   baseURL: "http://localhost:5000/",
-      //   method: "POST",
-      //   data: { "id": this.props.match.params.id },
-      //   timeout: 15000,
-      //   withCredentials: true,
-      //   headers: { "X-Requested-With": "XMLHttpRequest" }
-      // }).then((res: AxiosResponse): void => {
-      //   console.log(res.data);
-      // }).catch((err: AxiosError): void => {
-      //   // alert(err.message);
-      //   this.setState({ allow_getInitialData: true });
-      // });
+      axios.request({
+        url: "AssetRequestVehicle/initial",
+        baseURL: "http://localhost:5000/",
+        method: "POST",
+        data: { "id": this.props.match.params.id },
+        timeout: 15000,
+        // withCredentials: true,
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      }).then((res: AxiosResponse): void => {
+        console.log(res.data);
+        if (typeof res.data == "object") {
+          for (let x of res.data) {
+            x["startDateTime"] = new Date(x["startDateTime"])
+            x["endDateTime"] = new Date(x["endDateTime"])
+          }
+          this.setState({ requestList: res.data as RequestType[] });
+        } else alert(res.data);
+      }).catch((err: AxiosError): void => {
+        alert(err.message);
+        this.setState({ allow_getInitialData: true });
+      });
     }
   }
 
@@ -75,9 +85,11 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     let d: any = [];
     for (let x of l) {
       d.push({
-        "type": x.assetType,
-        "startDateTime": toTimeblock(x.startDateTime),
-        "endDateTime": toTimeblock(x.endDateTime)
+        "id": x.id,
+        "idVehicle": x.idVehicle,
+        "type": x.type,
+        "startDateTime": toPythonDate(x.startDateTime), // toTimeblock()
+        "endDateTime": toPythonDate(x.endDateTime)
       });
     }
 
@@ -93,7 +105,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
-      // this.props.onDisplayRequest(res.data.recommendation_list, res.data.volunteer_list);
+      console.log(res.data);
     }).catch((err: AxiosError): void => {
       console.log(err);
     });
@@ -105,14 +117,15 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
 
     const o: RequestType[] = this.state.requestList;
     let a: RequestType = {
-      id: o.length + 1,
-      assetType: this.insert_assetType.current ? this.insert_assetType.current.value : "",
+      id: makeid(),
+      idVehicle: makeid(),
+      type: this.insert_assetType.current ? this.insert_assetType.current.value : "",
       startDateTime: this.state.startDateTime,
       endDateTime: this.state.endDateTime,
     };
 
     // Validate Data :- Asset Type
-    if (!contains(a.assetType)) { alert("Asset Type has not been selected"); return; }
+    if (!contains(a.type)) { alert("Asset Type has not been selected"); return; }
 
     // Validate Data :- Start and End DateTime
     if (!contains(a.startDateTime)) { alert("Start DateTime has not been selected"); return; }
@@ -127,19 +140,12 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     this.setState({ requestList: o });
   }
 
-  removeAsset(i: number): void {
+  removeAsset(i: string): void {
     console.clear();
     const o: RequestType[] = this.state.requestList;
 
-    // Find and Remove Element, then update id
-    for (let y = 0; y < o.length; y++) {
-      if (o[y].id === i) {
-        o.splice(y, 1);
-        // Update id
-        for (let x = 0; x < o.length; x++) o[x].id = x + 1;
-        break;
-      }
-    }
+    // Find and Remove Element
+    for (let y = 0; y < o.length; y++) if (o[y].id === i) o.splice(y, 1);
 
     // Update Data
     this.setState({ requestList: o });
@@ -198,10 +204,10 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
         </div>
         <hr/>
         <div className="output">
-          {this.state.requestList.map((t: any) => (
+          {this.state.requestList.map((t: RequestType) => (
             <request-body id={t.id}>
                 <svg type="close" viewBox="0 0 282 282" onClick={() => { this.removeAsset(t.id); }}> <g> <circle cx="141" cy="141" r="141"/> <ellipse cx="114" cy="114.5" rx="114" ry="114.5"/> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z"/> </g> </svg>
-                <h2>{t.assetType}</h2>
+                <h2>{t.type}</h2>
                 <div className="cont-1">
                     <div className="cont-2">
                         <label>Start</label>

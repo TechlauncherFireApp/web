@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import reqparse, abort, Resource
 import uuid
 
-from includes.main import contains, message_return
+from includes.main import contains, error_message
 from includes.connection_mysqli import get as connection, is_connected, cur_conn_close
 
 class NewAssetRequest(Resource):
@@ -13,7 +13,7 @@ class NewAssetRequest(Resource):
         if is_connected(conn):
             id = uuid.uuid4().hex[0:15]             # Make New Request ID
             conn.start_transaction()                # Transaction type
-            cur = conn.cursor()
+            cur = conn.cursor(prepared=True)
             try:
                 cur.execute("INSERT INTO `asset-request`(`id`,`idAdmin`) VALUES (%s,%s);", [id, idAdmin])
                 conn.commit()                       # Commit
@@ -22,4 +22,4 @@ class NewAssetRequest(Resource):
             except:
                 conn.rollback()                     # RollBack
                 cur_conn_close(cur, conn)
-        return message_return()                     # Fail Message
+        return error_message()                     # Fail Message

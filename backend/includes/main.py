@@ -1,9 +1,9 @@
 import math, numbers
 
-error_message = "error"
+error_str = "error"
 
-def message_return(m=None):
-    return (m if contains(m) else error_message)
+def error_message(m=None):
+    return (m if contains(m) else error_str)
 
 def check_Request(r):
     return (r.is_ajax() and (r.method in ["GET","POST"]))

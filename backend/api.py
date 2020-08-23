@@ -2,12 +2,13 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from flask_restful import Api, Resource
-from includes.main import message_return, contains
+from includes.main import error_message, contains
 import json
 # Endpoints
 from endpoints.hello_world import HelloWorld
 from endpoints.NewAssetRequest import NewAssetRequest
 from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
+from AssetRequestVehicle.submit import Submit as AssetRequestVehicle_submit
 
 # from endpoints.recommendation import Recommendation
 # from endpoints.assignment import Assignment
@@ -39,10 +40,22 @@ api.add_resource(HelloWorld, '/hello-world')
 api.add_resource(NewAssetRequest, "/NewAssetRequest")
 
 @app.route("/AssetRequestVehicle/initial", methods=["POST"])
-def method():
-    d = json.loads(request.data)
-    if (type(d) is dict) and contains(d["id"]): return AssetRequestVehicle_initial.get(d["id"])
-    return message_return()
+def method_AssetRequestVehicle_initial():
+    d: any = json.loads(request.data)
+    if (type(d) is dict) and contains(d["id"]):
+        o = AssetRequestVehicle_initial.get(d["id"])
+        if (type(o) is dict) or (type(o) is list): return json.dumps(o)
+        else: return o
+    return error_message()
+
+@app.route("/AssetRequestVehicle/submit", methods=["POST"])
+def method_AssetRequestVehicle_submit():
+    d: any = json.loads(request.data)
+    if (type(d) is dict) and contains(d["id"], d["vehicles"]):
+        o = AssetRequestVehicle_submit.get(d["id"], d["vehicles"])
+        if (type(o) is dict) or (type(o) is list): return json.dumps(o)
+        else: return o
+    return error_message()
 
 if __name__ == '__main__':
     app.run(debug=True)
