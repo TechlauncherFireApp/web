@@ -16,7 +16,103 @@ class NewAssetRequest extends Component {
   state = {
     startDateTime: null,
     endDateTime: null,
-    requestList: [],
+    requestList: [
+      { id: 1, assetType: "Heavy Tanker", startDateTime: new Date("2020-10-28T17:00"), endDateTime: new Date("2020-12-01T14:30") },
+    ],
+    // Dummy list used to test recommendation UI without running the backend 
+    dummy_list: [
+      {
+        asset_id: 1,
+        asset_class: "Light Unit",
+        volunteers: [
+          {
+            volunteer_id: 10,
+            position_id: 1,
+            volunteer_name: "eg a",
+            role: "Driver",
+            possibleRoles: ["Driver", "CrewLeader", "Crew Member",],
+            qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
+            contact_info: [{ detail: "0412 490 340" }],
+          },
+          {
+            volunteer_id: 20,
+            position_id: 2,
+            volunteer_name: "eg b",
+            role: "CrewLeader",
+            possibleRoles: ["CrewLeader", "Crew Member",],
+            qualifications: ["advanced training", "crew leader training"],
+            contact_info: [{ detail: "0412 490 340" }],
+          },]
+      }
+    ],
+
+    volunteer_list: [
+      {
+        id: 10,
+        name: "eg a",
+        role: null,
+        possibleRoles: ["Driver", "CrewLeader", "Crew Member",],
+        qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
+        contact_info: [{ detail: "0412 490 340" }],
+      }, {
+        id: 20,
+        name: "eg b",
+        role: null,
+        possibleRoles: ["CrewLeader", "Crew Member",],
+        qualifications: ["advanced training", "crew leader training"],
+        contact_info: [{ detail: "0412 490 340" }],
+      }, {
+        id: 110,
+        name: "person one",
+        role: null,
+        possibleRoles: ["Driver", "CrewLeader", "Crew Member",],
+        qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
+        contact_info: [{ detail: "0412 490 340" }],
+      }, {
+        id: 111,
+        name: "person two",
+        role: null,
+        possibleRoles: ["CrewLeader", "Crew Member",],
+        qualifications: ["crew leader training", "advanced training",],
+        contact_info: [{ detail: "0412 490 340" }],
+      }, {
+        id: 112,
+        name: "person three",
+        role: null,
+        possibleRoles: ["Crew Member",],
+        qualifications: ["advanced training",],
+        contact_info: [{ detail: "0412 490 340" }],
+      }, {
+        id: 113,
+        name: "person four",
+        role: null,
+        possibleRoles: ["Driver", "Crew Member",],
+        qualifications: ["heavy rigid license", "pump training", "advanced training",],
+        contact_info: [{ detail: "0412 490 340" }],
+      }, {
+        id: 114,
+        name: "person five",
+        role: null,
+        possibleRoles: ["Crew Member",],
+        qualifications: ["advanced training",],
+        contact_info: [{ detail: "0412 490 340" }],
+      }, {
+        id: 115,
+        name: "person six",
+        role: null,
+        possibleRoles: ["Crew Member",],
+        qualifications: [],
+        contact_info: [{ detail: "0412 490 340" }],
+      }, {
+        id: 116,
+        name: "person seven",
+        role: null,
+        possibleRoles: ["CrewLeader", "Crew Member",],
+        qualifications: ["crew leader training", "advanced training",],
+        contact_info: [{ detail: "0412 490 340" }],
+      },
+    ],
+
   };
 
   constructor(props) {
@@ -159,6 +255,11 @@ class NewAssetRequest extends Component {
     else if (t === "end") this.setState({ endDateTime: v });
   };
 
+  testFunction = () => {
+    this.props.updateVehicleTimes(this.state.requestList);
+    this.props.onDisplayRequest(this.state.dummy_list, this.state.volunteer_list);
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -229,6 +330,10 @@ class NewAssetRequest extends Component {
         >
           Submit Request
         </Button>
+
+        <Button
+          className="type-1"
+          onClick={() => this.testFunction()}>Run with hard coded test data</Button>
       </React.Fragment>
     );
   }
