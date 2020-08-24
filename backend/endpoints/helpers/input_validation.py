@@ -1,5 +1,6 @@
 from flask_restful import inputs
 from ast import literal_eval # casts a string to a dict
+from pytz import UTC
 
 def input_dict(value, name):
     try:
@@ -13,13 +14,9 @@ def input_key_exists(value, key):
     if key not in value:
         raise ValueError("The parameter '{}' does not exist in the dictionary: {}".format(key, value))
 
-# Validate a timeblock input
-def input_timeblock(value, key):
+def input_datetime(value, key):
     input_key_exists(value, key)
-    value[key] = inputs.natural(value[key])
-    max_timeblock = 335
-    if value[key] > max_timeblock:
-        raise ValueError("The parameter '{}' is too large. Max is {}. You gave us: {}".format(key, max_timeblock, value[key]))
+    value[key] = inputs.datetime_from_rfc822(value[key]).replace(tzinfo=UTC)
     return value
 
 def input_key_positive(value, key):
