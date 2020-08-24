@@ -41,19 +41,19 @@ api.add_resource(NewAssetRequest, "/NewAssetRequest")
 
 @app.route("/AssetRequestVehicle/initial", methods=["POST"])
 def method_AssetRequestVehicle_initial():
-    d: any = json.loads(request.data)
+    d = json.loads(request.data)                                            # Get POST Data
     if (type(d) is dict) and contains(d["id"]):
-        o = AssetRequestVehicle_initial.get(d["id"])
-        if (type(o) is dict) or (type(o) is list): return json.dumps(o)
+        o = AssetRequestVehicle_initial.get(d["id"])                        # Get Ouput
+        if type(o) in [dict, list]: return json.dumps(o)
         else: return o
     return error_message()
 
 @app.route("/AssetRequestVehicle/submit", methods=["POST"])
 def method_AssetRequestVehicle_submit():
-    d: any = json.loads(request.data)
+    d = json.loads(request.data)                                            # Get POST Data
     if (type(d) is dict) and contains(d["id"], d["vehicles"]):
-        o = AssetRequestVehicle_submit.get(d["id"], d["vehicles"])
-        if (type(o) is dict) or (type(o) is list): return json.dumps(o)
+        o = AssetRequestVehicle_submit.get(d["id"], d["vehicles"])          # Get Ouput
+        if type(o) in [dict, list]: return json.dumps(o)
         else: return o
     return error_message()
 

@@ -5,9 +5,10 @@ import uuid
 from includes.main import contains, error_message
 from includes.connection_mysqli import get as connection, is_connected, cur_conn_close
 
+# Make a New Request inside the DataBase
 class NewAssetRequest(Resource):
     def get(self):
-        idAdmin = "jkEM0NW1QsTOqhH"
+        idAdmin = "jkEM0NW1QsTOqhH"                 # Using a single default admin (Brigade Captain)
         
         conn = connection()
         if is_connected(conn):
@@ -22,4 +23,4 @@ class NewAssetRequest(Resource):
             except:
                 conn.rollback()                     # RollBack
                 cur_conn_close(cur, conn)
-        return error_message()                     # Fail Message
+        return error_message()                      # Fail Message
