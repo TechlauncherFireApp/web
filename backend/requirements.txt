@@ -19,6 +19,7 @@ keyrings.alt==3.0
 kiwisolver==1.2.0
 MarkupSafe==1.1.1
 matplotlib==3.2.1
+minizinc==0.3.3
 numpy==1.18.3
 pipenv==2018.11.26
 pycrypto==2.6.1
