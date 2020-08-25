@@ -4,7 +4,6 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import DatePicker from "react-datepicker";
 import { Button } from "react-bootstrap";
 import { contains, getValidDate, toPythonDate, makeid } from "../functions";
-import { type } from "os";
 
 interface RequestType {
   id: string;
@@ -68,8 +67,8 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       console.log(res.data);
       if (typeof res.data == "object") {
         for (let x of res.data) {
-          x["startDateTime"] = new Date(x["startDateTime"])
-          x["endDateTime"] = new Date(x["endDateTime"])
+          x["startDateTime"] = new Date(x["startDateTime"]);
+          x["endDateTime"] = new Date(x["endDateTime"]);
         }
         this.setState({ requestList: res.data as RequestType[] });
       } else alert(res.data);
