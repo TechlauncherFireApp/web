@@ -7,6 +7,7 @@ import json
 # Endpoints
 from endpoints.hello_world import HelloWorld
 from endpoints.NewAssetRequest import NewAssetRequest
+from endpoints.volunteer_all import VolunteerAll
 from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
 from AssetRequestVehicle.submit import Submit as AssetRequestVehicle_submit
 # Load environment variables
@@ -27,6 +28,7 @@ api.add_resource(HelloWorld, '/hello-world')
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
 # api.add_resource(Assignment, '/assignment',
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
+api.add_resource(VolunteerAll, '/volunteer/all')
 api.add_resource(NewAssetRequest, "/NewAssetRequest")
 
 @app.route("/AssetRequestVehicle/initial", methods=["POST"])

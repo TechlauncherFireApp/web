@@ -16,8 +16,9 @@ Define Input
         "id": String
         "idVehicle": String 
         "type": String 
-        "startDateTime": DateTime
-        "endDateTime": DateTime
+        "startDateTime": DateTimeString
+        "endDateTime": DateTimeString
+        ? No volunteers?
     }]
 }
 '''
