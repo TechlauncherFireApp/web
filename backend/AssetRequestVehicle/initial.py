@@ -34,5 +34,5 @@ class Initial(Resource):
                 cur_conn_close(cur, conn)
                 return error_message("0x02")                    # Fail Message
 
-        cur_conn_close(cur, conn)
+        # cur_conn_close(cur, conn)
         return error_message("0x03")                            # Fail Message

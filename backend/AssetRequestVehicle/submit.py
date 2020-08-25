@@ -6,6 +6,22 @@ from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
 from includes.main import contains, error_message
 from includes.connection_mysqli import get as connection, is_connected, cur_conn_close
 
+
+'''
+Define Input
+
+{
+    "id": String
+    "vehicles": [{
+        "id": String
+        "idVehicle": String 
+        "type": String 
+        "startDateTime": DateTime
+        "endDateTime": DateTime
+    }]
+}
+'''
+
 class Submit(Resource):
     def get(idRequest, vehicles):
         
