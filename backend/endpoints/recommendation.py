@@ -53,7 +53,7 @@ parser.add_argument('request', action='append', type=input_asset_req)
 Define data output
 
 {
-    "request" : [{
+    "results" : [{
         "shiftID": Integer
         "assetClass": String [lightUnit | mediumTanker | heavyTanker]
         "volunteers": {
