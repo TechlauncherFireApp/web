@@ -56,6 +56,8 @@ Define data output
     "results" : [{
         "shiftID": Integer
         "assetClass": String [lightUnit | mediumTanker | heavyTanker]
+        "startTime": DateTime,
+        "endTime": DateTime,
         "volunteers": {
             "ID": Integer,
             "positionID": Integer,
@@ -74,6 +76,8 @@ volunteer_field = {
 recommendation_list_field = {
     'shiftID': fields.Integer,
     'assetClass': fields.String,
+    'startTime': fields.DateTime(dt_format='rfc822', attribute=lambda x: x['timeframe'][0]),
+    'endTime': fields.DateTime(dt_format='rfc822',  attribute=lambda x: x['timeframe'][1]),
     'volunteers': fields.List(fields.Nested(volunteer_field))
 }
 
@@ -89,8 +93,8 @@ class Recommendation(Resource):
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()
-        # if args["request"] is None:
-        #     return
+        if args["request"] is None:
+            return
         print(args)
 
         asset_requests = []
@@ -119,8 +123,8 @@ class Recommendation(Resource):
 
         # try:
         output = Schedule(Volunteers, asset_requests)
-        print("succeeded to optimise")
-        # print("succeeded to optimise, output:\n{}".format(output))
+        # print("succeeded to optimise")
+        print("succeeded to optimise, output:\n{}".format(output))
 
         return {
             "results" : output
