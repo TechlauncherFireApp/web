@@ -4,7 +4,6 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import DatePicker from "react-datepicker";
 import { Button } from "react-bootstrap";
 import { contains, getValidDate, toPythonDate, makeid } from "../functions";
-import { type } from "os";
 
 interface RequestType {
   id: string;
@@ -16,6 +15,7 @@ interface RequestType {
 
 interface State {
   allow_getInitialData: boolean;
+  allow_submitData: boolean;
   startDateTime: Date;
   endDateTime: Date;
   requestList: RequestType[];
@@ -25,6 +25,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
 
   state: State = {
     allow_getInitialData: true,
+    allow_submitData: true,
     startDateTime: getValidDate(new Date()),
     endDateTime: getValidDate(new Date()),
     requestList: [],
@@ -52,34 +53,36 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
   }
 
   getInitialData(): void {
-    if (this.state.allow_getInitialData) {
-      this.setState({ allow_getInitialData: false });
-      axios.request({
-        url: "AssetRequestVehicle/initial",
-        baseURL: "http://localhost:5000/",
-        method: "POST",
-        data: { "id": this.props.match.params.id },
-        timeout: 15000,
-        // withCredentials: true,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      }).then((res: AxiosResponse): void => {
-        console.log(res.data);
-        if (typeof res.data == "object") {
-          for (let x of res.data) {
-            x["startDateTime"] = new Date(x["startDateTime"])
-            x["endDateTime"] = new Date(x["endDateTime"])
-          }
-          this.setState({ requestList: res.data as RequestType[] });
-        } else alert(res.data);
-      }).catch((err: AxiosError): void => {
-        alert(err.message);
-        this.setState({ allow_getInitialData: true });
-      });
-    }
+    if (!this.state.allow_getInitialData) return;
+    this.setState({ allow_getInitialData: false });
+    axios.request({
+      url: "AssetRequestVehicle/initial",
+      baseURL: "http://localhost:5000/",
+      method: "POST",
+      data: { "id": this.props.match.params.id },
+      timeout: 15000,
+      // withCredentials: true,
+      headers: { "X-Requested-With": "XMLHttpRequest" }
+    }).then((res: AxiosResponse): void => {
+      console.log(res.data);
+      if (typeof res.data == "object") {
+        for (let x of res.data) {
+          x["startDateTime"] = new Date(x["startDateTime"]);
+          x["endDateTime"] = new Date(x["endDateTime"]);
+        }
+        this.setState({ requestList: res.data as RequestType[] });
+      } else alert(res.data);
+      this.setState({ allow_getInitialData: true });
+    }).catch((err: AxiosError): void => {
+      alert(err.message);
+      this.setState({ allow_getInitialData: true });
+    });
   }
 
   submitData(): void {
+    if (!this.state.allow_getInitialData || !this.state.allow_submitData) return;
     console.clear();
+    this.setState({ allow_submitData: false });
     const l: RequestType[] = this.state.requestList;
     
     let d: any = [];
@@ -94,7 +97,11 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     }
 
     // Don't get recommendations for no assets requested
-    if (!contains(d)) { alert("At least one asset needs to be selected"); return; }
+    if (!contains(d)) {
+      this.setState({ allow_submitData: false });
+      alert("At least one asset needs to be selected");
+      return;
+    }
 
     axios.request({
       url: "AssetRequestVehicle/submit",
@@ -105,16 +112,18 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
-      console.log(res.data);
+      alert(res.data === 1 ? "Successfully Saved" : res.data);
+      this.setState({ allow_submitData: true });
     }).catch((err: AxiosError): void => {
-      console.log(err);
+      alert(err.message);
+      this.setState({ allow_submitData: true });
     });
   }
 
   insertAsset(): void {
     // Get Data
     console.clear();
-
+    if (!this.state.allow_getInitialData) return;
     const o: RequestType[] = this.state.requestList;
     let a: RequestType = {
       id: makeid(),
@@ -167,8 +176,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
 
   render() {
     return (
-      <React.Fragment>
-        {/* <h4 className="mt-2">New Asset Request</h4> */}
+      <>
         <h1>New Asset Request</h1>
         <hr/>
         <div className="entry">
@@ -204,32 +212,34 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
         </div>
         <hr/>
         <div className="output">
-          {this.state.requestList.map((t: RequestType) => (
-            <request-body id={t.id}>
-                <svg type="close" viewBox="0 0 282 282" onClick={() => { this.removeAsset(t.id); }}> <g> <circle cx="141" cy="141" r="141"/> <ellipse cx="114" cy="114.5" rx="114" ry="114.5"/> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z"/> </g> </svg>
-                <h2>{t.type}</h2>
-                <div className="cont-1">
-                    <div className="cont-2">
-                        <label>Start</label>
-                        <br/>
-                        <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                        <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
-                    </div>
-                    <div className="cont-2">
-                        <label>End</label>
-                        <br/>
-                        <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                        <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
-                    </div>
-                </div>
-            </request-body>
-          ))}
+          {this.state.allow_getInitialData ? <>
+            {this.state.requestList.map((t: RequestType) => (
+              <request-body id={t.id}>
+                  <svg type="close" viewBox="0 0 282 282" onClick={()=>this.removeAsset(t.id)}> <g> <circle cx="141" cy="141" r="141"/> <ellipse cx="114" cy="114.5" rx="114" ry="114.5"/> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z"/> </g> </svg>
+                  <h2>{t.type}</h2>
+                  <div className="cont-1">
+                      <div className="cont-2">
+                          <label>Start</label>
+                          <br/>
+                          <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                          <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
+                      </div>
+                      <div className="cont-2">
+                          <label>End</label>
+                          <br/>
+                          <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                          <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
+                      </div>
+                  </div>
+              </request-body>
+            ))}
+          </> : <>Loading</>}
         </div>
         <hr/>
-        <Button className="type-1" onClick={() => this.submitData()}>
-          Submit Request
+        <Button className="type-1" onClick={()=>this.submitData()}>
+          {this.state.allow_submitData ? <>Submit Request</> : <>Loading</>}
         </Button>
-      </React.Fragment>
+      </>
     );
   }
 }

@@ -1,19 +1,21 @@
 import mysql.connector as mysql
 from includes.main import contains
+import os
 
 def get():
     conn = None
     try:
         conn = mysql.connect(
-            host="localhost",
-            user="root",
-            password="Fireapp.sem2",
-            database="fireapp",
-            port="3000",
+            host=os.getenv("MYSQL_HOST"),
+            user=os.getenv("MYSQL_USER"),
+            password=os.getenv("MYSQL_PASSWORD"),
+            database=os.getenv("MYSQL_DATABASE"),
+            port=os.getenv("MYSQL_PORT"),
             charset="utf8",
             autocommit=False
         )
-    except:
+    except mysql.Error as err:
+        print("Something went wrong: {}".format(err))
         return False
     finally:
         if is_connected(conn): return conn
@@ -24,9 +26,14 @@ def is_connected(conn):
     except: return False
 
 def cur_conn_close(cur, conn):
+    cur_close(cur)
+    conn_close(conn)
+
+def cur_close(cur):
     try: cur.close()
     except: cur = None
 
+def conn_close(conn):
     try:
         if is_connected(conn): conn.close()
     except: conn = None

@@ -7,7 +7,7 @@ export const contains = (...y: any): boolean => {
   return true;
 };
 
-export const toTimeblock = (d: Date) => {
+export const toTimeblock = (d: Date): (Number | Date) => {
   if (!contains(d)) return 0; // d === "Invalid Date"
   return d.getDay() * 48 + d.getHours() * 2 + (d.getMinutes() === 0 ? 0 : 1);
 };
@@ -26,9 +26,9 @@ export const toPythonDate = (d: Date): string => {
 };
 
 export const makeid = (): string => {
-  let result     : string = "",
-      characters : string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-      length     : number = 15;
-  for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * characters.length));   
-  return result;
+  let r : string = "",
+      c : string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+      l : number = 15;
+  for (let i = 0; i < l; i++) r += c.charAt(Math.floor(Math.random() * c.length));
+  return r;
 }

@@ -1,1 +1,0 @@
-export const contains = (x) => { return ((x !== undefined) && (x !== null) && (x !== "") && (x.length !== 0)); };

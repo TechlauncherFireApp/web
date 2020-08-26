@@ -9,7 +9,7 @@ declare global {
     interface IntrinsicElements {
       // Main
       "main-body": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-      // Page :- NewAssetRequest
+      // Page :- AssetRequestVehicle
       insert: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
       "request-body": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
     }
