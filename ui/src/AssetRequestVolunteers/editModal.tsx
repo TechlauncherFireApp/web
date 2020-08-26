@@ -1,0 +1,267 @@
+import React, { Component } from "react";
+import "./editModal.scss";
+import { contains } from "../main.js";
+import { Modal, Button, Table } from "react-bootstrap";
+import "./volunteer.scss"
+
+interface State {
+  //related to display elements
+  searchValue: string;
+  filteredVolunteerList: any; //list of volunteers
+  searchResults: any; //list of volunteers
+  qualificationsVisible: boolean;
+  filter: {
+    position: boolean; //should search results be filtered by position
+    availability: boolean; //should search results be filtered by availability
+  };
+  //related to data needed 
+  volunteerList: any;  //list of volunteers
+  selectedVolunteer: any; //the replacement volunteer selected from the list
+}
+
+export default class EditModal extends React.Component<any, State> {
+
+  state: State = {
+    searchValue: "",
+    filteredVolunteerList: [],
+    searchResults: [],
+    qualificationsVisible: false,
+    filter: {
+      position: true,
+      availability: true,
+    },
+    volunteerList: [],
+    selectedVolunteer: undefined,
+  };
+
+  constructor(props: any) {
+    super(props);
+    const volunteerList: any = props.volunteerList;
+    this.state.volunteerList = volunteerList;
+    const l: any = this.filterVolunteerList(volunteerList, this.state.filter);
+    this.state.filteredVolunteerList = l
+    this.state.searchResults = l;
+  }
+
+  //TODO - this is currently (i.e you can't search)
+  insertSearch = (e: any) => {
+    console.log("called")
+    // Get Value
+    e = e.target.value;
+    this.state.searchValue = e;
+
+    // Validate Value
+    if (!contains(e)) { this.setState({ searchResults: this.state.filteredVolunteerList }); return; }
+    e = e.toLowerCase();
+
+    // Search Value
+    let a = [];
+    for (let x of this.state.filteredVolunteerList) {
+      if (x.name.toLowerCase().indexOf(e) >= 0) a.push(x);
+    }
+
+    // Search Found
+    if (a.length > 0) this.setState({ searchResults: a });
+    else this.setState({ searchResults: "" });
+  };
+
+  displayQualsList = (quals: string[]) => {
+    let result: any = [];
+    for (let i = 0; i < quals.length - 1; i++) {
+      result.push(<div>- {quals[i]}</div>)
+    }
+    result.push(<div>- {quals[quals.length - 1]} <img src={require("../assets/collapse.png")} /></div>)
+    return result;
+  }
+
+  showHideQualifications = (): void => {
+    const qualificationsVisible = !this.state.qualificationsVisible;
+    this.setState({ qualificationsVisible });
+  }
+
+  saveChange = (): void => {
+    if (!(typeof this.state.selectedVolunteer === 'undefined')) {
+      const map: any = this.props.assignedVolunteers;
+      const vol: any = this.state.selectedVolunteer;
+      /* if (vol.id === this.props.volunteer.volunteer_id) {
+         alert("You can't change a volunteer to themselves")
+       } else //THIS SHOULDN'T BE POSSIBLE ANYWAY*/
+      if (map.has(vol.id)) {
+        alert(vol.name + " is already assigned to asset " + map.get(vol.id).shiftID + " position " + map.get(vol.id).positionID)
+      } else {
+        this.props.onSave(this.state.selectedVolunteer)
+        this.onHide();
+      }
+    } else {
+      this.onHide();
+    }
+
+  }
+
+  removeVolunteer = (): void => {
+    this.props.removeVolunteer();
+    this.onHide();
+  }
+
+  toggleFilterByPosition = (): void => {
+    let filter: { position: boolean, availability: boolean } = this.state.filter;
+    filter.position = !filter.position;
+    const l = this.filterVolunteerList(this.state.volunteerList, filter);
+    const searchValue = this.state.searchValue;
+    if (searchValue == "") {
+      this.setState({ filter, filteredVolunteerList: l, searchResults: l })
+    } else {
+      var input: any = document.getElementById('searchBar');
+      var nativeInputValueSetter: any = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set; // the ! is a fix from here: https://stackoverflow.com/questions/40349987/how-to-suppress-error-ts2533-object-is-possibly-null-or-undefined
+      nativeInputValueSetter.call(input, "");
+      var ev = new Event('input', { bubbles: true });
+      input.dispatchEvent(ev);
+      this.setState({ filter, filteredVolunteerList: l, searchResults: l });
+    }
+  }
+
+  filterVolunteerList = (baseList: any, filter: { position: boolean, availability: boolean }): any => {
+
+    // exclude the volunteer themselves from this list (position.assignedVolunteer.id if position.assignedVolunteer != null)
+    // rework this to do both filters in one pass
+
+    const targetRole = this.props.position.role[0]; //TODO make this work for multiple roles
+    let l = [];
+    if (filter.position) {
+      let v;
+      for (v of baseList) {
+        v.possibleRoles.includes(targetRole) && l.push(v);
+      }
+    } else {
+      l = [...baseList];
+    }
+
+    if (filter.availability) {
+      //TODO
+    }
+    return l;
+  }
+
+  onHide = (): void => {
+    //need to reset if you've selected a volunteer.
+    const l = this.filterVolunteerList(this.state.volunteerList, { position: true, availability: true });
+    this.setState({ qualificationsVisible: false, filter: { position: true, availability: true }, searchValue: "", searchResults: l, filteredVolunteerList: l, selectedVolunteer: undefined })
+    this.props.onHide();
+  }
+
+  generateModalHeading = (): string => {
+    // UNTESTED
+    const position = this.props.position;
+    let s: string = ""
+    s += position.assetClass + " -";
+    for (const r of position.role) {
+      s += " " + r + "/";
+    }
+    return s.slice(0, -1);
+  }
+
+  render() {
+    const { position } = this.props;
+
+    return (
+      <Modal
+        {...this.props}//TODO unsure what this does
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {this.generateModalHeading()}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {!this.props.position.assigned ?
+            <i>This position is currently unassigned</i> :
+            <div><b>{position.volunteer.firstName} {position.volunteer.lastName}</b>
+              <div className="view" onClick={this.showHideQualifications} >
+                {this.state.qualificationsVisible ?
+                  this.displayQualsList(position.volunteer.qualifications)
+                  : <div>View qualifications <img src={require("../assets/expand.png")} /></div>}
+              </div></div>
+          }
+
+          <br />
+
+          <form>
+            <input id='searchBar' type="text" placeholder="Search Volunteer via Name" value={this.state.searchValue} onChange={this.insertSearch} />
+            &nbsp;
+            <input
+              className="positionFilter"
+              type="checkbox"
+              id="positionFilter"
+              defaultChecked
+              onClick={this.toggleFilterByPosition}
+            /> Only show {position.role[0]}s {/*TODO need to make this work with multiple position roles*/}
+
+
+            <hr />
+            <div className="con-vols">
+              {((typeof this.state.searchResults === "object") && this.state.searchResults.length > 0) &&
+                <Table striped bordered hover size="sm">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Qualifications</th>
+                      <th>Phone No</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.searchResults.map((t: any) => (
+                      <tr className="view" onClick={() => { this.setState({ selectedVolunteer: t }); }}>
+                        <td>{this.props.assignedVolunteers.has(t.id) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../assets/assigned.png")} /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
+                        <td>
+                          {t.qualifications.map((q: string) => <div>- {q}</div>)}
+                        </td>
+                        <td>{t.mobileNo}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              }
+              {(this.state.searchResults === "") &&
+                <p>Nothing found</p>
+              }
+            </div>
+          </form>
+          {contains(this.state.selectedVolunteer) &&
+            <div className="con-vol">
+              {position.assigned ?
+                <p>{position.volunteer.firstName} {position.volunteer.lastName} will be changed to:</p> :
+                <p>Position will be assigned to:</p> /* TODO make sure this works properly*/}
+              <Table striped bordered hover size="sm">
+                <tbody>
+                  <tr>
+                    <td>{this.state.selectedVolunteer.firstName} {this.state.selectedVolunteer.lastName}</td>{/* TODO make sure this line works*/}
+                    <td>
+                      {this.state.selectedVolunteer.qualifications.map((q: string) => <div>- {q}</div>)}
+                    </td>
+                    <td>{this.state.selectedVolunteer.mobileNo}</td>{/*TODO probably not needed */}
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
+          }
+        </Modal.Body>
+        <Modal.Footer>
+          <Button className="danger" onClick={this.saveChange}>
+            Save Changes
+          </Button>
+          {position.assigned &&
+            <Button className="danger" onClick={this.removeVolunteer}>
+              Remove Volunteer
+            </Button>
+          }
+          <Button className="danger" onClick={this.onHide}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}

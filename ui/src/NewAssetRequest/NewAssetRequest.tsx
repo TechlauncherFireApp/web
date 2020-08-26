@@ -37,7 +37,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
     // console.clear();
     // Assign Current Time
     let t1: Date = getValidDate(new Date()),
-        t2: Date = getValidDate(new Date());
+      t2: Date = getValidDate(new Date());
 
     t1.setMinutes(t1.getMinutes() + 30);
     t1 = getValidDate(t1);
@@ -155,7 +155,7 @@ export default class NewAssetRequest extends React.Component<any, State> {
       <React.Fragment>
         {/* <h4 className="mt-2">New Asset Request</h4> */}
         <h1>New Asset Request</h1>
-        <hr/>
+        <hr />
         <div className="entry">
           <div className="con">
             <label>Asset Type</label>
@@ -185,32 +185,32 @@ export default class NewAssetRequest extends React.Component<any, State> {
               timeCaption="Time"
               dateFormat="d MMMM yyyy h:mm aa" />
           </div>
-          <insert onClick={()=>this.insertAsset()}></insert>
+          <insert onClick={() => this.insertAsset()}></insert>
         </div>
-        <hr/>
+        <hr />
         <div className="output">
           {this.state.requestList.map((t: any) => (
             <request-body id={t.id}>
-                <svg type="close" viewBox="0 0 282 282" onClick={() => { this.removeAsset(t.id); }}> <g> <circle cx="141" cy="141" r="141"/> <ellipse cx="114" cy="114.5" rx="114" ry="114.5"/> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z"/> </g> </svg>
-                <h2>{t.assetType}</h2>
-                <div className="cont-1">
-                    <div className="cont-2">
-                        <label>Start</label>
-                        <br/>
-                        <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                        <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
-                    </div>
-                    <div className="cont-2">
-                        <label>End</label>
-                        <br/>
-                        <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                        <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
-                    </div>
+              <svg type="close" viewBox="0 0 282 282" onClick={() => { this.removeAsset(t.id); }}> <g> <circle cx="141" cy="141" r="141" /> <ellipse cx="114" cy="114.5" rx="114" ry="114.5" /> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z" /> </g> </svg>
+              <h2>{t.assetType}</h2>
+              <div className="cont-1">
+                <div className="cont-2">
+                  <label>Start</label>
+                  <br />
+                  <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</div>
+                  <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</div>
                 </div>
+                <div className="cont-2">
+                  <label>End</label>
+                  <br />
+                  <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</div>
+                  <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</div>
+                </div>
+              </div>
             </request-body>
           ))}
         </div>
-        <hr/>
+        <hr />
         {/* className="btn-med" */}
         <Button
           className="type-1"
