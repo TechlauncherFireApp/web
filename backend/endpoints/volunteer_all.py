@@ -46,7 +46,7 @@ resource_fields = {
 
 # Handle the Recommendation endpoint
 class VolunteerAll(Resource):
-    # @marshal_with(resource_fields)
+    @marshal_with(resource_fields)
     def get(self):
         #TODO Get all volunteers from mysql
 
