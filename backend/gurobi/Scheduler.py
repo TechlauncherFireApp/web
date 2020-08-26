@@ -307,6 +307,7 @@ def Schedule(Volunteers, VehicleRequest):
             vehicledict = {}
             vehicledict["shiftID"] = VehicleRequest[i]["shiftID"]
             vehicledict["assetClass"] = VehicleRequest[i]["assetClass"]
+            vehicledict["timeframe"] = VehicleRequest[i]["timeframe"]
             seats = []
             seats.append(result["seat1"])
             seats.append(result["seat2"])
