@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import "./editScreenModal.scss";
-import { contains } from "../../main.js";
+import { contains } from "../../functions";
 import { Modal, Button, Table } from "react-bootstrap";
 import "./volunteer.scss"
+
+/* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
+entire class relates to 1.3.5 - I want to be able to manually add, remove, and swap volunteers to assets. */
 
 class EditScreenModal extends Component {
   state = {

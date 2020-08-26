@@ -3,6 +3,11 @@ import React, { Component } from "react";
 import NewAssetRequest from "./NewAssetRequest";
 import AssetRecommendation from "./components/assetRecommendation";
 
+
+/* User Story Map references (Ctrl + F the following reference numbers to find associated code) 
+ 1.3.5 - I want to be able to manually add, remove, and swap volunteers to assets. 
+ 1.2.3 - I want to be shown a list of recommended volunteers with their respective vehicle assignments, contact info, and qualifications */
+
 class AssetRequestContainer extends Component {
   state = {
     assetsSubmitted: false,
@@ -16,6 +21,7 @@ class AssetRequestContainer extends Component {
     this.setState({ vehicleTimes: list });
   };
 
+  // 1.3.5, when volunteers are changed ensure that the root vehicle list is up to date
   updateVehicle = (newVehicle) => {
     let vehicleList = this.state.vehicleList;
     for (let i = 0; i < vehicleList.length; i++) {
@@ -32,6 +38,7 @@ class AssetRequestContainer extends Component {
 
   };
 
+  // This function ensures that the root volunteer list is up to date after changes are made
   identifyAssignedVolunteers = (list) => {
     //create a new map
     let map = new Map();
@@ -40,7 +47,7 @@ class AssetRequestContainer extends Component {
       // for each volunteer in the vehicle
       v.volunteers.map((vol) => {
         // create a map entry for them
-        map.set(vol.volunteer_id, { asset_id: v.asset_id, position: vol.position_id })
+        vol.volunteer_id !== undefined && map.set(vol.volunteer_id, { asset_id: v.asset_id, position: vol.position_id })
       })
     })
     //set the state to the new map
@@ -55,8 +62,9 @@ class AssetRequestContainer extends Component {
   };
 
 
-
+  // 1.2.3 nested components are used to display an asset request. The heirarchy is assetRequestContainer > AssetRecommendation > AssetCrew(s) > Volunteer(s)
   render() {
+    console.log(this.props);
     return (
       <React.Fragment>
         {this.state.assetsSubmitted ? (
@@ -64,7 +72,7 @@ class AssetRequestContainer extends Component {
             onSaveRequest={this.handleSaveRequest}
             vehicleList={this.state.vehicleList}
             vehicleTimes={this.state.vehicleTimes}
-            updateVehicle={(vehicle) => this.updateVehicle(vehicle)}
+            updateVehicle={(vehicle) => this.updateVehicle(vehicle)} //1.3.5
             volunteerList={this.state.volunteerList}
             assignedVolunteers={this.state.assignedVolunteers}
           />

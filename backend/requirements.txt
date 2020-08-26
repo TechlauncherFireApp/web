@@ -20,12 +20,15 @@ kiwisolver==1.2.0
 MarkupSafe==1.1.1
 matplotlib==3.2.1
 minizinc==0.3.3
+mysql-connector-python==8.0.21
 numpy==1.18.3
 pipenv==2018.11.26
+protobuf==3.13.0
 pycrypto==2.6.1
 pygobject==3.26.1
 pyparsing==2.4.7
 python-dateutil==2.8.1
+python-dotenv==0.14.0
 pytz==2019.3
 pyxdg==0.25
 SecretStorage==2.3.1
