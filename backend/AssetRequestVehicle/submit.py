@@ -30,7 +30,7 @@ class Submit(Resource):
         if type(vehicles) is not list: return error_message("0x01")
         if not contains(vehicles): return error_message("empty")
         for i in vehicles:
-            if not contains(i["type"], i["startDateTime"], i["endDateTime"]): return error_message("0x02")
+            if not contains(i["type"], i["startDateTime"], i["endDateTime"]): return error_message("0x03")
             i["type"] = str(i["type"])
             try: datetime.datetime.strptime(i["startDateTime"], "%Y-%m-%d %H:%M:%S.%f").date()
             except: return error_message("startDateTime")
@@ -73,6 +73,7 @@ class Submit(Resource):
 
         # Insert
         conn = connection()
+        if not is_connected(conn): return error_message("0x06")
         conn.start_transaction()
         cur = conn.cursor(prepared=True)
         if contains(d["insert"]["vehicle"]) and is_connected(conn):
@@ -89,7 +90,7 @@ class Submit(Resource):
             except:
                 conn.rollback()
                 cur_conn_close(cur, conn)
-                return error_message("0x03")            # Fail Message
+                return error_message("0x07")            # Fail Message
         
         # Delete
         if contains(d["delete"]) and is_connected(conn):
@@ -101,7 +102,7 @@ class Submit(Resource):
             except:
                 conn.rollback()
                 cur_conn_close(cur, conn)
-                return error_message("0x04")            # Fail Message
+                return error_message("0x08")            # Fail Message
 
         conn.commit()
         cur_conn_close(cur, conn)

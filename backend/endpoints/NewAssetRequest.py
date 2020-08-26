@@ -23,4 +23,4 @@ class NewAssetRequest(Resource):
             except:
                 conn.rollback()                     # RollBack
                 cur_conn_close(cur, conn)
-        return error_message()                      # Fail Message
+        return error_message("0x01")                # Fail Message

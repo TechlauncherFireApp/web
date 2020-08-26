@@ -26,9 +26,14 @@ def is_connected(conn):
     except: return False
 
 def cur_conn_close(cur, conn):
+    cur_close(cur)
+    conn_close(conn)
+
+def cur_close(cur):
     try: cur.close()
     except: cur = None
 
+def conn_close(conn):
     try:
         if is_connected(conn): conn.close()
     except: conn = None

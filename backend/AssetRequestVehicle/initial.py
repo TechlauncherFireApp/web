@@ -3,7 +3,7 @@ from flask_restful import reqparse, abort, Resource
 import re
 
 from includes.main import contains, error_message
-from includes.connection_mysqli import get as connection, is_connected, cur_conn_close
+from includes.connection_mysqli import get as connection, is_connected, cur_conn_close, conn_close
 
 class Initial(Resource):
     def get(id):
@@ -28,11 +28,12 @@ class Initial(Resource):
                 for x in res:
                     x["startDateTime"] = str(x["startDateTime"])
                     x["endDateTime"] = str(x["endDateTime"])
+                cur_conn_close(cur, conn)
                 return res
             # except Exception as e: return str(e)
             except:
                 cur_conn_close(cur, conn)
                 return error_message("0x02")                    # Fail Message
 
-        # cur_conn_close(cur, conn)
+        conn_close(conn)
         return error_message("0x03")                            # Fail Message
