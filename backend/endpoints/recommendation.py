@@ -8,23 +8,18 @@ from endpoints.helpers.input_validation import *
 # Misc
 from datetime import *
 from pytz import UTC
+# Mysql
+from querys.volunteer import volunteer_all
 
 '''
 Define data input
-
-# TODO
-# Cannot represent timeframe as 'timeframe = (startTime, endTime)'
-# Discuss to use either
-# timeframe = [startTime, endTime]
-# or separate startTime, endTime keys
-#
 
 {
   "request" : [{
     "shiftID": Integer,
     "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-    "startTime": DateTime,
-    "endTime": DateTime
+    "startTime": DateTimeString,
+    "endTime": DateTimeString
   }]
 }
 '''
@@ -56,8 +51,8 @@ Define data output
     "results" : [{
         "shiftID": Integer
         "assetClass": String [lightUnit | mediumTanker | heavyTanker]
-        "startTime": DateTime,
-        "endTime": DateTime,
+        "startTime": DateTimeString,
+        "endTime": DateTimeString,
         "volunteers": {
             "ID": Integer,
             "positionID": Integer,
@@ -87,15 +82,12 @@ resource_fields = {
 
 # Handle the Recommendation endpoint
 class Recommendation(Resource):
-    # def __init__(self, **kwargs):
-    #     pass
 
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()
         if args["request"] is None:
             return
-        print(args)
 
         asset_requests = []
         for shift_request in args["request"]:
@@ -106,26 +98,44 @@ class Recommendation(Resource):
             }
             asset_requests.append(asset_request)
 
-        '''
-        Temporary test block code.
-        Replace with database volunteers.
-        '''
-        Volunteers = []
-        for i in range(12):
-            volunteer = {}
-            volunteer["ID"] = i
-            volunteer["prefHours"] = 69945585 + 1
-            volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
-            start = datetime.min.replace(tzinfo=UTC)
-            end = datetime.max.replace(tzinfo=UTC)
-            volunteer["availabilities"] = [(start,end)]
-            Volunteers.append(volunteer)
+        # TODO - remove once fixed below
+        # volunteers = []
+        # for i in range(12):
+        #     volunteer = {}
+        #     volunteer["ID"] = i
+        #     volunteer["prefHours"] = 69945585 + 1
+        #     volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
+        #     start = datetime.min.replace(tzinfo=UTC)
+        #     end = datetime.max.replace(tzinfo=UTC)
+        #     volunteer["availabilities"] = [(start,end)]
+        #     volunteers.append(volunteer)
 
-        # try:
-        output = Schedule(Volunteers, asset_requests)
-        # print("succeeded to optimise")
-        print("succeeded to optimise, output:\n{}".format(output))
+        volunteers = volunteer_all()
+        for volunteer in volunteers:
+            # Fix datetime variables
+            for availability in volunteer["availabilities"]:
+                availability[0] = availability[0].replace(tzinfo=UTC)
+                availability[1] = availability[1].replace(tzinfo=UTC)
+            
+            # Fix possibleRoles values. TODO standardise these
+            for role in volunteer["possibleRoles"]:
+                switcher = {
+                    "Basic":"basic",
+                    "Advanced":"advanced",
+                    "Crew Leader":"crewLeader",
+                    "Driver":"driver"
+                }
+                # TODO fix whatever is going on here
+                # Desired Code doesn't work:
+                # volunteer["possibleRoles"] = switcher[role]
+                # This works:
+                volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
 
-        return {
-            "results" : output
-        }
+        output = Schedule(volunteers, asset_requests)
+        # TODO - Scheduler overrides each volunteer's ID string. Who's been assigned?
+
+        if not output == []:
+            # print("succeeded to optimise")
+            print("succeeded to optimise, output:\n{}".format(output))
+
+        return { "results" : output }
