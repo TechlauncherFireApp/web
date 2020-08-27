@@ -27,12 +27,12 @@ def getDuration(start, end):
     hours = int(diff.total_seconds()/3600)
     return hours
 
-def addLightUnitToOutput(seats, currentRequest):
+def addLightUnitToOutput(seats, currentRequest, Volunteers):
     output = []
     for i in range(2):
         voldict = {}
         role = []
-        voldict["ID"] = seats[i][currentRequest]
+        voldict["ID"] = Volunteers[seats[i][currentRequest]]["ID"]
         voldict["positionID"] = i
         if i == 0:
             role.append("driver")
@@ -44,12 +44,12 @@ def addLightUnitToOutput(seats, currentRequest):
     return output
 
 
-def addMediumTankerToOutput(seats, currentRequest):
+def addMediumTankerToOutput(seats, currentRequest, Volunteers):
     output = []
     for i in range(3):
         voldict = {}
         role = []
-        voldict["ID"] = seats[i][currentRequest]
+        voldict["ID"] = Volunteers[seats[i][currentRequest]]["ID"]
         voldict["positionID"] = i
         if i == 0:
             role.append("driver")
@@ -62,12 +62,12 @@ def addMediumTankerToOutput(seats, currentRequest):
     return output
 
 
-def addHeavyTankerToOutput(seats, currentRequest):
+def addHeavyTankerToOutput(seats, currentRequest, Volunteers):
     output = []
     for i in range(5):
         voldict = {}
         role = []
-        voldict["ID"] = seats[i][currentRequest]
+        voldict["ID"] = Volunteers[seats[i][currentRequest]]["ID"]
         voldict["positionID"] = i
         if i == 0:
             role.append("driver")
@@ -315,11 +315,11 @@ def Schedule(Volunteers, VehicleRequest):
             seats.append(result["seat4"])
             seats.append(result["seat5"])
             if vehicledict["assetClass"] == "lightUnit":
-                volunteers = addLightUnitToOutput(seats, i)
+                volunteers = addLightUnitToOutput(seats, i, Volunteers)
             if vehicledict["assetClass"] == "mediumTanker":
-                volunteers = addMediumTankerToOutput(seats, i)
+                volunteers = addMediumTankerToOutput(seats, i, Volunteers)
             if vehicledict["assetClass"] == "heavyTanker":
-                volunteers = addHeavyTankerToOutput(seats, i)
+                volunteers = addHeavyTankerToOutput(seats, i, Volunteers)
             vehicledict["volunteers"] = volunteers
             output.append(vehicledict)
     else:
