@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./editModal.scss";
-import { contains } from "../main.js";
+import { contains, parseDateTime } from "../functions";
 import { Modal, Button, Table } from "react-bootstrap";
 import "./volunteer.scss"
 
@@ -9,7 +9,6 @@ interface State {
   searchValue: string;
   filteredVolunteerList: any; //list of volunteers
   searchResults: any; //list of volunteers
-  qualificationsVisible: boolean;
   filter: {
     position: boolean; //should search results be filtered by position
     availability: boolean; //should search results be filtered by availability
@@ -25,7 +24,6 @@ export default class EditModal extends React.Component<any, State> {
     searchValue: "",
     filteredVolunteerList: [],
     searchResults: [],
-    qualificationsVisible: false,
     filter: {
       position: true,
       availability: true,
@@ -44,11 +42,12 @@ export default class EditModal extends React.Component<any, State> {
   }
 
   //TODO - this is currently (i.e you can't search)
-  insertSearch = (e: any) => {
-    console.log("called")
+  insertSearch = (e: any): void => {
     // Get Value
-    e = e.target.value;
-    this.state.searchValue = e;
+    if (!(typeof e === 'string')) {
+      e = e.target.value;
+      this.state.searchValue = e;
+    }
 
     // Validate Value
     if (!contains(e)) { this.setState({ searchResults: this.state.filteredVolunteerList }); return; }
@@ -57,7 +56,8 @@ export default class EditModal extends React.Component<any, State> {
     // Search Value
     let a = [];
     for (let x of this.state.filteredVolunteerList) {
-      if (x.name.toLowerCase().indexOf(e) >= 0) a.push(x);
+      let name: string = x.firstName + " " + x.lastName;
+      if (name.toLowerCase().indexOf(e) >= 0) a.push(x);
     }
 
     // Search Found
@@ -65,28 +65,13 @@ export default class EditModal extends React.Component<any, State> {
     else this.setState({ searchResults: "" });
   };
 
-  displayQualsList = (quals: string[]) => {
-    let result: any = [];
-    for (let i = 0; i < quals.length - 1; i++) {
-      result.push(<div>- {quals[i]}</div>)
-    }
-    result.push(<div>- {quals[quals.length - 1]} <img src={require("../assets/collapse.png")} /></div>)
-    return result;
-  }
-
-  showHideQualifications = (): void => {
-    const qualificationsVisible = !this.state.qualificationsVisible;
-    this.setState({ qualificationsVisible });
-  }
-
   saveChange = (): void => {
     if (!(typeof this.state.selectedVolunteer === 'undefined')) {
       const map: any = this.props.assignedVolunteers;
       const vol: any = this.state.selectedVolunteer;
-      /* if (vol.id === this.props.volunteer.volunteer_id) {
-         alert("You can't change a volunteer to themselves")
-       } else //THIS SHOULDN'T BE POSSIBLE ANYWAY*/
-      if (map.has(vol.id)) {
+      if (this.props.position.assigned && vol.id === this.props.position.volunteer.id) {
+        alert("You can't change a volunteer to themselves")
+      } else if (map.has(vol.id)) {
         alert(vol.name + " is already assigned to asset " + map.get(vol.id).shiftID + " position " + map.get(vol.id).positionID)
       } else {
         this.props.onSave(this.state.selectedVolunteer)
@@ -95,7 +80,6 @@ export default class EditModal extends React.Component<any, State> {
     } else {
       this.onHide();
     }
-
   }
 
   removeVolunteer = (): void => {
@@ -103,20 +87,17 @@ export default class EditModal extends React.Component<any, State> {
     this.onHide();
   }
 
-  toggleFilterByPosition = (): void => {
+  togglePositionFilter = (): void => {
     let filter: { position: boolean, availability: boolean } = this.state.filter;
     filter.position = !filter.position;
     const l = this.filterVolunteerList(this.state.volunteerList, filter);
     const searchValue = this.state.searchValue;
     if (searchValue == "") {
-      this.setState({ filter, filteredVolunteerList: l, searchResults: l })
-    } else {
-      var input: any = document.getElementById('searchBar');
-      var nativeInputValueSetter: any = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set; // the ! is a fix from here: https://stackoverflow.com/questions/40349987/how-to-suppress-error-ts2533-object-is-possibly-null-or-undefined
-      nativeInputValueSetter.call(input, "");
-      var ev = new Event('input', { bubbles: true });
-      input.dispatchEvent(ev);
       this.setState({ filter, filteredVolunteerList: l, searchResults: l });
+    } else {
+      this.setState({ filter, filteredVolunteerList: l }, () => {
+        this.insertSearch(searchValue);
+      });
     }
   }
 
@@ -145,7 +126,7 @@ export default class EditModal extends React.Component<any, State> {
   onHide = (): void => {
     //need to reset if you've selected a volunteer.
     const l = this.filterVolunteerList(this.state.volunteerList, { position: true, availability: true });
-    this.setState({ qualificationsVisible: false, filter: { position: true, availability: true }, searchValue: "", searchResults: l, filteredVolunteerList: l, selectedVolunteer: undefined })
+    this.setState({ filter: { position: true, availability: true }, searchValue: "", searchResults: l, filteredVolunteerList: l, selectedVolunteer: undefined })
     this.props.onHide();
   }
 
@@ -169,21 +150,18 @@ export default class EditModal extends React.Component<any, State> {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
+        backdrop="static"
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton closeLabel="cancel" onHide={this.onHide}>
           <Modal.Title id="contained-modal-title-vcenter">
             {this.generateModalHeading()}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p>{parseDateTime(position.startTime, position.endTime)}</p>
           {!this.props.position.assigned ?
-            <i>This position is currently unassigned</i> :
-            <div><b>{position.volunteer.firstName} {position.volunteer.lastName}</b>
-              <div className="view" onClick={this.showHideQualifications} >
-                {this.state.qualificationsVisible ?
-                  this.displayQualsList(position.volunteer.qualifications)
-                  : <div>View qualifications <img src={require("../assets/expand.png")} /></div>}
-              </div></div>
+            <div><i>This position is currently unassigned</i></div> :
+            <div>Assigned to: <b>{position.volunteer.firstName} {position.volunteer.lastName}</b></div>
           }
 
           <br />
@@ -196,7 +174,7 @@ export default class EditModal extends React.Component<any, State> {
               type="checkbox"
               id="positionFilter"
               defaultChecked
-              onClick={this.toggleFilterByPosition}
+              onClick={this.togglePositionFilter}
             /> Only show {position.role[0]}s {/*TODO need to make this work with multiple position roles*/}
 
 
@@ -229,11 +207,11 @@ export default class EditModal extends React.Component<any, State> {
               }
             </div>
           </form>
-          {contains(this.state.selectedVolunteer) &&
-            <div className="con-vol">
-              {position.assigned ?
-                <p>{position.volunteer.firstName} {position.volunteer.lastName} will be changed to:</p> :
-                <p>Position will be assigned to:</p> /* TODO make sure this works properly*/}
+          <div className="con-vol">
+            {position.assigned ?
+              <p>{position.volunteer.firstName} {position.volunteer.lastName} will be replaced with:</p> :
+              <p>Position will be assigned to:</p> /* TODO make sure this works properly*/}
+            {contains(this.state.selectedVolunteer) ?
               <Table striped bordered hover size="sm">
                 <tbody>
                   <tr>
@@ -244,13 +222,15 @@ export default class EditModal extends React.Component<any, State> {
                     <td>{this.state.selectedVolunteer.mobileNo}</td>{/*TODO probably not needed */}
                   </tr>
                 </tbody>
-              </Table>
-            </div>
-          }
+              </Table> :
+              <i>Select a volunteer</i>
+
+            }
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button className="danger" onClick={this.saveChange}>
-            Save Changes
+            Replace Volunteer
           </Button>
           {position.assigned &&
             <Button className="danger" onClick={this.removeVolunteer}>

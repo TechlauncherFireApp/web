@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./editModal.scss";
-import { contains } from "../../main.js";
+import { contains } from "../../functions";
 import { Modal, Button, Table } from "react-bootstrap";
 import "./volunteer.scss"
 
