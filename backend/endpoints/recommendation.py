@@ -63,7 +63,7 @@ Define data output
 '''
 
 volunteer_field = {
-    'ID': fields.Integer,
+    'ID': fields.String,
     'positionID': fields.Integer,
     'role': fields.List(fields.String)
 }
