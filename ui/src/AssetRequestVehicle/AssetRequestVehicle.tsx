@@ -233,12 +233,10 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
                   </div>
               </request-body>
             ))}
-          </> : <>Loading</>}
+          </> : "Loading"}
         </div>
         <hr/>
-        <Button className="type-1" onClick={()=>this.submitData()}>
-          {this.state.allow_submitData ? <>Submit Request</> : <>Loading</>}
-        </Button>
+        <Button className="type-1" onClick={()=>this.submitData()}>{this.state.allow_submitData ? "Submit Request":"Loading"}</Button>
       </asset-request-vehicle>
     );
   }

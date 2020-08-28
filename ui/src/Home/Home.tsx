@@ -19,7 +19,11 @@ export default class Home extends React.Component<any, State> {
     if (!this.state.allow_makeNewRequest) return;
     this.setState({ allow_makeNewRequest: false });
 
-    if (!contains(this.state.request_title)) { alert("Title not assigned"); return; }
+    if (!contains(this.state.request_title)) {
+      alert("Title not assigned");
+      this.setState({ allow_makeNewRequest: true });
+      return;
+    }
 
     axios.request({
       url: "NewAssetRequest",
@@ -44,7 +48,6 @@ export default class Home extends React.Component<any, State> {
   render() {
     return (
       <home>
-        {/* <input></input> */}
         <input type="text" placeholder="Title for the asset" title="Title for the asset" value={this.state.request_title}
           onChange={(e:any) => this.setState({ request_title: e.target.value })} />
         <button className="type-1" onClick={()=>this.makeNewRequest()}>{this.state.allow_makeNewRequest?"New Request":"Loading"}</button>
