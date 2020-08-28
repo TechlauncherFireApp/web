@@ -27,7 +27,7 @@ Define data input
 # Validate an asset shift_request input
 def input_asset_req(value, name):
     # Validate that request contains dictionaries
-    value = input_dict(value, name)
+    value = type_dict(value, name)
     if type(value) is dict:
         # Validate vehicle values
         value = input_key_positive(value, 'shiftID')
