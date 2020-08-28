@@ -2,7 +2,7 @@ version: '3'
 services:
   fire-app:
     # build: .
-    image: "repo.treescale.com/tomwillisgd/minizinc-python-nodejs:latest"
+    image: "repo.treescale.com/fire-app-dev/minizinc-python-nodejs:latest"
     container_name: fire-app-container
     volumes:
     - ../:/workspace:cached

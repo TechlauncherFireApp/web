@@ -20,13 +20,13 @@ POST
     "requestID": String,
     "shifts": [{
         "shiftID": Integer,
-        "assetClass": String,
+        "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
         "startTime": DateTimeString,
         "endTime": DateTimeString,
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String]
+            "role": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
@@ -36,13 +36,13 @@ PATCH
     "requestID": String,
     "shifts": [{
         "shiftID": Integer,
-        "assetClass": String,
+        "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
         "startTime": DateTimeString,
         "endTime": DateTimeString,
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String]
+            "role": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
@@ -96,19 +96,19 @@ GET
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String]
+            "role": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
 
 POST
 {
-    "success" : Boolen
+    "success" : Boolean
 }
 
 PATCH
 {
-    "success" : Boolen
+    "success" : Boolean
 }
 '''
 
