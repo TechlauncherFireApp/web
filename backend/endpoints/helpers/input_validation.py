@@ -44,6 +44,16 @@ def input_key_enum(value, key, enums):
         if value[key] == enum:
             valid_enum = True
             continue
+    if not valid_enum:
+        raise ValueError("The parameter '{}' is not a valid asset like {}. You gave us: {}".format(key, str(enums), value[key]))
+    return value
+
+def type_enum(value, enums):
+    valid_enum = False
+    for enum in enums:
+        if value == enum:
+            valid_enum = True
+            continue
         
     if not valid_enum:
         raise ValueError("The parameter '{}' is not a valid asset like {}. You gave us: {}".format(key, str(enums), value[key]))

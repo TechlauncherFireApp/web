@@ -35,7 +35,7 @@ def input_asset_req(value, name):
         value = input_datetime(value, 'startTime')
         value = input_datetime(value, 'endTime')
         # TODO - further validation on DateTime values
-        # Validate the start_time is before the end_time
+        # Validate the startTime is before the endTime
 
         # if value['startTime'] >= value['endTime']:
         #     raise ValueError("The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))

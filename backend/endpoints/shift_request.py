@@ -71,11 +71,20 @@ def input_shift(value, name):
         value = input_datetime(value, 'startTime')
         value = input_datetime(value, 'endTime')
         # TODO - further validation on DateTime values
-        # Validate the start_time is before the end_time
+        # Validate the startTime is before the endTime
 
         # if value['startTime'] >= value['endTime']:
         #     raise ValueError("The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))
-        value = input_volunteer_position(value, 'volunteers')
+        # value = input_volunteer_position(value, 'volunteers')
+        # Validate each volunteer
+        value = input_list_of(value, 'volunteers', 'dictionary(s)', input_dict, ['in volunteers'])
+
+        for num, volunteer in enumerate(value['volunteers']):
+            volunteer = input_key_string(volunteer, 'ID')
+            volunteer = input_key_natural(volunteer, 'positionID')
+            # volunteer = input_list_of(volunteer, 'role', 'enum(s)', type_enum, [["basic", "advanced", "crewLeader", "driver"]])
+            # volunteer = input_key_enum(volunteer, 'role', ["basic", "advanced", "crewLeader", "driver"])
+            value['volunteers'][num] = volunteer
     return value
 
 parser = reqparse.RequestParser()
@@ -89,8 +98,8 @@ Define data output
 GET
 {
     "results" : [{
-        "shiftID": Integer
-        "assetClass": String [lightUnit | mediumTanker | heavyTanker]
+        "shiftID": Integer,
+        "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
         "startTime": DateTimeString,
         "endTime": DateTimeString,
         "volunteers": [{
