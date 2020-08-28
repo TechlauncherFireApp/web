@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./editModal.scss";
-import { contains, parseDateTime } from "../functions";
+import { contains, parseDateTime, parseRolesAsString, isAvailable } from "../functions";
 import { Modal, Button, Table } from "react-bootstrap";
-import "./volunteer.scss"
+import "./volunteer.scss";
 
 interface State {
   //related to display elements
@@ -11,7 +11,7 @@ interface State {
   searchResults: any; //list of volunteers
   filter: {
     position: boolean; //should search results be filtered by position
-    availability: boolean; //should search results be filtered by availability
+    // availability: boolean; //should search results be filtered by availability
   };
   //related to data needed 
   volunteerList: any;  //list of volunteers
@@ -26,7 +26,7 @@ export default class EditModal extends React.Component<any, State> {
     searchResults: [],
     filter: {
       position: true,
-      availability: true,
+      // availability: true,
     },
     volunteerList: [],
     selectedVolunteer: undefined,
@@ -36,12 +36,11 @@ export default class EditModal extends React.Component<any, State> {
     super(props);
     const volunteerList: any = props.volunteerList;
     this.state.volunteerList = volunteerList;
-    const l: any = this.filterVolunteerList(volunteerList, this.state.filter);
-    this.state.filteredVolunteerList = l
+    const l = this.filterVolunteerList(volunteerList, this.state.filter);
+    this.state.filteredVolunteerList = l;
     this.state.searchResults = l;
   }
 
-  //TODO - this is currently (i.e you can't search)
   insertSearch = (e: any): void => {
     // Get Value
     if (!(typeof e === 'string')) {
@@ -88,7 +87,7 @@ export default class EditModal extends React.Component<any, State> {
   }
 
   togglePositionFilter = (): void => {
-    let filter: { position: boolean, availability: boolean } = this.state.filter;
+    let filter: { position: boolean } = this.state.filter;
     filter.position = !filter.position;
     const l = this.filterVolunteerList(this.state.volunteerList, filter);
     const searchValue = this.state.searchValue;
@@ -101,32 +100,49 @@ export default class EditModal extends React.Component<any, State> {
     }
   }
 
-  filterVolunteerList = (baseList: any, filter: { position: boolean, availability: boolean }): any => {
+  filterVolunteerList = (allVolunteers: any, filter: { position: boolean }): any => {
 
     // exclude the volunteer themselves from this list (position.assignedVolunteer.id if position.assignedVolunteer != null)
     // rework this to do both filters in one pass
+    console.log(this.props.position.startTime, this.props.position.endTime);
 
-    const targetRole = this.props.position.role[0]; //TODO make this work for multiple roles
-    let l = [];
+    const targetRoles = this.props.position.roles;
+    let list = [];
     if (filter.position) {
-      let v;
-      for (v of baseList) {
-        v.possibleRoles.includes(targetRole) && l.push(v);
+      //let v: any;
+      for (const v of allVolunteers) {
+        targetRoles.every((r: string) => v.possibleRoles.includes(r)) && list.push(v); //if the volunteer in question can fulfil all vehicle requirements add this volunteer to the list
       }
     } else {
-      l = [...baseList];
+      list = [...allVolunteers];
     }
 
-    if (filter.availability) {
-      //TODO
+    // work out who is available
+    let yes: any = [];
+    let no: any = [];
+    for (const l of list) {
+      let l_copy = { ...l };
+      if (isAvailable(l.availability, { startTime: this.props.position.startTime, endTime: this.props.position.endTime })) {
+
+        l_copy.available = true;
+        yes.push(l_copy)
+        console.log("availa", l_copy);
+      } else {
+
+        l_copy.available = false;
+        no.push(l_copy);
+        console.log("unavail", l_copy);
+      }
     }
-    return l;
+    list = [...yes, ...no];
+    console.log(list)
+    return list.filter(l => (!this.props.position.assigned || l.id != this.props.position.volunteer.id));
   }
 
   onHide = (): void => {
     //need to reset if you've selected a volunteer.
-    const l = this.filterVolunteerList(this.state.volunteerList, { position: true, availability: true });
-    this.setState({ filter: { position: true, availability: true }, searchValue: "", searchResults: l, filteredVolunteerList: l, selectedVolunteer: undefined })
+    const l = this.filterVolunteerList(this.state.volunteerList, { position: true });
+    this.setState({ filter: { position: true }, searchValue: "", searchResults: l, filteredVolunteerList: l, selectedVolunteer: undefined })
     this.props.onHide();
   }
 
@@ -135,7 +151,7 @@ export default class EditModal extends React.Component<any, State> {
     const position = this.props.position;
     let s: string = ""
     s += position.assetClass + " -";
-    for (const r of position.role) {
+    for (const r of position.roles) {
       s += " " + r + "/";
     }
     return s.slice(0, -1);
@@ -160,11 +176,9 @@ export default class EditModal extends React.Component<any, State> {
         <Modal.Body>
           <p>{parseDateTime(position.startTime, position.endTime)}</p>
           {!this.props.position.assigned ?
-            <div><i>This position is currently unassigned</i></div> :
-            <div>Assigned to: <b>{position.volunteer.firstName} {position.volunteer.lastName}</b></div>
+            <p><i>This position is currently unassigned</i></p> :
+            <p>Assigned to: <b>{position.volunteer.firstName} {position.volunteer.lastName}</b></p>
           }
-
-          <br />
 
           <form>
             <input id='searchBar' type="text" placeholder="Search Volunteer via Name" value={this.state.searchValue} onChange={this.insertSearch} />
@@ -175,7 +189,8 @@ export default class EditModal extends React.Component<any, State> {
               id="positionFilter"
               defaultChecked
               onClick={this.togglePositionFilter}
-            /> Only show {position.role[0]}s {/*TODO need to make this work with multiple position roles*/}
+            /> Only show {parseRolesAsString(position.roles)}s
+
 
 
             <hr />
@@ -186,7 +201,7 @@ export default class EditModal extends React.Component<any, State> {
                     <tr>
                       <th>Name</th>
                       <th>Qualifications</th>
-                      <th>Phone No</th>
+                      <th>Available For This Shift</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -196,7 +211,7 @@ export default class EditModal extends React.Component<any, State> {
                         <td>
                           {t.qualifications.map((q: string) => <div>- {q}</div>)}
                         </td>
-                        <td>{t.mobileNo}</td>
+                        <td>{t.available ? "Available" : "Unavailable"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -210,16 +225,16 @@ export default class EditModal extends React.Component<any, State> {
           <div className="con-vol">
             {position.assigned ?
               <p>{position.volunteer.firstName} {position.volunteer.lastName} will be replaced with:</p> :
-              <p>Position will be assigned to:</p> /* TODO make sure this works properly*/}
+              <p>Position will be assigned to:</p>}
             {contains(this.state.selectedVolunteer) ?
               <Table striped bordered hover size="sm">
                 <tbody>
                   <tr>
-                    <td>{this.state.selectedVolunteer.firstName} {this.state.selectedVolunteer.lastName}</td>{/* TODO make sure this line works*/}
+                    <td>{this.state.selectedVolunteer.firstName} {this.state.selectedVolunteer.lastName}</td>
                     <td>
                       {this.state.selectedVolunteer.qualifications.map((q: string) => <div>- {q}</div>)}
                     </td>
-                    <td>{this.state.selectedVolunteer.mobileNo}</td>{/*TODO probably not needed */}
+                    <td>{this.state.selectedVolunteer.available ? "Available" : "Unavailable"}</td>
                   </tr>
                 </tbody>
               </Table> :

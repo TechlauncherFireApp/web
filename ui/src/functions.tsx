@@ -51,3 +51,20 @@ export const parseDateTime = (date1: Date, date2: Date): string => {
   }
   return str.toLowerCase();
 };
+
+export const parseRolesAsString = (list: string[]): string => {
+  let s: string = ""
+  for (const l of list) {
+    s += l + "/";
+  }
+  return s.slice(0, -1);
+}
+
+export const isAvailable = (availability: { startTime: Date, endTime: Date }[], shift: { startTime: Date, endTime: Date }): boolean => {
+  for (let i = 0; i < availability.length; i++) {
+    if (availability[i].startTime <= shift.startTime && availability[i].endTime >= shift.endTime) {
+      return true;
+    }
+  }
+  return false;
+}

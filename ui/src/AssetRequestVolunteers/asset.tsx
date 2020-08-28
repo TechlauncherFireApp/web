@@ -26,7 +26,7 @@ export default class Asset extends React.Component<any, any> {
     assigned: boolean
     volunteer:
     asset: string
-    role: string[]
+    roles: string[]
     startTime: Date
     endTime: Date
     } */
@@ -37,7 +37,7 @@ export default class Asset extends React.Component<any, any> {
       assigned: true,
       volunteer: position.volunteer,
       assetClass: asset.assetClass,
-      role: position.role,
+      roles: position.roles,
       startTime: asset.startTime,
       endTime: asset.endTime
     }
