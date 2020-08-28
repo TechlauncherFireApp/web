@@ -7,7 +7,7 @@ from includes.connection_mysqli import get as connection, is_connected, cur_conn
 
 # Make a New Request inside the DataBase
 class NewAssetRequest(Resource):
-    def get(self):
+    def get(title):
         idAdmin = "jkEM0NW1QsTOqhH"                 # Using a single default admin (Brigade Captain)
         
         conn = connection()
@@ -16,10 +16,11 @@ class NewAssetRequest(Resource):
             conn.start_transaction()                # Transaction type
             cur = conn.cursor(prepared=True)
             try:
-                cur.execute("INSERT INTO `asset-request`(`id`,`idAdmin`) VALUES (%s,%s);", [id, idAdmin])
+                cur.execute("INSERT INTO `asset-request`(`id`,`idAdmin`,`title`) VALUES (%s,%s,%s);", [id, idAdmin, title])
                 conn.commit()                       # Commit
                 cur_conn_close(cur, conn)
-                return { "status": 1, "id": id }    # Success Message
+                return { "id": id }                 # Success Message
+            # except Exception as e: return str(e)
             except:
                 conn.rollback()                     # RollBack
                 cur_conn_close(cur, conn)

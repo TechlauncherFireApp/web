@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Asset from "./asset";
 import { Button } from "react-bootstrap";
 
@@ -17,13 +17,14 @@ interface volunteer {
   //expYears: start date
   possibleRoles: string[];
   qualifications: string[];
-  availabilities: Timeframe[];
+  availability: Timeframe[];
 }
 
 interface Position {
   positionID: number;
-  volunteer: volunteer;
-  role: string[];
+  volunteerID: string;
+  volunteer: volunteer; //ID
+  roles: string[];
 }
 
 interface asset {
@@ -67,82 +68,41 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     let now: Date = new Date();
 
 
-    const asset1: asset = {
+    const asset1: any = {
       shiftID: 1,
       assetClass: "Light Unit",
-      startTime: now,
-      endTime: now,
+      startTime: new Date(2020, 5, 10, 10),
+      endTime: new Date(2020, 5, 10, 16),
       volunteers: [{
         positionID: 0,
-        volunteer: {
-          id: "1",
-          firstName: "Caleb",
-          lastName: "Addison",
-          email: "caleb.blah@blah.com",
-          mobileNo: "0412490340",
-          prefHours: 10,
-          possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
-          qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-          availabilities: [{ startTime: now, endTime: now }]
-        },
-        role: ["Driver"]
+        volunteerID: "1",
+        roles: ["Driver", "Crew Leader"]
       },
       {
         positionID: 1,
-        volunteer: {
-          id: "2",
-          firstName: "Tom",
-          lastName: "Willis",
-          email: "tom.blah@blah.com",
-          mobileNo: "0411222333",
-          prefHours: 15,
-          possibleRoles: ["Crew Member"],
-          qualifications: ["advanced training"],
-          availabilities: [{ startTime: now, endTime: now }]
-        },
-        role: ["Crew Member"]
+        volunteerID: "2",
+        roles: ["Crew Member"]
       }
       ]
     }
-    const asset2: asset = {
+    const asset2: any = {
       shiftID: 2,
       assetClass: "Light Unit",
       startTime: now,
       endTime: now,
       volunteers: [{
         positionID: 0,
-        volunteer: {
-          id: "3",
-          firstName: "Amandeep",
-          lastName: "Singh",
-          email: "aman.blah@blah.com",
-          mobileNo: "1234567890",
-          prefHours: 8,
-          possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
-          qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-          availabilities: [{ startTime: now, endTime: now }]
-        },
-        role: ["Driver"]
+        volunteerID: "3",
+        roles: ["Driver", "Crew Leader"]
       },
       {
         positionID: 1,
-        volunteer: {
-          id: "4",
-          firstName: "Stavros",
-          lastName: "Dimos",
-          email: "divos.blah@blah.com",
-          mobileNo: "9876543120",
-          prefHours: 20,
-          possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
-          qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-          availabilities: [{ startTime: now, endTime: now }]
-        },
-        role: ["Crew Member"]
+        volunteerID: "4",
+        roles: ["Crew Member"]
       }
       ]
     }
-    assetRequest.push(asset1);
-    assetRequest.push(asset2);
+    const recommendation: any[] = [asset1, asset2];
 
     const vol1: volunteer = {
       id: "1",
@@ -153,7 +113,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       prefHours: 10,
       possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
       qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-      availabilities: [{ startTime: now, endTime: now }]
+      availability: [{ startTime: new Date(2020, 5, 10, 8), endTime: new Date(2020, 5, 10, 12) },
+      { startTime: new Date(2020, 5, 10, 15), endTime: new Date(2020, 5, 10, 20) }]
     };
     const vol2: volunteer = {
       id: "2",
@@ -164,7 +125,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       prefHours: 15,
       possibleRoles: ["Crew Member"],
       qualifications: ["advanced training"],
-      availabilities: [{ startTime: now, endTime: now }]
+      availability: [{ startTime: new Date(2022, 1, 1), endTime: new Date(2022, 2, 1) }]
     };
     const vol3: volunteer = {
       id: "3",
@@ -175,7 +136,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       prefHours: 8,
       possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
       qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-      availabilities: [{ startTime: now, endTime: now }]
+      availability: [{ startTime: new Date(1990, 1, 1, 1, 1, 1, 1), endTime: new Date(1991, 1, 1, 1, 1, 1, 1) }]
     };
     const vol4: volunteer = {
       id: "4",
@@ -186,7 +147,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       prefHours: 20,
       possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
       qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-      availabilities: [{ startTime: now, endTime: now }]
+      availability: [{ startTime: new Date(1990, 1, 1, 1, 1, 1, 1), endTime: new Date(1991, 1, 1, 1, 1, 1, 1) },
+      { startTime: new Date(2020, 5, 10, 8), endTime: new Date(2020, 5, 10, 20) }]
     };
     const vol5: volunteer = {
       id: "5",
@@ -197,7 +159,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       prefHours: 7,
       possibleRoles: ["Crew Member"],
       qualifications: ["advanced training",],
-      availabilities: [{ startTime: now, endTime: now }]
+      availability: [{ startTime: new Date(2020, 1, 1, 1, 1, 1, 1), endTime: new Date(2021, 1, 1, 1, 1, 1, 1) }]
     };
     const vol6: volunteer = {
       id: "6",
@@ -206,9 +168,9 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       email: "charles.blah@blah.com",
       mobileNo: "123451234",
       prefHours: 14,
-      possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
-      qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-      availabilities: [{ startTime: now, endTime: now }]
+      possibleRoles: ["Driver", "Crew Member"],
+      qualifications: ["heavy rigid license", "pump training", "advanced training",],
+      availability: [{ startTime: new Date(2020, 1, 1, 1, 1, 1, 1), endTime: new Date(2021, 1, 1, 1, 1, 1, 1) }]
     };
     volunteerList.push(vol1);
     volunteerList.push(vol2);
@@ -217,9 +179,30 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     volunteerList.push(vol5);
     volunteerList.push(vol6);
 
+    assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
+
     const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
     this.setState({ assetRequest, volunteerList, assignedVolunteers })
     // HARD CODED DUMMY DATA FOR TESTING ~ END
+  }
+
+  mapVolunteersToRequest = (assets: any[], volunteerList: volunteer[]): asset[] => {
+    // this is not the most effecient method but it's very simple. I believe it's O(n^2) but as we're working with small data this should be fine
+
+    let output = [...assets];
+
+    for (const asset of output) {
+      for (const position of asset.volunteers) {
+        //find the corresponding volunteer
+        for (let j = 0; j < volunteerList.length; j++) {
+          if (volunteerList[j].id === position.volunteerID) {
+            position.volunteer = { ...volunteerList[j] };
+            j = volunteerList.length;
+          }
+        }
+      }
+    }
+    return output;
   }
 
 
@@ -227,6 +210,9 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     //TODO need aman's help with this function
     //need to populate 'assetRequest' from the database (or from the backend, I think it would be better to go through the database however as that makes this component extendable)
     //need to populate 'volunteerList' from the database (data for all volunteers, this is okay to do because we're only working with a small amount of data ~100 entries)
+
+
+
   }
 
   submitData(): void {

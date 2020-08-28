@@ -1,7 +1,8 @@
-import React, { Component } from "react";
-import { Button } from "react-bootstrap";
-import EditModal from "./editModal";
+import React from "react";
 import "./volunteer.scss";
+import { Button } from "react-bootstrap";
+import { parseRolesAsString } from "../functions";
+import EditModal from "./editModal";
 
 interface State {
   //related to display elements
@@ -96,7 +97,7 @@ export default class Position extends React.Component<any, State> {
               : bgColourNotConfirmed,
           }}
         >
-          <td>{position.role[0]}</td> {/* TODO fix this to handle mutltiple rows */}
+          <td>{parseRolesAsString(position.roles)}</td>
           {assigned ?
             <React.Fragment>
               <td width="15%">{position.volunteer.firstName} {position.volunteer.lastName}</td>
@@ -119,7 +120,7 @@ export default class Position extends React.Component<any, State> {
               className="btn-warning"
               onClick={this.toggleEditModalVisibility}
             >
-              {assigned ? "Change" : "Add"} {/* TODO unsure if this syntax will work */}
+              {assigned ? "Change" : "Add"}
             </Button>
           </td>
           {assigned ?
