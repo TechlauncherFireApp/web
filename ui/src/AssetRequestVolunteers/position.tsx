@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
+import "./volunteer.scss";
 import { Button } from "react-bootstrap";
 import EditModal from "./editModal";
-import "./volunteer.scss";
 
 interface State {
   //related to display elements
