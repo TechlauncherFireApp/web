@@ -1,5 +1,5 @@
 import React from "react";
-import "./home.scss";
+import "./Home.scss";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { contains } from "../functions";
 
