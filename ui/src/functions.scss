@@ -160,8 +160,10 @@
 }
 
 @mixin user-select($x) {
-    -webkit-user-select: $x;
-       -moz-user-select: $x;
-        -ms-user-select: $x;
-            user-select: $x;
+    -webkit-touch-callout: $x;
+      -webkit-user-select: $x;
+       -khtml-user-select: $x;
+         -moz-user-select: $x;
+          -ms-user-select: $x;
+              user-select: $x;
 }

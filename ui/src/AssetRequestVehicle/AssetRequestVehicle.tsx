@@ -176,7 +176,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
 
   render() {
     return (
-      <>
+      <asset-request-vehicle>
         <h1>New Asset Request</h1>
         <hr/>
         <div className="entry">
@@ -239,7 +239,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
         <Button className="type-1" onClick={()=>this.submitData()}>
           {this.state.allow_submitData ? <>Submit Request</> : <>Loading</>}
         </Button>
-      </>
+      </asset-request-vehicle>
     );
   }
 }
