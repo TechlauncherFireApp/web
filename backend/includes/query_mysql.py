@@ -13,9 +13,8 @@ def query_mysql(query):
             cur_conn_close(cur, conn)
             return res                                                          # Output
         except Exception as e:
-            print("Error 0x01: {}".format(e))
             cur_conn_close(cur, conn)
-            return error_message("0x01")                                        # Fail Message
+            raise ConnectionError("Error 0x01: {}".format(e))                   # Fail Message
     
     conn_close(conn)
-    return error_message("0x02")                                                # Fail Message
+    raise ConnectionError("Error 0x02")                                         # Fail Message

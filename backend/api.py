@@ -32,14 +32,6 @@ api.add_resource(VolunteerAll, '/volunteer/all')
 api.add_resource(ShiftRequest, '/shift/request')
 api.add_resource(NewAssetRequest, "/NewAssetRequest")
 
-@app.route("/NewAssetRequest", methods=["POST"])
-def method_NewAssetRequest():
-    d = json.loads(request.data)                                            # Get POST Data
-    if (type(d) is dict) and contains(str(d["title"])):
-        o = NewAssetRequest.get(d["title"])                                 # Get Ouput
-        if type(o) in [dict, list]: return json.dumps(o)
-        else: return o
-    return error_message()
 
 @app.route("/AssetRequestVehicle/initial", methods=["POST"])
 def method_AssetRequestVehicle_initial():

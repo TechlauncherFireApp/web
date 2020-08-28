@@ -71,9 +71,12 @@ def volunteer_all(set_offset_aware):
                 `id` AS `ID`,`firstName`,`lastName`,`email`,`mobileNo`,`prefHours`,`expYears`,`possibleRoles`,`qualifications`,`availabilities`
             FROM
                 `volunteer`;"""
-    res = query_mysql(query)
-
-    #TODO handle any error messages
+    
+    try:
+        res = query_mysql(query)
+    except Exception as e:
+        print(e)
+        return []
 
     # Edit retrived data
     for x in res:

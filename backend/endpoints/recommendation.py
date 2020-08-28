@@ -125,10 +125,9 @@ class Recommendation(Resource):
                 volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
 
         output = Schedule(volunteers, asset_requests)
-        # TODO - Scheduler overrides each volunteer's ID string. Who's been assigned?
 
         if not output == []:
-            print("succeeded to optimise")
-            # print("succeeded to optimise, output:\n{}".format(output))
+            print("Optimisation Succeeded")
+            # print("Optimisation Succeeded:\n{}".format(output))
 
         return { "results" : output }

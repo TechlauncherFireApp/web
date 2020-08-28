@@ -48,6 +48,5 @@ resource_fields = {
 class VolunteerAll(Resource):
     @marshal_with(resource_fields)
     def get(self):
-        #TODO Get all volunteers from mysql
-
+        # Get all volunteers from mysql
         return { "results": volunteer_all(False) }
