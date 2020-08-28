@@ -54,9 +54,9 @@ Define data output
         "startTime": DateTimeString,
         "endTime": DateTimeString,
         "volunteers": {
-            "ID": Integer,
+            "ID": String,
             "positionID": Integer,
-            "role": String
+            "role": [String]
         }
     }]
 }
