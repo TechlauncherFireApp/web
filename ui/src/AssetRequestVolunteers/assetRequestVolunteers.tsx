@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Asset from "./asset";
 import { Button } from "react-bootstrap";
 

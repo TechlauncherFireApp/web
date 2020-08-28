@@ -1,8 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import "./editModal.scss";
 import { contains, parseDateTime, parseRolesAsString, isAvailable } from "../functions";
 import { Modal, Button, Table } from "react-bootstrap";
-import "./volunteer.scss";
 
 interface State {
   //related to display elements
