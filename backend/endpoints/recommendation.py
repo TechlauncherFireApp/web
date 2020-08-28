@@ -27,18 +27,16 @@ Define data input
 # Validate an asset shift_request input
 def input_asset_req(value, name):
     # Validate that request contains dictionaries
-    value = type_dict(value, name)
+    value = type_dict(value)
     if type(value) is dict:
         # Validate vehicle values
-        value = input_key_positive(value, 'shiftID')
-        value = input_key_enum(value, 'assetClass', ["heavyTanker", "mediumTanker", "lightUnit"])
-        value = input_datetime(value, 'startTime')
-        value = input_datetime(value, 'endTime')
-        # TODO - further validation on DateTime values
+        value = input_key_type(value, 'shiftID', type_positive, [])
+        value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
+        value = input_key_type(value, 'startTime', type_datetime, [])
+        value = input_key_type(value, 'endTime', type_datetime, [])
         # Validate the startTime is before the endTime
-
-        # if value['startTime'] >= value['endTime']:
-        #     raise ValueError("The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))
+        if value['startTime'] >= value['endTime']:
+            raise ValueError("The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))
     return value
 
 parser = reqparse.RequestParser()
@@ -110,13 +108,8 @@ class Recommendation(Resource):
         #     volunteer["availabilities"] = [(start,end)]
         #     volunteers.append(volunteer)
 
-        volunteers = volunteer_all()
+        volunteers = volunteer_all(True)
         for volunteer in volunteers:
-            # Fix datetime variables
-            for availability in volunteer["availabilities"]:
-                availability[0] = availability[0].replace(tzinfo=UTC)
-                availability[1] = availability[1].replace(tzinfo=UTC)
-            
             # Fix possibleRoles values. TODO standardise these
             for role in volunteer["possibleRoles"]:
                 switcher = {
@@ -135,7 +128,7 @@ class Recommendation(Resource):
         # TODO - Scheduler overrides each volunteer's ID string. Who's been assigned?
 
         if not output == []:
-            # print("succeeded to optimise")
-            print("succeeded to optimise, output:\n{}".format(output))
+            print("succeeded to optimise")
+            # print("succeeded to optimise, output:\n{}".format(output))
 
         return { "results" : output }

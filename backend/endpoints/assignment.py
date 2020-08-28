@@ -25,29 +25,34 @@ Define data input
   }]
 }
 '''
+# Validate a volunteer's position and role
+def input_volunteer_position(value):
+    # Validate that volunteers contains dictionaries
+    value = type_dict(value)
+    if type(value) is dict:
+        # Validate volunteer values
+        value = input_key_type(value, 'ID', type_string, [])
+        value = input_key_type(value, 'positionID', type_natural, [])
+        value = input_key_type(value, 'role', type_list_of, ['enum of form [\'basic\', \'advanced\', \'crewLeader\', \'driver\']',
+                                            type_enum, [["basic", "advanced", "crewLeader", "driver"]]])
+    return value
 
 # Validate an asset request input
 def input_assignment_req(value, name):
     # Validate that assignment_list contains dictionaries
-    value = type_dict(value, name)
+    value = type_dict(value)
     if type(value) is dict:
         # Validate vehicle values
-        value = input_key_natural(value, 'shiftID')
-        value = input_key_enum(value, 'assetClass', ["heavyTanker", "mediumTanker", "lightUnit"])
-        value = input_datetime(value, 'startTime')
-        value = input_datetime(value, 'endTime')
-        # TODO - further validation on DateTime values
+        value = input_key_type(value, 'shiftID', type_natural, [])
+        value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
+        value = input_key_type(value, 'startTime', type_dateTime, [])
+        value = input_key_type(value, 'endTime', type_dateTime, [])
         # Validate the startTime is before the endTime
-        # if value['start_time'] >= value['end_time']:
-        #     raise ValueError("The start_time '{}' cannot be after the end_time '{}'".format(value['start_time'], value['end_time']))
-        # Validate that 'volunteers' is a list of dictionaries
-        value = input_list_of(value, 'volunteers', 'dictionary(s)', type_dict, ['in volunteers'])
-        # Validate each volunteer
-        for num, volunteer in enumerate(value['volunteers']):
-            volunteer = input_key_natural(volunteer, 'volunteer_id')
-            volunteer = input_key_natural(volunteer, 'position_id')
-            volunteer = input_key_enum(volunteer, 'role', ["Crew Member","CrewLeader", "CrewLeader/Driver", "Driver"])
-            value['volunteers'][num] = volunteer
+        if value['startTime'] >= value['endTime']:
+            raise ValueError("The start_time '{}' cannot be after the end_time '{}'".format(value['start_time'], value['end_time']))
+        # Validate the list of volunteers
+        value = input_key_type(value, 'volunteers', type_list_of, ['volunteer(s)',
+                                                    input_volunteer_position, []])
     return value
 
 
@@ -86,7 +91,7 @@ class Assignment(Resource):
             volunteers = asset_request["volunteers"]
             # Load the requested volunteers
             for volunteer in volunteers:
-                volunteer_id = volunteer["volunteer_id"]
+                volunteer_id = volunteer["ID"]
                 loaded_volunteer = LoadVolunteer('volunteers',volunteer_id)
                 loaded_volunteer.role = volunteer["role"]
                 assigned_volunteers.append(loaded_volunteer)

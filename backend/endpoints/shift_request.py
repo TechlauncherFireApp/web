@@ -31,7 +31,6 @@ POST
     }]
 }
 
-
 PATCH
 {
     "requestID": String,
@@ -50,39 +49,33 @@ PATCH
 
 '''
 # Validate a volunteer's position and role
-def input_volunteer_position(value, name):
+def input_volunteer_position(value):
     # Validate that volunteers contains dictionaries
-    value = type_dict(value, name)
+    value = type_dict(value)
     if type(value) is dict:
         # Validate volunteer values
-        value = input_key_string(value, 'ID')
-        value = input_key_natural(value, 'positionID')
-        value = input_key_enum(value, 'role', ["basic", "advanced", "crewLeader", "driver"])
+        value = input_key_type(value, 'ID', type_string, [])
+        value = input_key_type(value, 'positionID', type_natural, [])
+        value = input_key_type(value, 'role', type_list_of, ['enum of form [\'basic\', \'advanced\', \'crewLeader\', \'driver\']',
+                                            type_enum, [["basic", "advanced", "crewLeader", "driver"]]])
     return value
 
 # Validate a shift input
 def input_shift(value, name):
     # Validate that shifts contains dictionaries
+    value = type_dict(value)
     if type(value) is dict:
         # Validate shift values
-        value = input_key_positive(value, 'shiftID')
-        value = input_key_enum(value, 'assetClass', ["heavyTanker", "mediumTanker", "lightUnit"])
-        value = input_datetime(value, 'startTime')
-        value = input_datetime(value, 'endTime')
-        # TODO - further validation on DateTime values
+        value = input_key_type(value, 'shiftID', type_positive, [])
+        value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
+        value = input_key_type(value, 'startTime', type_datetime, [])
+        value = input_key_type(value, 'endTime', type_datetime, [])
         # Validate the startTime is before the endTime
-
-        # if value['startTime'] >= value['endTime']:
-        #     raise ValueError("The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))
-        # value = input_volunteer_position(value, 'volunteers')
-        # Validate each volunteer
-        value = input_list_of(value, 'volunteers', 'dictionary(s)', type_dict, [])
-        for num, volunteer in enumerate(value['volunteers']):
-            volunteer = input_key_string(volunteer, 'ID')
-            volunteer = input_key_natural(volunteer, 'positionID')
-            volunteer = input_list_of(volunteer, 'role', 'enum of form [\'basic\', \'advanced\', \'crewLeader\', \'driver\']', type_enum, [["basic", "advanced", "crewLeader", "driver"]])
-            # volunteer = input_key_enum(volunteer, 'role', ["basic", "advanced", "crewLeader", "driver"])
-            value['volunteers'][num] = volunteer
+        if value['startTime'] >= value['endTime']:
+            raise ValueError("The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))
+        # Validate the list of volunteers
+        value = input_key_type(value, 'volunteers', type_list_of, ['volunteer(s)',
+                                                    input_volunteer_position, []])
     return value
 
 parser = reqparse.RequestParser()

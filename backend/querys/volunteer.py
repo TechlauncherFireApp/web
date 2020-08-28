@@ -2,6 +2,7 @@
 from includes.query_mysql import query_mysql
 # Misc
 from datetime import *
+from pytz import UTC
 import re, json
 from math import floor
 
@@ -19,7 +20,7 @@ def weekdayStringToInt(weekdayString):
     return switcher[weekdayString]
 
 # Convert database availabilities to DateTime
-def availabilitiesToDateTime(availabilities):
+def availabilitiesToDateTime(availabilities, set_offset_aware):
     new_availabilities = []
     now = datetime.now()
 
@@ -49,8 +50,13 @@ def availabilitiesToDateTime(availabilities):
             
             # Format in DataTime
             start_availability = datetime(new_availability_day.year, new_availability_day.month, new_availability_day.day, start_hour, start_minute, 0)
-            end_availability = datetime(new_availability_day.year, new_availability_day.month, new_availability_day.day, end_hour, end_minute, 0)
+            end_availability   = datetime(new_availability_day.year, new_availability_day.month, new_availability_day.day, end_hour, end_minute, 0)
             
+            # Force availability to be offset-aware
+            if set_offset_aware:
+                start_availability = start_availability.replace(tzinfo=UTC)
+                end_availability   = end_availability.replace(tzinfo=UTC)
+
             # Add availability to output
             new_availability = [start_availability, end_availability]
             new_availabilities.append(new_availability)
@@ -58,7 +64,7 @@ def availabilitiesToDateTime(availabilities):
 
 
 # Get all of the volunteers and their info from the database
-def volunteer_all():
+def volunteer_all(set_offset_aware):
     # Make query
     query = """
             SELECT
@@ -74,7 +80,8 @@ def volunteer_all():
         try:
             x["possibleRoles"] = json.loads(x["possibleRoles"])
             x["qualifications"] = json.loads(x["qualifications"])
-            x["availabilities"] = availabilitiesToDateTime(json.loads(x["availabilities"]))
+            x["availabilities"] = availabilitiesToDateTime(json.loads(x["availabilities"]), set_offset_aware)
         except Exception as e:
             print("Error: {}".format(e))
+
     return res

@@ -50,4 +50,4 @@ class VolunteerAll(Resource):
     def get(self):
         #TODO Get all volunteers from mysql
 
-        return { "results": volunteer_all() }
+        return { "results": volunteer_all(False) }
