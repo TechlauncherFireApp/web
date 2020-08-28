@@ -76,9 +76,7 @@ def input_shift(value, name):
         #     raise ValueError("The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))
         # value = input_volunteer_position(value, 'volunteers')
         # Validate each volunteer
-        print(0)
         value = input_list_of(value, 'volunteers', 'dictionary(s)', type_dict, [])
-        print(0)
         for num, volunteer in enumerate(value['volunteers']):
             volunteer = input_key_string(volunteer, 'ID')
             volunteer = input_key_natural(volunteer, 'positionID')
