@@ -111,13 +111,25 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
 
     if (this.props.isNew) {
       //TODO get new recommendation from scheduler
+
       console.log(this.props.thisRequest)
+      let requestData: any = [];
+      for (const asset of this.props.thisRequest) {
+        requestData.push({
+          shiftID: asset.isVehicle,
+          assetClass: asset.type,
+          startTime: asset.startDateTime.toTimeString(),
+          endTime: asset.endDateTime.toTimeString()
+        });
+      }
+      console.log(requestData);
+
       //TODO get the vehicle information for the request
       axios.request({
         url: "recommendation",
         baseURL: "http://localhost:5000/",
         method: "POST",
-        data: { "request": this.props.id },
+        data: { "request": requestData },
         timeout: 15000,
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
