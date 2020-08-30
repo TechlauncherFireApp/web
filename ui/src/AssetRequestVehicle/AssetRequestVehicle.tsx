@@ -41,7 +41,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     // console.clear();
     // Assign Current Time
     let t1: Date = getValidDate(new Date()),
-        t2: Date = getValidDate(new Date());
+      t2: Date = getValidDate(new Date());
 
     t1.setMinutes(t1.getMinutes() + 30);
     t1 = getValidDate(t1);
@@ -84,7 +84,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     console.clear();
     this.setState({ allow_submitData: false });
     const l: RequestType[] = this.state.requestList;
-    
+
     let d: any = [];
     for (let x of l) {
       d.push({
@@ -113,6 +113,10 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       alert(res.data === 1 ? "Successfully Saved" : res.data);
+
+      // TODO - opening the volunteers page for this asset request
+      window.open(`./assetRequest/volunteers/${this.props.match.params.id}/${"new"}`, "_self", "", false);
+
       this.setState({ allow_submitData: true });
     }).catch((err: AxiosError): void => {
       alert(err.message);
@@ -178,7 +182,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     return (
       <asset-request-vehicle>
         <h1>New Asset Request</h1>
-        <hr/>
+        <hr />
         <div className="entry">
           <div className="con">
             <label>Asset Type</label>
@@ -208,35 +212,35 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
               timeCaption="Time"
               dateFormat="d MMMM yyyy h:mm aa" />
           </div>
-          <insert onClick={()=>this.insertAsset()}></insert>
+          <insert onClick={() => this.insertAsset()}></insert>
         </div>
-        <hr/>
+        <hr />
         <div className="output">
           {this.state.allow_getInitialData ? <>
             {this.state.requestList.map((t: RequestType) => (
               <request-body id={t.id}>
-                  <svg type="close" viewBox="0 0 282 282" onClick={()=>this.removeAsset(t.id)}> <g> <circle cx="141" cy="141" r="141"/> <ellipse cx="114" cy="114.5" rx="114" ry="114.5"/> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z"/> </g> </svg>
-                  <h2>{t.type}</h2>
-                  <div className="cont-1">
-                      <div className="cont-2">
-                          <label>Start</label>
-                          <br/>
-                          <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                          <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
-                      </div>
-                      <div className="cont-2">
-                          <label>End</label>
-                          <br/>
-                          <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                          <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US",{hour:"numeric",minute:"numeric",hour12:true})}</div>
-                      </div>
+                <svg type="close" viewBox="0 0 282 282" onClick={() => this.removeAsset(t.id)}> <g> <circle cx="141" cy="141" r="141" /> <ellipse cx="114" cy="114.5" rx="114" ry="114.5" /> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z" /> </g> </svg>
+                <h2>{t.type}</h2>
+                <div className="cont-1">
+                  <div className="cont-2">
+                    <label>Start</label>
+                    <br />
+                    <div className="cont-3">{t.startDateTime.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</div>
+                    <div className="cont-3">{t.startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</div>
                   </div>
+                  <div className="cont-2">
+                    <label>End</label>
+                    <br />
+                    <div className="cont-3">{t.endDateTime.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</div>
+                    <div className="cont-3">{t.endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</div>
+                  </div>
+                </div>
               </request-body>
             ))}
           </> : "Loading"}
         </div>
-        <hr/>
-        <Button className="type-1" onClick={()=>this.submitData()}>{this.state.allow_submitData ? "Submit Request":"Loading"}</Button>
+        <hr />
+        <Button className="type-1" onClick={() => this.submitData()}>{this.state.allow_submitData ? "Submit Request" : "Loading"}</Button>
       </asset-request-vehicle>
     );
   }
