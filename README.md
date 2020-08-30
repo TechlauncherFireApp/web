@@ -60,3 +60,16 @@ To install a new package use `python3.8 -m pip install package-name`.
 To install packages from file use `python3.8 -m pip install -r requirements.txt`.
 
 To save installed packages to file use `python3.8 -m pip freeze > requirements.txt`.
+
+## Database
+
+Our .devcontainer/docker-compose.yml opens our mysql database alongside our workspace when started in a container.
+
+When starting for the first time, we need to ensure that the backend can communicate with the database.
+To do this run `cat /etc/hosts` when in the workspace container.
+The last line should print the IP address of the workspace container on the inteface connected to the database.
+
+Which means that the first 3 numbers (*.*.*.0) part of the address is shared with the mysql database.
+Your host pc is '*.*.*.1', your workspace container and mysql container are either '*.*.*.2' or '*.*.*.3'.
+
+In the /backend/.env file replace the field of 'MYSQL_HOST=' with the mysql container IP address.
