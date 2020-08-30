@@ -60,7 +60,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       url: "AssetRequestVehicle/initial",
       baseURL: "http://localhost:5000/",
       method: "POST",
-      data: { "id": this.props.match.params.id },
+      data: { "id": this.props.id },
       timeout: 15000,
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
@@ -108,7 +108,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       url: "AssetRequestVehicle/submit",
       baseURL: "http://localhost:5000/",
       method: "POST",
-      data: { "id": this.props.match.params.id, "vehicles": d },
+      data: { "id": this.props.id, "vehicles": d },
       timeout: 15000,
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
@@ -116,7 +116,8 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       alert(res.data === 1 ? "Successfully Saved" : res.data);
 
       // TODO - opening the volunteers page for this asset request
-      window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}/${"new"}`, "_self", "", false);
+      this.props.submitRequest(this.state.requestList);
+      //window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}/${"new"}`, "_self", "", false);
 
 
       this.setState({ allow_submitData: true });

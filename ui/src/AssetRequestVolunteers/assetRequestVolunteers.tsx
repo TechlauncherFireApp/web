@@ -84,7 +84,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
 
 
   getInitialData = (): void => {
-    
+
     let volunteerList: volunteer[];
     let recommendation: any;
 
@@ -98,7 +98,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       volunteerList = res.data["results"]
-      if (recommendation.length != 0){
+      if (recommendation.length != 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
         const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
         this.setState({ assetRequest, volunteerList, assignedVolunteers })
@@ -108,16 +108,16 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     });
 
 
-    //path must be defined as "/assetRequest/volunteers/:id/:isNew"
-    if (this.props.match.params.isNew === "new") {
-      //TODO get new recommendation from scheduler
 
+    if (this.props.isNew) {
+      //TODO get new recommendation from scheduler
+      console.log(this.props.thisRequest)
       //TODO get the vehicle information for the request
       axios.request({
         url: "recommendation",
         baseURL: "http://localhost:5000/",
         method: "POST",
-        data: { "request": this.props.match.params.id },
+        data: { "request": this.props.id },
         timeout: 15000,
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
@@ -125,7 +125,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         recommendation = res.data["results"]
 
         // Both volunteerList and recommendation need to be populated
-        if (volunteerList.length != 0){
+        if (volunteerList.length != 0) {
           let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
           const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
           this.setState({ assetRequest, volunteerList, assignedVolunteers })
@@ -136,7 +136,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     } else {
       //TODO get saved asset request data from database
       axios.request({
-        url: "shift/request?requestID="+this.props.match.params.id,
+        url: "shift/request?requestID=" + this.props.id,
         baseURL: "http://localhost:5000/",
         method: "GET",
         timeout: 15000,
@@ -146,7 +146,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         recommendation = res.data["results"]
 
         // Both volunteerList and recommendation need to be populated
-        if (volunteerList.length != 0){
+        if (volunteerList.length != 0) {
           let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
           const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
           this.setState({ assetRequest, volunteerList, assignedVolunteers })
@@ -158,126 +158,126 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
   }
 
   // TESTING FUNCTION
-  // getTestData = (): void => {
-  //   let assetRequest: any = [];
-  //   let volunteerList: any = [];
-  //   let now: Date = new Date();
+  getTestData = (): void => {
+    //   let assetRequest: any = [];
+    //   let volunteerList: any = [];
+    //   let now: Date = new Date();
 
-  //   const asset1: any = {
-  //     shiftID: 1,
-  //     assetClass: "Light Unit",
-  //     startTime: new Date(2020, 5, 10, 10),
-  //     endTime: new Date(2020, 5, 10, 16),
-  //     volunteers: [{
-  //       positionID: 0,
-  //       volunteerID: "1",
-  //       roles: ["Driver", "Crew Leader"]
-  //     },
-  //     {
-  //       positionID: 1,
-  //       volunteerID: "2",
-  //       roles: ["Crew Member"]
-  //     }
-  //     ]
-  //   }
-  //   const asset2: any = {
-  //     shiftID: 2,
-  //     assetClass: "Light Unit",
-  //     startTime: now,
-  //     endTime: now,
-  //     volunteers: [{
-  //       positionID: 0,
-  //       volunteerID: "3",
-  //       roles: ["Driver", "Crew Leader"]
-  //     },
-  //     {
-  //       positionID: 1,
-  //       volunteerID: "4",
-  //       roles: ["Crew Member"]
-  //     }
-  //     ]
-  //   }
-  //   const recommendation: any[] = [asset1, asset2];
+    //   const asset1: any = {
+    //     shiftID: 1,
+    //     assetClass: "Light Unit",
+    //     startTime: new Date(2020, 5, 10, 10),
+    //     endTime: new Date(2020, 5, 10, 16),
+    //     volunteers: [{
+    //       positionID: 0,
+    //       volunteerID: "1",
+    //       roles: ["Driver", "Crew Leader"]
+    //     },
+    //     {
+    //       positionID: 1,
+    //       volunteerID: "2",
+    //       roles: ["Crew Member"]
+    //     }
+    //     ]
+    //   }
+    //   const asset2: any = {
+    //     shiftID: 2,
+    //     assetClass: "Light Unit",
+    //     startTime: now,
+    //     endTime: now,
+    //     volunteers: [{
+    //       positionID: 0,
+    //       volunteerID: "3",
+    //       roles: ["Driver", "Crew Leader"]
+    //     },
+    //     {
+    //       positionID: 1,
+    //       volunteerID: "4",
+    //       roles: ["Crew Member"]
+    //     }
+    //     ]
+    //   }
+    //   const recommendation: any[] = [asset1, asset2];
 
-  //   const vol1: volunteer = {
-  //     id: "1",
-  //     firstName: "Caleb",
-  //     lastName: "Addison",
-  //     email: "caleb.blah@blah.com",
-  //     mobileNo: "0412490340",
-  //     prefHours: 10,
-  //     possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
-  //     qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-  //     availability: [{ startTime: new Date(2020, 5, 10, 8), endTime: new Date(2020, 5, 10, 12) },
-  //     { startTime: new Date(2020, 5, 10, 15), endTime: new Date(2020, 5, 10, 20) }]
-  //   };
-  //   const vol2: volunteer = {
-  //     id: "2",
-  //     firstName: "Tom",
-  //     lastName: "Willis",
-  //     email: "tom.blah@blah.com",
-  //     mobileNo: "0411222333",
-  //     prefHours: 15,
-  //     possibleRoles: ["Crew Member"],
-  //     qualifications: ["advanced training"],
-  //     availability: [{ startTime: new Date(2022, 1, 1), endTime: new Date(2022, 2, 1) }]
-  //   };
-  //   const vol3: volunteer = {
-  //     id: "3",
-  //     firstName: "Amandeep",
-  //     lastName: "Singh",
-  //     email: "aman.blah@blah.com",
-  //     mobileNo: "1234567890",
-  //     prefHours: 8,
-  //     possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
-  //     qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-  //     availability: [{ startTime: new Date(1990, 1, 1, 1, 1, 1, 1), endTime: new Date(1991, 1, 1, 1, 1, 1, 1) }]
-  //   };
-  //   const vol4: volunteer = {
-  //     id: "4",
-  //     firstName: "Stavros",
-  //     lastName: "Dimos",
-  //     email: "divos.blah@blah.com",
-  //     mobileNo: "9876543120",
-  //     prefHours: 20,
-  //     possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
-  //     qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
-  //     availability: [{ startTime: new Date(1990, 1, 1, 1, 1, 1, 1), endTime: new Date(1991, 1, 1, 1, 1, 1, 1) },
-  //     { startTime: new Date(2020, 5, 10, 8), endTime: new Date(2020, 5, 10, 20) }]
-  //   };
-  //   const vol5: volunteer = {
-  //     id: "5",
-  //     firstName: "Cyrus",
-  //     lastName: "Safdsar",
-  //     email: "cyrus.blah@blah.com",
-  //     mobileNo: "541234345",
-  //     prefHours: 7,
-  //     possibleRoles: ["Crew Member"],
-  //     qualifications: ["advanced training",],
-  //     availability: [{ startTime: new Date(2020, 1, 1, 1, 1, 1, 1), endTime: new Date(2021, 1, 1, 1, 1, 1, 1) }]
-  //   };
-  //   const vol6: volunteer = {
-  //     id: "6",
-  //     firstName: "Charles",
-  //     lastName: "Luchetti",
-  //     email: "charles.blah@blah.com",
-  //     mobileNo: "123451234",
-  //     prefHours: 14,
-  //     possibleRoles: ["Driver", "Crew Member"],
-  //     qualifications: ["heavy rigid license", "pump training", "advanced training",],
-  //     availability: [{ startTime: new Date(2020, 1, 1, 1, 1, 1, 1), endTime: new Date(2021, 1, 1, 1, 1, 1, 1) }]
-  //   };
-  //   volunteerList.push(vol1);
-  //   volunteerList.push(vol2);
-  //   volunteerList.push(vol3);
-  //   volunteerList.push(vol4);
-  //   volunteerList.push(vol5);
-  //   volunteerList.push(vol6);
+    //   const vol1: volunteer = {
+    //     id: "1",
+    //     firstName: "Caleb",
+    //     lastName: "Addison",
+    //     email: "caleb.blah@blah.com",
+    //     mobileNo: "0412490340",
+    //     prefHours: 10,
+    //     possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
+    //     qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
+    //     availability: [{ startTime: new Date(2020, 5, 10, 8), endTime: new Date(2020, 5, 10, 12) },
+    //     { startTime: new Date(2020, 5, 10, 15), endTime: new Date(2020, 5, 10, 20) }]
+    //   };
+    //   const vol2: volunteer = {
+    //     id: "2",
+    //     firstName: "Tom",
+    //     lastName: "Willis",
+    //     email: "tom.blah@blah.com",
+    //     mobileNo: "0411222333",
+    //     prefHours: 15,
+    //     possibleRoles: ["Crew Member"],
+    //     qualifications: ["advanced training"],
+    //     availability: [{ startTime: new Date(2022, 1, 1), endTime: new Date(2022, 2, 1) }]
+    //   };
+    //   const vol3: volunteer = {
+    //     id: "3",
+    //     firstName: "Amandeep",
+    //     lastName: "Singh",
+    //     email: "aman.blah@blah.com",
+    //     mobileNo: "1234567890",
+    //     prefHours: 8,
+    //     possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
+    //     qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
+    //     availability: [{ startTime: new Date(1990, 1, 1, 1, 1, 1, 1), endTime: new Date(1991, 1, 1, 1, 1, 1, 1) }]
+    //   };
+    //   const vol4: volunteer = {
+    //     id: "4",
+    //     firstName: "Stavros",
+    //     lastName: "Dimos",
+    //     email: "divos.blah@blah.com",
+    //     mobileNo: "9876543120",
+    //     prefHours: 20,
+    //     possibleRoles: ["Driver", "Crew Leader", "Crew Member"],
+    //     qualifications: ["heavy rigid license", "pump training", "crew leader training", "advanced training",],
+    //     availability: [{ startTime: new Date(1990, 1, 1, 1, 1, 1, 1), endTime: new Date(1991, 1, 1, 1, 1, 1, 1) },
+    //     { startTime: new Date(2020, 5, 10, 8), endTime: new Date(2020, 5, 10, 20) }]
+    //   };
+    //   const vol5: volunteer = {
+    //     id: "5",
+    //     firstName: "Cyrus",
+    //     lastName: "Safdsar",
+    //     email: "cyrus.blah@blah.com",
+    //     mobileNo: "541234345",
+    //     prefHours: 7,
+    //     possibleRoles: ["Crew Member"],
+    //     qualifications: ["advanced training",],
+    //     availability: [{ startTime: new Date(2020, 1, 1, 1, 1, 1, 1), endTime: new Date(2021, 1, 1, 1, 1, 1, 1) }]
+    //   };
+    //   const vol6: volunteer = {
+    //     id: "6",
+    //     firstName: "Charles",
+    //     lastName: "Luchetti",
+    //     email: "charles.blah@blah.com",
+    //     mobileNo: "123451234",
+    //     prefHours: 14,
+    //     possibleRoles: ["Driver", "Crew Member"],
+    //     qualifications: ["heavy rigid license", "pump training", "advanced training",],
+    //     availability: [{ startTime: new Date(2020, 1, 1, 1, 1, 1, 1), endTime: new Date(2021, 1, 1, 1, 1, 1, 1) }]
+    //   };
+    //   volunteerList.push(vol1);
+    //   volunteerList.push(vol2);
+    //   volunteerList.push(vol3);
+    //   volunteerList.push(vol4);
+    //   volunteerList.push(vol5);
+    //   volunteerList.push(vol6);
 
-  //   assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
-  //   const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
-  //   this.setState({ assetRequest, volunteerList, assignedVolunteers })
-  // }
+    //   assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
+    //   const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
+    //   this.setState({ assetRequest, volunteerList, assignedVolunteers })
+  }
 
   submitData(): void {
     //TODO need aman's help with this function (this is 1.3.8)
@@ -285,12 +285,12 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     //can either happen every time a position is updated OR when the captain clicks save
 
     // TODO remove volunteer feild from each volunteer
-    let shifts:any = this.state.assetRequest
+    let shifts: any = this.state.assetRequest
 
     //path must be defined as "/assetRequest/volunteers/:id/:isNew"
     if (this.props.match.params.isNew === "new") {
       axios.request({
-        url: "shift/request?requestID="+this.props.match.params.id,
+        url: "shift/request?requestID=" + this.props.id,
         baseURL: "http://localhost:5000/",
         method: "POST",
         timeout: 15000,
@@ -298,9 +298,9 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
-        if (res.data["success"]){
+        if (res.data["success"]) {
           alert("Save Succeded")
-        }else{
+        } else {
           alert("Save Failed")
         }
       }).catch((err: AxiosError): void => {
@@ -308,7 +308,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       });
     } else {
       axios.request({
-        url: "shift/request?requestID="+this.props.match.params.id,
+        url: "shift/request?requestID=" + this.props.id,
         baseURL: "http://localhost:5000/",
         method: "PATCH",
         timeout: 15000,
@@ -316,9 +316,9 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
-        if (res.data["success"]){
+        if (res.data["success"]) {
           alert("Save Succeded")
-        }else{
+        } else {
           alert("Save Failed")
         }
       }).catch((err: AxiosError): void => {
