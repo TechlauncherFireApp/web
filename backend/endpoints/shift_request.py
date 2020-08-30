@@ -17,12 +17,8 @@ GET
 
 POST
 {
-    "requestID": String,
     "shifts": [{
         "shiftID": String,
-        "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-        "startTime": DateTimeString iso8601,
-        "endTime": DateTimeString iso8601,
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
@@ -33,12 +29,8 @@ POST
 
 PATCH
 {
-    "requestID": String,
     "shifts": [{
         "shiftID": String,
-        "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-        "startTime": DateTimeString iso8601,
-        "endTime": DateTimeString iso8601,
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
@@ -67,12 +59,6 @@ def input_shift(value, name):
     if type(value) is dict:
         # Validate shift values
         value = input_key_type(value, 'shiftID', type_string, [])
-        value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
-        value = input_key_type(value, 'startTime', type_datetime, [])
-        value = input_key_type(value, 'endTime', type_datetime, [])
-        # Validate the startTime is before the endTime
-        if value['startTime'] >= value['endTime']:
-            raise ValueError("The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))
         # Validate the list of volunteers
         value = input_key_type(value, 'volunteers', type_list_of, ['volunteer(s)',
                                                     input_volunteer_position, []])
@@ -154,7 +140,6 @@ class ShiftRequest(Resource):
         if args["requestID"] is None or args["shifts"] is None:
             return { "success": False }
         
-        requestID = args["requestID"]
         shifts = args["shifts"]
         #TODO Create a new shift request object in database
 
@@ -167,7 +152,6 @@ class ShiftRequest(Resource):
         if args["requestID"] is None or args["shifts"] is None:
             return { "success": False }
         
-        requestID = args["requestID"]
         shifts = args["shifts"]
         #TODO Update a shift request object in database
 
