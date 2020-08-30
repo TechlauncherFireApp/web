@@ -40,6 +40,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
   componentDidMount(): void {
     // console.clear();
     // Assign Current Time
+
     let t1: Date = getValidDate(new Date()),
       t2: Date = getValidDate(new Date());
 
@@ -115,7 +116,8 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       alert(res.data === 1 ? "Successfully Saved" : res.data);
 
       // TODO - opening the volunteers page for this asset request
-      window.open(`./assetRequest/volunteers/${this.props.match.params.id}/${"new"}`, "_self", "", false);
+      window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}/${"new"}`, "_self", "", false);
+
 
       this.setState({ allow_submitData: true });
     }).catch((err: AxiosError): void => {
