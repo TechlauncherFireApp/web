@@ -116,10 +116,10 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       let requestData: any = [];
       for (const asset of this.props.thisRequest) {
         requestData.push({
-          shiftID: asset.isVehicle,
+          shiftID: asset.idVehicle,
           assetClass: asset.type,
-          startTime: asset.startDateTime.toTimeString(),
-          endTime: asset.endDateTime.toTimeString()
+          startTime: asset.startDateTime.toISOString(),
+          endTime: asset.endDateTime.toISOString()
         });
       }
       console.log(requestData);
