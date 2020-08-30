@@ -136,6 +136,13 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       }).then((res: AxiosResponse): void => {
         recommendation = res.data["results"]
 
+        for (const r of recommendation) {
+          console.log(r.startTime, r.endTime);
+          r.startTime = Date.parse(r.startTime);
+          r.endTime = Date.parse(r.endTime);
+          console.log(r.startTime, r.endTime);
+        }
+
         // Both volunteerList and recommendation need to be populated
         if (volunteerList.length != 0) {
           let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
