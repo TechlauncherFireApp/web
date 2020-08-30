@@ -23,7 +23,7 @@ interface volunteer {
 interface Position {
   positionID: number;
   volunteerID: string;
-  volunteer: volunteer; //ID
+  volunteer: volunteer; //not to be saved in database
   roles: string[];
 }
 
@@ -59,14 +59,54 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     }
   }
 
-  componentDidMount(): void {   // I think this needs to be WillMount rather than DidMount to display appropriate info
+  componentDidMount(): void {
     this.getInitialData();
+  }
 
-    // HARD CODED DUMMY DATA FOR TESTING ~ BEGIN
+  mapVolunteersToRequest = (assets: any[], volunteerList: volunteer[]): asset[] => {
+    // this is not the most effecient method but it's very simple. I believe it's O(n^2) but as we're working with small data this should be fine
+    let output = [...assets];
+    for (const asset of output) {
+      for (const position of asset.volunteers) {
+        //find the corresponding volunteer
+        for (let j = 0; j < volunteerList.length; j++) {
+          if (volunteerList[j].id === position.volunteerID) {
+            position.volunteer = { ...volunteerList[j] };
+            j = volunteerList.length;
+          }
+        }
+      }
+    }
+    return output;
+  }
+
+
+  getInitialData = (): void => {
+    let volunteerList: volunteer[];
+    //TODO get allVolunteers data from database
+
+
+
+    let recommendation: any;
+    //path must be defined as "/assetRequest/volunteers/:id/:isNew"
+    if (this.props.match.params.isNew === "new") {
+      //TODO get new recommendation from scheduler
+
+    } else {
+      //TODO get saved asset request data from database
+
+    }
+
+    let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
+    const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
+    this.setState({ assetRequest, volunteerList, assignedVolunteers })
+  }
+
+  // TESTING FUNCTION
+  getTestData = (): void => {
     let assetRequest: any = [];
     let volunteerList: any = [];
     let now: Date = new Date();
-
 
     const asset1: any = {
       shiftID: 1,
@@ -180,44 +220,13 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     volunteerList.push(vol6);
 
     assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
-
     const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
     this.setState({ assetRequest, volunteerList, assignedVolunteers })
-    // HARD CODED DUMMY DATA FOR TESTING ~ END
-  }
-
-  mapVolunteersToRequest = (assets: any[], volunteerList: volunteer[]): asset[] => {
-    // this is not the most effecient method but it's very simple. I believe it's O(n^2) but as we're working with small data this should be fine
-
-    let output = [...assets];
-
-    for (const asset of output) {
-      for (const position of asset.volunteers) {
-        //find the corresponding volunteer
-        for (let j = 0; j < volunteerList.length; j++) {
-          if (volunteerList[j].id === position.volunteerID) {
-            position.volunteer = { ...volunteerList[j] };
-            j = volunteerList.length;
-          }
-        }
-      }
-    }
-    return output;
-  }
-
-
-  getInitialData(): void {
-    //TODO need aman's help with this function
-    //need to populate 'assetRequest' from the database (or from the backend, I think it would be better to go through the database however as that makes this component extendable)
-    //need to populate 'volunteerList' from the database (data for all volunteers, this is okay to do because we're only working with a small amount of data ~100 entries)
-
-
-
   }
 
   submitData(): void {
-    //TODO need aman's help with this function
-    //need to save the 'assetRequest' list in the database
+    //TODO need aman's help with this function (this is 1.3.8)
+    //need to save the 'assetRequest' list in the database (IGNORING the volunteer field in each list of volunteers, i.e. only store the ID not all volunteer data)
     //can either happen every time a position is updated OR when the captain clicks save
   }
 

@@ -20,7 +20,7 @@ export default function App() {
           <Route exact path="/" component={Home} />
           <Route path="/assetRequest/vehicle/:id" component={AssetRequestVehicle} />
           <Route path="/assetRequest/test" component={AssetRequestVolunteers} />
-          <Route path="/assetRequest/volunteer/:id" component={AssetRequestVolunteers} />
+          <Route path="/assetRequest/volunteers/:id/:isNew" component={AssetRequestVolunteers} />
           <Route path="/NewAssetRequest" component={AssetRequestContainer} />
           <Route path="/volunteers" component={Volunteers} />
         </Switch>
