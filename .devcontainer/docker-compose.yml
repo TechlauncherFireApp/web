@@ -8,6 +8,17 @@ services:
     - ../:/workspace:cached
     - node_modules:/workspace/ui/node_modules
     command: /bin/sh -c "while sleep 1000; do :; done"
+    networks:
+      mysql_net:
+
+  mysql:
+    image: "repo.treescale.com/fire-app-dev/mysql"
+    container_name: "fire-app-mysql-container"
+    networks:
+      mysql_net:
 
 volumes:
   node_modules:
+
+networks:
+  mysql_net:
