@@ -113,7 +113,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
-      alert(res.data === 1 ? "Successfully Saved" : res.data);
+      // alert(res.data === 1 ? "Successfully Saved" : res.data);
 
       // TODO - opening the volunteers page for this asset request
       this.props.submitRequest(this.state.requestList);

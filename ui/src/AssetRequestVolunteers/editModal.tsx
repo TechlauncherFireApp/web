@@ -103,7 +103,6 @@ export default class EditModal extends React.Component<any, State> {
 
     // exclude the volunteer themselves from this list (position.assignedVolunteer.id if position.assignedVolunteer != null)
     // rework this to do both filters in one pass
-    console.log(this.props.position.startTime, this.props.position.endTime);
 
     const targetRoles = this.props.position.roles;
     let list = [];
@@ -121,21 +120,18 @@ export default class EditModal extends React.Component<any, State> {
     let no: any = [];
     for (const l of list) {
       let l_copy = { ...l };
-      if (isAvailable(l.availability, { startTime: this.props.position.startTime, endTime: this.props.position.endTime })) {
+      if (isAvailable(l.availabilities, { startTime: this.props.position.startTime, endTime: this.props.position.endTime })) {
 
         l_copy.available = true;
         yes.push(l_copy)
-        console.log("availa", l_copy);
       } else {
 
         l_copy.available = false;
         no.push(l_copy);
-        console.log("unavail", l_copy);
       }
     }
     list = [...yes, ...no];
-    console.log(list)
-    return list.filter(l => (!this.props.position.assigned || l.id != this.props.position.volunteer.id));
+    return list.filter(l => (!this.props.position.assigned || l.ID != this.props.position.volunteer.ID));
   }
 
   onHide = (): void => {

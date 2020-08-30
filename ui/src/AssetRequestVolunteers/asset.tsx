@@ -36,7 +36,7 @@ export default class Asset extends React.Component<any, any> {
       assigned: true,
       volunteer: position.volunteer,
       assetClass: asset.assetClass,
-      roles: position.roles,
+      roles: position.role,
       startTime: asset.startTime,
       endTime: asset.endTime
     }
@@ -48,6 +48,7 @@ export default class Asset extends React.Component<any, any> {
 
   render() {
     const { asset } = this.props;
+
 
     return (
       <Table className="mt-4" striped bordered hover size="sm">

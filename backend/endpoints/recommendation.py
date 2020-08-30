@@ -16,10 +16,10 @@ Define data input
 
 {
   "request" : [{
-    "shiftID": Integer,
+    "shiftID": String,
     "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-    "startTime": DateTimeString,
-    "endTime": DateTimeString
+    "startTime": DateTimeString iso8601,
+    "endTime": DateTimeString iso8601
   }]
 }
 '''
@@ -30,7 +30,7 @@ def input_asset_req(value, name):
     value = type_dict(value)
     if type(value) is dict:
         # Validate vehicle values
-        value = input_key_type(value, 'shiftID', type_positive, [])
+        value = input_key_type(value, 'shiftID', type_string, [])
         value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
         value = input_key_type(value, 'startTime', type_datetime, [])
         value = input_key_type(value, 'endTime', type_datetime, [])
@@ -47,10 +47,10 @@ Define data output
 
 {
     "results" : [{
-        "shiftID": Integer
+        "shiftID": String
         "assetClass": String [lightUnit | mediumTanker | heavyTanker]
-        "startTime": DateTimeString,
-        "endTime": DateTimeString,
+        "startTime": DateTimeString iso8601,
+        "endTime": DateTimeString iso8601,
         "volunteers": {
             "ID": String,
             "positionID": Integer,
@@ -67,10 +67,10 @@ volunteer_field = {
 }
 
 recommendation_list_field = {
-    'shiftID': fields.Integer,
+    'shiftID': fields.String,
     'assetClass': fields.String,
-    'startTime': fields.DateTime(dt_format='rfc822', attribute=lambda x: x['timeframe'][0]),
-    'endTime': fields.DateTime(dt_format='rfc822',  attribute=lambda x: x['timeframe'][1]),
+    'startTime': fields.DateTime(dt_format='iso8601', attribute=lambda x: x['timeframe'][0]),
+    'endTime': fields.DateTime(dt_format='iso8601',  attribute=lambda x: x['timeframe'][1]),
     'volunteers': fields.List(fields.Nested(volunteer_field))
 }
 

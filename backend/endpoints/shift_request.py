@@ -19,10 +19,10 @@ POST
 {
     "requestID": String,
     "shifts": [{
-        "shiftID": Integer,
+        "shiftID": String,
         "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-        "startTime": DateTimeString,
-        "endTime": DateTimeString,
+        "startTime": DateTimeString iso8601,
+        "endTime": DateTimeString iso8601,
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
@@ -35,10 +35,10 @@ PATCH
 {
     "requestID": String,
     "shifts": [{
-        "shiftID": Integer,
+        "shiftID": String,
         "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-        "startTime": DateTimeString,
-        "endTime": DateTimeString,
+        "startTime": DateTimeString iso8601,
+        "endTime": DateTimeString iso8601,
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
@@ -66,7 +66,7 @@ def input_shift(value, name):
     value = type_dict(value)
     if type(value) is dict:
         # Validate shift values
-        value = input_key_type(value, 'shiftID', type_positive, [])
+        value = input_key_type(value, 'shiftID', type_string, [])
         value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
         value = input_key_type(value, 'startTime', type_datetime, [])
         value = input_key_type(value, 'endTime', type_datetime, [])
@@ -89,10 +89,10 @@ Define data output
 GET
 {
     "results" : [{
-        "shiftID": Integer,
+        "shiftID": String,
         "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-        "startTime": DateTimeString,
-        "endTime": DateTimeString,
+        "startTime": DateTimeString iso8601,
+        "endTime": DateTimeString iso8601,
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
@@ -119,10 +119,10 @@ shift_volunteers_list_field = {
 }
 
 shift_list_field = {
-    "shiftID": fields.Integer,
+    "shiftID": fields.String,
     "assetClass": fields.String,
-    "startTime": fields.DateTime(dt_format='rfc822'),
-    "endTime": fields.DateTime(dt_format='rfc822'),
+    "startTime": fields.DateTime(dt_format='iso8601'),
+    "endTime": fields.DateTime(dt_format='iso8601'),
     "volunteers": fields.List(fields.Nested(shift_volunteers_list_field)),
 }
 

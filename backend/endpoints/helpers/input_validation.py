@@ -52,7 +52,7 @@ def type_dict(value):
         raise ValueError("Expected a dictionary, you gave us: '{}'.".format(value))
 
 def type_datetime(value):
-    return inputs.datetime_from_rfc822(value).replace(tzinfo=UTC)
+    return inputs.datetime_from_iso8601(value).replace(tzinfo=UTC)
 
 def type_positive(value):
     return inputs.positive(value)

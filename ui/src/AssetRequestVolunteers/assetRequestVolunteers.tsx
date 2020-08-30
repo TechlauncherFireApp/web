@@ -10,7 +10,7 @@ interface Timeframe {
 }
 
 interface volunteer {
-  id: string;
+  ID: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -19,14 +19,14 @@ interface volunteer {
   expYears: number;
   possibleRoles: string[];
   qualifications: string[];
-  availability: Timeframe[];
+  availabilities: Timeframe[];
 }
 
 interface Position {
   positionID: number;
-  volunteerID: string;
+  ID: string;
   volunteer: volunteer; //not to be saved in database
-  roles: string[];
+  role: string[];
 }
 
 interface asset {
@@ -72,7 +72,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       for (const position of asset.volunteers) {
         //find the corresponding volunteer
         for (let j = 0; j < volunteerList.length; j++) {
-          if (volunteerList[j].id === position.volunteerID) {
+          if (volunteerList[j].ID === position.ID) {
             position.volunteer = { ...volunteerList[j] };
             j = volunteerList.length;
           }
@@ -85,8 +85,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
 
   getInitialData = (): void => {
 
-    let volunteerList: volunteer[];
-    let recommendation: any;
+    let volunteerList: volunteer[] = [];
+    let recommendation: any = [];
 
     //TODO get allVolunteers data from database
     axios.request({
@@ -97,7 +97,18 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
-      volunteerList = res.data["results"]
+      let tmp = res.data["results"]
+      for (const v of tmp) {
+        let convertedAvailabilities : any = [];
+        for (const a of v.availabilities) {
+          const start = new Date(Date.parse(a[0]));
+          const end = new Date(Date.parse(a[1]));
+          convertedAvailabilities.push({startTime: start, endTime: end});
+        }
+        v.availabilities = convertedAvailabilities;
+      }
+      volunteerList = tmp
+
       if (recommendation.length != 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
         const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
@@ -112,7 +123,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     if (this.props.isNew) {
       //TODO get new recommendation from scheduler
 
-      console.log(this.props.thisRequest)
       let requestData: any = [];
       for (const asset of this.props.thisRequest) {
         requestData.push({
@@ -122,7 +132,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
           endTime: asset.endDateTime.toISOString()
         });
       }
-      console.log(requestData);
 
       //TODO get the vehicle information for the request
       axios.request({
@@ -134,15 +143,13 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
-        recommendation = res.data["results"]
+        let tmp = res.data["results"]
 
-        for (const r of recommendation) {
-          console.log(r.startTime, r.endTime);
-          r.startTime = Date.parse(r.startTime);
-          r.endTime = Date.parse(r.endTime);
-          console.log(r.startTime, r.endTime);
+        for (const r of tmp) {
+          r.startTime = new Date(Date.parse(r.startTime));
+          r.endTime = new Date(Date.parse(r.endTime));
         }
-
+        recommendation = tmp;
         // Both volunteerList and recommendation need to be populated
         if (volunteerList.length != 0) {
           let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
@@ -364,7 +371,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       a.volunteers.map((p: Position) => {
         let v: volunteer = p.volunteer;
         if (!(typeof v === 'undefined')) {
-          map.set(v.id, { shiftID: a.shiftID, positionID: p.positionID })
+          map.set(v.ID, { shiftID: a.shiftID, positionID: p.positionID })
         }
       })
     })
@@ -373,6 +380,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
 
   //1.2.3, handles display
   render() {
+
     return (
       <React.Fragment>
         <h4 className="mt-2">New Asset Request</h4>
