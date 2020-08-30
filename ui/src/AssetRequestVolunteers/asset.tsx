@@ -6,7 +6,6 @@ import Position from "./position";
 
 export default class Asset extends React.Component<any, any> {
 
-  // 1.3.5, if a volunteer is changed update the relevant fields and propogate the change up through parent components
   updateAsset = (newPosition: any): void => {
     let asset = this.props.asset;
     for (let i: number = 0; i < asset.volunteers.length; i++) {
@@ -47,7 +46,6 @@ export default class Asset extends React.Component<any, any> {
     return positionInfo;
   }
 
-  // 1.2.3
   render() {
     const { asset } = this.props;
 
@@ -55,7 +53,7 @@ export default class Asset extends React.Component<any, any> {
       <Table className="mt-4" striped bordered hover size="sm">
         <thead>
           <tr>
-            <td width="15%"><b>({asset.shiftID}) {asset.assetClass}</b> </td>
+            <td width="15%"><b>{asset.assetClass}</b> </td>
             <td colSpan={6}>
               <span>
                 {parseDateTime(
