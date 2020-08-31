@@ -9,42 +9,50 @@ from gurobi.ManualAdditionCheck import ManualAdditionCheck, NameToAsset
 # Helpers
 from endpoints.helpers.input_validation import *
 
-# Define data input
-# {
-#   assignment_list : [{
-#     asset_id: Integer,
-#     asset_name: String,
-#     start_time: TimeBlock,
-#     end_time: TimeBlock,
-#     volunteers: [{
-#       volunteer_id: Integer,
-#       position_id: Integer,
-#       role: String,
-#     }]
-#   }]
-# }
+'''
+Define data input
+{
+  assignment_list : [{
+    shiftID: Integer,
+    assetClass: String, [lightUnit | mediumTanker | heavyTanker]
+    startTime: DateTimeString,
+    endTime: DateTimeString,
+    volunteers: [{
+      ID: Integer,
+      positionID: Integer,
+      role: [String],
+    }]
+  }]
+}
+'''
+# Validate a volunteer's position and role
+def input_volunteer_position(value):
+    # Validate that volunteers contains dictionaries
+    value = type_dict(value)
+    if type(value) is dict:
+        # Validate volunteer values
+        value = input_key_type(value, 'ID', type_string, [])
+        value = input_key_type(value, 'positionID', type_natural, [])
+        value = input_key_type(value, 'role', type_list_of, ['enum of form [\'basic\', \'advanced\', \'crewLeader\', \'driver\']',
+                                            type_enum, [["basic", "advanced", "crewLeader", "driver"]]])
+    return value
 
 # Validate an asset request input
 def input_assignment_req(value, name):
     # Validate that assignment_list contains dictionaries
-    value = input_dict(value, name)
+    value = type_dict(value)
     if type(value) is dict:
         # Validate vehicle values
-        value = input_key_positive(value, 'asset_id')
-        value = input_key_enum(value, 'asset_name', ["Heavy Tanker", "Medium Unit", "Light Unit"])
-        value = input_timeblock(value, 'start_time')
-        value = input_timeblock(value, 'end_time')
-        # Validate the start_time is before the end_time
-        if value['start_time'] >= value['end_time']:
+        value = input_key_type(value, 'shiftID', type_natural, [])
+        value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
+        value = input_key_type(value, 'startTime', type_dateTime, [])
+        value = input_key_type(value, 'endTime', type_dateTime, [])
+        # Validate the startTime is before the endTime
+        if value['startTime'] >= value['endTime']:
             raise ValueError("The start_time '{}' cannot be after the end_time '{}'".format(value['start_time'], value['end_time']))
-        # Validate that 'volunteers' is a list of dictionaries
-        value = input_list_of(value, 'volunteers', 'dictionary(s)', input_dict, ['in volunteers'])
-        # Validate each volunteer
-        for num, volunteer in enumerate(value['volunteers']):
-            volunteer = input_key_natural(volunteer, 'volunteer_id')
-            volunteer = input_key_natural(volunteer, 'position_id')
-            volunteer = input_key_enum(volunteer, 'role', ["Crew Member","CrewLeader", "CrewLeader/Driver", "Driver"])
-            value['volunteers'][num] = volunteer
+        # Validate the list of volunteers
+        value = input_key_type(value, 'volunteers', type_list_of, ['volunteer(s)',
+                                                    input_volunteer_position, []])
     return value
 
 
@@ -73,17 +81,17 @@ class Assignment(Resource):
 
         for asset_request in args["assignment_list"]:
             # Turn the dictionary into a Request object
-            asset_id = asset_request["asset_id"]
-            asset_type = NameToAsset(asset_request["asset_name"])
-            start_time = asset_request["start_time"]
-            end_time = asset_request["end_time"]
-            asset_request_test = Request(asset_id, asset_type, start_time, end_time)
+            shiftID = asset_request["shiftID"]
+            assetClass = NameToAsset(asset_request["assetClass"])
+            startTime = asset_request["startTime"]
+            endTime = asset_request["endTime"]
+            asset_request_test = Request(shiftID, assetClass, startTime, endTime)
 
             assigned_volunteers = []
             volunteers = asset_request["volunteers"]
             # Load the requested volunteers
             for volunteer in volunteers:
-                volunteer_id = volunteer["volunteer_id"]
+                volunteer_id = volunteer["ID"]
                 loaded_volunteer = LoadVolunteer('volunteers',volunteer_id)
                 loaded_volunteer.role = volunteer["role"]
                 assigned_volunteers.append(loaded_volunteer)

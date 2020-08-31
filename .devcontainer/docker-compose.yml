@@ -1,12 +1,26 @@
 version: '3'
 services:
   fire-app:
-    image: "nikolaik/python-nodejs:python3.8-nodejs12"
+    # build: .
+    image: "repo.treescale.com/fire-app-dev/minizinc-python-nodejs:latest"
     container_name: fire-app-container
     volumes:
-    - ../:/workspace:cached
-    - node_modules:/workspace/ui/node_modules
-    command: /bin/sh -c "while sleep 1000; do :; done"
+    - ../:/workspace:cached # Attach our workspace
+    - node_modules:/workspace/ui/node_modules # Don't need to redownload node_modules
+    command: /bin/sh -c "while sleep 1000; do :; done" # Ensure container doesn't stop when started
+    environment:
+      - PORT=4000 # For NodeJS
+    networks:
+      mysql_net: # To connect to mysql
+
+  mysql:
+    image: "repo.treescale.com/fire-app-dev/mysql"
+    container_name: "fire-app-mysql-container"
+    networks:
+      mysql_net:
 
 volumes:
   node_modules:
+
+networks:
+  mysql_net:

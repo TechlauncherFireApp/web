@@ -1,13 +1,10 @@
 /*
     -> rgba
-    -> scrollbar
+    -> scrollbar:
         ::-webkit-scrollbar-thumb
         ::-webkit-scrollbar-track
         ::-webkit-scrollbar
-    -> calc
-        ___: -webkit-calc();
-        ___:    -moz-calc();
-        ___:         calc();
+
 */
 
 /* ---------- Browser Compatibility ---------- */
@@ -20,7 +17,30 @@
 @mixin appearance($x) {
     -webkit-appearance: $x;
        -moz-appearance: $x;
+        -ms-appearance: $x;
             appearance: $x;
+}
+
+@mixin animation($x) {
+    -webkit-animation: $x;
+       -moz-animation: $x;
+         -o-animation: $x;
+            animation: $x;
+}
+
+@mixin animation-fill-mode($x) {
+    -webkit-animation-fill-mode: $x;
+       -moz-animation-fill-mode: $x;
+         -o-animation-fill-mode: $x;
+            animation-fill-mode: $x;
+}
+
+@mixin background-image-linear-gradient($x) {
+    background-image: -webkit-linear-gradient($x);
+    background-image:    -moz-linear-gradient($x);
+    background-image:     -ms-linear-gradient($x);
+    background-image:      -o-linear-gradient($x);
+    background-image:         linear-gradient($x);
 }
 
 @mixin background-size($x) {
@@ -48,6 +68,12 @@
             box-shadow: $x;
 }
 
+@mixin calc($p, $x) {
+    #{$p}: -webkit-calc(#{$x});
+    #{$p}:    -moz-calc(#{$x});
+    #{$p}:         calc(#{$x});
+}
+
 @mixin display-flex {
     display: -webkit-box;
     display:    -moz-box;
@@ -69,12 +95,21 @@
             justify-content: $x;
 }
 
-@mixin background-image-linear-gradient($x) {
-    background-image: -webkit-linear-gradient($x);
-    background-image:    -moz-linear-gradient($x);
-    background-image:     -ms-linear-gradient($x);
-    background-image:      -o-linear-gradient($x);
-    background-image:         linear-gradient($x);
+@mixin keyframes($x) {
+    @-webkit-keyframes #{$x} { @content; }
+       @-moz-keyframes #{$x} { @content; }
+         @-o-keyframes #{$x} { @content; }
+            @keyframes #{$x} { @content; }
+}
+
+@mixin object-fit($x) {
+    -o-object-fit: $x;
+       object-fit: $x;
+}
+
+@mixin object-position($x) {
+    -o-object-position: $x;
+       object-position: $x;
 }
 
 @mixin outline($x) {
@@ -86,6 +121,17 @@
     overflow-x: $x;
     overflow-y: $y;
 }
+
+@mixin screen-mobile  { @media only screen and (max-width: 650px) { @content; } }
+@mixin screen-tablet  { @media only screen and (min-width: 651px) and (max-width: 1080px) { @content; } }
+@mixin screen-desktop { @media only screen and (min-width: 1081px) { @content; } }
+@mixin screen-min($x) {
+    @media only screen and (min-width: $x) {
+        @content;
+    }
+}
+@mixin screen-max($x) { @media only screen and (max-width: #{$x}) { @content; } }
+@mixin screen-between($f, $t) { @media only screen and (min-width: $f) and (max-width: $t) { @content; } }
 
 @mixin text-decoration($x) {
     -webkit-text-decoration: $x;
@@ -114,50 +160,10 @@
 }
 
 @mixin user-select($x) {
-    -webkit-user-select: $x;
-       -moz-user-select: $x;
-        -ms-user-select: $x;
-            user-select: $x;
-}
-
-/* ----------- Important Functions ----------- */
-
-$imported-url-once-files: ();
-@mixin import-url-once($l) {
-    @each $e in $l {
-        @if not index($imported-once-files, $e) {
-            $imported-once-files: append($imported-once-files, $e) !global;
-            @import url($e);
-        }
-    }
-}
-
-/* -------------- Main Variables ------------- */
-
-$black-1: rgb(35, 35, 35);
-$black-2: rgb(15, 15, 15);
-
-$red-1: rgb(205, 30, 30);
-$red-2: rgb(160, 35, 35);
-$red-3: rgb(115, 5, 0);
-
-$silver-1: rgb(165, 165, 165);
-$silver-2: rgb(105, 105, 105);
-
-/* -------------- Custom Button ------------- */
-
-button.type-1 {
-    padding: 15px 25px;
-    color: white;
-    font-size: 20px;
-    background-color: $red-1;
-    border: none;
-    appearance: none;
-    transition: all 0.5s;
-
-    &:hover, &:focus {
-        color: $red-3;
-        background-color: white;
-        border: 1px solid $red-1;
-    }
+    -webkit-touch-callout: $x;
+      -webkit-user-select: $x;
+       -khtml-user-select: $x;
+         -moz-user-select: $x;
+          -ms-user-select: $x;
+              user-select: $x;
 }
