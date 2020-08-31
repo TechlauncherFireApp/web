@@ -14,8 +14,8 @@ from endpoints.shift_request import ShiftRequest
 from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
 from AssetRequestVehicle.submit import Submit as AssetRequestVehicle_submit
 # Load environment variables
-from dotenv import load_dotenv
-load_dotenv()
+from load_env import load_env
+load_env()
 
 app = Flask(__name__)
 cors = CORS(app)

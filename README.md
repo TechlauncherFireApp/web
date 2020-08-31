@@ -65,11 +65,6 @@ To save installed packages to file use `python3.8 -m pip freeze > requirements.t
 
 Our .devcontainer/docker-compose.yml opens our mysql database alongside our workspace when started in a container.
 
-When starting for the first time, we need to ensure that the backend can communicate with the database.
-To do this run `cat /etc/hosts` when in the workspace container.
-The last line should print the IP address of the workspace container on the inteface connected to the database.
+If the DEVELOPMENT field is set true in the /backend/.env file then the backend automatically gets the IP address of the MYSQL host.
 
-Which means that the first 3 numbers (*.*.*.0) part of the address is shared with the mysql database.
-Your host pc is '*.*.*.1', your workspace container and mysql container are either '*.*.*.2' or '*.*.*.3'.
-
-In the /backend/.env file replace the field of 'MYSQL_HOST=' with the mysql container IP address.
+Otherwise in release or production, the MYSQL_HOST field in the /backend/.env should be set. Or the same environment variable set manually.
