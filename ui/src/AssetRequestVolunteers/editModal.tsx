@@ -67,10 +67,10 @@ export default class EditModal extends React.Component<any, State> {
     if (!(typeof this.state.selectedVolunteer === 'undefined')) {
       const map: any = this.props.assignedVolunteers;
       const vol: any = this.state.selectedVolunteer;
-      if (this.props.position.assigned && vol.id === this.props.position.volunteer.id) {
+      if (this.props.position.assigned && vol.ID === this.props.position.volunteer.ID) {
         alert("You can't change a volunteer to themselves")
-      } else if (map.has(vol.id)) {
-        alert(vol.name + " is already assigned to asset " + map.get(vol.id).shiftID + " position " + map.get(vol.id).positionID)
+      } else if (map.has(vol.ID)) {
+        alert(vol.name + " is already assigned to asset " + map.get(vol.ID).shiftID + " position " + map.get(vol.ID).positionID)
       } else {
         this.props.onSave(this.state.selectedVolunteer)
         this.onHide();
@@ -202,7 +202,7 @@ export default class EditModal extends React.Component<any, State> {
                   <tbody>
                     {this.state.searchResults.map((t: any) => (
                       <tr className="view" onClick={() => { this.setState({ selectedVolunteer: t }); }}>
-                        <td>{this.props.assignedVolunteers.has(t.id) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../assets/assigned.png")} /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
+                        <td>{this.props.assignedVolunteers.has(t.ID) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../assets/assigned.png")} /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
                         <td>
                           {t.qualifications.map((q: string) => <div>- {q}</div>)}
                         </td>
