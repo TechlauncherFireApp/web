@@ -39,5 +39,4 @@ def load_env():
     if os.environ.get('DEVELOPMENT') == "True":
         mysql_host = mysql_host_address()
         os.environ["MYSQL_HOST"] = mysql_host
-    print(os.environ.get('DEVELOPMENT'))
-    print(os.environ.get("MYSQL_HOST"))
+    print("MySQL Host: {}".format(os.environ.get("MYSQL_HOST")))
