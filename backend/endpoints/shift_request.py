@@ -1,10 +1,12 @@
 # Flask
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
-import re, json
+import re, json, numpy as np
 # Helpers
+from includes.main import contains
 from endpoints.helpers.input_validation import *
 # Mysql
+from includes.connection_mysqli import get as connection, is_connected, cur_conn_close
 from querys.volunteer import volunteer_all
 
 '''
@@ -137,12 +139,31 @@ class ShiftRequest(Resource):
     @marshal_with(post_patch_resource_fields)
     def post(self):
         args = parser.parse_args()
-        if args["requestID"] is None or args["shifts"] is None:
+        if args["shifts"] is None:
             return { "success": False }
         
         shifts = args["shifts"]
         #TODO Create a new shift request object in database
+        d = []
+        for s in shifts:
+            for v in s["volunteers"]:
+                d.append([v["ID"], s["shiftID"], int(v["positionID"]), json.dumps(v["role"])])
 
+        conn = connection()
+        if is_connected(conn) and contains(d):
+            conn.start_transaction()
+            cur = conn.cursor(prepared=True)
+            try:
+                q = ",".join(["(%s,%s,%s,%s)"] * len(d))
+                d = np.concatenate(d).tolist()
+                cur.execute("INSERt INTO `asset-request_volunteer` (`idVolunteer`,`idVehicle`,`position`,`roles`) VALUES " + q + ";", d)
+                conn.commit()
+                cur_conn_close(cur, conn)
+                return { "success": True }
+            except Exception as e:
+                conn.rollback()
+                cur_conn_close(cur, conn)
+                print("Error: {}".format(e))
 
         return { "success": False }
 
