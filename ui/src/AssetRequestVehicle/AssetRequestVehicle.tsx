@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import { Button } from "react-bootstrap";
 import { contains, getValidDate, toPythonDate, makeid } from "../functions";
 
-interface RequestType {
+interface SelectedVehicles {
   id: string;
   idVehicle: string;
   type: string;
@@ -18,7 +18,7 @@ interface State {
   allow_submitData: boolean;
   startDateTime: Date;
   endDateTime: Date;
-  requestList: RequestType[];
+  requestList: SelectedVehicles[];
 }
 
 export default class AssetRequestVehicle extends React.Component<any, State> {
@@ -71,7 +71,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
           x["startDateTime"] = new Date(x["startDateTime"]);
           x["endDateTime"] = new Date(x["endDateTime"]);
         }
-        this.setState({ requestList: res.data as RequestType[] });
+        this.setState({ requestList: res.data as SelectedVehicles[] });
       } else alert(res.data);
       this.setState({ allow_getInitialData: true });
     }).catch((err: AxiosError): void => {
@@ -84,7 +84,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     if (!this.state.allow_getInitialData || !this.state.allow_submitData) return;
     console.clear();
     this.setState({ allow_submitData: false });
-    const l: RequestType[] = this.state.requestList;
+    const l: SelectedVehicles[] = this.state.requestList;
 
     let d: any = [];
     for (let x of l) {
@@ -131,8 +131,8 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     // Get Data
     console.clear();
     if (!this.state.allow_getInitialData) return;
-    const o: RequestType[] = this.state.requestList;
-    let a: RequestType = {
+    const o: SelectedVehicles[] = this.state.requestList;
+    let a: SelectedVehicles = {
       id: makeid(),
       idVehicle: makeid(),
       type: this.insert_assetType.current ? this.insert_assetType.current.value : "",
@@ -158,7 +158,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
 
   removeAsset(i: string): void {
     console.clear();
-    const o: RequestType[] = this.state.requestList;
+    const o: SelectedVehicles[] = this.state.requestList;
 
     // Find and Remove Element
     for (let y = 0; y < o.length; y++) if (o[y].id === i) o.splice(y, 1);
@@ -221,7 +221,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
         <hr />
         <div className="output">
           {this.state.allow_getInitialData ? <>
-            {this.state.requestList.map((t: RequestType) => (
+            {this.state.requestList.map((t: SelectedVehicles) => (
               <request-body id={t.id}>
                 <svg type="close" viewBox="0 0 282 282" onClick={() => this.removeAsset(t.id)}> <g> <circle cx="141" cy="141" r="141" /> <ellipse cx="114" cy="114.5" rx="114" ry="114.5" /> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z" /> </g> </svg>
                 <h2>{t.type}</h2>
