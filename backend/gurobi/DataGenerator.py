@@ -1,11 +1,12 @@
 import random
 import json
 import os, shutil
-
-from gurobi.AssetTypes import *
+import datetime
+from backend.gurobi.AssetTypes import *
 
 # returns a list populated with the the hours in a week to be scheduled
-from gurobi.Names import *
+from backend.gurobi.Names import *
+
 
 
 def shiftpopulator():
@@ -109,15 +110,49 @@ def AvailabilityGenerator():
         #converts to the string format for now
         AvailDict[j]=generatedbool
 
-    return AvailDict
+    return AvailabilityConverter(AvailDict)
+
 QualificationList=["Heavy Rigid Vehicle License","Tanker Driving training",
                    "Urgent Duty Driving Training","Advanced Pumping Skills","Crew Leader Course",
                    "Advanced Firefighting Qualification"]
 
+def next_monday():
+    i=0
+    while((datetime.datetime.today()+datetime.timedelta(days=i)).weekday()!=0):
+        i+=1
+    return  datetime.datetime.today()+ datetime.timedelta(days=i)
 
 
 
 
+def AvailabilityConverter(AvailabilityDict):
+    """Takes availabilities in boolean and timeblock representation and changes it to a list of days and starttimes"""
+
+    Days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+    #the
+    MondayTime=next_monday()
+    MondayTime=MondayTime.replace(hour=0,minute=0,second=0,microsecond=0)
+    #this is a boolean that tracks the start of a shift in order to convert into a set of tuples
+    #with a start and end
+    NewShiftCheck=False
+    timepairs=[]
+    #this will hold the time pairs
+    TimePairList=list()
+
+    for shift in shiftpopulator():
+        Timeblocknumber=DayHourtoNumConverter(shift)
+        # This represents the start of a time pair the case that a person has started being available
+        if (AvailabilityDict[shift] and not NewShiftCheck):
+            NewShiftCheck = True
+            timepairs.append(MondayTime+datetime.timedelta(hours=(Timeblocknumber%48) / 2))
+
+        # This represents the end of a time pair
+        if (not AvailabilityDict[shift] and NewShiftCheck):
+            NewShiftCheck = False
+            timepairs.append(MondayTime+datetime.timedelta(hours=(Timeblocknumber%48) / 2))
+            TimePairList.append(timepairs)
+            timepairs=[]
+    return TimePairList
 
 # each volunteer has an Name,Experience level, preferred Hours, Availability
 # is availability different
@@ -204,7 +239,7 @@ def VolunteerTest(number):
                 print(j+": "+str(i.Availability[j]))
             print("\n")
 
-
+print(AvailabilityGenerator())
 def deleteContents(path):
     import os, shutil
     folder = path
