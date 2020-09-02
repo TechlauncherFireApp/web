@@ -30,18 +30,10 @@ def SimpleVolunteerGenerate(Number):
         Volunteers.append(volunteer)
     return Volunteers
 
-# 1700 monday onwards for 6.5hours
-AssetRequests = []
-for i in range(2):
-    assetrequest = {}
-    assetrequest["shiftID"] = i
-    assetrequest["assetClass"] = "lightUnit"
-    start = datetime.now()
-    end = datetime.max
-    assetrequest["timeframe"] = (start,end)
-    AssetRequests.append(assetrequest)
+#The request dictionary for A request with only one Assetclass
 SingleRequest = [{'shiftID':0,'assetClass':'lightUnit',
                       'timeframe':(next_monday()+datetime.timedelta(hours=17),next_monday()+datetime.timedelta(hours=24))}]
+#The volunteer dictionary for A request with only one Assetclas
 SingleRequestVolunteers=[{'ID':0,'prefhours':7,
                           'possibleroles':['advanced'],
                           'availabilities':[(next_monday()+datetime.timedelta(hours=17),next_monday()+datetime.timedelta(hours=24))]},
@@ -50,19 +42,17 @@ SingleRequestVolunteers=[{'ID':0,'prefhours':7,
                           'availabilities': [(next_monday() + datetime.timedelta(hours=17),
                                               next_monday() + datetime.timedelta(hours=24))]}
                          ]
-SingleRequestResult=[{'shiftID':0,'assetClass':SingleRequest['assetClass'],'timeframe':SingleRequest['timeframe'],
-                      'volunteers':{'ID':1,'positionID':0,'role':'driver'}}]
+
 def SingleTest():
     Results=Schedule(SingleRequestVolunteers,SingleRequest)
     for result in Results:
-        if(result['shiftID']!=0):
-            return False
+        #Will return Assertion Errors if the criteria is not met exactly.
         assert(result['shiftID']==0)
         assert (result['assetClass'] == SingleRequest['assetClass'])
         assert (result['timeframe']==SingleRequest['timeframe'])
         assert(result['volunteers'][0]['ID']==1 and result['volunteers'][0]['role']==['driver','crewLeader'])
         assert (result['volunteers'][1]['ID'] == 0 and result['volunteers'][0]['role'] == ['advanced'])
-    return True
+    print("Passed")
 # 1700 monday onwards for 6.5hours but two asset types
 TwoAssetTypeRequest=[{'shiftID':0,'assetClass':'lightUnit',
                       'timeframe':(next_monday()+datetime.timedelta(hours=17),next_monday()+datetime.timedelta(hours=24))},
