@@ -24,7 +24,7 @@ POST
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String], [basic | advanced | crewLeader | driver]
+            "roles": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
@@ -36,7 +36,7 @@ PATCH
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String], [basic | advanced | crewLeader | driver]
+            "roles": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
@@ -84,7 +84,7 @@ GET
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String], [basic | advanced | crewLeader | driver]
+            "roles": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
@@ -103,7 +103,7 @@ PATCH
 shift_volunteers_list_field = {
     "ID": fields.String,
     "positionID": fields.Integer,
-    "role": fields.List(fields.String)
+    "roles": fields.List(fields.String)
 }
 
 shift_list_field = {
@@ -128,11 +128,43 @@ class ShiftRequest(Resource):
     def get(self):
         args = parser.parse_args()
         if args["requestID"] is None:
-            return
+            return { "results": None }
         
         requestID = args["requestID"]
         #TODO Get a shift request from it's requestID
 
+        conn = connection()
+        if is_connected(conn):
+            cur = conn.cursor(prepared=True)
+            try:
+                o = []
+                q = """
+                    SELECT
+                        arv.`id` AS `shiftID`, v.`type` AS `assetClass`, arv.`from` AS `startTime`, arv.`to` AS `endTime`,
+                        arp.`idVolunteer` AS `ID`, arp.`position` AS `positionID`, arp.`roles` AS `roles`
+                    FROM
+                        `asset-request_volunteer` AS arp
+                        INNER JOIN `asset-request_vehicle` AS arv ON arp.`idVehicle` = arv.`id`
+                        INNER JOIN `vehicle` AS v ON v.`id` = arv.`idVehicle`
+                    WHERE
+                        arv.`idRequest` = %s;"""
+                cur.execute(re.sub("\s\s+", " ", q), [requestID])
+                res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]      # Get all the vehicles inside a request
+                for y in res:
+                    n = True
+                    for i, x in o:
+                        if x["shiftID"] == y["shiftID"]:
+                            n = False
+                            o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "roles": y["roles"] })
+                            break
+                    if n:
+                        o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "roles": y["roles"] }] })
+
+                cur_conn_close(cur, conn)
+                return { "results": o }
+            except Exception as e:
+                cur_conn_close(cur, conn)
+                print("Error: {}".format(e))
 
         return { "results": None }
     

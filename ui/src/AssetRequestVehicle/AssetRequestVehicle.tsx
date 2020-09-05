@@ -139,6 +139,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       startDateTime: this.state.startDateTime,
       endDateTime: this.state.endDateTime,
     };
+    console.log(a.id);
 
     // Validate Data :- Asset Type
     if (!contains(a.type)) { alert("Asset Type has not been selected"); return; }
