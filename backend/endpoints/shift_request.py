@@ -139,7 +139,7 @@ class ShiftRequest(Resource):
             try:
                 o = []
                 q = """
-                    SELECT
+                    SELECT DISTINCT
                         arv.`id` AS `shiftID`, v.`type` AS `assetClass`, arv.`from` AS `startTime`, arv.`to` AS `endTime`,
                         arp.`idVolunteer` AS `ID`, arp.`position` AS `positionID`, arp.`roles` AS `roles`
                     FROM
@@ -154,11 +154,10 @@ class ShiftRequest(Resource):
                     n = True
                     for i, x in o:
                         if x["shiftID"] == y["shiftID"]:
+                            o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) })
                             n = False
-                            o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "roles": y["roles"] })
                             break
-                    if n:
-                        o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "roles": y["roles"] }] })
+                    if n: o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) }] })
 
                 cur_conn_close(cur, conn)
                 return { "results": o }
