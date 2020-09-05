@@ -152,13 +152,19 @@ class ShiftRequest(Resource):
                 res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]      # Get all the vehicles inside a request
                 for y in res:
                     n = True
-                    for i, x in o:
+                    for i, x in enumerate(o):
                         if x["shiftID"] == y["shiftID"]:
                             o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) })
                             n = False
                             break
+<<<<<<< HEAD
                     if n: o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) }] })
 
+=======
+                    if n:
+                        o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "roles": y["roles"] }] })
+                
+>>>>>>> a8d917133b48c82558c01d2fa6508c02af22188d
                 cur_conn_close(cur, conn)
                 return { "results": o }
             except Exception as e:
