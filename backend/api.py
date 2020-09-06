@@ -10,6 +10,7 @@ from endpoints.recommendation import Recommendation
 # from endpoints.assignment import Assignment
 from endpoints.NewAssetRequest import NewAssetRequest
 from endpoints.volunteer_all import VolunteerAll
+from endpoints.volunteer_availability import VolunteerAvailability
 from endpoints.shift_request import ShiftRequest
 from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
 from AssetRequestVehicle.submit import Submit as AssetRequestVehicle_submit
@@ -29,6 +30,7 @@ api.add_resource(Recommendation, '/recommendation')
 # api.add_resource(Assignment, '/assignment',
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
 api.add_resource(VolunteerAll, '/volunteer/all')
+api.add_resource(VolunteerAvailability, '/volunteer/availability')
 api.add_resource(ShiftRequest, '/shift/request')
 api.add_resource(NewAssetRequest, "/NewAssetRequest")
 
