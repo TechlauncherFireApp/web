@@ -50,8 +50,7 @@ def input_volunteer_position(value):
         # Validate volunteer values
         value = input_key_type(value, 'ID', type_string, [])
         value = input_key_type(value, 'positionID', type_natural, [])
-        value = input_key_type(value, 'role', type_list_of, ['enum of form [\'basic\', \'advanced\', \'crewLeader\', \'driver\']',
-                                            type_enum, [["basic", "advanced", "crewLeader", "driver"]]])
+        value = input_key_type(value, 'role', type_list_of, [type_enum, [["basic", "advanced", "crewLeader", "driver"]]])
     return value
 
 # Validate a shift input
@@ -62,8 +61,7 @@ def input_shift(value, name):
         # Validate shift values
         value = input_key_type(value, 'shiftID', type_string, [])
         # Validate the list of volunteers
-        value = input_key_type(value, 'volunteers', type_list_of, ['volunteer(s)',
-                                                    input_volunteer_position, []])
+        value = input_key_type(value, 'volunteers', type_list_of, [input_volunteer_position, []])
     return value
 
 parser = reqparse.RequestParser()

@@ -25,7 +25,7 @@ def input_key_type(value, key, type_validator, extra_args):
 '''
 Validates that every entry of a list is of a type
 '''
-def type_list_of(value, of, type_validator, extra_args):
+def type_list_of(value, type_validator, extra_args):
     try:
         # value = type_list(value)
         if type(value) is not list:

@@ -87,6 +87,7 @@ class Recommendation(Resource):
         if args["request"] is None:
             return
 
+        # Comile an asset request type for the scheduler
         asset_requests = []
         for shift_request in args["request"]:
             asset_request = {
@@ -96,21 +97,14 @@ class Recommendation(Resource):
             }
             asset_requests.append(asset_request)
 
-        # TODO - remove once fixed below
-        # volunteers = []
-        # for i in range(12):
-        #     volunteer = {}
-        #     volunteer["ID"] = i
-        #     volunteer["prefHours"] = 69945585 + 1
-        #     volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
-        #     start = datetime.min.replace(tzinfo=UTC)
-        #     end = datetime.max.replace(tzinfo=UTC)
-        #     volunteer["availabilities"] = [(start,end)]
-        #     volunteers.append(volunteer)
-
+        # Get all volunteers
         volunteers = volunteer_all(True)
+        
+        # TODO Update the database volunteers with all roles (not just most advanced)
+        # Then remove the below for loop
+
         for volunteer in volunteers:
-            # Fix possibleRoles values. TODO standardise these
+            # Fix possibleRoles values.
             for role in volunteer["possibleRoles"]:
                 switcher = {
                     "Basic":"basic",
@@ -118,12 +112,9 @@ class Recommendation(Resource):
                     "Crew Leader":"crewLeader",
                     "Driver":"driver"
                 }
-                # TODO fix whatever is going on here
-                # Desired Code doesn't work:
-                # volunteer["possibleRoles"] = switcher[role]
-                # This works:
                 volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
 
+        # Get the generated recommendation
         output = Schedule(volunteers, asset_requests)
 
         if not output == []:

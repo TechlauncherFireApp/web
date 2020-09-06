@@ -19,27 +19,27 @@ type IntegerPair = [Integer, Integer]
 }
 
 '''
+def input_pair_list(pair, key):
+    # Validate that the list is of length 2 (pairs)
+    pair = type_list_of_length(pair, 2)
+    # Validate the pairs of the list
+    pair[0] = type_natural(pair[0])
+    pair[1] = type_natural(pair[1])
+    return pair
+
 # Validate an avaiability input
 def input_availability(value, name):
-    # Validate that availabilitys contains dictionaries
+    # Validate that availability contains dictionaries
     value = type_dict(value)
     if type(value) is dict:
-        # 
         for key in value.keys():
+            # Validate that the key is correct
             key = type_enum(key, ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"])
-        #
-        for pair_list in value.values():
-            pair_list = type_list(pair_list)
-            # 
-            for pair in pair_list:
-                pair = type_list_of_length(pair, 2)
-                pair[0] = type_natural(pair[0])
-                pair[1] = type_natural(pair[1])
-            
+            # Validate that the value is correct
+            value = input_key_type(value, key, type_list_of, [input_pair_list, [key]])
     return value
 
 parser = reqparse.RequestParser()
-# Define search criteria
 parser.add_argument('volunteerID', action='store', type=str)
 parser.add_argument('availability', action='append', type=input_availability)
 
@@ -63,5 +63,8 @@ class VolunteerAvailability(Resource):
         args = parser.parse_args()
         if args["volunteerID"] is None or args["availability"] is None:
             return { "results": None }
+
+        # TODO Update the volunteers availability
+        # Tom - I imagine this being like, remove the old availability and push the new availability
 
         return { "success": False}
