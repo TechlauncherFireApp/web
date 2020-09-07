@@ -11,6 +11,13 @@ Define Data Input
 
 type DayString = "Monday"|"Tuesday"|"Wednesday"|"Thursday"|"Friday"|"Saturday"|"Sunday"
 type IntegerPair = [Integer, Integer]
+
+GET
+{
+    "volunteerID": String
+}
+
+PATCH
 {
     "volunteerID": String,
     "availability": {
@@ -46,25 +53,58 @@ parser.add_argument('availability', action='append', type=input_availability)
 '''
 Define Data Output
 
+type DayString = "Monday"|"Tuesday"|"Wednesday"|"Thursday"|"Friday"|"Saturday"|"Sunday"
+type IntegerPair = [Integer, Integer]
+
+GET
+{
+    "availability": {
+        type DayString : [type IntegerPair]
+    }
+}
+
+PATCH
 {
     "success" : Boolean
 }
 '''
 
-resource_fields = {
+def generate_availability_field():
+    days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+    output = {}
+    for day in days:
+        output[day] = fields.List(fields.List(fields.Integer))
+    return output
+
+get_resource_fields = {
+    'availability': fields.Nested(generate_availability_field()),
+    'success': fields.Boolean,
+}
+
+patch_resource_fields = {
     'success': fields.Boolean,
 }
 
 
 # Handle the Recommendation endpoint
 class VolunteerAvailability(Resource):
-    @marshal_with(resource_fields)
+    @marshal_with(get_resource_fields)
+    def get(self):
+        args = parser.parse_args()
+        if args["volunteerID"] is None:
+            return { "success": False }
+        
+        # TODO get the volunteers availability
+
+        return { "success": False, "availability": None }
+
+    @marshal_with(patch_resource_fields)
     def patch(self):
         args = parser.parse_args()
         if args["volunteerID"] is None or args["availability"] is None:
-            return { "results": None }
+            return { "success": False }
 
         # TODO Update the volunteers availability
         # Tom - I imagine this being like, remove the old availability and push the new availability
 
-        return { "success": False}
+        return { "success": False }
