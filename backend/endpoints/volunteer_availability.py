@@ -50,7 +50,7 @@ def input_availability(value, name):
 
 parser = reqparse.RequestParser()
 parser.add_argument('volunteerID', action='store', type=str)
-parser.add_argument('availability', action='append', type=input_availability)
+parser.add_argument('availability', action='store', type=input_availability)
 
 '''
 Define Data Output
