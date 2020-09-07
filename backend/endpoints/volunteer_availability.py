@@ -12,7 +12,7 @@ from includes.connection_mysqli import get as connection, is_connected, cur_conn
 Define Data Input
 
 type DayString = "Monday"|"Tuesday"|"Wednesday"|"Thursday"|"Friday"|"Saturday"|"Sunday"
-type IntegerPair = [Integer, Integer]
+type DecimalPair = [Decimal, Decimal]
 
 GET
 {
@@ -23,7 +23,7 @@ PATCH
 {
     "volunteerID": String,
     "availability": {
-        type DayString : [type IntegerPair]
+        type DayString : [type DecimalPair]
     }
 }
 
@@ -32,8 +32,8 @@ def input_pair_list(pair, key):
     # Validate that the list is of length 2 (pairs)
     pair = type_list_of_length(pair, 2)
     # Validate the pairs of the list
-    pair[0] = type_natural(pair[0])
-    pair[1] = type_natural(pair[1])
+    pair[0] = type_fixed(pair[0], 1)
+    pair[1] = type_fixed(pair[1], 1)
     return pair
 
 # Validate an avaiability input
@@ -56,12 +56,12 @@ parser.add_argument('availability', action='store', type=input_availability)
 Define Data Output
 
 type DayString = "Monday"|"Tuesday"|"Wednesday"|"Thursday"|"Friday"|"Saturday"|"Sunday"
-type IntegerPair = [Integer, Integer]
+type DecimalPair = [Decimal, Decimal]
 
 GET
 {
     "availability": {
-        type DayString : [type IntegerPair]
+        type DayString : [type DecimalPair]
     }
 }
 
@@ -75,7 +75,7 @@ def generate_availability_field():
     days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     output = {}
     for day in days:
-        output[day] = fields.List(fields.List(fields.Integer))
+        output[day] = fields.List(fields.List(fields.Float()))
     return output
 
 get_resource_fields = {

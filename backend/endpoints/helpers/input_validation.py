@@ -60,6 +60,10 @@ def type_positive(value):
 def type_natural(value):
     return inputs.natural(value)
 
+def type_fixed(value, decimals):
+    return round(value, decimals)
+    
+
 def type_string(value):
     if type(value) is not str:
         raise ValueError("Expected a string, you gave us: '{}'.".format(value))
