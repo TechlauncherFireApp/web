@@ -32,7 +32,7 @@ def addLightUnitToOutput(seats, currentRequest, Volunteers):
     for i in range(2):
         voldict = {}
         role = []
-        voldict["ID"] = Volunteers[seats[i][currentRequest]]["ID"]
+        voldict["ID"] = Volunteers[seats[i][currentRequest]-1]["ID"]
         voldict["positionID"] = i
         if i == 0:
             role.append("driver")
@@ -49,7 +49,7 @@ def addMediumTankerToOutput(seats, currentRequest, Volunteers):
     for i in range(3):
         voldict = {}
         role = []
-        voldict["ID"] = Volunteers[seats[i][currentRequest]]["ID"]
+        voldict["ID"] = Volunteers[seats[i][currentRequest]-1]["ID"]
         voldict["positionID"] = i
         if i == 0:
             role.append("driver")
@@ -67,7 +67,7 @@ def addHeavyTankerToOutput(seats, currentRequest, Volunteers):
     for i in range(5):
         voldict = {}
         role = []
-        voldict["ID"] = Volunteers[seats[i][currentRequest]]["ID"]
+        voldict["ID"] = Volunteers[seats[i][currentRequest]-1]["ID"]
         voldict["positionID"] = i
         if i == 0:
             role.append("driver")
