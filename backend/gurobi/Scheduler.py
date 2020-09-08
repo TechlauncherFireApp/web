@@ -1,6 +1,8 @@
 from datetime import *
 from minizinc import *
 
+#range1 and range2 are tuples (or 2 item lists) with a start and end time
+#the function returns true if the two ranges overlap
 def rangeOverlaps(range1, range2):
     start1 = range1[0]
     start2 = range2[0]
@@ -11,7 +13,8 @@ def rangeOverlaps(range1, range2):
     else:
         return True
 
-
+#range1 and range2 are tuples (or 2 item lists) with a start and end time
+#the function returns true if the first range completely encompasses the second
 def rangeSurrounds(range1, range2):
     start1 = range1[0]
     start2 = range2[0]
@@ -22,11 +25,13 @@ def rangeSurrounds(range1, range2):
     else:
         return False
 
+#this function takes two datetimes and returns the difference/duration between them
 def getDuration(start, end):
     diff = end - start
     hours = int(diff.total_seconds()/3600)
     return hours
 
+#this is a helper function, it formats the output of light units for the scheduler
 def addLightUnitToOutput(seats, currentRequest, Volunteers):
     output = []
     alreadyAdded = []
@@ -50,7 +55,7 @@ def addLightUnitToOutput(seats, currentRequest, Volunteers):
 
     return output
 
-
+#this is a helper function, it formats the output of medium tankers for the scheduler
 def addMediumTankerToOutput(seats, currentRequest, Volunteers):
     output = []
     alreadyAdded = []
@@ -74,7 +79,7 @@ def addMediumTankerToOutput(seats, currentRequest, Volunteers):
         output.append(voldict)
     return output
 
-
+#this is a helper function, it formats the output of heavy tankers for the scheduler
 def addHeavyTankerToOutput(seats, currentRequest, Volunteers):
     output = []
     alreadyAdded = []
@@ -100,24 +105,20 @@ def addHeavyTankerToOutput(seats, currentRequest, Volunteers):
         output.append(voldict)
     return output
 
-
-
-'''
-this code is for testing purposes:
-
+""" Test Code
 Volunteers = []
-for i in range(12):
+for i in range(6):
     volunteer = {}
     volunteer["ID"] = i
-    volunteer["prefHours"] = 69945585 + 1
+    volunteer["prefHours"] = 69945585 - 1
     volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
     start = datetime.min
     end = datetime.max
     volunteer["availabilities"] = [(start,end)]
     Volunteers.append(volunteer)
-    
+
 AssetRequests = []
-for i in range(2):
+for i in range(1):
     assetrequest = {}
     assetrequest["shiftID"] = i
     assetrequest["assetClass"] = "lightUnit"
@@ -134,8 +135,11 @@ for i in range(1):
     end = datetime.max
     assetrequest["timeframe"] = (start,end)
     AssetRequests.append(assetrequest)
-'''
+"""
 
+
+
+#this is a helper function which generates a list of shift lengths given a list of vehicle requests
 def genShiftLengths(VehicleRequest):
     shiftLengths = []
     for request in VehicleRequest:
@@ -144,6 +148,8 @@ def genShiftLengths(VehicleRequest):
         shiftLengths.append(getDuration(start, end))
     return shiftLengths
 
+#this is a helper function which determines the compatability for volunteer availability and shift times for the scheduler
+#Takes scheduler inputs and returns a 2d array of booleans where each element is the compatability of 1 volunteer and 1 shift
 def genCompatibility(Volunteers, VehicleRequest):
     compatible = []
     for request in VehicleRequest:
@@ -158,6 +164,8 @@ def genCompatibility(Volunteers, VehicleRequest):
         compatible.append(requestRow)
     return compatible
 
+#this is a helper function which determines any clashes within a list of vehicle requests
+#Takes scheduler inputs and returns a 2d array of booleans where each element is the compatability of 1 shift with another shift
 def genClashes(VehicleRequest):
     clashing = []
     for request1 in VehicleRequest:
@@ -172,24 +180,37 @@ def genClashes(VehicleRequest):
 #Takes a list of Volunteers and Requests and returns a volunteer assignment and model
 def Schedule(Volunteers, VehicleRequest):
     temp = FullSchedule(Volunteers,VehicleRequest)
+    #if a full solve was possible, return it
     if temp != []:
         return temp
+    #otherwise, return a partial solve
     else:
-        print("Attempting partial fill")
+        print("Generating partial fill")
         return PartialSchedule(Volunteers,VehicleRequest)
 
+#this function should only be called from Schedule
+#This attempts a complete assignment, returning an empty list if a full assignment is impossible
 def FullSchedule(Volunteers, VehicleRequest):
     # create an array of preferredHours
     preferredHours = []
     for volunteer in Volunteers:
         preferredHours.append(volunteer["prefHours"])
 
+    #generates a list of shift lengths corresponding to each vehicle request
     shiftLengths = genShiftLengths(VehicleRequest)
 
+    #generates a 2d array of booleans for the model
+    #each entry denotes the compatability of 1 volunteer to 1 request
     compatible = genCompatibility(Volunteers,VehicleRequest)
 
+    #generates a 2d array of booleans for the model
+    #each entry denotes whether there is a clash (true) between vehicle requests
     clashing = genClashes(VehicleRequest)
 
+    #the following codeblock generates 3 lists of booleans
+    #if isHeavy(index) = true then vehicleRequest(index) is a heavy tanker
+    #if isMedium(index) = true then vehicleRequest(index) is a medium tanker
+    #if isLight(index) = true then vehicleRequest(index) is a light unit
     isHeavy = []
     isMedium = []
     isLight = []
@@ -207,6 +228,11 @@ def FullSchedule(Volunteers, VehicleRequest):
             isMedium.append(False)
             isLight.append(True)
 
+    # the following codeblock generates 4 lists of booleans
+    # if isDriver(index) = true then volunteer(index) is a driver
+    # if isCrewLeader(index) = true then volunteer(index) is a crewleader
+    # if isAdvanced(index) = true then volunteer(index) is advanced
+    # if isBasic(index) = true then volunteer(index) is basic
     isDriver = []
     isCrewLeader = []
     isAdvanced = []
@@ -230,8 +256,11 @@ def FullSchedule(Volunteers, VehicleRequest):
         isCrewLeader.append(crewLeader)
         isDriver.append(driver)
 
+    #we are using the gecode optimiser
     gecode = Solver.lookup("gecode")
+    #create the model
     model = Model()
+    #the following string generates the minizinc model for a full solve
     model.add_string(
         """
         int: V;
@@ -322,6 +351,7 @@ def FullSchedule(Volunteers, VehicleRequest):
         """
     )
 
+    #initialise all the variables in the minizinc model from the variables we previously created
     instance = Instance(gecode, model)
     instance["V"] = len(Volunteers)
     instance["S"] = len(VehicleRequest)
@@ -336,7 +366,9 @@ def FullSchedule(Volunteers, VehicleRequest):
     instance["isAdvanced"] = isAdvanced
     instance["isCrewLeader"] = isCrewLeader
     instance["isDriver"] = isDriver
+    #solve the model
     result = instance.solve()
+    #if there is a valid solution, format it and output
     if result.solution:
         output = []
         for i in range(len(VehicleRequest)):
@@ -358,23 +390,35 @@ def FullSchedule(Volunteers, VehicleRequest):
                 volunteers = addHeavyTankerToOutput(seats, i, Volunteers)
             vehicledict["volunteers"] = volunteers
             output.append(vehicledict)
+    #if there is no valid model, output an empty list
     else:
         print("failed to solve, invalid model")
         output = []
     return output
 
+#this function should only be called from Schedule
+#This attempts a complete assignment, returning an empty list if a full assignment is impossible
 def PartialSchedule(Volunteers, VehicleRequest):
     # create an array of preferredHours
     preferredHours = []
     for volunteer in Volunteers:
         preferredHours.append(volunteer["prefHours"])
 
+    # generates a list of shift lengths corresponding to each vehicle request
     shiftLengths = genShiftLengths(VehicleRequest)
 
+    # generates a 2d array of booleans for the model
+    # each entry denotes the compatability of 1 volunteer to 1 request
     compatible = genCompatibility(Volunteers,VehicleRequest)
 
+    # generates a 2d array of booleans for the model
+    # each entry denotes whether there is a clash (true) between the corresponding vehicle requests
     clashing = genClashes(VehicleRequest)
 
+    # the following codeblock generates 3 lists of booleans
+    # if isHeavy(index) = true then vehicleRequest(index) is a heavy tanker
+    # if isMedium(index) = true then vehicleRequest(index) is a medium tanker
+    # if isLight(index) = true then vehicleRequest(index) is a light unit
     isHeavy = []
     isMedium = []
     isLight = []
@@ -392,6 +436,11 @@ def PartialSchedule(Volunteers, VehicleRequest):
             isMedium.append(False)
             isLight.append(True)
 
+    # the following codeblock generates 4 lists of booleans
+    # if isDriver(index) = true then volunteer(index) is a driver
+    # if isCrewLeader(index) = true then volunteer(index) is a crewleader
+    # if isAdvanced(index) = true then volunteer(index) is advanced
+    # if isBasic(index) = true then volunteer(index) is basic
     isDriver = []
     isCrewLeader = []
     isAdvanced = []
@@ -415,8 +464,11 @@ def PartialSchedule(Volunteers, VehicleRequest):
         isCrewLeader.append(crewLeader)
         isDriver.append(driver)
 
+    # we are using the gecode optimiser
     gecode = Solver.lookup("gecode")
+    # create the model
     model = Model()
+    # the following string generates the minizinc model for a full solve
     model.add_string(
         """
         int: V;
@@ -454,7 +506,7 @@ def PartialSchedule(Volunteers, VehicleRequest):
         %volunteers cannot be assigned to 2 shifts at once
         constraint forall(s1 in Shifts)(forall(s2 in Shifts)(forall(v in Volunteers)(if clashing[s1,s2] /\ assignments[s1,v] then assignments[s2,v] == false endif)));
 
-        %all vehicles are filled
+        %all vehicles are (at most) filled. This allows for partial fills
         constraint forall(s in Shifts)(if isHeavy[s] then sum(v in Volunteers)(assignments[s,v]) <= 5 endif);
         constraint forall(s in Shifts)(if isMedium[s] then sum(v in Volunteers)(assignments[s,v]) <= 3 endif);
         constraint forall(s in Shifts)(if isLight[s] then sum(v in Volunteers)(assignments[s,v]) <= 2 endif);
@@ -505,7 +557,7 @@ def PartialSchedule(Volunteers, VehicleRequest):
         solve maximize sum(s in Shifts)(sum(v in Volunteers)(assignments[s,v]))
         """
     )
-
+    # initialise all the variables in the minizinc model from the variables we previously created
     instance = Instance(gecode, model)
     instance["V"] = len(Volunteers)
     instance["S"] = len(VehicleRequest)
@@ -520,7 +572,9 @@ def PartialSchedule(Volunteers, VehicleRequest):
     instance["isAdvanced"] = isAdvanced
     instance["isCrewLeader"] = isCrewLeader
     instance["isDriver"] = isDriver
+    # solve the model
     result = instance.solve()
+    # if there is a valid solution, format it and output
     if result.solution:
         output = []
         for i in range(len(VehicleRequest)):
@@ -542,7 +596,11 @@ def PartialSchedule(Volunteers, VehicleRequest):
                 volunteers = addHeavyTankerToOutput(seats, i, Volunteers)
             vehicledict["volunteers"] = volunteers
             output.append(vehicledict)
+    # if there is no valid model, output an empty list
     else:
         print("No partial fill possible")
         output = []
     return output
+
+#Test Code
+#print(Schedule(Volunteers,AssetRequests))
