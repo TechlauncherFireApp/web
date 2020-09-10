@@ -88,7 +88,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     let volunteerList: volunteer[] = [];
     let recommendation: any = [];
 
-    //TODO get allVolunteers data from database
+    //get allVolunteers data from database
     axios.request({
       url: "volunteer/all",
       baseURL: "http://localhost:5000/",
@@ -99,15 +99,16 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     }).then((res: AxiosResponse): void => {
       let tmp = res.data["results"]
       for (const v of tmp) {
-        let convertedAvailabilities : any = [];
+        let convertedAvailabilities: any = [];
         for (const a of v.availabilities) {
           const start = new Date(Date.parse(a[0]));
           const end = new Date(Date.parse(a[1]));
-          convertedAvailabilities.push({startTime: start, endTime: end});
+          convertedAvailabilities.push({ startTime: start, endTime: end });
         }
         v.availabilities = convertedAvailabilities;
       }
       volunteerList = tmp
+      volunteerList.sort((a, b) => ((a.firstName > b.firstName) ? 1 : ((a.firstName === b.firstName) ? ((a.lastName > b.lastName) ? 1 : -1) : -1)));
 
       if (recommendation.length != 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
