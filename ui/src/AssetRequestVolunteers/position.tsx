@@ -1,5 +1,5 @@
 import React from "react";
-import "./volunteer.scss";
+import "./position.scss";
 import { Button } from "react-bootstrap";
 import { parseRolesAsString } from "../functions";
 import EditModal from "./editModal";
