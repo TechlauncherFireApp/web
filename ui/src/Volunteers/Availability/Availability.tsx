@@ -83,7 +83,9 @@ export default class Availability extends React.Component<any, State> {
     }).then((res: AxiosResponse): void => {
       console.log(res.data);
       if ((typeof res.data === "object") && (res.data["success"])) {
-        this.setState({ currentSchedule: res.data["availability"][0] as Schedule });
+        let n: Schedule = res.data["availability"] as Schedule;
+        // console.log(n instanceof Schedule);
+        this.setState({ currentSchedule: n });
       } else alert(res.data);
       this.setState({ allow_getCurrentSchedule: true });
     }).catch((err: AxiosError): void => {
@@ -95,8 +97,7 @@ export default class Availability extends React.Component<any, State> {
   patchCurrentSchedule(): void {
     if (!this.state.allow_patchCurrentSchedule && !contains(this.state.currentSchedule)) return;
     this.setState({ allow_patchCurrentSchedule: false });
-    
-    console.log({ "volunteerID": "1XrptA7sjhrys1D", "availability": this.state.currentSchedule });
+    console.log(this.state.currentSchedule);
 
     axios.request({
       url: "/volunteer/availability",
@@ -105,7 +106,7 @@ export default class Availability extends React.Component<any, State> {
       timeout: 15000
     }).then((res: AxiosResponse): void => {
       console.log(res.data);
-      // alert(res.data);
+      alert(res.data["success"] ? "Updated" : "Failed");
       this.setState({ allow_patchCurrentSchedule: true });
     }).catch((err: AxiosError): void => {
       alert(err.message);
