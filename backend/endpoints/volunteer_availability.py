@@ -4,7 +4,9 @@ from flask_restful import reqparse, abort, Resource, fields, marshal_with, input
 import re, json
 # Helpers
 from endpoints.helpers.input_validation import *
+from includes.main import contains
 # Mysql
+from includes.connection_mysqli import get as connection, is_connected, cur_conn_close
 
 '''
 Define Data Input
@@ -93,8 +95,23 @@ class VolunteerAvailability(Resource):
         args = parser.parse_args()
         if args["volunteerID"] is None:
             return { "success": False }
-        
+        id = args["volunteerID"]
         # TODO get the volunteers availability
+
+        conn = connection()
+        if is_connected(conn):
+            cur = conn.cursor(prepared=True)
+            try:
+                cur.execute("SELECT `availabilities` FROM `volunteer` WHERE `id`=%s;", [id])
+                res = cur.fetchone()
+                res = dict(zip(cur.column_names, (res if contains(res) else [])))
+                if contains(res):
+                    cur_conn_close(cur, conn)
+                    return { "success": True, "availability": json.loads(res["availabilities"]) }
+                cur_conn_close(cur, conn)
+            except Exception as e:
+                cur_conn_close(cur, conn)
+                print (str(e))
 
         return { "success": False, "availability": None }
 
@@ -104,7 +121,29 @@ class VolunteerAvailability(Resource):
         if args["volunteerID"] is None or args["availability"] is None:
             return { "success": False }
 
+        av = None
+        try: av = json.dumps(args["availability"])
+        except: return { "success": False }
+        id = args["volunteerID"]
+
         # TODO Update the volunteers availability
         # Tom - I imagine this being like, remove the old availability and push the new availability
+
+        conn = connection()
+        if is_connected(conn):
+            conn.start_transaction()                # Transaction type
+            cur = conn.cursor(prepared=True)
+            try:
+                cur.execute("UPDATE `volunteer` SET `availabilities`=%s WHERE `id`=%s;", [av, id])
+                # print("\n\n")
+                # print(args)
+                # print("\n\n")
+                conn.commit()                       # Commit
+                cur_conn_close(cur, conn)
+                return { "success": True }
+            except Exception as e:
+                conn.rollback()                     # RollBack
+                cur_conn_close(cur, conn)
+                print (str(e))
 
         return { "success": False }

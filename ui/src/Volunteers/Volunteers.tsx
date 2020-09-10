@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Volunteers extends Component {
+export default class Volunteers extends React.Component<any, any> {
   //state = {};
-  render() {
+  render(): JSX.Element {
     return (
       <div className="mt-2">
         <h4>stub volunteer page</h4>
@@ -10,5 +10,3 @@ class Volunteers extends Component {
     );
   }
 }
-
-export default Volunteers;

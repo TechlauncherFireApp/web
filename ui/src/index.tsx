@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:5000/";
+axios.defaults.headers = { "X-Requested-With": "XMLHttpRequest" };
 
 declare global {
   namespace JSX {
@@ -15,6 +19,9 @@ declare global {
       "asset-request-vehicle": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
       insert: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
       "request-body": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+
+      // Page :- Volunteer Availability
+      availability: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
     }
   }
 }
