@@ -1,7 +1,7 @@
 import React from "react";
 import "./position.scss";
 import { Button } from "react-bootstrap";
-import { parseRolesAsString } from "../functions";
+import { parseRolesAsString, toSentenceCase } from "../functions";
 import EditModal from "./editModal";
 
 interface State {
@@ -74,6 +74,7 @@ export default class Position extends React.Component<any, State> {
     const assigned: boolean = this.props.position.assigned;
     const bgColourNotConfirmed = "#ececec";
     const bgColourConfirmed = "#abff95";
+    const bgWarning = "#FFCCCC"
 
     return (
       <React.Fragment>
@@ -94,7 +95,7 @@ export default class Position extends React.Component<any, State> {
           style={{
             backgroundColor: this.state.availabilityConfirmed
               ? bgColourConfirmed
-              : bgColourNotConfirmed,
+              : (assigned ? bgColourNotConfirmed : bgWarning)
           }}
         >
           <td>{parseRolesAsString(position.roles)}</td>
@@ -110,7 +111,7 @@ export default class Position extends React.Component<any, State> {
             </React.Fragment>
             :
             <React.Fragment>
-              <td width="15%"><i>Unassigned</i></td>
+              <td width="15%" ><i>Unassigned</i></td>
               <td width="15%" />
               <td width="10%" />
             </React.Fragment>
