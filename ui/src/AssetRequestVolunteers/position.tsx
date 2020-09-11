@@ -1,7 +1,7 @@
 import React from "react";
 import "./position.scss";
 import { Button } from "react-bootstrap";
-import { parseRolesAsString, toSentenceCase } from "../functions";
+import { parseRolesAsString } from "../functions";
 import EditModal from "./editModal";
 
 interface State {
@@ -111,14 +111,14 @@ export default class Position extends React.Component<any, State> {
             </React.Fragment>
             :
             <React.Fragment>
-              <td width="15%" ><i>Unassigned</i></td>
+              <td width="15%"><i>Unassigned</i></td>
               <td width="15%" />
               <td width="10%" />
             </React.Fragment>
           }
           <td width="1%">
             <Button //1.3.5
-              className="btn-warning"
+              className="btn-warning fill"
               onClick={this.toggleEditModalVisibility}
             >
               {assigned ? "Change" : "Add"}
