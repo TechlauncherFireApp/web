@@ -35,21 +35,41 @@ export const makeid = (): string => {
 
 // handles display of date/time info
 export const parseDateTime = (date1: Date, date2: Date): string => {
-  let str = date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
+  let str = date1.toLocaleDateString("en-GB");
   if (
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate() &&
     date1.getFullYear() === date2.getFullYear()
   ) {
     //if the request starts and ends on the same day
-    str = str + " - " + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
-      + date2.toLocaleDateString("en-GB");
+    str = str + " " + date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " - "
+      + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
   } else {
-    str = str + " " + date1.toLocaleDateString("en-GB") + " - "
-      + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
-      + date2.toLocaleDateString("en-GB");
+    str = str + " " + date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " - "
+      + date2.toLocaleDateString("en-GB") + " "
+      + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
   }
   return str.toLowerCase();
+
+
+
+
+
+  // let str = date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
+  // if (
+  //   date1.getMonth() === date2.getMonth() &&
+  //   date1.getDate() === date2.getDate() &&
+  //   date1.getFullYear() === date2.getFullYear()
+  // ) {
+  //   //if the request starts and ends on the same day
+  //   str = str + " - " + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
+  //     + date2.toLocaleDateString("en-GB");
+  // } else {
+  //   str = str + " " + date1.toLocaleDateString("en-GB") + " - "
+  //     + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
+  //     + date2.toLocaleDateString("en-GB");
+  // }
+  // return str.toLowerCase();
 };
 
 export const parseRolesAsString = (list: string[]): string => {
