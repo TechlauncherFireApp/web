@@ -238,11 +238,13 @@ export default class EditModal extends React.Component<any, State> {
         </Modal.Body>
         <Modal.Footer>
           <Button className="danger" onClick={this.saveChange}>
-            Replace Volunteer
+            {position.assigned ?
+              "Replace"
+              : "Assign Volunteer"}
           </Button>
           {position.assigned &&
             <Button className="danger" onClick={this.removeVolunteer}>
-              Remove Volunteer
+              Remove
             </Button>
           }
           <Button className="danger" onClick={this.onHide}>
