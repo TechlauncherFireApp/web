@@ -10,7 +10,6 @@ interface State {
   searchResults: any; //list of volunteers
   filter: {
     position: boolean; //should search results be filtered by position
-    // availability: boolean; //should search results be filtered by availability
   };
   //related to data needed 
   volunteerList: any;  //list of volunteers
@@ -25,7 +24,6 @@ export default class EditModal extends React.Component<any, State> {
     searchResults: [],
     filter: {
       position: true,
-      // availability: true,
     },
     volunteerList: [],
     selectedVolunteer: undefined,

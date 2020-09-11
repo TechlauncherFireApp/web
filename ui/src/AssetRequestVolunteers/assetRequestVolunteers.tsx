@@ -25,7 +25,7 @@ interface volunteer {
 interface Position {
   positionID: number;
   ID: string;
-  volunteer: volunteer; //not to be saved in database
+  volunteer: volunteer;
   role: string[];
 }
 
@@ -53,7 +53,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     assetRequest: []
   };
 
-  // 1.2.3, merges the vehicle times and vehicle list to create one central list with all relevant info for display
   constructor(props: any) {
     super(props);
     if (this.state.volunteerList.length > 0) {
@@ -315,7 +314,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     let shifts: any = this.state.assetRequest
 
     //path must be defined as "/assetRequest/volunteers/:id/:isNew"
-    if (this.props.match.params.isNew === "new") {
+    if (this.props.isNew === true) {
       axios.request({
         url: "shift/request?requestID=" + this.props.id,
         baseURL: "http://localhost:5000/",
@@ -379,12 +378,11 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     return map;
   }
 
-  //1.2.3, handles display
   render() {
 
     return (
       <React.Fragment>
-        <h4 className="mt-2">New Asset Request</h4>
+        <h4 className="mt-2">Asset Request</h4>
         <hr />
         {this.state.assetRequest.map((a: any) => (
           <Asset

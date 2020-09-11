@@ -1,0 +1,28 @@
+select {
+    display: inline-block;
+    width: 100%;
+}
+
+select.pending {
+    background-color: #FFF888;
+}
+
+select.rejected {
+    background-color: #FFCCCC;
+}
+
+select.confirmed {
+    background-color: #abff95;
+}
+
+select option[value="rejected"] {
+    background-color: #FFCCCC;
+}
+
+select option[value="confirmed"] {
+    background-color: #abff95;
+}
+
+select option[value="pending"] {
+    background-color: #FFF888;
+}

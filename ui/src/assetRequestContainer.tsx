@@ -6,21 +6,21 @@ import AssetRequestVolunteers from "./AssetRequestVolunteers/assetRequestVolunte
 interface State {
   assetsSubmitted: boolean;
   assetRequest: any;
+  title: string;
 }
 
 export default class AssetRequestContainer extends React.Component<any, State> {
   state = {
     assetsSubmitted: false,
     assetRequest: [],
+    title: "",
   };
 
+  componentDidMount() {
+    //TODO get the asset request title from the database
+  }
 
   submitRequest = (request: any): void => {
-
-
-
-
-
     this.setState({ assetsSubmitted: true, assetRequest: request });
   };
 
