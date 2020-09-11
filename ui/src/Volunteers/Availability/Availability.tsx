@@ -78,15 +78,15 @@ export default class Availability extends React.Component<any, State> {
     axios.request({
       url: "/volunteer/availability",
       method: "GET",
-      params: { "volunteerID": "1XrptA7sjhrys1D" },
+      params: { "volunteerID": this.props.match.params.id },
       timeout: 15000
     }).then((res: AxiosResponse): void => {
-      console.log(res.data);
+      // console.log(res.data);
       if ((typeof res.data === "object") && (res.data["success"])) {
         let n: Schedule = res.data["availability"] as Schedule;
         // console.log(n instanceof Schedule);
         this.setState({ currentSchedule: n });
-      } else alert(res.data);
+      } else alert("Request Failed");
       this.setState({ allow_getCurrentSchedule: true });
     }).catch((err: AxiosError): void => {
       alert(err.message);
@@ -97,16 +97,15 @@ export default class Availability extends React.Component<any, State> {
   patchCurrentSchedule(): void {
     if (!this.state.allow_patchCurrentSchedule && !contains(this.state.currentSchedule)) return;
     this.setState({ allow_patchCurrentSchedule: false });
-    console.log(this.state.currentSchedule);
 
     axios.request({
       url: "/volunteer/availability",
       method: "PATCH",
-      params: { "volunteerID": "1XrptA7sjhrys1D", "availability": this.state.currentSchedule },
+      params: { "volunteerID": this.props.match.params.id, "availability": this.state.currentSchedule },
       timeout: 15000
     }).then((res: AxiosResponse): void => {
-      console.log(res.data);
-      alert(res.data["success"] ? "Updated" : "Failed");
+      // console.log(res.data);
+      alert(res.data["success"] ? "Updated" : "Request Failed");
       this.setState({ allow_patchCurrentSchedule: true });
     }).catch((err: AxiosError): void => {
       alert(err.message);
@@ -140,8 +139,10 @@ export default class Availability extends React.Component<any, State> {
             {this.state.allow_patchCurrentSchedule ? "Update" : "Loading"}
           </button>
         </> : <>
-            <h1>{this.state.allow_getCurrentSchedule ? "Nothing Found" : "Loading"}</h1>
-          </>}
+          <h1 onClick={(): void => this.getCurrentSchedule()}>
+            {this.state.allow_getCurrentSchedule ? "Nothing Found" : "Loading"}
+          </h1>
+        </>}
       </availability>
     );
   }

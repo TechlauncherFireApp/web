@@ -64,7 +64,7 @@ export default class Position extends React.Component<any, State> {
     for (let i = 0; i < quals.length - 1; i++) {
       result.push(<div>- {quals[i]}</div>)
     }
-    result.push(<div>- {quals[quals.length - 1]} <img src={require("../assets/collapse.png")} /></div>)
+    result.push(<div>- {quals[quals.length - 1]} <img src={require("../assets/collapse.png")} alt=""/></div>)
     return result;
   }
 
@@ -104,7 +104,7 @@ export default class Position extends React.Component<any, State> {
               <td width="15%" onClick={this.showHideQualifications} className="view">
                 {this.state.qualificationsVisible ?
                   this.displayQualsList(position.volunteer.qualifications)
-                  : <div>view <img src={require("../assets/expand.png")} /></div>}
+                  : <div>view <img src={require("../assets/expand.png")} alt=""/></div>}
               </td>
               <td width="10%">{position.volunteer.mobileNo}</td>
             </React.Fragment>

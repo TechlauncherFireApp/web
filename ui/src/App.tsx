@@ -22,7 +22,7 @@ export default function App() {
           {/* <Route path="/assetRequest/volunteers/:id/:isNew" component={AssetRequestVolunteers} /> */}
           {/* <Route path="/NewAssetRequest" component={AssetRequestContainer} /> */}
           <Route exact path="/volunteers" component={Volunteers} />
-          <Route exact path="/volunteers/availability" component={Availability} />
+          <Route exact path="/volunteers/availability/:id" component={Availability} />
 
 
 
