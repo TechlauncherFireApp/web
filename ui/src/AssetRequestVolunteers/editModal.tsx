@@ -1,6 +1,6 @@
 import React from "react";
 import "./editModal.scss";
-import { contains, parseDateTime, parseRolesAsString, isAvailable } from "../functions";
+import { contains, parseDateTime, parseRolesAsString, isAvailable, toSentenceCase } from "../functions";
 import { Modal, Button, Table } from "react-bootstrap";
 
 interface State {
@@ -145,11 +145,9 @@ export default class EditModal extends React.Component<any, State> {
     // UNTESTED
     const position = this.props.position;
     let s: string = ""
-    s += position.assetClass + " -";
-    for (const r of position.roles) {
-      s += " " + r + "/";
-    }
-    return s.slice(0, -1);
+    s += toSentenceCase(position.assetClass) + " - ";
+    s += parseRolesAsString(position.roles);
+    return s
   }
 
   render() {
@@ -184,7 +182,7 @@ export default class EditModal extends React.Component<any, State> {
               id="positionFilter"
               defaultChecked
               onClick={this.togglePositionFilter}
-            /> Only show {parseRolesAsString(position.roles)}s
+            /> Only show '{parseRolesAsString(position.roles)}'s
 
 
 

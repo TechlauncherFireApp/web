@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
-import { parseDateTime } from "../functions";
+import { parseDateTime, toSentenceCase } from "../functions";
 import Position from "./position";
 
 
@@ -54,7 +54,7 @@ export default class Asset extends React.Component<any, any> {
       <Table className="mt-4" striped bordered hover size="sm">
         <thead>
           <tr>
-            <td width="15%"><b>{asset.assetClass}</b> </td>
+            <td width="15%"><b>{toSentenceCase(asset.assetClass)}</b> </td>
             <td colSpan={6}>
               <span>
                 {parseDateTime(

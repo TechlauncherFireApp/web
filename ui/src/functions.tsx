@@ -55,7 +55,7 @@ export const parseDateTime = (date1: Date, date2: Date): string => {
 export const parseRolesAsString = (list: string[]): string => {
   let s: string = ""
   for (const l of list) {
-    s += l + "/";
+    s += toSentenceCase(l) + "/";
   }
   return s.slice(0, -1);
 }
@@ -67,4 +67,10 @@ export const isAvailable = (availability: { startTime: Date, endTime: Date }[], 
     }
   }
   return false;
+}
+
+export const toSentenceCase = (camelCase: string): string => {
+  var result = camelCase.replace(/([A-Z])/g, " $1");
+  var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
+  return finalResult;
 }
