@@ -8,6 +8,7 @@ import AssetRequestContainer from "./assetRequestContainer";
 import VolunteersContainer from "./Volunteers/volunteersContainer";
 import Volunteer from "./Volunteers/volunteer";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import ExistingRequestContainer from "./viewExistingRequests/existingRequestContainer";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/assetRequest/:id" component={AssetRequestContainer} />
+          <Route path="/viewExistingRequest/" component={ExistingRequestContainer} />
           {/* <Route path="/assetRequest/vehicle/:id" component={AssetRequestVehicle} /> */}
           {/* <Route path="/assetRequest/volunteers/:id/:isNew" component={AssetRequestVolunteers} /> */}
           {/* <Route path="/NewAssetRequest" component={AssetRequestContainer} /> */}
