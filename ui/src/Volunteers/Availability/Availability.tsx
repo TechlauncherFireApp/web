@@ -7,6 +7,11 @@ type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturda
 type Schedule = { [key in Day]: number[][] };
 
 interface State {
+  // Pref Hours
+  prefHours?: number;
+  allow_getPrefHours: boolean;
+  allow_patchPrefHours: boolean;
+  // Availability
   currentSchedule?: Schedule;
   allow_getCurrentSchedule: boolean;
   allow_patchCurrentSchedule: boolean;
@@ -15,11 +20,14 @@ interface State {
 export default class Availability extends React.Component<any, State> {
   // Initial Fields and Methods 
   state: State = {
+    allow_getPrefHours: true,
+    allow_patchPrefHours: true,
     allow_getCurrentSchedule: true,
     allow_patchCurrentSchedule: true
   };
 
   componentDidMount(): void {
+    this.getPrefHours();
     this.getCurrentSchedule();
   }
 
@@ -71,6 +79,27 @@ export default class Availability extends React.Component<any, State> {
   }
 
   // Backend Requests
+  getPrefHours(): void {
+    if (!this.state.allow_getPrefHours) return;
+    this.setState({ allow_getPrefHours: false });
+
+    axios.request({
+      url: "/volunteer/prefhours",
+      method: "GET",
+      params: { "volunteerID": this.props.match.params.id },
+      timeout: 15000
+    }).then((res: AxiosResponse): void => {
+      // console.log(res.data);
+      if ((typeof res.data === "object") && (res.data["success"])) {
+        this.setState({ prefHours: res.data["prefHours"] as number });
+      } else alert("Request Failed");
+      this.setState({ allow_getPrefHours: true });
+    }).catch((err: AxiosError): void => {
+      alert(err.message);
+      this.setState({ allow_getPrefHours: true });
+    });
+  }
+
   getCurrentSchedule(): void {
     if (!this.state.allow_getCurrentSchedule) return;
     this.setState({ allow_getCurrentSchedule: false });
@@ -94,6 +123,25 @@ export default class Availability extends React.Component<any, State> {
     });
   }
 
+  patchPrefHours(): void {
+    if (!this.state.allow_patchPrefHours && !contains(this.state.allow_patchPrefHours)) return;
+    this.setState({ allow_patchPrefHours: false });
+
+    axios.request({
+      url: "/volunteer/prefHours",
+      method: "PATCH",
+      params: { "volunteerID": this.props.match.params.id, "prefHours": Number(this.state.prefHours) },
+      timeout: 15000
+    }).then((res: AxiosResponse): void => {
+      // console.log(res.data);
+      alert(res.data["success"] ? "Updated - prefHours" : "Request Failed");
+      this.setState({ allow_patchPrefHours: true });
+    }).catch((err: AxiosError): void => {
+      alert(err.message);
+      this.setState({ allow_patchPrefHours: true });
+    });
+  }
+
   patchCurrentSchedule(): void {
     if (!this.state.allow_patchCurrentSchedule && !contains(this.state.currentSchedule)) return;
     this.setState({ allow_patchCurrentSchedule: false });
@@ -105,7 +153,7 @@ export default class Availability extends React.Component<any, State> {
       timeout: 15000
     }).then((res: AxiosResponse): void => {
       // console.log(res.data);
-      alert(res.data["success"] ? "Updated" : "Request Failed");
+      alert(res.data["success"] ? "Updated - Availability" : "Request Failed");
       this.setState({ allow_patchCurrentSchedule: true });
     }).catch((err: AxiosError): void => {
       alert(err.message);
@@ -120,6 +168,8 @@ export default class Availability extends React.Component<any, State> {
 
     return (
       <availability is="x3d">
+        <input type="number" placeholder="Select PrefHours" title="Set PrefHours" value={this.state.prefHours}
+          onChange={(e: any) => this.setState({ prefHours: Number(e.target.value) })} />
         {contains(this.state.currentSchedule) ? <>
           <table>
             <tr>
@@ -135,7 +185,7 @@ export default class Availability extends React.Component<any, State> {
               </tr>
             )}
           </table>
-          <button className="type-1" onClick={(): void => this.patchCurrentSchedule()}>
+          <button className="type-1" onClick={(): void => { this.patchPrefHours(); this.patchCurrentSchedule(); }}>
             {this.state.allow_patchCurrentSchedule ? "Update" : "Loading"}
           </button>
         </> : <>

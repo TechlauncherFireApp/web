@@ -135,9 +135,6 @@ class VolunteerAvailability(Resource):
             cur = conn.cursor(prepared=True)
             try:
                 cur.execute("UPDATE `volunteer` SET `availabilities`=%s WHERE `id`=%s;", [av, id])
-                # print("\n\n")
-                # print(args)
-                # print("\n\n")
                 conn.commit()                       # Commit
                 cur_conn_close(cur, conn)
                 return { "success": True }
