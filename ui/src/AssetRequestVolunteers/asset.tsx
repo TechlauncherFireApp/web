@@ -11,6 +11,7 @@ export default class Asset extends React.Component<any, any> {
     for (let i: number = 0; i < asset.volunteers.length; i++) {
       if (asset.volunteers[i].positionID === newPosition.positionID) {
         asset.volunteers[i].volunteer = newPosition.volunteer;
+        asset.volunteers[i].role = newPosition.roles;
         i = asset.volunteers.length;
       }
     }

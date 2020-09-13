@@ -40,6 +40,15 @@ export default class Position extends React.Component<any, State> {
     let newPosition = this.props.position;
     newPosition.assigned = true;
     newPosition.volunteer = v;
+
+    if (newPosition.roles.includes("advanced") && v.possibleRoles.includes("basic")) {
+      newPosition.roles = ["basic"];
+    } else if (newPosition.roles.includes("basic") && v.possibleRoles.includes("advanced")) {
+      newPosition.roles = ["advanced"];
+    }
+
+    console.log("look here!", newPosition, v)
+
     this.setState({ availabilityConfirmed: false, qualificationsVisible: false });
     this.props.updateAsset(newPosition);
   }
@@ -64,7 +73,7 @@ export default class Position extends React.Component<any, State> {
     for (let i = 0; i < quals.length - 1; i++) {
       result.push(<div>- {quals[i]}</div>)
     }
-    result.push(<div>- {quals[quals.length - 1]} <img src={require("../assets/collapse.png")} alt=""/></div>)
+    result.push(<div>- {quals[quals.length - 1]} <img src={require("../assets/collapse.png")} alt="" /></div>)
     return result;
   }
 
@@ -105,7 +114,7 @@ export default class Position extends React.Component<any, State> {
               <td width="15%" onClick={this.showHideQualifications} className="view">
                 {this.state.qualificationsVisible ?
                   this.displayQualsList(position.volunteer.qualifications)
-                  : <div>view <img src={require("../assets/expand.png")} alt=""/></div>}
+                  : <div>view <img src={require("../assets/expand.png")} alt="" /></div>}
               </td>
               <td width="10%">{position.volunteer.mobileNo}</td>
             </React.Fragment>
