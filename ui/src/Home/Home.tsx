@@ -59,7 +59,7 @@ export default class Home extends React.Component<any, State> {
         </home>
         <hr />
         <home>
-          <button className="type-1" onClick={() => this.viewExistingRequests()}>View Existing Requests</button>
+          <button className="type-1" onClick={() => this.viewExistingRequests()}>Manage Existing Requests</button>
         </home>
       </React.Fragment>
     );

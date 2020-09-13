@@ -148,9 +148,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
           r.startTime = new Date(Date.parse(r.startTime));
           r.endTime = new Date(Date.parse(r.endTime));
         }
-        console.log("tmp", tmp);
         recommendation = tmp;
-
         // Both volunteerList and recommendation need to be populated
         if (volunteerList.length != 0) {
           let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
@@ -191,8 +189,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
 
     // format the data as expected by the endpoint
     const shifts = this.formatForDB(this.state.assetRequest);
-    console.log(shifts) //for testing purposes
-    console.log(this.state.assetRequest)
 
     if (this.props.isNew === true) {
       axios.request({

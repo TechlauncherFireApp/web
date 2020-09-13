@@ -14,7 +14,7 @@ export default class ExistingRequestSelector extends React.Component<any, State>
         allRequests: undefined,
     };
 
-    getRequest(): void {
+    getRequest = (): void => {
         this.props.getRequest("dsa")
     }
 
@@ -22,7 +22,7 @@ export default class ExistingRequestSelector extends React.Component<any, State>
         return (
             <React.Fragment>
                 <h4>selector page</h4>
-                <Button onClick={this.getRequest}>text</Button>
+                <Button onClick={this.getRequest}>View</Button>
             </React.Fragment>
         );
     }
