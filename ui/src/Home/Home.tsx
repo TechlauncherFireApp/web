@@ -45,13 +45,23 @@ export default class Home extends React.Component<any, State> {
     });
   }
 
+  viewExistingRequests(): void {
+    window.open(window.location.origin + `/viewExistingRequest`, "_self", "", false)
+  }
+
   render() {
     return (
-      <home>
-        <input type="text" placeholder="Title for the asset" title="Title for the asset" value={this.state.request_title}
-          onChange={(e: any) => this.setState({ request_title: e.target.value })} />
-        <button className="type-1" onClick={() => this.makeNewRequest()}>{this.state.allow_makeNewRequest ? "New Request" : "Loading"}</button>
-      </home>
+      <React.Fragment>
+        <home>
+          <input type="text" placeholder="Title for the request" title="Title for the request" value={this.state.request_title}
+            onChange={(e: any) => this.setState({ request_title: e.target.value })} />
+          <button className="type-1" onClick={() => this.makeNewRequest()}>{this.state.allow_makeNewRequest ? "Make New Request" : "Loading"}</button>
+        </home>
+        <hr />
+        <home>
+          <button className="type-1" onClick={() => this.viewExistingRequests()}>Manage Existing Requests</button>
+        </home>
+      </React.Fragment>
     );
   }
 }

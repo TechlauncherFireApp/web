@@ -3,7 +3,7 @@ import "./AssetRequestVehicle.scss";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import DatePicker from "react-datepicker";
 import { Button } from "react-bootstrap";
-import { contains, getValidDate, toPythonDate, makeid } from "../functions";
+import { contains, getValidDate, toPythonDate, makeid, toSentenceCase } from "../functions";
 
 interface SelectedVehicles {
   id: string;
@@ -225,7 +225,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
             {this.state.requestList.map((t: SelectedVehicles) => (
               <request-body id={t.id}>
                 <svg type="close" viewBox="0 0 282 282" onClick={() => this.removeAsset(t.id)}> <g> <circle cx="141" cy="141" r="141" /> <ellipse cx="114" cy="114.5" rx="114" ry="114.5" /> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z" /> </g> </svg>
-                <h2>{t.type}</h2>
+                <h2>{toSentenceCase(t.type)}</h2>
                 <div className="cont-1">
                   <div className="cont-2">
                     <label>Start</label>
