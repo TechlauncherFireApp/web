@@ -119,35 +119,32 @@ export default class Volunteer extends React.Component<any, State> {
     //testing function that generates some dummy data (in the format I would like it to be returned from DB)
     getDummyShiftData = (): any => {
         const shift1: any = {
-            requestID: "req1",
             requestTitle: "Kowen fire",
             vehicleID: "veh1",
             vehicleType: "lightUnit",
             vehicleFrom: new Date(2020, 6, 10, 10),
             vehicleTo: new Date(2020, 6, 10, 16),
-            shiftID: "shf1",
             volunteerRoles: ["driver", "crewLeader"],
             volunteerStatus: "confirmed",
         }
+
+        /* Given a 'volID' I need a list of the following objects returned,
+            (for all asset-request_volunteer where asset-request_volunteer.idVolunteer == volID */
         const shift3: any = {
-            requestID: "req2",
-            requestTitle: "Orroral Valley",
-            vehicleID: "veh2",
-            vehicleType: "heavyTanker",
-            vehicleFrom: new Date(2020, 6, 12, 14),
-            vehicleTo: new Date(2020, 6, 12, 20),
-            shiftID: "shf2",
-            volunteerRoles: ["crewLeader"],
-            volunteerStatus: "pending",
+            requestTitle: "Orroral Valley",         //asset-request.title            (String)  
+            vehicleID: "veh2",                      //asset-request_vehicle.id       (String)
+            vehicleType: "heavyTanker",             //vehicle.type                   (String)
+            vehicleFrom: new Date(2020, 6, 12, 14), //asset-request_vehicle.from     (Date)
+            vehicleTo: new Date(2020, 6, 12, 20), //asset-request_vehicle.to       (Date)
+            volunteerRoles: ["crewLeader"],         //asset-request_volunteer.roles  (string[])
+            volunteerStatus: "pending",             //asset-request_volunteer.status (string)
         }
         const shift2: any = {
-            requestID: "req3",
             requestTitle: "Orroral Valley",
             vehicleID: "veh3",
             vehicleType: "heavyTanker",
             vehicleFrom: new Date(2020, 6, 16, 22),
             vehicleTo: new Date(2020, 6, 17, 6),
-            shiftID: "shf3",
             volunteerRoles: ["driver"],
             volunteerStatus: "pending",
         }
@@ -195,7 +192,7 @@ export default class Volunteer extends React.Component<any, State> {
                             {(this.state.myShifts === undefined)
                                 ? <tr></tr>
                                 : this.state.myShifts.map((s: any) =>
-                                    <Shift key={s.shiftID}
+                                    <Shift key={s.vehicleID}
                                         shift={s}
                                         updateStatus={(a: string, b: any) => this.updateStatus(a, b)} />
                                 )
