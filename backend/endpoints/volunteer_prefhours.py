@@ -86,7 +86,7 @@ class VolunteerPrefhours(Resource):
         prefHours = int(args["prefHours"])
         # TODO Update the volunteer's prefHours
 
-        print ("\n" + prefHours + "\n")
+        print ("\n" + str(prefHours) + "\n")
 
         conn = connection()
         if is_connected(conn):

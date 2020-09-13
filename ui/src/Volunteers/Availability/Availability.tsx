@@ -128,7 +128,7 @@ export default class Availability extends React.Component<any, State> {
     this.setState({ allow_patchPrefHours: false });
 
     axios.request({
-      url: "/volunteer/prefHours",
+      url: "/volunteer/prefhours",
       method: "PATCH",
       params: { "volunteerID": this.props.match.params.id, "prefHours": Number(this.state.prefHours) },
       timeout: 15000
@@ -149,7 +149,8 @@ export default class Availability extends React.Component<any, State> {
     axios.request({
       url: "/volunteer/availability",
       method: "PATCH",
-      params: { "volunteerID": this.props.match.params.id, "availability": this.state.currentSchedule },
+      params: { "volunteerID": this.props.match.params.id },
+      data: { "availability": this.state.currentSchedule },
       timeout: 15000
     }).then((res: AxiosResponse): void => {
       // console.log(res.data);

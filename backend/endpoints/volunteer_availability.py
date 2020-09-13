@@ -75,7 +75,7 @@ def generate_availability_field():
     days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     output = {}
     for day in days:
-        output[day] = fields.List(fields.List(fields.Float()))
+        output[day] = fields.List(fields.List(fields.Float()), default=[])
     return output
 
 get_resource_fields = {
