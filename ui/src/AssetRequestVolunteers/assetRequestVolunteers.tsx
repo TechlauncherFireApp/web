@@ -108,7 +108,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       volunteerList = tmp
       volunteerList.sort((a, b) => ((a.firstName > b.firstName) ? 1 : ((a.firstName === b.firstName) ? ((a.lastName > b.lastName) ? 1 : -1) : -1)));
 
-      if (recommendation.length != 0) {
+      if (recommendation.length !== 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
         const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
         this.setState({ assetRequest, volunteerList, assignedVolunteers })
@@ -150,7 +150,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         }
         recommendation = tmp;
         // Both volunteerList and recommendation need to be populated
-        if (volunteerList.length != 0) {
+        if (volunteerList.length !== 0) {
           let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
           const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
           this.setState({ assetRequest, volunteerList, assignedVolunteers })
@@ -171,7 +171,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         recommendation = res.data["results"]
 
         // Both volunteerList and recommendation need to be populated
-        if (volunteerList.length != 0) {
+        if (volunteerList.length !== 0) {
           let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
           const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
           this.setState({ assetRequest, volunteerList, assignedVolunteers })

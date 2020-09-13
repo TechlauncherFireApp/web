@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Table } from "react-bootstrap";
 import { parseDateTime, toSentenceCase } from "../functions";
 import Position from "./position";

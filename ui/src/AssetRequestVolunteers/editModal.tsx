@@ -88,7 +88,7 @@ export default class EditModal extends React.Component<any, State> {
     filter.position = !filter.position;
     const l = this.filterVolunteerList(this.state.volunteerList, filter);
     const searchValue = this.state.searchValue;
-    if (searchValue == "") {
+    if (searchValue === "") {
       this.setState({ filter, filteredVolunteerList: l, searchResults: l });
     } else {
       this.setState({ filter, filteredVolunteerList: l }, () => {
@@ -198,7 +198,7 @@ export default class EditModal extends React.Component<any, State> {
                   <tbody>
                     {this.state.searchResults.map((t: any) => (
                       <tr className="view" onClick={() => { this.setState({ selectedVolunteer: t }); }}>
-                        <td>{this.props.assignedVolunteers.has(t.ID) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../assets/assigned.png")} /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
+                        <td>{this.props.assignedVolunteers.has(t.ID) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../assets/assigned.png")} alt="" /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
                         <td>
                           {t.qualifications.map((q: string) => <div>- {q}</div>)}
                         </td>

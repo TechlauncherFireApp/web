@@ -25,10 +25,9 @@ export const toPythonDate = (d: Date): string => {
   return (`${d.getFullYear()}-${(d.getMonth() + 1)}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds().toString()}`);
 };
 
-export const makeid = (): string => {
+export const makeid = (l: number = 15): string => {
   let r: string = "",
-    c: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-    l: number = 15;
+      c: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   for (let i = 0; i < l; i++) r += c.charAt(Math.floor(Math.random() * c.length));
   return r;
 }

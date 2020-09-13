@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import AssetRequestVehicle from "./AssetRequestVehicle/AssetRequestVehicle";
 import AssetRequestVolunteers from "./AssetRequestVolunteers/assetRequestVolunteers";
 
