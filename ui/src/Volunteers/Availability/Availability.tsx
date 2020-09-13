@@ -113,6 +113,10 @@ export default class Availability extends React.Component<any, State> {
     });
   }
 
+  exit = (): void => {
+    window.open(window.location.origin + `/volunteer/${this.props.match.params.id}`, "_self", "", false)
+  }
+
   // Render Component
   render(): JSX.Element {
     let l: number[] = [];
@@ -139,10 +143,13 @@ export default class Availability extends React.Component<any, State> {
             {this.state.allow_patchCurrentSchedule ? "Update" : "Loading"}
           </button>
         </> : <>
-          <h1 onClick={(): void => this.getCurrentSchedule()}>
-            {this.state.allow_getCurrentSchedule ? "Nothing Found" : "Loading"}
-          </h1>
-        </>}
+            <h1 onClick={(): void => this.getCurrentSchedule()}>
+              {this.state.allow_getCurrentSchedule ? "Nothing Found" : "Loading"}
+            </h1>
+          </>}
+        <button className="type-1" onClick={() => this.exit()}>
+          Return
+          </button>
       </availability>
     );
   }

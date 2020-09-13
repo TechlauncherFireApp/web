@@ -20,15 +20,9 @@ export default function App() {
           <Route exact path="/" component={Home} />
           <Route path="/assetRequest/:id" component={AssetRequestContainer} />
           <Route path="/viewExistingRequest/" component={ExistingRequestContainer} />
-          {/* <Route path="/assetRequest/vehicle/:id" component={AssetRequestVehicle} /> */}
-          {/* <Route path="/assetRequest/volunteers/:id/:isNew" component={AssetRequestVolunteers} /> */}
-          {/* <Route path="/NewAssetRequest" component={AssetRequestContainer} /> */}
-          <Route path="/volunteers" component={VolunteersContainer} />
-          <Route path="/volunteer/:id" component={Volunteer} />
-          <Route exact path="/volunteers/availability/:id" component={Availability} />
-
-          {/* localhost:5000/shift/request */}
-          {/* { "shifts" : [{ "shiftID":"3de8735f76d14d0", "volunteers":[{ "ID":"3LOToozxu5UgWFW", "positionID":0, "role": ["driver", "crewLeader"] }, { "ID":"35uwKUUugHaY2ZN", "positionID":1, "role": ["advanced"] }] }] } */}
+          <Route exact path="/volunteer" component={VolunteersContainer} />
+          <Route exact path="/volunteer/:id" component={Volunteer} />
+          <Route exact path="/volunteer/:id/availability" component={Availability} />
         </Switch>
       </main-body>
     </BrowserRouter>

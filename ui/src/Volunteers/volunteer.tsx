@@ -153,8 +153,9 @@ export default class Volunteer extends React.Component<any, State> {
         return shifts;
     }
 
-    test = (): void => {
-        console.log(this.state.thisVolunteer);
+    manageAvailability = (): void => {
+        window.open(window.location.origin + `/volunteer/${this.props.match.params.id}/availability`, "_self", "", false)
+
     }
 
     updateStatus = (newStatus: string, shiftData: any): void => {
@@ -172,7 +173,7 @@ export default class Volunteer extends React.Component<any, State> {
                     <hr />
                     <p>This is the volunteer page for {this.state.thisVolunteer?.firstName} {this.state.thisVolunteer?.lastName}.</p>
                     <p>Here they will be able to see their assigned shifts, update their availability, and update their preferred hours.</p>
-                    {/* <Button onClick={this.test} className="btn-med">print volunteer data (this.state.thisVolunteer) to console</Button> */}
+                    <Button onClick={this.manageAvailability}>Manage Availability</Button>
                 </div>
                 <div className="mt-3">
                     <h5>My Shifts</h5>
