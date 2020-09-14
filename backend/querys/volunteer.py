@@ -33,24 +33,28 @@ def availabilitiesToDateTime(availabilities, set_offset_aware):
         if days_to_add < 0:
             days_to_add = 7 + days_to_add
         # Calculate year, month, day
-        new_availability_day = now + timedelta(days = days_to_add)
+        availability_start = now + timedelta(days = days_to_add)
 
         for availability in availabilities[day]:
             # Calculate hour and minutes
             start_hour = floor(availability[0])
             end_hour = floor(availability[1])
             start_minute = int(60 * (availability[0] - start_hour))
-            
+            end_minute =   int(60 * (availability[1] - end_hour))
+
             # hour=24 is invalid
+            if start_hour == 24:
+                availability_start = availability_start + timedelta(days = 1)
+                start_hour = 0
             if end_hour == 24:
-                end_hour = 23
-                end_minute = 30
+                availability_end = availability_start + timedelta(days = 1)
+                end_hour = 0
             else:
-                end_minute = int(60 * (availability[0] - start_hour))
+                availability_end = availability_start
             
             # Format in DataTime
-            start_availability = datetime(new_availability_day.year, new_availability_day.month, new_availability_day.day, start_hour, start_minute, 0)
-            end_availability   = datetime(new_availability_day.year, new_availability_day.month, new_availability_day.day, end_hour, end_minute, 0)
+            start_availability = datetime(availability_start.year, availability_start.month, availability_start.day, start_hour, start_minute, 0)
+            end_availability   = datetime(availability_end.year  , availability_end.month  , availability_end.day  , end_hour  , end_minute  , 0)
             
             # Force availability to be offset-aware
             if set_offset_aware:
