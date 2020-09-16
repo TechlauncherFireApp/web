@@ -63,8 +63,27 @@ export default class Volunteer extends React.Component<any, State> {
             alert(err.message);
         });
 
+        axios.request({
+            url: "volunteer/shifts",
+            baseURL: "http://localhost:5000/",
+            method: "GET",
+            params: { "volunteerID": this.props.match.params.id },
+            timeout: 15000,
+            // withCredentials: true,
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        }).then((res: AxiosResponse): void => {
+            let tmp = res.data["results"]
+            if (tmp !== null) {
+                for (const t of tmp) {
+                    t.vehicleFrom = new Date(Date.parse(t.vehicleFrom));
+                    t.vehicleTo = new Date(Date.parse(t.vehicleTo));
+                }
+                this.setState({ myShifts: tmp })
+            }
 
-        this.state.myShifts = this.getDummyShiftData();
+        }).catch((err: AxiosError): void => {
+            alert(err.message);
+        });
     }
 
     //testing function that generates some dummy data (in the format I would like it to be returned from DB)
@@ -142,7 +161,7 @@ export default class Volunteer extends React.Component<any, State> {
                         <tbody>
 
                             {(this.state.myShifts === undefined)
-                                ? <tr></tr>
+                                ? <tr><td colSpan={5}>None</td></tr>
                                 : this.state.myShifts.map((s: any) =>
                                     <Shift key={s.vehicleID}
                                         shift={s}

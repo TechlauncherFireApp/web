@@ -91,18 +91,18 @@ class VolunteerShifts(Resource):
                 res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]
                 o = []
                 for r in res:
-                    r["volunteerRoles"] = json.loads(res["volunteerRoles"])
+                    r["volunteerRoles"] = json.loads(r["volunteerRoles"])
                     o.append(r)
-
+                print(o)
                 if contains(o):
                     cur_conn_close(cur, conn)
-                    return { "success": True, "shifts": o }
+                    return { "success": True, "results": o }
                 cur_conn_close(cur, conn)
             except Exception as e:
                 cur_conn_close(cur, conn)
                 print (str(e))
 
-        return None
+        return {"success": False}
 
 
 
