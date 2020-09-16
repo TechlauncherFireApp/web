@@ -87,13 +87,12 @@ class VolunteerShifts(Resource):
                         `idVolunteer` = %s;
                 """)
 
-                cur.execute(q, [id])
+                cur.execute(q, [volunteerID])
                 res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]
                 o = []
                 for r in res:
                     r["volunteerRoles"] = json.loads(res["volunteerRoles"])
                     o.append(r)
-
 
                 if contains(o):
                     cur_conn_close(cur, conn)
