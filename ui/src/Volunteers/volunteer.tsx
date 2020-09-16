@@ -40,78 +40,31 @@ export default class Volunteer extends React.Component<any, State> {
     componentDidMount(): void {
 
         let id: string = this.props.match.params.id;
-        // temp solution, get all volunteers from database and find the matching one
         let l: volunteer[] = [];
         axios.request({
-            url: "volunteer/all",
+            url: "volunteer",
             baseURL: "http://localhost:5000/",
             method: "GET",
+            params: { "volunteerID": this.props.match.params.id },
             timeout: 15000,
             // withCredentials: true,
             headers: { "X-Requested-With": "XMLHttpRequest" }
         }).then((res: AxiosResponse): void => {
-            let tmp = res.data["results"]
-            for (const v of tmp) {
-                let convertedAvailabilities: any = [];
-                for (const a of v.availabilities) {
-                    const start = new Date(Date.parse(a[0]));
-                    const end = new Date(Date.parse(a[1]));
-                    convertedAvailabilities.push({ startTime: start, endTime: end });
-                }
-                v.availabilities = convertedAvailabilities;
-            }
-            l = tmp
+            let tmp = res.data
+            console.log(tmp)
 
-            let v: (volunteer | undefined) = undefined;
-            for (let i = 0; i < l.length; i++) {
-                if (l[i].ID === id) {
-                    v = l[i];
-                    i = l.length;
-                }
+            let convertedAvailabilities: any = [];
+            for (const a of tmp.availabilities) {
+                const start = new Date(Date.parse(a[0]));
+                const end = new Date(Date.parse(a[1]));
+                convertedAvailabilities.push({ startTime: start, endTime: end });
             }
-            this.setState({ thisVolunteer: v })
+            tmp.availabilities = convertedAvailabilities;
+            this.setState({ thisVolunteer: tmp })
         }).catch((err: AxiosError): void => {
             alert(err.message);
         });
 
-
-        /* the way it should be done: query the database to return only the specific volunteer in question:
-           
-           query might look something like the following:
-           
-        query = """
-            SELECT
-                `id` AS `ID`,`firstName`,`lastName`,`email`,`mobileNo`,`prefHours`,`expYears`,`possibleRoles`,`qualifications`,`availabilities`
-            FROM
-                `volunteer`
-            WHERE
-                `id` = $id
-            LIMIT
-                1;"""           
-           */
-
-        // axios.request({
-        //     url: "volunteer/specific",
-        //     baseURL: "http://localhost:5000/",
-        //     method: "POST",
-        //     data: { "id:": id },
-        //     timeout: 15000,
-        //     // withCredentials: true,
-        //     headers: { "X-Requested-With": "XMLHttpRequest" }
-
-        // }).then((res: AxiosResponse): void => {
-        //     let vol = res.data["results"]
-        //     let convertedAvailabilities: any = [];
-        //     for (const a of vol.availabilities) {
-        //         const start = new Date(Date.parse(a[0]));
-        //         const end = new Date(Date.parse(a[1]));
-        //         convertedAvailabilities.push({ startTime: start, endTime: end });
-        //     }
-        //     vol.availabilities = convertedAvailabilities;
-        //     this.setState({ thisVolunteer: vol })
-        // }).catch((err: AxiosError): void => {
-        //     alert(err.message);
-        // });
 
         this.state.myShifts = this.getDummyShiftData();
     }
