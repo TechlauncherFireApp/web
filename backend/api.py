@@ -11,7 +11,7 @@ from endpoints.recommendation import Recommendation
 from endpoints.NewAssetRequest import NewAssetRequest
 from endpoints.volunteer_all import VolunteerAll
 from endpoints.volunteer import Volunteer
-# from endpoints.volunteer_shifts import VolunteerShifts
+from endpoints.volunteer_shifts import VolunteerShifts
 from endpoints.volunteer_availability import VolunteerAvailability
 from endpoints.volunteer_prefhours import VolunteerPrefhours
 from endpoints.shift_request import ShiftRequest
@@ -34,7 +34,7 @@ api.add_resource(Recommendation, '/recommendation')
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
 api.add_resource(VolunteerAll, '/volunteer/all')
 api.add_resource(Volunteer, '/volunteer')
-# api.add_resource(VolunteerShifts, '/volunteer/shifts')
+api.add_resource(VolunteerShifts, '/volunteer/shifts')
 api.add_resource(VolunteerAvailability, '/volunteer/availability')
 api.add_resource(VolunteerPrefhours, '/volunteer/prefhours')
 api.add_resource(ShiftRequest, '/shift/request')

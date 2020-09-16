@@ -51,8 +51,6 @@ export default class Volunteer extends React.Component<any, State> {
             headers: { "X-Requested-With": "XMLHttpRequest" }
         }).then((res: AxiosResponse): void => {
             let tmp = res.data
-            console.log(tmp)
-
             let convertedAvailabilities: any = [];
             for (const a of tmp.availabilities) {
                 const start = new Date(Date.parse(a[0]));

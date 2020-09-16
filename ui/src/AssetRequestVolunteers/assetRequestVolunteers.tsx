@@ -188,7 +188,10 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     //can either happen every time a position is updated OR when the captain clicks save
 
     // format the data as expected by the endpoint
-    const shifts = this.formatForDB(this.state.assetRequest);
+    //const shifts = this.formatForDB(this.state.assetRequest);
+
+    const shifts = this.state.assetRequest;
+    console.log(shifts)
 
     if (this.props.isNew === true) {
       axios.request({
@@ -200,7 +203,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
-        if (res.data["success"]) {
+        console.log(res.data)
+        if (res.data.success) {
           alert("Save Succeded")
         } else {
           alert("Save Failed")

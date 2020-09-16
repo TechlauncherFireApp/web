@@ -178,6 +178,8 @@ class ShiftRequest(Resource):
             for v in s["volunteers"]:
                 d.append([v["ID"], s["shiftID"], int(v["positionID"]), json.dumps(v["role"])])
 
+        print("data to save:", d)
+
         conn = connection()
         if is_connected(conn) and contains(d):
             conn.start_transaction()
