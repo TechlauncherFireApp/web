@@ -41,6 +41,7 @@ interface State {
   volunteerList: volunteer[];
   assignedVolunteers: Map<string, { shiftID: number, positionID: number }>;
   assetRequest: asset[];
+  isNew: boolean;
 }
 
 export default class AssetRequestVolunteers extends React.Component<any, State> {
@@ -49,7 +50,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     allow_getInitialData: true,
     volunteerList: [],
     assignedVolunteers: new Map(),
-    assetRequest: []
+    assetRequest: [],
+    isNew: true
   };
 
   constructor(props: any) {
@@ -57,6 +59,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     if (this.state.volunteerList.length > 0) {
       this.identifyAssignedVolunteers(this.state.assetRequest);
     }
+    this.state.isNew = props.isNew;
   }
 
   componentDidMount(): void {
@@ -119,7 +122,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
 
 
 
-    if (this.props.isNew) {
+    if (this.state.isNew) {
       //TODO get new recommendation from scheduler
 
       let requestData: any = [];
@@ -193,7 +196,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     const shifts = this.state.assetRequest;
     console.log(shifts)
 
-    if (this.props.isNew === true) {
+    if (this.state.isNew === true) {
       axios.request({
         url: "shift/request?requestID=" + this.props.id,
         baseURL: "http://localhost:5000/",
@@ -206,6 +209,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         console.log(res.data)
         if (res.data.success) {
           alert("Save Succeded")
+          this.setState({ isNew: false })
         } else {
           alert("Save Failed")
         }
@@ -223,9 +227,9 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
         if (res.data["success"]) {
-          alert("Save Succeded")
+          alert("(patch) Save Succeded")
         } else {
-          alert("Save Failed")
+          alert("(patch) Save Failed")
         }
       }).catch((err: AxiosError): void => {
         alert(err.message);
