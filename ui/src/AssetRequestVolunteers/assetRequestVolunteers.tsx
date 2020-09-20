@@ -72,10 +72,16 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     for (const asset of output) {
       for (const position of asset.volunteers) {
         //find the corresponding volunteer
-        for (let j = 0; j < volunteerList.length; j++) {
-          if (volunteerList[j].ID === position.ID) {
-            position.volunteer = { ...volunteerList[j] };
-            j = volunteerList.length;
+
+        if (position.ID === "") {
+          //empty position
+          position.volunteer = undefined;
+        } else {
+          for (let j = 0; j < volunteerList.length; j++) {
+            if (volunteerList[j].ID === position.ID) {
+              position.volunteer = { ...volunteerList[j] };
+              j = volunteerList.length;
+            }
           }
         }
       }
@@ -269,7 +275,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     let map: Map<string, { shiftID: number, positionID: number }> = new Map();
     assetRequest.map((a: asset) => {
       a.volunteers.map((p: Position) => {
-        let v: volunteer = p.volunteer;
+        let v: (volunteer | undefined) = p.volunteer;
         if (!(typeof v === 'undefined')) {
           map.set(v.ID, { shiftID: a.shiftID, positionID: p.positionID })
         }

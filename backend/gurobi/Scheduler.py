@@ -283,11 +283,11 @@ def FullSchedule(Volunteers, VehicleRequest):
         array[Volunteers] of bool: isCrewLeader;
         array[Volunteers] of bool: isDriver;
 
-        array[Shifts] of var 0..V: seat1;
-        array[Shifts] of var 0..V: seat2;
-        array[Shifts] of var 0..V: seat3;
-        array[Shifts] of var 0..V: seat4;
-        array[Shifts] of var 0..V: seat5;
+        array[Shifts] of var Volunteers: seat1;
+        array[Shifts] of var Volunteers: seat2;
+        array[Shifts] of var Volunteers: seat3;
+        array[Shifts] of var Volunteers: seat4;
+        array[Shifts] of var Volunteers: seat5;
 
         array[Volunteers,Shifts] of var int: hoursOnAssignment;
         array[Volunteers] of var int: totalHours;
@@ -491,11 +491,11 @@ def PartialSchedule(Volunteers, VehicleRequest):
         array[Volunteers] of bool: isCrewLeader;
         array[Volunteers] of bool: isDriver;
 
-        array[Shifts] of var Volunteers: seat1;
-        array[Shifts] of var Volunteers: seat2;
-        array[Shifts] of var Volunteers: seat3;
-        array[Shifts] of var Volunteers: seat4;
-        array[Shifts] of var Volunteers: seat5;
+        array[Shifts] of var 0..V: seat1;
+        array[Shifts] of var 0..V: seat2;
+        array[Shifts] of var 0..V: seat3;
+        array[Shifts] of var 0..V: seat4;
+        array[Shifts] of var 0..V: seat5;
 
         array[Volunteers,Shifts] of var int: hoursOnAssignment;
         array[Volunteers] of var int: totalHours;
