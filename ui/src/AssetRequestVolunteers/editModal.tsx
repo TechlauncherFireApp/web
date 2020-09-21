@@ -1,6 +1,6 @@
 import React from "react";
 import "./editModal.scss";
-import { contains, parseDateTime, parseRolesAsString, isAvailable } from "../functions";
+import { contains, parseDateTime, parseRolesAsString, isAvailable, toSentenceCase } from "../functions";
 import { Modal, Button, Table } from "react-bootstrap";
 
 interface State {
@@ -10,7 +10,6 @@ interface State {
   searchResults: any; //list of volunteers
   filter: {
     position: boolean; //should search results be filtered by position
-    // availability: boolean; //should search results be filtered by availability
   };
   //related to data needed 
   volunteerList: any;  //list of volunteers
@@ -25,7 +24,6 @@ export default class EditModal extends React.Component<any, State> {
     searchResults: [],
     filter: {
       position: true,
-      // availability: true,
     },
     volunteerList: [],
     selectedVolunteer: undefined,
@@ -90,7 +88,7 @@ export default class EditModal extends React.Component<any, State> {
     filter.position = !filter.position;
     const l = this.filterVolunteerList(this.state.volunteerList, filter);
     const searchValue = this.state.searchValue;
-    if (searchValue == "") {
+    if (searchValue === "") {
       this.setState({ filter, filteredVolunteerList: l, searchResults: l });
     } else {
       this.setState({ filter, filteredVolunteerList: l }, () => {
@@ -145,11 +143,9 @@ export default class EditModal extends React.Component<any, State> {
     // UNTESTED
     const position = this.props.position;
     let s: string = ""
-    s += position.assetClass + " -";
-    for (const r of position.roles) {
-      s += " " + r + "/";
-    }
-    return s.slice(0, -1);
+    s += toSentenceCase(position.assetClass) + " - ";
+    s += parseRolesAsString(position.roles);
+    return s
   }
 
   render() {
@@ -184,7 +180,7 @@ export default class EditModal extends React.Component<any, State> {
               id="positionFilter"
               defaultChecked
               onClick={this.togglePositionFilter}
-            /> Only show {parseRolesAsString(position.roles)}s
+            /> Only show '{parseRolesAsString(position.roles)}'s
 
 
 
@@ -202,7 +198,7 @@ export default class EditModal extends React.Component<any, State> {
                   <tbody>
                     {this.state.searchResults.map((t: any) => (
                       <tr className="view" onClick={() => { this.setState({ selectedVolunteer: t }); }}>
-                        <td>{this.props.assignedVolunteers.has(t.ID) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../assets/assigned.png")} /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
+                        <td>{this.props.assignedVolunteers.has(t.ID) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../assets/assigned.png")} alt="" /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
                         <td>
                           {t.qualifications.map((q: string) => <div>- {q}</div>)}
                         </td>
@@ -240,11 +236,13 @@ export default class EditModal extends React.Component<any, State> {
         </Modal.Body>
         <Modal.Footer>
           <Button className="danger" onClick={this.saveChange}>
-            Replace Volunteer
+            {position.assigned ?
+              "Replace"
+              : "Assign Volunteer"}
           </Button>
           {position.assigned &&
             <Button className="danger" onClick={this.removeVolunteer}>
-              Remove Volunteer
+              Remove
             </Button>
           }
           <Button className="danger" onClick={this.onHide}>

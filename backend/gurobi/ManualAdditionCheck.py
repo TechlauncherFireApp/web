@@ -1,4 +1,4 @@
-from gurobi.Scheduler import *
+from backend.gurobi.Scheduler import *
 
 def NameToAsset(Name):
     if(Name=="Light Unit"):

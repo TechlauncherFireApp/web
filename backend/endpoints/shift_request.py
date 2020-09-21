@@ -1,10 +1,12 @@
 # Flask
 from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
-import re, json
+import re, json, numpy as np
 # Helpers
+from includes.main import contains
 from endpoints.helpers.input_validation import *
 # Mysql
+from includes.connection_mysqli import get as connection, is_connected, cur_conn_close
 from querys.volunteer import volunteer_all
 
 '''
@@ -22,7 +24,7 @@ POST
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String], [basic | advanced | crewLeader | driver]
+            "roles": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
@@ -34,7 +36,7 @@ PATCH
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String], [basic | advanced | crewLeader | driver]
+            "roles": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
@@ -48,8 +50,7 @@ def input_volunteer_position(value):
         # Validate volunteer values
         value = input_key_type(value, 'ID', type_string, [])
         value = input_key_type(value, 'positionID', type_natural, [])
-        value = input_key_type(value, 'role', type_list_of, ['enum of form [\'basic\', \'advanced\', \'crewLeader\', \'driver\']',
-                                            type_enum, [["basic", "advanced", "crewLeader", "driver"]]])
+        value = input_key_type(value, 'role', type_list_of, [type_enum, [["basic", "advanced", "crewLeader", "driver"]]])
     return value
 
 # Validate a shift input
@@ -60,8 +61,7 @@ def input_shift(value, name):
         # Validate shift values
         value = input_key_type(value, 'shiftID', type_string, [])
         # Validate the list of volunteers
-        value = input_key_type(value, 'volunteers', type_list_of, ['volunteer(s)',
-                                                    input_volunteer_position, []])
+        value = input_key_type(value, 'volunteers', type_list_of, [input_volunteer_position, []])
     return value
 
 parser = reqparse.RequestParser()
@@ -82,7 +82,7 @@ GET
         "volunteers": [{
             "ID": String,
             "positionID": Integer,
-            "role": [String], [basic | advanced | crewLeader | driver]
+            "roles": [String], [basic | advanced | crewLeader | driver]
         }]
     }]
 }
@@ -101,7 +101,7 @@ PATCH
 shift_volunteers_list_field = {
     "ID": fields.String,
     "positionID": fields.Integer,
-    "role": fields.List(fields.String)
+    "roles": fields.List(fields.String)
 }
 
 shift_list_field = {
@@ -126,23 +126,75 @@ class ShiftRequest(Resource):
     def get(self):
         args = parser.parse_args()
         if args["requestID"] is None:
-            return
+            return { "results": None }
         
         requestID = args["requestID"]
         #TODO Get a shift request from it's requestID
 
+        conn = connection()
+        if is_connected(conn):
+            cur = conn.cursor(prepared=True)
+            try:
+                o = []
+                q = """
+                    SELECT DISTINCT
+                        arv.`id` AS `shiftID`, v.`type` AS `assetClass`, arv.`from` AS `startTime`, arv.`to` AS `endTime`,
+                        arp.`idVolunteer` AS `ID`, arp.`position` AS `positionID`, arp.`roles` AS `roles`
+                    FROM
+                        `asset-request_volunteer` AS arp
+                        INNER JOIN `asset-request_vehicle` AS arv ON arp.`idVehicle` = arv.`id`
+                        INNER JOIN `vehicle` AS v ON v.`id` = arv.`idVehicle`
+                    WHERE
+                        arv.`idRequest` = %s;"""
+                cur.execute(re.sub("\s\s+", " ", q), [requestID])
+                res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]      # Get all the vehicles inside a request
+                for y in res:
+                    n = True
+                    for i, x in enumerate(o):
+                        if x["shiftID"] == y["shiftID"]:
+                            o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) })
+                            n = False
+                            break
+                    if n: o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) }] })
+
+                cur_conn_close(cur, conn)
+                return { "results": o }
+            except Exception as e:
+                cur_conn_close(cur, conn)
+                print("Error: {}".format(e))
 
         return { "results": None }
     
     @marshal_with(post_patch_resource_fields)
     def post(self):
         args = parser.parse_args()
-        if args["requestID"] is None or args["shifts"] is None:
+        if args["shifts"] is None:
             return { "success": False }
         
         shifts = args["shifts"]
         #TODO Create a new shift request object in database
+        d = []
+        for s in shifts:
+            for v in s["volunteers"]:
+                d.append([v["ID"], s["shiftID"], int(v["positionID"]), json.dumps(v["role"])])
 
+        print("data to save:", d)
+
+        conn = connection()
+        if is_connected(conn) and contains(d):
+            conn.start_transaction()
+            cur = conn.cursor(prepared=True)
+            try:
+                q = ",".join(["(%s,%s,%s,%s)"] * len(d))
+                d = np.concatenate(d).tolist()
+                cur.execute("INSERt INTO `asset-request_volunteer` (`idVolunteer`,`idVehicle`,`position`,`roles`) VALUES " + q + ";", d)
+                conn.commit()
+                cur_conn_close(cur, conn)
+                return { "success": True }
+            except Exception as e:
+                conn.rollback()
+                cur_conn_close(cur, conn)
+                print("Error: {}".format(e))
 
         return { "success": False }
 

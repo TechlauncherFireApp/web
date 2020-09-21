@@ -25,10 +25,10 @@ def input_key_type(value, key, type_validator, extra_args):
 '''
 Validates that every entry of a list is of a type
 '''
-def type_list_of(value, of, type_validator, extra_args):
+def type_list_of(value, type_validator, extra_args):
     try:
+        # value = type_list(value)
         if type(value) is not list:
-            # value = literal_eval(value)
             raise ValueError("Expected list, you gave us: {}".format(value))
         else:
             #
@@ -60,6 +60,10 @@ def type_positive(value):
 def type_natural(value):
     return inputs.natural(value)
 
+def type_fixed(value, decimals):
+    return round(value, decimals)
+    
+
 def type_string(value):
     if type(value) is not str:
         raise ValueError("Expected a string, you gave us: '{}'.".format(value))
@@ -74,4 +78,15 @@ def type_enum(value, enums):
             continue
     if not valid_enum:
         raise ValueError("Expected a string enum of form: {}, You gave us: '{}'.".format(str(enums), value))
+    return value
+
+def type_list(value):
+    if type(value) is not list:
+        raise ValueError("Expected list, you gave us: {}".format(value))
+    return value
+
+def type_list_of_length(value, length):
+    value = type_list(value)
+    if len(value) is not length:
+        raise ValueError("Expected a list of length {}, You gave us: '{}'".format(length, value))
     return value

@@ -10,12 +10,16 @@ from endpoints.recommendation import Recommendation
 # from endpoints.assignment import Assignment
 from endpoints.NewAssetRequest import NewAssetRequest
 from endpoints.volunteer_all import VolunteerAll
+from endpoints.volunteer import Volunteer
+from endpoints.volunteer_shifts import VolunteerShifts
+from endpoints.volunteer_availability import VolunteerAvailability
+from endpoints.volunteer_prefhours import VolunteerPrefhours
 from endpoints.shift_request import ShiftRequest
 from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
 from AssetRequestVehicle.submit import Submit as AssetRequestVehicle_submit
 # Load environment variables
-from dotenv import load_dotenv
-load_dotenv()
+from load_env import load_env
+load_env()
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -29,6 +33,10 @@ api.add_resource(Recommendation, '/recommendation')
 # api.add_resource(Assignment, '/assignment',
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
 api.add_resource(VolunteerAll, '/volunteer/all')
+api.add_resource(Volunteer, '/volunteer')
+api.add_resource(VolunteerShifts, '/volunteer/shifts')
+api.add_resource(VolunteerAvailability, '/volunteer/availability')
+api.add_resource(VolunteerPrefhours, '/volunteer/prefhours')
 api.add_resource(ShiftRequest, '/shift/request')
 api.add_resource(NewAssetRequest, "/NewAssetRequest")
 

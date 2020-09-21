@@ -18,7 +18,6 @@ Define Input
         "type": String 
         "startDateTime": DateTimeString
         "endDateTime": DateTimeString
-        ? No volunteers?
     }]
 }
 '''

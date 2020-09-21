@@ -25,37 +25,56 @@ export const toPythonDate = (d: Date): string => {
   return (`${d.getFullYear()}-${(d.getMonth() + 1)}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds().toString()}`);
 };
 
-export const makeid = (): string => {
+export const makeid = (l: number = 15): string => {
   let r: string = "",
-    c: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-    l: number = 15;
+      c: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   for (let i = 0; i < l; i++) r += c.charAt(Math.floor(Math.random() * c.length));
   return r;
 }
 
 // handles display of date/time info
 export const parseDateTime = (date1: Date, date2: Date): string => {
-  let str = date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
+  let str = date1.toLocaleDateString("en-GB");
   if (
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate() &&
     date1.getFullYear() === date2.getFullYear()
   ) {
     //if the request starts and ends on the same day
-    str = str + " - " + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
-      + date2.toLocaleDateString("en-GB");
+    str = str + " " + date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " - "
+      + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
   } else {
-    str = str + " " + date1.toLocaleDateString("en-GB") + " - "
-      + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
-      + date2.toLocaleDateString("en-GB");
+    str = str + " " + date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " - "
+      + date2.toLocaleDateString("en-GB") + " "
+      + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
   }
   return str.toLowerCase();
+
+
+
+
+
+  // let str = date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
+  // if (
+  //   date1.getMonth() === date2.getMonth() &&
+  //   date1.getDate() === date2.getDate() &&
+  //   date1.getFullYear() === date2.getFullYear()
+  // ) {
+  //   //if the request starts and ends on the same day
+  //   str = str + " - " + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
+  //     + date2.toLocaleDateString("en-GB");
+  // } else {
+  //   str = str + " " + date1.toLocaleDateString("en-GB") + " - "
+  //     + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
+  //     + date2.toLocaleDateString("en-GB");
+  // }
+  // return str.toLowerCase();
 };
 
 export const parseRolesAsString = (list: string[]): string => {
   let s: string = ""
   for (const l of list) {
-    s += l + "/";
+    s += toSentenceCase(l) + "/";
   }
   return s.slice(0, -1);
 }
@@ -67,4 +86,10 @@ export const isAvailable = (availability: { startTime: Date, endTime: Date }[], 
     }
   }
   return false;
+}
+
+export const toSentenceCase = (camelCase: string): string => {
+  var result = camelCase.replace(/([A-Z])/g, " $1");
+  var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
+  return finalResult;
 }
