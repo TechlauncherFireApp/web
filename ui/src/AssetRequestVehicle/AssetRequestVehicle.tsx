@@ -149,6 +149,9 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     else if (!contains(a.endDateTime)) { alert("End DateTime has not been selected"); return; }
     else if (a.startDateTime.valueOf() < (new Date()).valueOf()) { alert("Start DateTime has to be in the future"); return; }
     else if (a.startDateTime.valueOf() >= a.endDateTime.valueOf()) { alert("Start DateTime has to be earlier than End DateTime"); return; }
+    else if ((Math.abs(a.startDateTime.valueOf() - a.endDateTime.valueOf()) / 3600000) > 14) { alert("This request exceeds the maximum shift length, consider breaking down into multiple shifts"); }
+
+
 
     // Detect same records --> for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
 
