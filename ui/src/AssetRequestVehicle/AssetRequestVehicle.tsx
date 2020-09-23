@@ -188,7 +188,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
   render() {
     return (
       <asset-request-vehicle>
-        <h1>New Asset Request</h1>
+        <h4>New Asset Request</h4>
         <hr />
         <div className="entry">
           <div className="con">
@@ -222,7 +222,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
           </div>
           <insert onClick={() => this.insertAsset()}></insert>
         </div>
-        <hr />
+        <hr className="thick" />
         <div className="output">
           {this.state.allow_getInitialData ? <>
             {this.state.requestList.map((t: SelectedVehicles) => (
@@ -247,7 +247,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
             ))}
           </> : "Loading"}
         </div>
-        <hr />
+        <hr className="thick" />
         <Button className="type-1" onClick={() => this.submitData()}>{this.state.allow_submitData ? "Submit Request" : "Loading"}</Button>
       </asset-request-vehicle>
     );

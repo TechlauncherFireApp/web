@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { Button } from "react-bootstrap";
 
 interface volunteer {
   ID: string;
@@ -95,7 +94,7 @@ export default class VolunteersContainer extends React.Component<any, State> {
 
   render() {
     return (
-      <div className="mt-2">
+      <div className="padding">
         <h4>Volunteers</h4>
         <hr />
         <p>Select a volunteer to view their personalised volunteer page.</p>
@@ -105,7 +104,7 @@ export default class VolunteersContainer extends React.Component<any, State> {
             <option value={v.ID}>{v.firstName} {v.lastName}</option>
           )}
         </select>
-        <Button onClick={this.test} className="btn-med">view volunteer</Button>
+        <button className="type-1 margin" onClick={this.test}>View Volunteer</button>
       </div>
     );
   }

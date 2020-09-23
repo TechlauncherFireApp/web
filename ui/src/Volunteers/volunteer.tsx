@@ -137,13 +137,13 @@ export default class Volunteer extends React.Component<any, State> {
     //state = {};
     render() {
         return (
-            <div className="mt-2">
+            <div className="padding">
                 <div>
                     <h4>{this.state.thisVolunteer?.firstName} {this.state.thisVolunteer?.lastName}</h4>
                     <hr />
                     <p>This is the volunteer page for {this.state.thisVolunteer?.firstName} {this.state.thisVolunteer?.lastName}.</p>
                     <p>Here they will be able to see their assigned shifts, update their availability, and update their preferred hours.</p>
-                    <Button onClick={this.manageAvailability}>Manage Availability</Button>
+                    <button className="type-1" onClick={this.manageAvailability}>Manage Availability</button>
                 </div>
                 <div className="mt-3">
                     <h5>My Shifts</h5>

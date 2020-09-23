@@ -14,7 +14,10 @@ declare global {
       // Main
       "main-body": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
       home: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-      
+
+      // Page :- Brigade Captain Home
+      brigadeCaptainHome: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+
       // Page :- AssetRequestVehicle
       "asset-request-vehicle": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
       insert: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;

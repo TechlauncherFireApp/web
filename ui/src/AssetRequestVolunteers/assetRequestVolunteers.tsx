@@ -287,8 +287,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
   render() {
 
     return (
-      <React.Fragment>
-        <h4 className="mt-2">Asset Request</h4>
+      <div className="padding">
+        <h4>Asset Request</h4>
         <hr />
         {this.state.assetRequest.map((a: any) => (
           <Asset
@@ -299,10 +299,10 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
             assignedVolunteers={this.state.assignedVolunteers}
           />
         ))}
-        <Button onClick={this.submitData} className="btn-med">
+        <button onClick={this.submitData} className="type-1">
           Save
-        </Button>
-      </React.Fragment>
+        </button>
+      </div>
     );
   }
 }
