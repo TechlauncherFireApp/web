@@ -201,16 +201,9 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
   }
 
   submitData = (): void => {
-    //TODO need aman's help with this function (this is 1.3.8)
-    //need to save the 'assetRequest' list in the database (IGNORING the volunteer field in each list of volunteers, i.e. only store the ID not all volunteer data)
-    //can either happen every time a position is updated OR when the captain clicks save
-
-    // format the data as expected by the endpoint
-    //const shifts = this.formatForDB(this.state.assetRequest);
-
     const shifts = this.state.assetRequest;
-    console.log(shifts)
 
+    //TODO implement the patch request
     axios.request({
       url: "shift/request?requestID=" + this.props.match.params.id,
       baseURL: "http://localhost:5000/",
@@ -228,22 +221,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     }).catch((err: AxiosError): void => {
       alert(err.message);
     });
-  }
-
-  //we only need certain fields in the assetRequest for storing in the database
-  //this function returns a new object that only has those required fields
-  formatForDB = (request: any): any => {
-    console.log("inside formatForDB", request)
-    let shifts = [];
-    for (let s of request) {
-      let shift: any = { shiftID: "", volunteers: [] }
-      shift.shiftID = s.shiftID;
-      for (let v of s.volunteers) {
-        shift.volunteers.push({ ID: v.ID, positionID: v.positionID, roles: v.role });
-      }
-      shifts.push(shift);
-    }
-    return shifts;
   }
 
   updateAssetRequest = (updatedAsset: any): void => {
