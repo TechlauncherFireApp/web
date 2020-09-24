@@ -8,7 +8,7 @@ import VolunteersContainer from "./Volunteers/volunteersContainer";
 import Volunteer from "./Volunteers/volunteer";
 import Availability from "./Volunteers/Availability/Availability";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import ExistingRequestContainer from "./ViewExistingRequests/existingRequestContainer";
+import ExistingRequestSelector from "./ViewExistingRequests/existingRequestSelector";
 import Home from "./Home/Home";
 
 export default function App() {
@@ -21,7 +21,7 @@ export default function App() {
           <Route exact path="/captain" component={BrigadeCaptainHome} />
           <Route exact path="/assetRequest/vehicles/:id" component={AssetRequestVehicle} />
           <Route exact path="/assetRequest/volunteers/:id" component={AssetRequestVolunteers} />
-          <Route exact path="/viewExistingRequest/" component={ExistingRequestContainer} />
+          <Route exact path="/viewExistingRequest/" component={ExistingRequestSelector} />
           <Route exact path="/volunteer" component={VolunteersContainer} />
           <Route exact path="/volunteer/:id" component={Volunteer} />
           <Route exact path="/volunteer/:id/availability" component={Availability} />
