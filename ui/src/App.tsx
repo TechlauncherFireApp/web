@@ -2,7 +2,8 @@ import React from "react";
 
 import NavBar from "./Navbar/navbar";
 import BrigadeCaptainHome from "./BrigadeCaptainHome/brigadeCaptainHome";
-import AssetRequestContainer from "./assetRequestContainer";
+import AssetRequestVehicle from "./AssetRequestVehicle/AssetRequestVehicle";
+import AssetRequestVolunteers from "./AssetRequestVolunteers/assetRequestVolunteers";
 import VolunteersContainer from "./Volunteers/volunteersContainer";
 import Volunteer from "./Volunteers/volunteer";
 import Availability from "./Volunteers/Availability/Availability";
@@ -18,7 +19,8 @@ export default function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/captain" component={BrigadeCaptainHome} />
-          <Route exact path="/assetRequest/:id" component={AssetRequestContainer} />
+          <Route exact path="/assetRequest/vehicles/:id" component={AssetRequestVehicle} />
+          <Route exact path="/assetRequest/volunteers/:id" component={AssetRequestVolunteers} />
           <Route exact path="/viewExistingRequest/" component={ExistingRequestContainer} />
           <Route exact path="/volunteer" component={VolunteersContainer} />
           <Route exact path="/volunteer/:id" component={Volunteer} />

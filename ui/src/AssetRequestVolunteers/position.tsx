@@ -7,7 +7,6 @@ import EditModal from "./editModal";
 interface State {
   //related to display elements
   showEditModal: boolean; // Is the edit modal being displayed
-  availabilityConfirmed: boolean; //TODO this needs to be made dynamic, need to see how shifts are stored in database
   qualificationsVisible: boolean; //are qualifications being displayed for the volunteer in this position
 }
 
@@ -15,7 +14,6 @@ interface State {
 export default class Position extends React.Component<any, State> {
   state: State = {
     showEditModal: false,
-    availabilityConfirmed: false,
     qualificationsVisible: false,
   };
 
@@ -27,12 +25,6 @@ export default class Position extends React.Component<any, State> {
   toggleEditModalVisibility = (): void => {
     const showEditModal = !this.state.showEditModal;
     this.setState({ showEditModal });
-  };
-
-  // 1.5.4
-  handleToggleColour = (): void => {
-    const availabilityConfirmed = !this.state.availabilityConfirmed;
-    this.setState({ availabilityConfirmed });
   };
 
   // 1.3.5, if a volunteer is changed update the relevant fields and propogate the change up through parent components
@@ -49,7 +41,7 @@ export default class Position extends React.Component<any, State> {
 
     console.log("look here!", newPosition, v)
 
-    this.setState({ availabilityConfirmed: false, qualificationsVisible: false });
+    this.setState({ qualificationsVisible: false });
     this.props.updateAsset(newPosition);
   }
 
@@ -57,7 +49,6 @@ export default class Position extends React.Component<any, State> {
     let newPosition: any = this.props.position;
     newPosition.assigned = false;
     newPosition.volunteer = undefined;
-    this.state.availabilityConfirmed = false;
     this.props.updateAsset(newPosition);
   }
 
@@ -81,8 +72,8 @@ export default class Position extends React.Component<any, State> {
   render() {
     const { position } = this.props;
     const assigned: boolean = this.props.position.assigned;
-    const bgColourNotConfirmed = "#ececec";
-    const bgColourConfirmed = "#abff95";
+    const bgColourGrey = "#ececec";
+    // const bgColourConfirmed = "#abff95";
     const bgWarning = "#FFCCCC"
 
     return (
@@ -102,9 +93,7 @@ export default class Position extends React.Component<any, State> {
           key={position.positionID}
           className="body"
           style={{
-            backgroundColor: this.state.availabilityConfirmed
-              ? bgColourConfirmed
-              : (assigned ? bgColourNotConfirmed : bgWarning)
+            backgroundColor: assigned ? bgColourGrey : bgWarning
           }}
         >
           <td>{parseRolesAsString(position.roles)}</td>
@@ -136,15 +125,8 @@ export default class Position extends React.Component<any, State> {
           {assigned ?
             <td width="10%">
               <div >
-                <input //1.5.4
-                  className="confirm"
-                  type="checkbox"
-                  id="availability"
-                  checked={this.state.availabilityConfirmed}
-                  onClick={this.handleToggleColour}
-                />
-            Confirmed
-            </div>
+                {position.status}
+              </div>
             </td> :
             <td width="10%" />
           }

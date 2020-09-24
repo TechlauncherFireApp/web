@@ -39,6 +39,7 @@ export default class Asset extends React.Component<any, any> {
       volunteer: position.volunteer,
       assetClass: asset.assetClass,
       roles: position.role,
+      status: position.status,
       startTime: asset.startTime,
       endTime: asset.endTime
     }

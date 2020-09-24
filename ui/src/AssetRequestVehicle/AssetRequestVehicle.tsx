@@ -60,7 +60,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       url: "AssetRequestVehicle/initial",
       baseURL: "http://localhost:5000/",
       method: "POST",
-      data: { "id": this.props.id },
+      data: { "id": this.props.match.params.id },
       timeout: 15000,
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
@@ -81,6 +81,10 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
   }
 
   submitData(): void {
+
+
+
+
     if (!this.state.allow_getInitialData || !this.state.allow_submitData) return;
     console.clear();
     this.setState({ allow_submitData: false });
@@ -108,23 +112,73 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       url: "AssetRequestVehicle/submit",
       baseURL: "http://localhost:5000/",
       method: "POST",
-      data: { "id": this.props.id, "vehicles": d },
+      data: { "id": this.props.match.params.id, "vehicles": d },
       timeout: 15000,
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       // alert(res.data === 1 ? "Successfully Saved" : res.data);
 
-      // TODO - opening the volunteers page for this asset request
-      this.props.submitRequest(this.state.requestList);
-      //window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}/${"new"}`, "_self", "", false);
 
 
-      this.setState({ allow_submitData: true });
+      let requestData: any = [];
+      for (const asset of this.state.requestList) {
+        requestData.push({
+          shiftID: asset.id,
+          assetClass: asset.type,
+          startTime: asset.startDateTime.toISOString(),
+          endTime: asset.endDateTime.toISOString()
+        });
+      }
+
+      axios.request({
+        url: "recommendation",
+        baseURL: "http://localhost:5000/",
+        method: "POST",
+        data: { "request": requestData },
+        timeout: 15000,
+        // withCredentials: true,
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      }).then((res: AxiosResponse): void => {
+        let tmp = res.data["results"]
+        console.log("res.data[results]:", tmp)
+
+        axios.request({
+          url: "shift/request?requestID=" + this.props.match.params.id,
+          baseURL: "http://localhost:5000/",
+          method: "POST",
+          timeout: 15000,
+          data: { "shifts": tmp },
+          // withCredentials: true,
+          headers: { "X-Requested-With": "XMLHttpRequest" }
+        }).then((res: AxiosResponse): void => {
+          console.log(res.data)
+          if (res.data.success) {
+            alert("Save Succeded")
+            this.setState({ allow_submitData: true });
+            window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}`, "_self", "", false);
+          } else {
+            this.setState({ allow_submitData: true });
+            alert("Save Failed")
+          }
+        }).catch((err: AxiosError): void => {
+          alert(err.message);
+          this.setState({ allow_submitData: true });
+        });
+      }).catch((err: AxiosError): void => {
+        alert(err.message);
+        this.setState({ allow_submitData: true });
+      });
+
+      //this.props.submitRequest(this.state.requestList);      
     }).catch((err: AxiosError): void => {
       alert(err.message);
       this.setState({ allow_submitData: true });
     });
+
+
+
+
   }
 
   insertAsset(): void {

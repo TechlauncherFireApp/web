@@ -101,7 +101,8 @@ PATCH
 shift_volunteers_list_field = {
     "ID": fields.String,
     "positionID": fields.Integer,
-    "roles": fields.List(fields.String)
+    "role": fields.List(fields.String),
+    "status": fields.String,
 }
 
 shift_list_field = {
@@ -139,7 +140,7 @@ class ShiftRequest(Resource):
                 q = """
                     SELECT DISTINCT
                         arv.`id` AS `shiftID`, v.`type` AS `assetClass`, arv.`from` AS `startTime`, arv.`to` AS `endTime`,
-                        arp.`idVolunteer` AS `ID`, arp.`position` AS `positionID`, arp.`roles` AS `roles`
+                        arp.`idVolunteer` AS `ID`, arp.`position` AS `positionID`, arp.`roles` AS `role`, arp.`status` AS `status`
                     FROM
                         `asset-request_volunteer` AS arp
                         INNER JOIN `asset-request_vehicle` AS arv ON arp.`idVehicle` = arv.`id`
@@ -152,10 +153,10 @@ class ShiftRequest(Resource):
                     n = True
                     for i, x in enumerate(o):
                         if x["shiftID"] == y["shiftID"]:
-                            o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) })
+                            o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "role": json.loads(y["role"]), "status": y["status"] })
                             n = False
                             break
-                    if n: o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) }] })
+                    if n: o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "role": json.loads(y["role"]), "status": y["status"] }] })
 
                 cur_conn_close(cur, conn)
                 return { "results": o }

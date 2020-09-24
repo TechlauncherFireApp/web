@@ -34,7 +34,7 @@ export default class BrigadeCaptainHome extends React.Component<any, State> {
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
-      if ((typeof res.data === "object") && contains(res.data["id"])) window.open(window.location.origin + `/assetRequest/${res.data["id"]}`, "_self", "", false);
+      if ((typeof res.data === "object") && contains(res.data["id"])) window.open(window.location.origin + `/assetRequest/vehicles/${res.data["id"]}`, "_self", "", false);
       else if (typeof res.data === "string") {
         alert(res.data);
         this.setState({ allow_makeNewRequest: true });
