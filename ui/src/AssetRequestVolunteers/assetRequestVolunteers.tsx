@@ -205,7 +205,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
   render() {
 
     return (
-      this.state.loading ? <div className="padding">Loading...</div> :
+      this.state.loading ? <div className="padding"><h4>Asset Request</h4><hr />Loading...</div> :
         <div className="padding">
           <h4>Asset Request</h4>
           <hr />

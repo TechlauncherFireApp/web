@@ -139,7 +139,7 @@ export default class Volunteer extends React.Component<any, State> {
     //state = {};
     render() {
         return (
-            this.state.loading ? <div className="padding">Loading...</div> :
+            this.state.loading ? <div className="padding"><h4>Volunteers</h4><hr />Loading...</div> :
 
                 <div className="padding">
                     <div>
