@@ -12,10 +12,11 @@ export default class Asset extends React.Component<any, any> {
       if (asset.volunteers[i].positionID === newPosition.positionID) {
         asset.volunteers[i].volunteer = newPosition.volunteer;
         asset.volunteers[i].role = newPosition.roles;
-        newPosition.assigned ? asset.volunteers[i].ID = newPosition.volunteer.ID : asset.volunteers[i].ID = '-1'; //unsure about this line, may need to check structure of .volunteer
+        newPosition.assigned ? asset.volunteers[i].ID = newPosition.volunteer.ID : asset.volunteers[i].ID = '-1';
         i = asset.volunteers.length;
       }
     }
+    console.log(asset)
     this.props.updateAssetRequest(asset);
   }
 

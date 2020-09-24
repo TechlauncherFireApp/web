@@ -22,6 +22,7 @@ interface Timeframe {
 }
 
 interface State {
+    loading: boolean,
     thisVolunteer?: volunteer;
     myShifts: any;
 }
@@ -29,6 +30,7 @@ interface State {
 export default class Volunteer extends React.Component<any, State> {
 
     state: State = {
+        loading: true,
         thisVolunteer: undefined,
         myShifts: undefined
     }
@@ -58,7 +60,7 @@ export default class Volunteer extends React.Component<any, State> {
                 convertedAvailabilities.push({ startTime: start, endTime: end });
             }
             tmp.availabilities = convertedAvailabilities;
-            this.setState({ thisVolunteer: tmp })
+            this.setState({ thisVolunteer: tmp, loading: false })
         }).catch((err: AxiosError): void => {
             alert(err.message);
         });
@@ -137,44 +139,46 @@ export default class Volunteer extends React.Component<any, State> {
     //state = {};
     render() {
         return (
-            <div className="padding">
-                <div>
-                    <h4>{this.state.thisVolunteer?.firstName} {this.state.thisVolunteer?.lastName}</h4>
-                    <hr />
-                    <p>This is the volunteer page for {this.state.thisVolunteer?.firstName} {this.state.thisVolunteer?.lastName}.</p>
-                    <p>Here they will be able to see their assigned shifts, update their availability, and update their preferred hours.</p>
-                    <button className="type-1" onClick={this.manageAvailability}>Manage Availability</button>
+            this.state.loading ? <div className="padding">Loading...</div> :
+
+                <div className="padding">
+                    <div>
+                        <h4>{this.state.thisVolunteer?.firstName} {this.state.thisVolunteer?.lastName}</h4>
+                        <hr />
+                        <p>This is the volunteer page for {this.state.thisVolunteer?.firstName} {this.state.thisVolunteer?.lastName}.</p>
+                        <p>Here they will be able to see their assigned shifts, update their availability, and update their preferred hours.</p>
+                        <button className="type-1" onClick={this.manageAvailability}>Manage Availability</button>
+                    </div>
+                    <div className="mt-3">
+                        <h5>My Shifts</h5>
+                        <Table className="mt-2" striped bordered hover size="sm">
+
+                            <thead>
+                                <tr>
+                                    <th>Date and Time</th>
+                                    <th>Role</th>
+                                    <th>Asset</th>
+                                    <th>Request Title</th>
+                                    <th>My Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {(this.state.myShifts === undefined)
+                                    ? <tr><td colSpan={5}>None</td></tr>
+                                    : this.state.myShifts.map((s: any) =>
+                                        <Shift key={s.vehicleID}
+                                            shift={s}
+                                            updateStatus={(a: string, b: any) => this.updateStatus(a, b)} />
+                                    )
+
+                                }
+
+                            </tbody>
+                        </Table>
+
+                    </div>
                 </div>
-                <div className="mt-3">
-                    <h5>My Shifts</h5>
-                    <Table className="mt-2" striped bordered hover size="sm">
-
-                        <thead>
-                            <tr>
-                                <th>Date and Time</th>
-                                <th>Role</th>
-                                <th>Asset</th>
-                                <th>Request Title</th>
-                                <th>My Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            {(this.state.myShifts === undefined)
-                                ? <tr><td colSpan={5}>None</td></tr>
-                                : this.state.myShifts.map((s: any) =>
-                                    <Shift key={s.vehicleID}
-                                        shift={s}
-                                        updateStatus={(a: string, b: any) => this.updateStatus(a, b)} />
-                                )
-
-                            }
-
-                        </tbody>
-                    </Table>
-
-                </div>
-            </div>
         );
     }
 }

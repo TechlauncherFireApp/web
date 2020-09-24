@@ -38,6 +38,7 @@ interface asset {
 }
 
 interface State {
+  loading: boolean;
   allow_getInitialData: boolean;
   volunteerList: volunteer[];
   assignedVolunteers: Map<string, { shiftID: number, positionID: number }>;
@@ -47,6 +48,7 @@ interface State {
 export default class AssetRequestVolunteers extends React.Component<any, State> {
 
   state: State = {
+    loading: true,
     allow_getInitialData: true,
     volunteerList: [],
     assignedVolunteers: new Map(),
@@ -99,7 +101,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       baseURL: "http://localhost:5000/",
       method: "GET",
       timeout: 15000,
-      // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       let tmp = res.data["results"]
@@ -118,59 +119,13 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       if (recommendation.length !== 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
         const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
-        this.setState({ assetRequest, volunteerList, assignedVolunteers })
+        this.setState({ assetRequest, volunteerList, assignedVolunteers, loading: false })
       }
     }).catch((err: AxiosError): void => {
       alert(err.message);
     });
 
-
-
-    // if (this.state.isNew) {
-    //   //TODO get new recommendation from scheduler
-
-    //   let requestData: any = [];
-    //   for (const asset of this.props.thisRequest) {
-    //     requestData.push({
-    //       shiftID: asset.id,
-    //       assetClass: asset.type,
-    //       startTime: asset.startDateTime.toISOString(),
-    //       endTime: asset.endDateTime.toISOString()
-    //     });
-    //   }
-
-
-    //   console.log("props.thisRequest:", this.props.thisRequest)
-    //   console.log("requestData:", requestData)
-
-    //   //TODO get the vehicle information for the request
-    //   axios.request({
-    //     url: "recommendation",
-    //     baseURL: "http://localhost:5000/",
-    //     method: "POST",
-    //     data: { "request": requestData },
-    //     timeout: 15000,
-    //     // withCredentials: true,
-    //     headers: { "X-Requested-With": "XMLHttpRequest" }
-    //   }).then((res: AxiosResponse): void => {
-    //     let tmp = res.data["results"]
-
-    //     for (const r of tmp) {
-    //       r.startTime = new Date(Date.parse(r.startTime));
-    //       r.endTime = new Date(Date.parse(r.endTime));
-    //     }
-    //     recommendation = tmp;
-    //     // Both volunteerList and recommendation need to be populated
-    //     if (volunteerList.length !== 0) {
-    //       let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
-    //       const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
-    //       this.setState({ assetRequest, volunteerList, assignedVolunteers })
-    //     }
-    //   }).catch((err: AxiosError): void => {
-    //     alert(err.message);
-    //   });
-    // } else {
-    //TODO get saved asset request data from database
+    //get the request volunteer data from the database
     axios.request({
       url: "shift/request?requestID=" + this.props.match.params.id,
       baseURL: "http://localhost:5000/",
@@ -192,12 +147,11 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       if (volunteerList.length !== 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
         const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
-        this.setState({ assetRequest, volunteerList, assignedVolunteers })
+        this.setState({ assetRequest, volunteerList, assignedVolunteers, loading: false })
       }
     }).catch((err: AxiosError): void => {
       alert(err.message);
     });
-    //}
   }
 
   submitData = (): void => {
@@ -251,22 +205,23 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
   render() {
 
     return (
-      <div className="padding">
-        <h4>Asset Request</h4>
-        <hr />
-        {this.state.assetRequest.map((a: any) => (
-          <Asset
-            key={a.shiftID}
-            asset={a}
-            updateAssetRequest={(a: any) => this.updateAssetRequest(a)} //1.3.5
-            volunteerList={this.state.volunteerList}
-            assignedVolunteers={this.state.assignedVolunteers}
-          />
-        ))}
-        <button onClick={this.submitData} className="type-1">
-          Save
+      this.state.loading ? <div className="padding">Loading...</div> :
+        <div className="padding">
+          <h4>Asset Request</h4>
+          <hr />
+          {this.state.assetRequest.map((a: any) => (
+            <Asset
+              key={a.shiftID}
+              asset={a}
+              updateAssetRequest={(a: any) => this.updateAssetRequest(a)} //1.3.5
+              volunteerList={this.state.volunteerList}
+              assignedVolunteers={this.state.assignedVolunteers}
+            />
+          ))}
+          <button onClick={this.submitData} className="type-1">
+            Save
         </button>
-      </div>
+        </div>
     );
   }
 }
