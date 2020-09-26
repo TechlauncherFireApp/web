@@ -72,7 +72,7 @@ class VolunteerShifts(Resource):
                 q = re.sub("\s\s+", " ", """
                     SELECT DISTINCT
                         ar.`title` AS `requestTitle`,
-                        v.`id` AS `vehicleID`, v.`type` AS `vehicleType`,
+                        arv.`id` AS `vehicleID`, v.`type` AS `vehicleType`,
                         arv.`from` AS `vehicleFrom`, arv.`to` AS `vehicleTo`,
                         arp.`roles` AS `volunteerRoles`, arp.`status` AS `volunteerStatus`
                     FROM

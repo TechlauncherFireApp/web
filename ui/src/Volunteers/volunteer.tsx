@@ -131,8 +131,23 @@ export default class Volunteer extends React.Component<any, State> {
     }
 
     updateStatus = (newStatus: string, shiftData: any): void => {
-        //TODO update the asset_request_volunteer.status in the database
-        console.log(newStatus, shiftData);
+        //console.log(newStatus, shiftData);
+        const info = {
+            idVolunteer: this.state.thisVolunteer?.ID,
+            idVehicle: shiftData.vehicleID,
+            status: newStatus
+        }
+
+        axios.request({
+            url: "volunteer/status",
+            baseURL: "http://localhost:5000/",
+            method: "PATCH",
+            timeout: 15000,
+            params: info,
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        }).catch((err: AxiosError): void => {
+            alert(err.message);
+        });
 
     }
 

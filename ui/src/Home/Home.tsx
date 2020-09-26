@@ -16,15 +16,15 @@ export default class Home extends React.Component<any, any> {
     test() {
 
         const info = {
-            idVolunteer: "L8YEWowKEhDBz34",
-            idVehicle: "4ucckDl7b318tot",
-            status: "confirmed"
+            idVolunteer: "4fdIPciwWUvj2Fn",
+            idVehicle: "LXmy1Q9cVQpVgNg",
+            //status: "confirmed"
         }
 
         axios.request({
             url: "volunteer/status",
             baseURL: "http://localhost:5000/",
-            method: "PATCH",
+            method: "GET",//"PATCH",
             timeout: 15000,
             params: info,
             headers: { "X-Requested-With": "XMLHttpRequest" }

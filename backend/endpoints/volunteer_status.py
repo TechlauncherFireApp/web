@@ -8,6 +8,14 @@ from includes.connection_mysqli import get as connection, is_connected, cur_conn
 
 '''
 Define Data Input
+
+GET
+{
+    idVolunteer: String
+    idVehicle: String
+}
+
+PATCH
 {
     idVolunteer: String
     idVehicle: String
@@ -25,19 +33,56 @@ parser.add_argument('status', action='store', type=str)
 '''
 Define Data Output
 
+GET
+{
+    status: String
+}
+
+PATCH
 {
     success: boolean
 }
+
 '''
 
-resource_fields = {
-    'success': fields.Boolean,
+get_resource_fields = {
+    'status': fields.String,
+    'success': fields.Boolean
+}
+
+patch_resource_fields = {
+    'success': fields.Boolean
 }
 
 
 class VolunteerStatus(Resource):
 
-    @marshal_with(resource_fields)
+    @marshal_with(get_resource_fields)
+    def get(self):
+        args = parser.parse_args()
+        if (args["idVolunteer"] is None or args["idVehicle"] is None):
+            return { "status": None, "success": False }
+        idVolunteer = args['idVolunteer']
+        idVehicle = args['idVehicle']
+        conn = connection()
+        if is_connected(conn):
+            cur = conn.cursor(prepared=True)
+            try:
+                cur.execute("SELECT `status` FROM `asset-request_volunteer` WHERE `idVolunteer`=%s AND `idVehicle`=%s;", [idVolunteer, idVehicle])
+                res = cur.fetchone()
+                res = dict(zip(cur.column_names, (res if contains(res) else [])))
+                if contains(res):
+                    cur_conn_close(cur, conn)
+                    return { "success": True, "status": (res["status"]) }
+                cur_conn_close(cur, conn)
+            except Exception as e:
+                cur_conn_close(cur, conn)
+                print (str(e))
+        return { "success": False, "status": None }
+
+
+
+    @marshal_with(patch_resource_fields)
     def patch(self):
 
         args = parser.parse_args()
@@ -47,12 +92,8 @@ class VolunteerStatus(Resource):
         idVolunteer = args['idVolunteer']
         idVehicle = args['idVehicle']
         status = args['status']
-        # print(idVolunteer, idVehicle, status) # testing line
 
         if status not in ["confirmed","rejected"]: return { "success" : False }
-
-        # TODO
-        # write the mysql to update the 'status' field in the asset-request-volunteer who has .idVolunteer = idVolunteer AND .idVehicle = idVehicle
 
         conn = connection()
         if is_connected(conn):
