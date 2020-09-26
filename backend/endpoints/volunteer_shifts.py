@@ -65,9 +65,6 @@ class VolunteerShifts(Resource):
             return { "success": False }
         volunteerID = args["volunteerID"]
 
-        # TODO create the mysql query.
-        # may need to use the function 'availabilitiesToDateTime' to convert time block data to date time
-        
         conn = connection()
         if is_connected(conn):
             cur = conn.cursor(prepared=True)
