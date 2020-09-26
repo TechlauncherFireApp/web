@@ -47,9 +47,25 @@ class VolunteerStatus(Resource):
         idVolunteer = args['idVolunteer']
         idVehicle = args['idVehicle']
         status = args['status']
-        print(idVolunteer, idVehicle, status) # testing line
+        # print(idVolunteer, idVehicle, status) # testing line
+
+        if status not in ["confirmed","rejected"]: return { "success" : False }
 
         # TODO
         # write the mysql to update the 'status' field in the asset-request-volunteer who has .idVolunteer = idVolunteer AND .idVehicle = idVehicle
+
+        conn = connection()
+        if is_connected(conn):
+            conn.start_transaction()                # Transaction type
+            cur = conn.cursor(prepared=True)
+            try:
+                cur.execute("UPDATE `asset-request_volunteer` SET `status`=%s WHERE `idVolunteer`=%s AND `idVehicle`=%s;", [status, idVolunteer, idVehicle])
+                conn.commit()                       # Commit
+                cur_conn_close(cur, conn)
+                return { "success": True }
+            except Exception as e:
+                conn.rollback()                     # RollBack
+                cur_conn_close(cur, conn)
+                print (str(e))
 
         return { "success": False }

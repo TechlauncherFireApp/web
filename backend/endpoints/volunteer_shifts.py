@@ -70,7 +70,7 @@ class VolunteerShifts(Resource):
             cur = conn.cursor(prepared=True)
             try:
                 q = re.sub("\s\s+", " ", """
-                    SELECT
+                    SELECT DISTINCT
                         ar.`title` AS `requestTitle`,
                         v.`id` AS `vehicleID`, v.`type` AS `vehicleType`,
                         arv.`from` AS `vehicleFrom`, arv.`to` AS `vehicleTo`,

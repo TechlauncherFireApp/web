@@ -86,8 +86,6 @@ class VolunteerPrefhours(Resource):
         prefHours = int(args["prefHours"])
         # TODO Update the volunteer's prefHours
 
-        print ("\n" + str(prefHours) + "\n")
-
         conn = connection()
         if is_connected(conn):
             conn.start_transaction()                # Transaction type
