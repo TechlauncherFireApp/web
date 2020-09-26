@@ -32,6 +32,7 @@ export default class Position extends React.Component<any, State> {
     let newPosition = this.props.position;
     newPosition.assigned = true;
     newPosition.volunteer = v;
+    newPosition.status = "pending";
 
     if (newPosition.roles.includes("advanced") && v.possibleRoles.includes("basic")) {
       newPosition.roles = ["basic"];
@@ -49,6 +50,7 @@ export default class Position extends React.Component<any, State> {
     let newPosition: any = this.props.position;
     newPosition.assigned = false;
     newPosition.volunteer = undefined;
+    newPosition.status = "pending";
     this.props.updateAsset(newPosition);
   }
 
