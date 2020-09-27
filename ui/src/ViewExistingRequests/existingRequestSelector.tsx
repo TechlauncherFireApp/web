@@ -21,7 +21,6 @@ export default class existingRequestSelector extends React.Component<any, State>
   };
   select_request: React.RefObject<HTMLSelectElement>;
 
-
   constructor(props: any) {
     super(props);
     this.select_request = React.createRef();
@@ -43,11 +42,11 @@ export default class existingRequestSelector extends React.Component<any, State>
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       l = res.data["results"];
-
-
+      
+      
       console.log("Data from backend returned:")
       console.log(l);
-
+    
       this.setState({ requests: l })
     }).catch((err: AxiosError): void => {
       alert(err.message);
@@ -55,13 +54,12 @@ export default class existingRequestSelector extends React.Component<any, State>
   }
 
   test = (): void => {
-
-    let ID: string = this.select_request.current ? this.select_request.current.value : "";
-
-    //find the volunteer we selected from the list
+    
+    let selectedID: string = this.select_request.current ? this.select_request.current.value : "";
+    
     let v: (AssetRequest | undefined) = undefined;
     for (let i = 0; i < this.state.requests.length; i++) {
-      if (this.state.requests[i].id === ID) {
+      if (this.state.requests[i].id === selectedID) {
         v = this.state.requests[i];
         i = this.state.requests.length;
       }
