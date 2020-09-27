@@ -1,3 +1,8 @@
+export const att = (s: string, b?: boolean): any => {
+  if ((b !== undefined) && (b === false)) return {};
+  return { [s]: '' };
+};
+
 export const contains = (...y: any): boolean => {
   for (let x of y) if (
     (x === undefined) || (x === null) ||
