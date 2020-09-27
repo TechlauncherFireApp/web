@@ -6,8 +6,6 @@ interface AssetRequest {
   title: string;
 }
 
-
-
 interface State {
   requests: AssetRequest[];
   selectedRequest?: AssetRequest;
@@ -25,12 +23,7 @@ export default class existingRequestSelector extends React.Component<any, State>
     super(props);
     this.select_request = React.createRef();
   }
-  getRequest = (): void => {
-    /* to view a request already existing in the database, simply call the below line window.open
-       with 'id' replaced with the id of the selected request. */
-    const id = "2a8a0f8767364af"
-    window.open(window.location.origin + `/assetRequest/volunteers/${id}`, "_self", "", false);
-}
+
   componentDidMount(): void {
     let l: AssetRequest[] = [];
     axios.request({
@@ -42,21 +35,19 @@ export default class existingRequestSelector extends React.Component<any, State>
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       l = res.data["results"];
-      
-      
+
       console.log("Data from backend returned:")
       console.log(l);
-    
+
       this.setState({ requests: l })
     }).catch((err: AxiosError): void => {
       alert(err.message);
     });
   }
 
-  test = (): void => {
-    
+  selectRequest = (): void => {
     let selectedID: string = this.select_request.current ? this.select_request.current.value : "";
-    
+
     let v: (AssetRequest | undefined) = undefined;
     for (let i = 0; i < this.state.requests.length; i++) {
       if (this.state.requests[i].id === selectedID) {
@@ -84,10 +75,10 @@ export default class existingRequestSelector extends React.Component<any, State>
         <select ref={this.select_request}>
           <option value="" hidden selected>Select saved request</option>
           {this.state.requests.map((v: AssetRequest) =>
-            <option value={v.title}>{v.title}</option>
+            <option value={v.id}>{v.title}</option>
           )}
         </select>
-        <button className="type-1 margin" onClick={this.test}>View Assignment</button>
+        <button className="type-1 margin" onClick={() => this.selectRequest()}>View Assignment</button>
       </div>
     );
   }
