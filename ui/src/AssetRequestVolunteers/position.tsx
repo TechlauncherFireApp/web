@@ -1,7 +1,7 @@
 import React from "react";
 import "./position.scss";
 import { Button } from "react-bootstrap";
-import { parseRolesAsString } from "../functions";
+import { parseRolesAsString, toSentenceCase } from "../functions";
 import EditModal from "./editModal";
 
 interface State {
@@ -74,10 +74,19 @@ export default class Position extends React.Component<any, State> {
   render() {
     const { position } = this.props;
     const assigned: boolean = this.props.position.assigned;
-    const bgColourGrey = "#ececec";
-    // const bgColourConfirmed = "#abff95";
+    const bgPending = "#ececec";
+    const bgGrey = "#ececec";
+    const bgConfirmed = "#abff95";
     const bgWarning = "#FFCCCC"
-
+    let bgColour: string;
+    if (!assigned || position.status === "rejected") {
+      bgColour = bgWarning;
+    } else if (position.status === "confirmed") {
+      bgColour = bgConfirmed;
+    } else {
+      bgColour = bgGrey;
+    }
+    console.log(position.positionID, bgColour)
     return (
       <React.Fragment>
 
@@ -95,7 +104,7 @@ export default class Position extends React.Component<any, State> {
           key={position.positionID}
           className="body"
           style={{
-            backgroundColor: assigned ? bgColourGrey : bgWarning
+            backgroundColor: bgColour
           }}
         >
           <td>{parseRolesAsString(position.roles)}</td>
@@ -127,7 +136,7 @@ export default class Position extends React.Component<any, State> {
           {assigned ?
             <td width="10%">
               <div >
-                {position.status}
+                {toSentenceCase(position.status)}
               </div>
             </td> :
             <td width="10%" />
