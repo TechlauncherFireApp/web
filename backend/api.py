@@ -16,6 +16,7 @@ from endpoints.volunteer_shifts import VolunteerShifts
 from endpoints.volunteer_availability import VolunteerAvailability
 from endpoints.volunteer_prefhours import VolunteerPrefhours
 from endpoints.shift_request import ShiftRequest
+from endpoints.existing_requests import ExistingRequests
 from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
 from AssetRequestVehicle.submit import Submit as AssetRequestVehicle_submit
 # Load environment variables
@@ -40,6 +41,7 @@ api.add_resource(VolunteerShifts, '/volunteer/shifts')
 api.add_resource(VolunteerAvailability, '/volunteer/availability')
 api.add_resource(VolunteerPrefhours, '/volunteer/prefhours')
 api.add_resource(ShiftRequest, '/shift/request')
+api.add_resource(ExistingRequests, "/existing_requests")
 api.add_resource(NewAssetRequest, "/NewAssetRequest")
 
 
