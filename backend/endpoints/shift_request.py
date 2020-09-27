@@ -150,6 +150,11 @@ class ShiftRequest(Resource):
                 cur.execute(re.sub("\s\s+", " ", q), [requestID])
                 res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]      # Get all the vehicles inside a request
                 for y in res:
+
+                    # start - untested
+                    if y["ID"] == None:
+                        y["ID"] = '-1'
+                    # end - untested 
                     n = True
                     for i, x in enumerate(o):
                         if x["shiftID"] == y["shiftID"]:
@@ -177,6 +182,8 @@ class ShiftRequest(Resource):
         d = []
         for s in shifts:
             for v in s["volunteers"]:
+                if v["ID"] == '-1':
+                    v["ID"] = None
                 d.append([v["ID"], s["shiftID"], int(v["positionID"]), json.dumps(v["role"])])
 
         print("data to save:", d)
@@ -188,7 +195,7 @@ class ShiftRequest(Resource):
             try:
                 q = ",".join(["(%s,%s,%s,%s)"] * len(d))
                 d = np.concatenate(d).tolist()
-                cur.execute("INSERt INTO `asset-request_volunteer` (`idVolunteer`,`idVehicle`,`position`,`roles`) VALUES " + q + ";", d)
+                cur.execute("INSERT INTO `asset-request_volunteer` (`idVolunteer`,`idVehicle`,`position`,`roles`) VALUES " + q + ";", d)
                 conn.commit()
                 cur_conn_close(cur, conn)
                 return { "success": True }
