@@ -214,7 +214,7 @@ class ShiftRequest(Resource):
         if args["requestID"] is None or args["shifts"] is None:
             return { "success": False }
         
-        requestID = args["requestID"] # 16a08e833ee0419
+        requestID = args["requestID"] # 16a08e833ee0419, 6034102810a84eb
         shifts = args["shifts"]
         cd = self.get_func(requestID)
 
@@ -250,7 +250,7 @@ class ShiftRequest(Resource):
             for s2 in shifts:
                 for v2 in s2["volunteers"]:
                     if v2["ID"] == "-1": v2["ID"] = None
-                    d.append([v2["ID"], s2["shiftID"], int(v2["positionID"]), json.dumps(v2["role"])])
+                    d["insert"].append([v2["ID"], s2["shiftID"], int(v2["positionID"]), json.dumps(v2["role"])])
 
         conn = connection()
         if not is_connected(conn): return { "success": False }
@@ -258,18 +258,20 @@ class ShiftRequest(Resource):
         cur = conn.cursor(prepared=True)
 
         # Delete
-        if contains(d["delete"]) and is_connected(conn):
+        if is_connected(conn):
             try:
                 # Delete t1
                 # for i in d["delete"]["t1"]: cur.execute("DELETE FROM `asset-request_volunteer` WHERE `idVolunteer`=%s AND `idVehicle`=%s;", i)
-                q = ",".join(["(%s,%s)"] * len(d["delete"]["t1"]))
-                d["delete"]["t1"] = np.concatenate(d["delete"]["t1"]).tolist()
-                cur.execute("DELETE FROM `asset-request_volunteer` WHERE (`idVolunteer`,`idVehicle`) IN (" + q + ");", d["delete"]["t1"])
+                if contains(d["delete"]["t1"]):
+                    q = ",".join(["(%s,%s)"] * len(d["delete"]["t1"]))
+                    d["delete"]["t1"] = np.concatenate(d["delete"]["t1"]).tolist()
+                    cur.execute("DELETE FROM `asset-request_volunteer` WHERE (`idVolunteer`,`idVehicle`) IN (" + q + ");", d["delete"]["t1"])
                 # Delete t2
                 # for i in d["delete"]["t2"]: cur.execute("DELETE FROM `asset-request_volunteer` WHERE `idVolunteer` IS NULL AND `idVehicle`=%s AND `position`=%s;", i)
-                q = ",".join(["(%s,%s)"] * len(d["delete"]["t2"]))
-                d["delete"]["t2"] = np.concatenate(d["delete"]["t2"]).tolist()
-                cur.execute("DELETE FROM `asset-request_volunteer` WHERE `idVolunteer` IS NULL AND (`idVehicle`,`position`) IN (" + q + ");", d["delete"]["t2"])
+                if contains(d["delete"]["t2"]):
+                    q = ",".join(["(%s,%s)"] * len(d["delete"]["t2"]))
+                    d["delete"]["t2"] = np.concatenate(d["delete"]["t2"]).tolist()
+                    cur.execute("DELETE FROM `asset-request_volunteer` WHERE `idVolunteer` IS NULL AND (`idVehicle`,`position`) IN (" + q + ");", d["delete"]["t2"])
             except Exception as e:
                 conn.rollback()
                 cur_conn_close(cur, conn)
