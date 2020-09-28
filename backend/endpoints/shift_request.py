@@ -155,8 +155,7 @@ class ShiftRequest(Resource):
                 for y in res:
 
                     # start - untested
-                    if y["ID"] == None:
-                        y["ID"] = '-1'
+                    if y["ID"] == None: y["ID"] = "-1"
                     # end - untested 
                     n = True
                     for i, x in enumerate(o):
@@ -214,152 +213,47 @@ class ShiftRequest(Resource):
         if args["requestID"] is None or args["shifts"] is None:
             return { "success": False }
         
-        requestID = args["requestID"] # 16a08e833ee0419, 6034102810a84eb
+        requestID = args["requestID"]
         shifts = args["shifts"]
-        cd = self.get_func(requestID)
+        cd = self.get_func(requestID)["results"]
 
         #TODO Update a shift request object in database
-        d = { "insert": [], "delete": { "t1": [], "t2": [] } }
-        # print ("\n", cd, "\n", shifts)
-
+        d = []
         if contains(cd) and (type(cd) is list):
-            cd = cd["results"]
-            # Delete
-            for s in cd:
+            for s in shifts:
                 for v in s["volunteers"]:
-                    for s2 in shifts:
+                    for s2 in cd:
                         for v2 in s2["volunteers"]:
-                            if v["ID"] == None and s["shiftID"] == s2["shiftID"] and v["position"] == v2["position"]:
-                                d["delete"]["t2"].append([s["shiftID"], int(v["positionID"])])
-                            elif v["ID"] == v2["ID"] and s["shiftID"] == s2["shiftID"]:
-                                d["delete"]["t1"].append([v["ID"], s["shiftID"]])
-            # Insert
-            for s2 in shifts:
-                for v2 in s2["volunteers"]:
-                    if v2["ID"] == "-1": v2["ID"] = None
-                    b = True
-                    for s in cd:
-                        for v in s["volunteers"]:
-                            if (
-                                (v2["ID"] == None and s2["shiftID"] == s["shiftID"] and v2["position"] == v["position"]) or
-                                (v2["ID"] == v["ID"] and s2["shiftID"] == s["shiftID"])
-                                ): b = False
-                    if b: d["insert"].append([v2["ID"], s2["shiftID"], int(v2["positionID"]), json.dumps(v2["role"])])
+                            if ((s["shiftID"] == s2["shiftID"] and v["positionID"] == v2["positionID"]) and
+                                (v["ID"] != v2["ID"] or v["role"] != v2["role"])):
+                                if v["ID"] == "-1": v["ID"] = None
+                                d.append([v["ID"], json.dumps(v["role"]), s["shiftID"], int(v["positionID"])])
         else:
-            # Insert
-            for s2 in shifts:
-                for v2 in s2["volunteers"]:
-                    if v2["ID"] == "-1": v2["ID"] = None
-                    d["insert"].append([v2["ID"], s2["shiftID"], int(v2["positionID"]), json.dumps(v2["role"])])
-
-        conn = connection()
-        if not is_connected(conn): return { "success": False }
-        conn.start_transaction()
-        cur = conn.cursor(prepared=True)
-
-        # Delete
-        if is_connected(conn):
-            try:
-                # Delete t1
-                # for i in d["delete"]["t1"]: cur.execute("DELETE FROM `asset-request_volunteer` WHERE `idVolunteer`=%s AND `idVehicle`=%s;", i)
-                if contains(d["delete"]["t1"]):
-                    q = ",".join(["(%s,%s)"] * len(d["delete"]["t1"]))
-                    d["delete"]["t1"] = np.concatenate(d["delete"]["t1"]).tolist()
-                    cur.execute("DELETE FROM `asset-request_volunteer` WHERE (`idVolunteer`,`idVehicle`) IN (" + q + ");", d["delete"]["t1"])
-                # Delete t2
-                # for i in d["delete"]["t2"]: cur.execute("DELETE FROM `asset-request_volunteer` WHERE `idVolunteer` IS NULL AND `idVehicle`=%s AND `position`=%s;", i)
-                if contains(d["delete"]["t2"]):
-                    q = ",".join(["(%s,%s)"] * len(d["delete"]["t2"]))
-                    d["delete"]["t2"] = np.concatenate(d["delete"]["t2"]).tolist()
-                    cur.execute("DELETE FROM `asset-request_volunteer` WHERE `idVolunteer` IS NULL AND (`idVehicle`,`position`) IN (" + q + ");", d["delete"]["t2"])
-            except Exception as e:
-                conn.rollback()
-                cur_conn_close(cur, conn)
-                print (str(e))
-                return { "success": False }
+            return { "success": False }
 
         # Insert
-        if contains(d["insert"]) and is_connected(conn):
+        conn = connection()
+        if contains(d) and is_connected(conn):
+            conn.start_transaction()
+            cur = conn.cursor(prepared=True)
             try:
-                q = ",".join(["(%s,%s,%s,%s)"] * len(d["insert"]))
-                d["insert"] = np.concatenate(d["insert"]).tolist()
-                cur.execute("INSERT INTO `asset-request_volunteer` (`idVolunteer`,`idVehicle`,`position`,`roles`) VALUES " + q + ";", d["insert"])
+                for x in d:
+                    cur.execute("UPDATE `asset-request_volunteer` SET `idVolunteer`=%s, `roles`=%s, `status`=DEFAULT WHERE `idVehicle`=%s AND `position`=%s;", x)
+                conn.commit()
+                cur_conn_close(cur, conn)
+                return { "success": True }
             except Exception as e:
                 conn.rollback()
                 cur_conn_close(cur, conn)
                 print (str(e))
                 return { "success": False }
 
-        conn.commit()
-        cur_conn_close(cur, conn)
-        print ("\n")
-        return { "success": True }
+# d.append([s["shiftID"], int(v["positionID"]), v["ID"], json.dumps(v["role"])])
 
-# # Get Current Data from DataBase
-# current = AssetRequestVehicle_initial.get(idRequest)
-
-# # Query Parameter's Data
-# d = { "insert": { "vehicle": [], "ARvehicle": [] }, "delete": [] }
-
-# if contains(current) and (type(current) is list):
-#     # Insert
-#     for v in vehicles:
-#         e = False
-#         for c in current:
-#             if v["id"] == c["id"]:
-#                 e = True
-#                 break
-#         if not e:
-#             d["insert"]["vehicle"].append([v["idVehicle"], v["type"]])
-#             d["insert"]["ARvehicle"].append([v["id"], v["idVehicle"], idRequest, v["startDateTime"], v["endDateTime"]])
-#     # Delete
-#     for c in current:
-#         e = False
-#         for v in vehicles:
-#             if v["id"] == c["id"]:
-#                 e = True
-#                 break
-#         if not e:
-#             d["delete"].append(c["idVehicle"])
-# else:
-#     # Insert
-#     for v in vehicles:
-#         d["insert"]["vehicle"].append([v["idVehicle"], v["type"]])
-#         d["insert"]["ARvehicle"].append([v["id"], v["idVehicle"], idRequest, v["startDateTime"], v["endDateTime"]])
-
-# # Insert
-# conn = connection()
-# if not is_connected(conn): return error_message("0x06")
-# conn.start_transaction()
-# cur = conn.cursor(prepared=True)
-# if contains(d["insert"]["vehicle"]) and is_connected(conn):
-#     try:
-#         # Make New Vehicle
-#         q = ",".join(["(%s,%s)"] * len(d["insert"]["vehicle"]))
-#         d["insert"]["vehicle"] = np.concatenate(d["insert"]["vehicle"]).tolist()
-#         cur.execute("INSERT INTO `vehicle` (`id`,`type`) VALUES " + q + ";", d["insert"]["vehicle"])
-#         # Insert Vehicle of the Request
-#         q = ",".join(["(%s,%s,%s,%s,%s)"] * len(d["insert"]["ARvehicle"]))
-#         d["insert"]["ARvehicle"] = np.concatenate(d["insert"]["ARvehicle"]).tolist()
-#         cur.execute("INSERT INTO `asset-request_vehicle` (`id`,`idVehicle`,`idRequest`,`from`,`to`) VALUES " + q + ";", d["insert"]["ARvehicle"])
-#     # except Exception as e: return str(e)
-#     except:
-#         conn.rollback()
-#         cur_conn_close(cur, conn)
-#         return error_message("0x07")            # Fail Message
-
-# # Delete
-# if contains(d["delete"]) and is_connected(conn):
-#     try:
-#         # Delete
-#         q = ",".join(["%s"] * len(d["delete"]))
-#         cur.execute("DELETE FROM `vehicle` WHERE `id` IN (" + q + ");", d["delete"])
-#     # except Exception as e: return str(e)
-#     except:
-#         conn.rollback()
-#         cur_conn_close(cur, conn)
-#         return error_message("0x08")            # Fail Message
-
-# conn.commit()
-# cur_conn_close(cur, conn)
-# return "1"                                      # Success Message
+# q = ",".join(["(%s,%s,%s,%s)"] * len(d))
+# q = re.sub("\s\s+", " ", """
+#     INSERT INTO `asset-request_volunteer` (`idVehicle`,`position`,`idVolunteer`,`roles`) VALUES """ + q + """"
+#     ON DUPLICATE KEY UPDATE `idVolunteer`=VALUES(`idVolunteer`), `roles`=VALUES(`roles`);
+# """)
+# d = np.concatenate(d).tolist()
+# cur.execute(q, d)
