@@ -65,13 +65,13 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       console.log(res.data);
-      if (typeof res.data == "object") {
-        for (let x of res.data) {
-          x["startDateTime"] = new Date(x["startDateTime"]);
-          x["endDateTime"] = new Date(x["endDateTime"]);
-        }
-        this.setState({ requestList: res.data as SelectedVehicles[] });
-      } else alert(res.data);
+      // if (typeof res.data == "object") {
+      //   for (let x of res.data) {
+      //     x["startDateTime"] = new Date(x["startDateTime"]);
+      //     x["endDateTime"] = new Date(x["endDateTime"]);
+      //   }
+      //   this.setState({ requestList: res.data as SelectedVehicles[] });
+      // } else alert(res.data);
       this.setState({ allow_getInitialData: true });
     }).catch((err: AxiosError): void => {
       alert(err.message);

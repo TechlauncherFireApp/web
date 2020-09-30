@@ -15,21 +15,11 @@ class Initial(Resource):
         if is_connected(conn):
             cur = conn.cursor(prepared=True)
             try:
-                q = """
-                    SELECT DISTINCT
-                        `id`, `type`, `from` AS `startDateTime`, `to` AS `endDateTime`
-                    FROM
-                        `asset-request_vehicle`
-                    WHERE
-                        `idRequest`=%s;"""
-
-                cur.execute(re.sub("\s\s+", " ", q), [id])
-                res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]          # Get all the vehicles inside a request
-                for x in res:
-                    x["startDateTime"] = str(x["startDateTime"])
-                    x["endDateTime"] = str(x["endDateTime"])
+                cur.execute("SELECT COUNT(`id`) AS `count` FROM `asset-request_vehicle` WHERE `idRequest`=%s;", [id])
+                res = cur.fetchone()
+                res = dict(zip(cur.column_names, (res if contains(res) else [])))
                 cur_conn_close(cur, conn)
-                return res
+                return (res["count"] > 0)
             # except Exception as e: return str(e)
             except:
                 cur_conn_close(cur, conn)
