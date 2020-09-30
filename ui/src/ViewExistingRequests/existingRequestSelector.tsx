@@ -9,13 +9,15 @@ interface AssetRequest {
 interface State {
   requests: AssetRequest[];
   selectedRequest?: AssetRequest;
+  loading: boolean;
 }
 
 export default class existingRequestSelector extends React.Component<any, State> {
 
   state: State = {
     requests: [],
-    selectedRequest: undefined
+    selectedRequest: undefined,
+    loading: true
   };
   select_request: React.RefObject<HTMLSelectElement>;
 
@@ -39,7 +41,7 @@ export default class existingRequestSelector extends React.Component<any, State>
       console.log("Data from backend returned:")
       console.log(l);
 
-      this.setState({ requests: l })
+      this.setState({ requests: l, loading: false })
     }).catch((err: AxiosError): void => {
       alert(err.message);
     });
@@ -73,7 +75,7 @@ export default class existingRequestSelector extends React.Component<any, State>
         <hr />
         <p>Select a saved request to see further information.</p>
         <select ref={this.select_request}>
-          <option value="" hidden selected>Select saved request</option>
+          <option value="" hidden selected>{this.state.loading ? "Loading..." : "Select saved request"}</option>
           {this.state.requests.map((v: AssetRequest) =>
             <option value={v.id}>{v.title}</option>
           )}
