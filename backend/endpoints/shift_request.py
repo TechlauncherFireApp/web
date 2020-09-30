@@ -142,12 +142,11 @@ class ShiftRequest(Resource):
                 o = []
                 q = """
                     SELECT DISTINCT
-                        arv.`id` AS `shiftID`, v.`type` AS `assetClass`, arv.`from` AS `startTime`, arv.`to` AS `endTime`,
+                        arv.`id` AS `shiftID`, arv.`type` AS `assetClass`, arv.`from` AS `startTime`, arv.`to` AS `endTime`,
                         arp.`idVolunteer` AS `ID`, arp.`position` AS `positionID`, arp.`roles` AS `role`, arp.`status` AS `status`
                     FROM
                         `asset-request_volunteer` AS arp
                         INNER JOIN `asset-request_vehicle` AS arv ON arp.`idVehicle` = arv.`id`
-                        INNER JOIN `vehicle` AS v ON v.`id` = arv.`idVehicle`
                     WHERE
                         arv.`idRequest` = %s;"""
                 cur.execute(re.sub("\s\s+", " ", q), [requestID])

@@ -39,25 +39,20 @@ class Submit(Resource):
             i["endDateTime"] = str(i["endDateTime"])
 
         # Query Parameter's Data
-        d = { "vehicle": [], "ARvehicle": [] }
+        d = []
         for v in vehicles:
-            d["vehicle"].append([v["idVehicle"], v["type"]])
-            d["ARvehicle"].append([v["id"], v["idVehicle"], idRequest, v["startDateTime"], v["endDateTime"]])
+            d.append([v["id"], idRequest, v["type"], v["startDateTime"], v["endDateTime"]])
 
         conn = connection()
 
-        if contains(d["vehicle"]) and is_connected(conn):
+        if contains(d) and is_connected(conn):
             conn.start_transaction()
             cur = conn.cursor(prepared=True)
             try:
-                # Make New Vehicle
-                q = ",".join(["(%s,%s)"] * len(d["vehicle"]))
-                d["vehicle"] = np.concatenate(d["vehicle"]).tolist()
-                cur.execute("INSERT INTO `vehicle` (`id`,`type`) VALUES " + q + ";", d["vehicle"])
                 # Insert Vehicle of the Request
-                q = ",".join(["(%s,%s,%s,%s,%s)"] * len(d["ARvehicle"]))
-                d["ARvehicle"] = np.concatenate(d["ARvehicle"]).tolist()
-                cur.execute("INSERT INTO `asset-request_vehicle` (`id`,`idVehicle`,`idRequest`,`from`,`to`) VALUES " + q + ";", d["ARvehicle"])
+                q = ",".join(["(%s,%s,%s,%s,%s)"] * len(d))
+                d = np.concatenate(d).tolist()
+                cur.execute("INSERT INTO `asset-request_vehicle` (`id`,`idRequest`,`type`,`from`,`to`) VALUES " + q + ";", d)
                 conn.commit()
                 cur_conn_close(cur, conn)
                 return "1"

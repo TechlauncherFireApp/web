@@ -17,11 +17,11 @@ class Initial(Resource):
             try:
                 q = """
                     SELECT DISTINCT
-                        arv.`id`, arv.`idVehicle`, v.`type`, arv.`from` AS `startDateTime`, arv.`to` AS `endDateTime`
+                        `id`, `type`, `from` AS `startDateTime`, `to` AS `endDateTime`
                     FROM
-                        `asset-request_vehicle` AS arv JOIN `vehicle` AS v ON arv.`idVehicle` = v.`id`
+                        `asset-request_vehicle`
                     WHERE
-                        arv.`idRequest`=%s;"""
+                        `idRequest`=%s;"""
 
                 cur.execute(re.sub("\s\s+", " ", q), [id])
                 res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]          # Get all the vehicles inside a request

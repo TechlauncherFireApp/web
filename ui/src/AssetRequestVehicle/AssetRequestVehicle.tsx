@@ -7,7 +7,6 @@ import { contains, getValidDate, toPythonDate, makeid, toSentenceCase } from "..
 
 interface SelectedVehicles {
   id: string;
-  idVehicle: string;
   type: string;
   startDateTime: Date;
   endDateTime: Date;
@@ -94,7 +93,6 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     for (let x of l) {
       d.push({
         "id": x.id,
-        "idVehicle": x.idVehicle,
         "type": x.type,
         "startDateTime": toPythonDate(x.startDateTime), // toTimeblock()
         "endDateTime": toPythonDate(x.endDateTime)
@@ -188,7 +186,6 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     const o: SelectedVehicles[] = this.state.requestList;
     let a: SelectedVehicles = {
       id: makeid(),
-      idVehicle: makeid(),
       type: this.insert_assetType.current ? this.insert_assetType.current.value : "",
       startDateTime: this.state.startDateTime,
       endDateTime: this.state.endDateTime,

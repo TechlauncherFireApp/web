@@ -72,13 +72,12 @@ class VolunteerShifts(Resource):
                 q = re.sub("\s\s+", " ", """
                     SELECT DISTINCT
                         ar.`title` AS `requestTitle`,
-                        arv.`id` AS `vehicleID`, v.`type` AS `vehicleType`,
+                        arv.`id` AS `vehicleID`, arv.`type` AS `vehicleType`,
                         arv.`from` AS `vehicleFrom`, arv.`to` AS `vehicleTo`,
                         arp.`roles` AS `volunteerRoles`, arp.`status` AS `volunteerStatus`
                     FROM
                         `asset-request_volunteer` AS arp
                         INNER JOIN `asset-request_vehicle` AS arv ON arp.`idVehicle` = arv.`id`
-                        INNER JOIN `vehicle` AS v ON arv.`idVehicle` = v.`id`
                         INNER JOIN `asset-request` AS ar ON arv.`idRequest` = ar.`id`
                     WHERE
                         `idVolunteer` = %s;
