@@ -228,6 +228,9 @@ class ShiftRequest(Resource):
                                 (v["ID"] != v2["ID"] or v["role"] != v2["role"])):
                                 if v["ID"] == "-1": v["ID"] = None
                                 d.append([v["ID"], json.dumps(v["role"]), s["shiftID"], int(v["positionID"])])
+            if not contains(d):
+                # the request in unchanged so we don't need to update any data
+                return {"success": True}
         else:
             return { "success": False }
 

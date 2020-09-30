@@ -168,9 +168,9 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       if (res.data["success"]) {
-        alert("(patch) Save Succeded")
+        alert("Save Succeded")
       } else {
-        alert("(patch) Save Failed")
+        alert("Save Failed")
       }
     }).catch((err: AxiosError): void => {
       alert(err.message);
