@@ -25,6 +25,16 @@ export const toPythonDate = (d: Date): string => {
   return (`${d.getFullYear()}-${(d.getMonth() + 1)}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds().toString()}`);
 };
 
+export const toPythonDate2 = (d: Date): string => {
+  let month = (`${d.getMonth() + 1}`);
+  if (month.length === 1)
+    month = "0"+month;
+  let date = (`${d.getDate()}`);
+  if (date.length === 1)
+    date = "0"+date;
+  return (`${d.getFullYear()}-${month}-${date}T${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds().toString()}`);
+};
+
 export const makeid = (l: number = 15): string => {
   let r: string = "",
       c: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

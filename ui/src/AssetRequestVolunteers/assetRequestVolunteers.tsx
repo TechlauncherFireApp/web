@@ -2,6 +2,7 @@ import React from "react";
 import Asset from "./asset";
 import { Button } from "react-bootstrap";
 import axios, { AxiosResponse, AxiosError } from "axios";
+import { toPythonDate2 } from "../functions";
 
 interface Timeframe {
   startTime: Date;
@@ -136,8 +137,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         requestData.push({
           shiftID: asset.id,
           assetClass: asset.type,
-          startTime: asset.startDateTime.toISOString(),
-          endTime: asset.endDateTime.toISOString()
+          startTime: toPythonDate2(asset.startDateTime),
+          endTime: toPythonDate2(asset.endDateTime)
         });
       }
 
@@ -156,6 +157,10 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         for (const r of tmp) {
           r.startTime = new Date(Date.parse(r.startTime));
           r.endTime = new Date(Date.parse(r.endTime));
+          let startMillisecondOffset : number = r.startTime.getTimezoneOffset() * 60 * 1000
+          let endMillisecondOffset : number = r.endTime.getTimezoneOffset() * 60 * 1000
+          r.startTime.setTime(r.startTime.getTime()+startMillisecondOffset);
+          r.endTime.setTime(r.endTime.getTime()+endMillisecondOffset);
         }
         recommendation = tmp;
         // Both volunteerList and recommendation need to be populated
@@ -177,7 +182,17 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
-        recommendation = res.data["results"]
+        let tmp = res.data["results"]
+
+        for (const r of tmp) {
+          r.startTime = new Date(Date.parse(r.startTime));
+          r.endTime = new Date(Date.parse(r.endTime));
+          let startMillisecondOffset : number = r.startTime.getTimezoneOffset() * 60 * 1000
+          let endMillisecondOffset : number = r.endTime.getTimezoneOffset() * 60 * 1000
+          r.startTime.setTime(r.startTime.getTime()+startMillisecondOffset);
+          r.endTime.setTime(r.endTime.getTime()+endMillisecondOffset);
+        }
+        recommendation = tmp;
 
         // Both volunteerList and recommendation need to be populated
         if (volunteerList.length !== 0) {
@@ -202,13 +217,24 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     const shifts = this.state.assetRequest;
     console.log(shifts)
 
+    let requestData: any = [];
+    shifts.forEach(shift => {
+      requestData.push({
+        shiftID: shift.shiftID,
+        assetClass: shift.assetClass,
+        startTime: toPythonDate2(shift.startTime),
+        endTime: toPythonDate2(shift.endTime),
+        volunteers: shift.volunteers
+      });
+    });
+
     if (this.state.isNew === true) {
       axios.request({
         url: "shift/request?requestID=" + this.props.id,
         baseURL: "http://localhost:5000/",
         method: "POST",
         timeout: 15000,
-        data: { "shifts": shifts },
+        data: { "shifts": requestData },
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
@@ -228,7 +254,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         baseURL: "http://localhost:5000/",
         method: "PATCH",
         timeout: 15000,
-        data: { "shifts": shifts },
+        data: { "shifts": requestData },
         // withCredentials: true,
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
