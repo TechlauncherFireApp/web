@@ -25,7 +25,7 @@ export const toPythonDate = (d: Date): string => {
   return (`${d.getFullYear()}-${(d.getMonth() + 1)}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds().toString()}`);
 };
 
-export const toPythonDate2 = (d: Date): string => {
+export const dateToBackend = (d: Date): string => {
   let month = (`${d.getMonth() + 1}`);
   if (month.length === 1)
     month = "0"+month;
@@ -33,6 +33,13 @@ export const toPythonDate2 = (d: Date): string => {
   if (date.length === 1)
     date = "0"+date;
   return (`${d.getFullYear()}-${month}-${date}T${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds().toString()}`);
+};
+
+export const dateFromBackend = (d: string): Date => {
+  let out = new Date(Date.parse(d));
+  let millisecondOffset : number = out.getTimezoneOffset() * 60 * 1000;
+  out.setTime(out.getTime()+millisecondOffset);
+  return out;
 };
 
 export const makeid = (l: number = 15): string => {

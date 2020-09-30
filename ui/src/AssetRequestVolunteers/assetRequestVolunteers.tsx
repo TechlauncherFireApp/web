@@ -2,7 +2,7 @@ import React from "react";
 import Asset from "./asset";
 import { Button } from "react-bootstrap";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { toPythonDate2 } from "../functions";
+import { dateToBackend, dateFromBackend } from "../functions";
 
 interface Timeframe {
   startTime: Date;
@@ -137,8 +137,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         requestData.push({
           shiftID: asset.id,
           assetClass: asset.type,
-          startTime: toPythonDate2(asset.startDateTime),
-          endTime: toPythonDate2(asset.endDateTime)
+          startTime: dateToBackend(asset.startDateTime),
+          endTime: dateToBackend(asset.endDateTime)
         });
       }
 
@@ -155,12 +155,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         let tmp = res.data["results"]
 
         for (const r of tmp) {
-          r.startTime = new Date(Date.parse(r.startTime));
-          r.endTime = new Date(Date.parse(r.endTime));
-          let startMillisecondOffset : number = r.startTime.getTimezoneOffset() * 60 * 1000
-          let endMillisecondOffset : number = r.endTime.getTimezoneOffset() * 60 * 1000
-          r.startTime.setTime(r.startTime.getTime()+startMillisecondOffset);
-          r.endTime.setTime(r.endTime.getTime()+endMillisecondOffset);
+          r.startTime = dateFromBackend(r.startTime);
+          r.endTime = dateFromBackend(r.endTime);
         }
         recommendation = tmp;
         // Both volunteerList and recommendation need to be populated
@@ -185,12 +181,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         let tmp = res.data["results"]
 
         for (const r of tmp) {
-          r.startTime = new Date(Date.parse(r.startTime));
-          r.endTime = new Date(Date.parse(r.endTime));
-          let startMillisecondOffset : number = r.startTime.getTimezoneOffset() * 60 * 1000
-          let endMillisecondOffset : number = r.endTime.getTimezoneOffset() * 60 * 1000
-          r.startTime.setTime(r.startTime.getTime()+startMillisecondOffset);
-          r.endTime.setTime(r.endTime.getTime()+endMillisecondOffset);
+          r.startTime = dateFromBackend(r.startTime);
+          r.endTime = dateFromBackend(r.endTime);
         }
         recommendation = tmp;
 
@@ -222,8 +214,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       requestData.push({
         shiftID: shift.shiftID,
         assetClass: shift.assetClass,
-        startTime: toPythonDate2(shift.startTime),
-        endTime: toPythonDate2(shift.endTime),
+        startTime: dateToBackend(shift.startTime),
+        endTime: dateToBackend(shift.endTime),
         volunteers: shift.volunteers
       });
     });
