@@ -15,10 +15,9 @@ from endpoints.volunteer_status import VolunteerStatus
 from endpoints.volunteer_shifts import VolunteerShifts
 from endpoints.volunteer_availability import VolunteerAvailability
 from endpoints.volunteer_prefhours import VolunteerPrefhours
+from endpoints.vehicle_request import VehicleRequest
 from endpoints.shift_request import ShiftRequest
 from endpoints.existing_requests import ExistingRequests
-from AssetRequestVehicle.initial import Initial as AssetRequestVehicle_initial
-from AssetRequestVehicle.submit import Submit as AssetRequestVehicle_submit
 # Load environment variables
 from load_env import load_env
 load_env()
@@ -41,27 +40,9 @@ api.add_resource(VolunteerStatus, '/volunteer/status')
 api.add_resource(VolunteerShifts, '/volunteer/shifts')
 api.add_resource(VolunteerAvailability, '/volunteer/availability')
 api.add_resource(VolunteerPrefhours, '/volunteer/prefhours')
+api.add_resource(VehicleRequest, '/vehicle/request')
 api.add_resource(ShiftRequest, '/shift/request')
 api.add_resource(ExistingRequests, "/existing_requests")
-
-
-@app.route("/AssetRequestVehicle/initial", methods=["POST"])
-def method_AssetRequestVehicle_initial():
-    d = json.loads(request.data)                                            # Get POST Data
-    if (type(d) is dict) and contains(d["id"]):
-        o = AssetRequestVehicle_initial.get(d["id"])                        # Get Ouput
-        if type(o) in [dict, list]: return json.dumps(o)
-        else: return o
-    return error_message()
-
-@app.route("/AssetRequestVehicle/submit", methods=["POST"])
-def method_AssetRequestVehicle_submit():
-    d = json.loads(request.data)                                            # Get POST Data
-    if (type(d) is dict) and contains(d["id"], d["vehicles"]):
-        o = AssetRequestVehicle_submit.get(d["id"], d["vehicles"])          # Get Ouput
-        if type(o) in [dict, list]: return json.dumps(o)
-        else: return o
-    return error_message()
 
 if __name__ == '__main__':
     app.run(debug=True)
