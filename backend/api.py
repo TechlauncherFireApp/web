@@ -6,9 +6,9 @@ from includes.main import error_message, contains
 import json
 # Endpoints
 from endpoints.hello_world import HelloWorld
+from endpoints.new_request import NewRequest
 from endpoints.recommendation import Recommendation
 # from endpoints.assignment import Assignment
-from endpoints.NewAssetRequest import NewAssetRequest
 from endpoints.volunteer_all import VolunteerAll
 from endpoints.volunteer import Volunteer
 from endpoints.volunteer_status import VolunteerStatus
@@ -31,6 +31,7 @@ api = Api(app)
 
 # Define the api's endpoints
 api.add_resource(HelloWorld, '/hello-world')
+api.add_resource(NewRequest, "/new_request")
 api.add_resource(Recommendation, '/recommendation')
 # api.add_resource(Assignment, '/assignment',
 #     resource_class_kwargs={ 'volunteer_list': volunteer_list })
@@ -42,7 +43,6 @@ api.add_resource(VolunteerAvailability, '/volunteer/availability')
 api.add_resource(VolunteerPrefhours, '/volunteer/prefhours')
 api.add_resource(ShiftRequest, '/shift/request')
 api.add_resource(ExistingRequests, "/existing_requests")
-api.add_resource(NewAssetRequest, "/NewAssetRequest")
 
 
 @app.route("/AssetRequestVehicle/initial", methods=["POST"])
