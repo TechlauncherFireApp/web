@@ -99,12 +99,11 @@ class Recommendation(Resource):
 
         # Get all volunteers
         volunteers = volunteer_all(True)
-        
-        # TODO Update the database volunteers with all roles (not just most advanced)
-        # Then remove the below for loop
 
+        # Shouldn't have to have this switcher
         for volunteer in volunteers:
             # Fix possibleRoles values.
+            roles = []
             for role in volunteer["possibleRoles"]:
                 switcher = {
                     "Basic":"basic",
@@ -112,8 +111,9 @@ class Recommendation(Resource):
                     "Crew Leader":"crewLeader",
                     "Driver":"driver"
                 }
-                volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
-
+                roles.append(switcher[role])
+            volunteer["possibleRoles"] = roles
+        
         # Get the generated recommendation
         output = Schedule(volunteers, asset_requests)
 
