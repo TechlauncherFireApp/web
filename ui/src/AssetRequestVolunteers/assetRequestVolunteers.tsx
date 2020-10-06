@@ -89,6 +89,34 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     return output;
   }
 
+  getVolunteerList = (): Promise<volunteer[]> => {
+    // Get the current 'global' time from an API using Promise
+    return new Promise((resolve, reject) => {
+      axios.request({
+        url: "volunteer/all",
+        method: "GET",
+        timeout: 15000,
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      }).then((res: AxiosResponse): void => {
+        let tmp = res.data["results"];
+        
+        for (const v of tmp) {
+          let convertedAvailabilities: any = [];
+          for (const a of v.availabilities) {
+            const start = dateFromBackend(a[0]);
+            const end = dateFromBackend(a[1]);
+            convertedAvailabilities.push({ startTime: start, endTime: end });
+          }
+          v.availabilities = convertedAvailabilities;
+        }
+        console.log(0);
+        resolve(tmp);
+      }).catch((err: AxiosError): void => {
+        // alert(err.message);
+        resolve(this.getVolunteerList());
+      });
+    });
+  }
 
   getInitialData = (): void => {
 
@@ -96,33 +124,17 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     let recommendation: any = [];
 
     //get allVolunteers data from database
-    axios.request({
-      url: "volunteer/all",
-      method: "GET",
-      timeout: 15000,
-      headers: { "X-Requested-With": "XMLHttpRequest" }
-    }).then((res: AxiosResponse): void => {
-      let tmp = res.data["results"];
-      console.log("tmp:", tmp);
-      for (const v of tmp) {
-        let convertedAvailabilities: any = [];
-        for (const a of v.availabilities) {
-          const start = dateFromBackend(a[0]);
-          const end = dateFromBackend(a[1]);
-          convertedAvailabilities.push({ startTime: start, endTime: end });
-        }
-        v.availabilities = convertedAvailabilities;
-      }
-      volunteerList = tmp
+    this.getVolunteerList().then((tmp: volunteer[]): void => {
+      // Assign volunteer list
+      console.log(0);
+      volunteerList = tmp;
       volunteerList.sort((a, b) => ((a.firstName > b.firstName) ? 1 : ((a.firstName === b.firstName) ? ((a.lastName > b.lastName) ? 1 : -1) : -1)));
-      
+
       if (recommendation.length !== 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
         const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
         this.setState({ assetRequest, volunteerList, assignedVolunteers, loading: false })
       }
-    }).catch((err: AxiosError): void => {
-      alert(err.message);
     });
 
     //get the request volunteer data from the database
@@ -149,7 +161,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         this.setState({ assetRequest, volunteerList, assignedVolunteers, loading: false })
       }
     }).catch((err: AxiosError): void => {
-      alert(err.message);
+      // alert(err.message);
     });
   }
 
