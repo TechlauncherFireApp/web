@@ -52,8 +52,8 @@ def create_app():
         d = json.loads(request.data)                                            # Get POST Data
         if (type(d) is dict) and contains(d["id"]):
             o = AssetRequestVehicle_initial.get(d["id"])                        # Get Ouput
-            if type(o) in [dict, list]: return json.dumps(o)
-            else: return o
+            if type(o) in [dict, list]: return {"success": json.dumps(o)}
+            else: return {"success" : o}
         return error_message()
 
     @app.route("/AssetRequestVehicle/submit", methods=["POST"])
