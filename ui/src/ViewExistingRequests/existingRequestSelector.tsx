@@ -30,7 +30,6 @@ export default class existingRequestSelector extends React.Component<any, State>
     let l: AssetRequest[] = [];
     axios.request({
       url: "existing_requests",
-      baseURL: "http://localhost:5000/",
       method: "GET",
       timeout: 15000,
       // withCredentials: true,

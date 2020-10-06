@@ -42,7 +42,6 @@ export default class VolunteersContainer extends React.Component<any, State> {
     let l: volunteer[] = [];
     axios.request({
       url: "volunteer/all",
-      baseURL: "http://localhost:5000/",
       method: "GET",
       timeout: 15000,
       // withCredentials: true,

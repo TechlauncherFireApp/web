@@ -45,7 +45,6 @@ export default class Volunteer extends React.Component<any, State> {
         let l: volunteer[] = [];
         axios.request({
             url: "volunteer",
-            baseURL: "http://localhost:5000/",
             method: "GET",
             params: { "volunteerID": this.props.match.params.id },
             timeout: 15000,
@@ -67,7 +66,6 @@ export default class Volunteer extends React.Component<any, State> {
 
         axios.request({
             url: "volunteer/shifts",
-            baseURL: "http://localhost:5000/",
             method: "GET",
             params: { "volunteerID": this.props.match.params.id },
             timeout: 15000,
@@ -140,7 +138,6 @@ export default class Volunteer extends React.Component<any, State> {
 
         axios.request({
             url: "volunteer/status",
-            baseURL: "http://localhost:5000/",
             method: "PATCH",
             timeout: 15000,
             params: info,

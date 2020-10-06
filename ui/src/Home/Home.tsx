@@ -23,7 +23,6 @@ export default class Home extends React.Component<any, any> {
 
         axios.request({
             url: "volunteer/status",
-            baseURL: "http://localhost:5000/",
             method: "GET",//"PATCH",
             timeout: 15000,
             params: info,
