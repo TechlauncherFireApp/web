@@ -26,7 +26,7 @@ export default class BrigadeCaptainHome extends React.Component<any, State> {
     }
 
     axios.request({
-      url: "NewAssetRequest",
+      url: "new_request",
       method: "POST",
       data: { "title": this.state.request_title },
       timeout: 15000,

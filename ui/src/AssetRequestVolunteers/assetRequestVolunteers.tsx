@@ -109,7 +109,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
           }
           v.availabilities = convertedAvailabilities;
         }
-        console.log(0);
         resolve(tmp);
       }).catch((err: AxiosError): void => {
         // alert(err.message);
@@ -126,7 +125,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     //get allVolunteers data from database
     this.getVolunteerList().then((tmp: volunteer[]): void => {
       // Assign volunteer list
-      console.log(0);
       volunteerList = tmp;
       volunteerList.sort((a, b) => ((a.firstName > b.firstName) ? 1 : ((a.firstName === b.firstName) ? ((a.lastName > b.lastName) ? 1 : -1) : -1)));
 
