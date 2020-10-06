@@ -38,7 +38,7 @@ export default class Availability extends React.Component<any, State> {
   // Component Methods
   inData(k: Day, n: number): boolean {
     if (this.state.currentSchedule && contains(this.state.currentSchedule, this.state.currentSchedule[k]))
-      for (let l of this.state.currentSchedule[k]) if (l.includes(n) || ((n > l[0]) && (n < l[1]))) return true;
+      for (let l of this.state.currentSchedule[k]) if ((n === l[0]) || ((n > l[0]) && (n < l[1]))) return true;
     return false;
   }
 
@@ -47,7 +47,7 @@ export default class Availability extends React.Component<any, State> {
       // console.clear();
       if (this.inData(k, n)) this.deleteData(k, n);
       else this.insertData(k, n);
-      // console.log(JSON.stringify(this.data[k]));
+      console.log(JSON.stringify(this.state.currentSchedule[k]), "\n");
     }
   }
 
@@ -55,19 +55,19 @@ export default class Availability extends React.Component<any, State> {
     if (this.state.currentSchedule && contains(this.state.currentSchedule) && !this.inData(k, n)) {
       const d: Schedule = this.state.currentSchedule;
       let b: boolean = true;
-
+      
       for (let i: number = 0; i < d[k].length; i++) {
         if ((d[k][i][0] - 0.5) === n) { d[k][i][0] = n; b = false; }
-        else if ((d[k][i][1] + 0.5) === n) { d[k][i][1] = n; b = false; }
+        else if ((d[k][i][1] + 0.5) === (n + 0.5)) { d[k][i][1] = n + 0.5; b = false; }
 
-        if (contains(d[k][i + 1]) && ((d[k][i][1] + 0.5) === d[k][i + 1][0])) {
+        if (contains(d[k][i + 1]) && (d[k][i][1] === d[k][i + 1][0])) {
           d[k][i][1] = d[k][i + 1][1];
           d[k].splice(i + 1, 1);
           b = false;
         }
         if (!b) break;
       }
-      if (b) d[k].push([n, n]);
+      if (b) d[k].push([n, n + 0.5]);
       d[k].sort(function (a, b: number[]): number { return ((a[0] === b[0]) ? 0 : ((a[0] < b[0]) ? -1 : 1)); });
       this.setState({ currentSchedule: d });
     }
@@ -78,14 +78,14 @@ export default class Availability extends React.Component<any, State> {
       const d: Schedule = this.state.currentSchedule;
       
       for (let i: number = 0; i < d[k].length; i++) {
-        if (d[k][i].includes(n)) {
-          if (d[k][i][0] === d[k][i][1]) d[k].splice(i, 1);
+        if ((d[k][i][0] === n) || (d[k][i][1] === (n + 0.5))) {
+          if (d[k][i][0] === (d[k][i][1] - 0.5)) d[k].splice(i, 1);
           else if (d[k][i][0] === n) d[k][i][0] += 0.5;
-          else if (d[k][i][1] === n) d[k][i][1] -= 0.5;
+          else if (d[k][i][1] === (n + 0.5)) d[k][i][1] -= 0.5;
           break;
         } else if ((n > d[k][i][0]) && (n < d[k][i][1])) {
           d[k].push([n + 0.5, d[k][i][1]]);
-          d[k][i][1] = n - 0.5;
+          d[k][i][1] = n;
           break;
         }
       }
