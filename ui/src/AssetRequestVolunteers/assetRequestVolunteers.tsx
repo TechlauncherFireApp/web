@@ -1,7 +1,7 @@
 import React from "react";
 import Asset from "./asset";
-import { Button } from "react-bootstrap";
 import axios, { AxiosResponse, AxiosError } from "axios";
+import { dateToBackend, dateFromBackend } from "../functions";
 
 interface Timeframe {
   startTime: Date;
@@ -98,24 +98,24 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     //get allVolunteers data from database
     axios.request({
       url: "volunteer/all",
-      baseURL: "http://localhost:5000/",
       method: "GET",
       timeout: 15000,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
-      let tmp = res.data["results"]
+      let tmp = res.data["results"];
+      console.log("tmp:", tmp);
       for (const v of tmp) {
         let convertedAvailabilities: any = [];
         for (const a of v.availabilities) {
-          const start = new Date(Date.parse(a[0]));
-          const end = new Date(Date.parse(a[1]));
+          const start = dateFromBackend(a[0]);
+          const end = dateFromBackend(a[1]);
           convertedAvailabilities.push({ startTime: start, endTime: end });
         }
         v.availabilities = convertedAvailabilities;
       }
       volunteerList = tmp
       volunteerList.sort((a, b) => ((a.firstName > b.firstName) ? 1 : ((a.firstName === b.firstName) ? ((a.lastName > b.lastName) ? 1 : -1) : -1)));
-
+      
       if (recommendation.length !== 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
         const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
@@ -128,21 +128,20 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     //get the request volunteer data from the database
     axios.request({
       url: "shift/request?requestID=" + this.props.match.params.id,
-      baseURL: "http://localhost:5000/",
       method: "GET",
       timeout: 15000,
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
-      let tmp = res.data["results"]
-      console.log("tmp:", tmp)
-
+      let tmp = res.data["results"];
+      console.log("tmp:", tmp);
+      
       for (const r of tmp) {
-        r.startTime = new Date(Date.parse(r.startTime));
-        r.endTime = new Date(Date.parse(r.endTime));
+        r.startTime = dateFromBackend(r.startTime);
+        r.endTime = dateFromBackend(r.endTime);
       }
-      recommendation = tmp;
 
+      recommendation = tmp;
       // Both volunteerList and recommendation need to be populated
       if (volunteerList.length !== 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
@@ -157,13 +156,23 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
   submitData = (): void => {
     const shifts = this.state.assetRequest;
 
+    let requestData: any = [];
+    shifts.forEach(shift => {
+      requestData.push({
+        shiftID: shift.shiftID,
+        assetClass: shift.assetClass,
+        startTime: dateToBackend(shift.startTime),
+        endTime: dateToBackend(shift.endTime),
+        volunteers: shift.volunteers
+      });
+    });
+
     //TODO implement the patch request
     axios.request({
       url: "shift/request?requestID=" + this.props.match.params.id,
-      baseURL: "http://localhost:5000/",
       method: "PATCH",
       timeout: 15000,
-      data: { "shifts": shifts },
+      data: { "shifts": requestData },
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {

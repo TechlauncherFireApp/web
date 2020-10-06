@@ -3,7 +3,7 @@ import "./AssetRequestVehicle.scss";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import DatePicker from "react-datepicker";
 import { Button } from "react-bootstrap";
-import { contains, getValidDate, toPythonDate, makeid, toSentenceCase } from "../functions";
+import { contains, getValidDate, toPythonDate, makeid, toSentenceCase, dateToBackend } from "../functions";
 
 interface SelectedVehicles {
   id: string;
@@ -57,7 +57,6 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     this.setState({ allow_getInitialData: false });
     axios.request({
       url: "AssetRequestVehicle/initial",
-      baseURL: "http://localhost:5000/",
       method: "POST",
       data: { "id": this.props.match.params.id },
       timeout: 15000,
@@ -108,7 +107,6 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
 
     axios.request({
       url: "AssetRequestVehicle/submit",
-      baseURL: "http://localhost:5000/",
       method: "POST",
       data: { "id": this.props.match.params.id, "vehicles": d },
       timeout: 15000,
@@ -124,14 +122,13 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
         requestData.push({
           shiftID: asset.id,
           assetClass: asset.type,
-          startTime: asset.startDateTime.toISOString(),
-          endTime: asset.endDateTime.toISOString()
+          startTime: dateToBackend(asset.startDateTime),
+          endTime: dateToBackend(asset.endDateTime),
         });
       }
 
       axios.request({
         url: "recommendation",
-        baseURL: "http://localhost:5000/",
         method: "POST",
         data: { "request": requestData },
         timeout: 15000,
@@ -143,7 +140,6 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
 
         axios.request({
           url: "shift/request?requestID=" + this.props.match.params.id,
-          baseURL: "http://localhost:5000/",
           method: "POST",
           timeout: 15000,
           data: { "shifts": tmp },
@@ -152,7 +148,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
         }).then((res: AxiosResponse): void => {
           console.log(res.data)
           if (res.data.success) {
-            alert("Save Succeded")
+            // alert("Save Succeded")
             this.setState({ allow_submitData: true });
             window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}`, "_self", "", false);
           } else {
