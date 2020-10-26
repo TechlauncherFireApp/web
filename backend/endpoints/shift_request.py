@@ -101,7 +101,8 @@ PATCH
 shift_volunteers_list_field = {
     "ID": fields.String,
     "positionID": fields.Integer,
-    "roles": fields.List(fields.String)
+    "role": fields.List(fields.String),
+    "status": fields.String,
 }
 
 shift_list_field = {
@@ -128,7 +129,10 @@ class ShiftRequest(Resource):
         if args["requestID"] is None:
             return { "results": None }
         
-        requestID = args["requestID"]
+        return self.get_func(args["requestID"])
+    
+    # @marshal_with(get_resource_fields)
+    def get_func(self, requestID):
         #TODO Get a shift request from it's requestID
 
         conn = connection()
@@ -138,24 +142,27 @@ class ShiftRequest(Resource):
                 o = []
                 q = """
                     SELECT DISTINCT
-                        arv.`id` AS `shiftID`, v.`type` AS `assetClass`, arv.`from` AS `startTime`, arv.`to` AS `endTime`,
-                        arp.`idVolunteer` AS `ID`, arp.`position` AS `positionID`, arp.`roles` AS `roles`
+                        arv.`id` AS `shiftID`, arv.`type` AS `assetClass`, arv.`from` AS `startTime`, arv.`to` AS `endTime`,
+                        arp.`idVolunteer` AS `ID`, arp.`position` AS `positionID`, arp.`roles` AS `role`, arp.`status` AS `status`
                     FROM
                         `asset-request_volunteer` AS arp
                         INNER JOIN `asset-request_vehicle` AS arv ON arp.`idVehicle` = arv.`id`
-                        INNER JOIN `vehicle` AS v ON v.`id` = arv.`idVehicle`
                     WHERE
                         arv.`idRequest` = %s;"""
                 cur.execute(re.sub("\s\s+", " ", q), [requestID])
                 res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]      # Get all the vehicles inside a request
                 for y in res:
+
+                    # start - untested
+                    if y["ID"] == None: y["ID"] = "-1"
+                    # end - untested 
                     n = True
                     for i, x in enumerate(o):
                         if x["shiftID"] == y["shiftID"]:
-                            o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) })
+                            o[i]["volunteers"].append({ "ID": y["ID"], "positionID": y["positionID"], "role": json.loads(y["role"]), "status": y["status"] })
                             n = False
                             break
-                    if n: o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "roles": json.loads(y["roles"]) }] })
+                    if n: o.append({ "shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"], "endTime": y["endTime"], "volunteers": [{ "ID": y["ID"], "positionID": y["positionID"], "role": json.loads(y["role"]), "status": y["status"] }] })
 
                 cur_conn_close(cur, conn)
                 return { "results": o }
@@ -176,6 +183,7 @@ class ShiftRequest(Resource):
         d = []
         for s in shifts:
             for v in s["volunteers"]:
+                if v["ID"] == "-1": v["ID"] = None
                 d.append([v["ID"], s["shiftID"], int(v["positionID"]), json.dumps(v["role"])])
 
         print("data to save:", d)
@@ -187,7 +195,7 @@ class ShiftRequest(Resource):
             try:
                 q = ",".join(["(%s,%s,%s,%s)"] * len(d))
                 d = np.concatenate(d).tolist()
-                cur.execute("INSERt INTO `asset-request_volunteer` (`idVolunteer`,`idVehicle`,`position`,`roles`) VALUES " + q + ";", d)
+                cur.execute("INSERT INTO `asset-request_volunteer` (`idVolunteer`,`idVehicle`,`position`,`roles`) VALUES " + q + ";", d)
                 conn.commit()
                 cur_conn_close(cur, conn)
                 return { "success": True }
@@ -204,8 +212,50 @@ class ShiftRequest(Resource):
         if args["requestID"] is None or args["shifts"] is None:
             return { "success": False }
         
+        requestID = args["requestID"]
         shifts = args["shifts"]
+        cd = self.get_func(requestID)["results"]
+
         #TODO Update a shift request object in database
+        d = []
+        if contains(cd) and (type(cd) is list):
+            for s in shifts:
+                for v in s["volunteers"]:
+                    for s2 in cd:
+                        for v2 in s2["volunteers"]:
+                            if ((s["shiftID"] == s2["shiftID"] and v["positionID"] == v2["positionID"]) and
+                                (v["ID"] != v2["ID"] or v["role"] != v2["role"])):
+                                if v["ID"] == "-1": v["ID"] = None
+                                d.append([v["ID"], json.dumps(v["role"]), s["shiftID"], int(v["positionID"])])
+            if not contains(d):
+                # the request in unchanged so we don't need to update any data
+                return {"success": True}
+        else:
+            return { "success": False }
 
+        # Insert
+        conn = connection()
+        if contains(d) and is_connected(conn):
+            conn.start_transaction()
+            cur = conn.cursor(prepared=True)
+            try:
+                for x in d:
+                    cur.execute("UPDATE `asset-request_volunteer` SET `idVolunteer`=%s, `roles`=%s, `status`=DEFAULT WHERE `idVehicle`=%s AND `position`=%s;", x)
+                conn.commit()
+                cur_conn_close(cur, conn)
+                return { "success": True }
+            except Exception as e:
+                conn.rollback()
+                cur_conn_close(cur, conn)
+                print (str(e))
+                return { "success": False }
 
-        return { "success": False }
+# d.append([s["shiftID"], int(v["positionID"]), v["ID"], json.dumps(v["role"])])
+
+# q = ",".join(["(%s,%s,%s,%s)"] * len(d))
+# q = re.sub("\s\s+", " ", """
+#     INSERT INTO `asset-request_volunteer` (`idVehicle`,`position`,`idVolunteer`,`roles`) VALUES """ + q + """"
+#     ON DUPLICATE KEY UPDATE `idVolunteer`=VALUES(`idVolunteer`), `roles`=VALUES(`roles`);
+# """)
+# d = np.concatenate(d).tolist()
+# cur.execute(q, d)

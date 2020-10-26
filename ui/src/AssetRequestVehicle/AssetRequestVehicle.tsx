@@ -3,12 +3,11 @@ import "./AssetRequestVehicle.scss";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import DatePicker from "react-datepicker";
 import { Button } from "react-bootstrap";
-import { contains, getValidDate, toPythonDate, makeid, toSentenceCase } from "../functions";
+import { contains, getValidDate, toPythonDate, makeid, toSentenceCase, dateToBackend } from "../functions";
 
 interface SelectedVehicles {
-  id: string;
-  idVehicle: string;
-  type: string;
+  vehicleID: string;
+  assetClass: string;
   startDateTime: Date;
   endDateTime: Date;
 }
@@ -57,22 +56,17 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     if (!this.state.allow_getInitialData) return;
     this.setState({ allow_getInitialData: false });
     axios.request({
-      url: "AssetRequestVehicle/initial",
-      baseURL: "http://localhost:5000/",
-      method: "POST",
-      data: { "id": this.props.id },
+      url: "vehicle/request",
+      method: "GET",
+      params: { "requestID": this.props.match.params.id },
       timeout: 15000,
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
-      console.log(res.data);
-      if (typeof res.data == "object") {
-        for (let x of res.data) {
-          x["startDateTime"] = new Date(x["startDateTime"]);
-          x["endDateTime"] = new Date(x["endDateTime"]);
-        }
-        this.setState({ requestList: res.data as SelectedVehicles[] });
-      } else alert(res.data);
+      // console.log(res.data);
+      if ((typeof res.data == "object") && (res.data["success"])) {
+        window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}`, "_self", "", false);
+      }
       this.setState({ allow_getInitialData: true });
     }).catch((err: AxiosError): void => {
       alert(err.message);
@@ -81,6 +75,10 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
   }
 
   submitData(): void {
+
+
+
+
     if (!this.state.allow_getInitialData || !this.state.allow_submitData) return;
     console.clear();
     this.setState({ allow_submitData: false });
@@ -89,9 +87,8 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     let d: any = [];
     for (let x of l) {
       d.push({
-        "id": x.id,
-        "idVehicle": x.idVehicle,
-        "type": x.type,
+        "vehicleID": x.vehicleID,
+        "assetClass": x.assetClass,
         "startDateTime": toPythonDate(x.startDateTime), // toTimeblock()
         "endDateTime": toPythonDate(x.endDateTime)
       });
@@ -103,28 +100,74 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       alert("At least one asset needs to be selected");
       return;
     }
-
+    console.log({ "requestID": this.props.match.params.id, "vehicles": d });
     axios.request({
-      url: "AssetRequestVehicle/submit",
-      baseURL: "http://localhost:5000/",
+      url: "vehicle/request",
       method: "POST",
-      data: { "id": this.props.id, "vehicles": d },
+      data: { "requestID": this.props.match.params.id, "vehicles": d },
       timeout: 15000,
       // withCredentials: true,
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
+      // console.log(res.data);
       // alert(res.data === 1 ? "Successfully Saved" : res.data);
 
-      // TODO - opening the volunteers page for this asset request
-      this.props.submitRequest(this.state.requestList);
-      //window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}/${"new"}`, "_self", "", false);
+      let requestData: any = [];
+      for (const asset of this.state.requestList) {
+        requestData.push({
+          shiftID: asset.vehicleID,
+          assetClass: asset.assetClass,
+          startTime: dateToBackend(asset.startDateTime),
+          endTime: dateToBackend(asset.endDateTime),
+        });
+      }
 
+      axios.request({
+        url: "recommendation",
+        method: "POST",
+        data: { "request": requestData },
+        timeout: 15000,
+        // withCredentials: true,
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      }).then((res: AxiosResponse): void => {
+        let tmp = res.data["results"]
+        console.log("res.data[results]:", tmp)
 
-      this.setState({ allow_submitData: true });
+        axios.request({
+          url: "shift/request?requestID=" + this.props.match.params.id,
+          method: "POST",
+          timeout: 15000,
+          data: { "shifts": tmp },
+          // withCredentials: true,
+          headers: { "X-Requested-With": "XMLHttpRequest" }
+        }).then((res: AxiosResponse): void => {
+          console.log(res.data)
+          if (res.data.success) {
+            // alert("Save Succeded")
+            this.setState({ allow_submitData: true });
+            window.open(window.location.origin + `/assetRequest/volunteers/${this.props.match.params.id}`, "_self", "", false);
+          } else {
+            this.setState({ allow_submitData: true });
+            alert("Save Failed")
+          }
+        }).catch((err: AxiosError): void => {
+          alert(err.message);
+          this.setState({ allow_submitData: true });
+        });
+      }).catch((err: AxiosError): void => {
+        alert(err.message);
+        this.setState({ allow_submitData: true });
+      });
+
+      //this.props.submitRequest(this.state.requestList);      
     }).catch((err: AxiosError): void => {
       alert(err.message);
       this.setState({ allow_submitData: true });
     });
+
+
+
+
   }
 
   insertAsset(): void {
@@ -133,22 +176,24 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     if (!this.state.allow_getInitialData) return;
     const o: SelectedVehicles[] = this.state.requestList;
     let a: SelectedVehicles = {
-      id: makeid(),
-      idVehicle: makeid(),
-      type: this.insert_assetType.current ? this.insert_assetType.current.value : "",
+      vehicleID: makeid(),
+      assetClass: this.insert_assetType.current ? this.insert_assetType.current.value : "",
       startDateTime: this.state.startDateTime,
       endDateTime: this.state.endDateTime,
     };
-    console.log(a.id);
+    console.log(a.vehicleID);
 
     // Validate Data :- Asset Type
-    if (!contains(a.type)) { alert("Asset Type has not been selected"); return; }
+    if (!contains(a.assetClass)) { alert("Asset Type has not been selected"); return; }
 
     // Validate Data :- Start and End DateTime
     if (!contains(a.startDateTime)) { alert("Start DateTime has not been selected"); return; }
     else if (!contains(a.endDateTime)) { alert("End DateTime has not been selected"); return; }
     else if (a.startDateTime.valueOf() < (new Date()).valueOf()) { alert("Start DateTime has to be in the future"); return; }
     else if (a.startDateTime.valueOf() >= a.endDateTime.valueOf()) { alert("Start DateTime has to be earlier than End DateTime"); return; }
+    else if ((Math.abs(a.startDateTime.valueOf() - a.endDateTime.valueOf()) / 3600000) > 14) { alert("This request exceeds the maximum shift length, consider breaking down into multiple shifts"); }
+
+
 
     // Detect same records --> for (let x of o) if (JSON.stringify(a) === JSON.stringify(x)) { alert("Same Record already exists"); return; }
 
@@ -162,7 +207,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     const o: SelectedVehicles[] = this.state.requestList;
 
     // Find and Remove Element
-    for (let y = 0; y < o.length; y++) if (o[y].id === i) o.splice(y, 1);
+    for (let y = 0; y < o.length; y++) if (o[y].vehicleID === i) o.splice(y, 1);
 
     // Update Data
     this.setState({ requestList: o });
@@ -185,7 +230,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
   render() {
     return (
       <asset-request-vehicle>
-        <h1>New Asset Request</h1>
+        <h4>New Asset Request</h4>
         <hr />
         <div className="entry">
           <div className="con">
@@ -193,7 +238,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
             <select ref={this.insert_assetType}>
               <option value="" disabled hidden>Select asset type</option>
               <option value="heavyTanker" selected>Heavy Tanker</option>
-              <option value="mediumUnit">Medium Unit</option>
+              <option value="mediumTanker">Medium Tanker</option>
               <option value="lightUnit">Light Unit</option>
             </select>
           </div>
@@ -219,13 +264,13 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
           </div>
           <insert onClick={() => this.insertAsset()}></insert>
         </div>
-        <hr />
+        <hr className="thick" />
         <div className="output">
           {this.state.allow_getInitialData ? <>
             {this.state.requestList.map((t: SelectedVehicles) => (
-              <request-body id={t.id}>
-                <svg type="close" viewBox="0 0 282 282" onClick={() => this.removeAsset(t.id)}> <g> <circle cx="141" cy="141" r="141" /> <ellipse cx="114" cy="114.5" rx="114" ry="114.5" /> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z" /> </g> </svg>
-                <h2>{toSentenceCase(t.type)}</h2>
+              <request-body id={t.vehicleID}>
+                <svg type="close" viewBox="0 0 282 282" onClick={() => this.removeAsset(t.vehicleID)}> <g> <circle cx="141" cy="141" r="141" /> <ellipse cx="114" cy="114.5" rx="114" ry="114.5" /> <path d="M1536.374,2960.632,1582.005,2915l20.742,20.742-45.632,45.632,45.632,45.632-20.742,20.742-45.632-45.632-45.632,45.632L1470,3027.005l45.632-45.632L1470,2935.742,1490.742,2915Z" /> </g> </svg>
+                <h2>{toSentenceCase(t.assetClass)}</h2>
                 <div className="cont-1">
                   <div className="cont-2">
                     <label>Start</label>
@@ -244,7 +289,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
             ))}
           </> : "Loading"}
         </div>
-        <hr />
+        <hr className="thick" />
         <Button className="type-1" onClick={() => this.submitData()}>{this.state.allow_submitData ? "Submit Request" : "Loading"}</Button>
       </asset-request-vehicle>
     );

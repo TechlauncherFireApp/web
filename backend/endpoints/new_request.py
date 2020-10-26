@@ -29,7 +29,7 @@ resource_fields = {
 }
 
 # Make a New Request inside the DataBase
-class NewAssetRequest(Resource):
+class NewRequest(Resource):
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()

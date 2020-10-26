@@ -3,95 +3,104 @@ from flask import Flask
 from flask_restful import reqparse, abort, Resource, fields, marshal_with, inputs
 import re, json
 from includes.main import contains
-# Mysql
 from includes.connection_mysqli import get as connection, is_connected, cur_conn_close
+
 
 '''
 Define Data Input
 
 GET
 {
-    "volunteerID": String
+    idVolunteer: String
+    idVehicle: String
 }
 
 PATCH
 {
-    "volunteerID": String,
-    "prefHours": Integer
+    idVolunteer: String
+    idVehicle: String
+    Status: String 
 }
 
 '''
 
 parser = reqparse.RequestParser()
-parser.add_argument('volunteerID', action='store', type=str)
-parser.add_argument('prefHours', action='store', type=int)
+parser.add_argument('idVolunteer', action='store', type=str) # unsure about this line
+parser.add_argument('idVehicle', action='store', type=str)
+parser.add_argument('status', action='store', type=str)
+
 
 '''
 Define Data Output
 
 GET
 {
-    "prefHours": Integer
+    status: String
 }
 
 PATCH
 {
-    "success" : Boolean
+    success: boolean
 }
+
 '''
 
 get_resource_fields = {
-    'prefHours': fields.Integer,
+    'status': fields.String,
     'success': fields.Boolean
 }
 
 patch_resource_fields = {
-    'success': fields.Boolean,
+    'success': fields.Boolean
 }
 
 
-# Handle the Recommendation endpoint
-class VolunteerPrefhours(Resource):
+class VolunteerStatus(Resource):
+
     @marshal_with(get_resource_fields)
     def get(self):
         args = parser.parse_args()
-        if args["volunteerID"] is None:
-            return { "success": False }
-        id = args["volunteerID"]
-        # TODO Get the volunteer's prefHours
-
+        if (args["idVolunteer"] is None or args["idVehicle"] is None):
+            return { "status": None, "success": False }
+        idVolunteer = args['idVolunteer']
+        idVehicle = args['idVehicle']
         conn = connection()
         if is_connected(conn):
             cur = conn.cursor(prepared=True)
             try:
-                cur.execute("SELECT `prefHours` FROM `volunteer` WHERE `id`=%s;", [id])
+                cur.execute("SELECT `status` FROM `asset-request_volunteer` WHERE `idVolunteer`=%s AND `idVehicle`=%s;", [idVolunteer, idVehicle])
                 res = cur.fetchone()
                 res = dict(zip(cur.column_names, (res if contains(res) else [])))
                 if contains(res):
                     cur_conn_close(cur, conn)
-                    return { "success": True, "prefHours": int(res["prefHours"]) }
+                    return { "success": True, "status": (res["status"]) }
                 cur_conn_close(cur, conn)
             except Exception as e:
                 cur_conn_close(cur, conn)
                 print (str(e))
+        return { "success": False, "status": None }
 
-        return { "success": False, "prefHours": None }
+
 
     @marshal_with(patch_resource_fields)
     def patch(self):
+
         args = parser.parse_args()
-        if args["volunteerID"] is None or args["prefHours"] is None:
+        if (args["idVolunteer"] is None or args["idVehicle"] is None or args["status"] is None):
             return { "success": False }
-        id = args["volunteerID"]
-        prefHours = int(args["prefHours"])
-        # TODO Update the volunteer's prefHours
+        
+        idVolunteer = args['idVolunteer']
+        idVehicle = args['idVehicle']
+        status = args['status']
+
+        if status not in ["confirmed","rejected"]: return { "success" : False }
 
         conn = connection()
         if is_connected(conn):
             conn.start_transaction()                # Transaction type
             cur = conn.cursor(prepared=True)
             try:
-                cur.execute("UPDATE `volunteer` SET `prefHours`=%s WHERE `id`=%s;", [prefHours, id])
+                cur.execute("UPDATE `asset-request_volunteer` SET `status`=%s WHERE `idVolunteer`=%s AND `idVehicle`=%s;", [status, idVolunteer, idVehicle])
                 conn.commit()                       # Commit
                 cur_conn_close(cur, conn)
                 return { "success": True }

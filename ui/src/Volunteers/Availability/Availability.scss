@@ -44,12 +44,12 @@ availability {
             border: 1px solid var(--white-1);
             background-color: var(--silver-3);
 
-            &:not([data-selected="true"]):hover {
+            &:not([selectd]):hover {
               background-color: var(--purple-1);
               opacity: 0.5;
             }
 
-            &[data-selected="true"] {
+            &[selectd] {
               background-color: var(--purple-1);
             }
           }

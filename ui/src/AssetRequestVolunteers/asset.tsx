@@ -12,9 +12,12 @@ export default class Asset extends React.Component<any, any> {
       if (asset.volunteers[i].positionID === newPosition.positionID) {
         asset.volunteers[i].volunteer = newPosition.volunteer;
         asset.volunteers[i].role = newPosition.roles;
+        asset.volunteers[i].status = newPosition.status;
+        newPosition.assigned ? asset.volunteers[i].ID = newPosition.volunteer.ID : asset.volunteers[i].ID = '-1';
         i = asset.volunteers.length;
       }
     }
+    console.log(asset)
     this.props.updateAssetRequest(asset);
   }
 
@@ -38,6 +41,7 @@ export default class Asset extends React.Component<any, any> {
       volunteer: position.volunteer,
       assetClass: asset.assetClass,
       roles: position.role,
+      status: position.status,
       startTime: asset.startTime,
       endTime: asset.endTime
     }

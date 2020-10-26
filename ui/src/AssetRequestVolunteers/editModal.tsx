@@ -107,7 +107,12 @@ export default class EditModal extends React.Component<any, State> {
     if (filter.position) {
       //let v: any;
       for (const v of allVolunteers) {
-        targetRoles.every((r: string) => v.possibleRoles.includes(r)) && list.push(v); //if the volunteer in question can fulfil all vehicle requirements add this volunteer to the list
+
+        if (targetRoles.length == 1 && targetRoles[0] == "basic") {
+          v.possibleRoles.includes("basic") && !v.possibleRoles.includes("advanced") && list.push(v); //if the volunteer in question is basic but not advanced
+        } else {
+          targetRoles.every((r: string) => v.possibleRoles.includes(r)) && list.push(v); //if the volunteer in question can fulfil all vehicle requirements add this volunteer to the list
+        }
       }
     } else {
       list = [...allVolunteers];
@@ -198,7 +203,7 @@ export default class EditModal extends React.Component<any, State> {
                   <tbody>
                     {this.state.searchResults.map((t: any) => (
                       <tr className="view" onClick={() => { this.setState({ selectedVolunteer: t }); }}>
-                        <td>{this.props.assignedVolunteers.has(t.ID) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../assets/assigned.png")} alt="" /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
+                        <td>{this.props.assignedVolunteers.has(t.ID) ? <div title="Already assigned">{t.firstName}{" "}{t.lastName}{" "}<img src={require("../images/assigned.png")} alt="" /></div> : <div>{t.firstName}{" "}{t.lastName}</div>}</td>
                         <td>
                           {t.qualifications.map((q: string) => <div>- {q}</div>)}
                         </td>

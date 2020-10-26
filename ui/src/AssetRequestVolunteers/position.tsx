@@ -1,13 +1,12 @@
 import React from "react";
 import "./position.scss";
 import { Button } from "react-bootstrap";
-import { parseRolesAsString } from "../functions";
+import { parseRolesAsString, toSentenceCase } from "../functions";
 import EditModal from "./editModal";
 
 interface State {
   //related to display elements
   showEditModal: boolean; // Is the edit modal being displayed
-  availabilityConfirmed: boolean; //TODO this needs to be made dynamic, need to see how shifts are stored in database
   qualificationsVisible: boolean; //are qualifications being displayed for the volunteer in this position
 }
 
@@ -15,7 +14,6 @@ interface State {
 export default class Position extends React.Component<any, State> {
   state: State = {
     showEditModal: false,
-    availabilityConfirmed: false,
     qualificationsVisible: false,
   };
 
@@ -29,19 +27,14 @@ export default class Position extends React.Component<any, State> {
     this.setState({ showEditModal });
   };
 
-  // 1.5.4
-  handleToggleColour = (): void => {
-    const availabilityConfirmed = !this.state.availabilityConfirmed;
-    this.setState({ availabilityConfirmed });
-  };
-
   // 1.3.5, if a volunteer is changed update the relevant fields and propogate the change up through parent components
   updatePosition = (v: any): void => {
     let newPosition = this.props.position;
     newPosition.assigned = true;
     newPosition.volunteer = v;
+    newPosition.status = "pending";
 
-    if (newPosition.roles.includes("advanced") && v.possibleRoles.includes("basic")) {
+    if (newPosition.roles.includes("advanced") && !v.possibleRoles.includes("advanced")) {
       newPosition.roles = ["basic"];
     } else if (newPosition.roles.includes("basic") && v.possibleRoles.includes("advanced")) {
       newPosition.roles = ["advanced"];
@@ -49,7 +42,7 @@ export default class Position extends React.Component<any, State> {
 
     console.log("look here!", newPosition, v)
 
-    this.setState({ availabilityConfirmed: false, qualificationsVisible: false });
+    this.setState({ qualificationsVisible: false });
     this.props.updateAsset(newPosition);
   }
 
@@ -57,7 +50,7 @@ export default class Position extends React.Component<any, State> {
     let newPosition: any = this.props.position;
     newPosition.assigned = false;
     newPosition.volunteer = undefined;
-    this.state.availabilityConfirmed = false;
+    newPosition.status = "pending";
     this.props.updateAsset(newPosition);
   }
 
@@ -73,7 +66,7 @@ export default class Position extends React.Component<any, State> {
     for (let i = 0; i < quals.length - 1; i++) {
       result.push(<div>- {quals[i]}</div>)
     }
-    result.push(<div>- {quals[quals.length - 1]} <img src={require("../assets/collapse.png")} alt="" /></div>)
+    result.push(<div>- {quals[quals.length - 1]} <img src={require("../images/collapse.png")} alt="" /></div>)
     return result;
   }
 
@@ -81,10 +74,19 @@ export default class Position extends React.Component<any, State> {
   render() {
     const { position } = this.props;
     const assigned: boolean = this.props.position.assigned;
-    const bgColourNotConfirmed = "#ececec";
-    const bgColourConfirmed = "#abff95";
+    const bgPending = "#ececec";
+    const bgGrey = "#ececec";
+    const bgConfirmed = "#abff95";
     const bgWarning = "#FFCCCC"
-
+    let bgColour: string;
+    if (!assigned || position.status === "rejected") {
+      bgColour = bgWarning;
+    } else if (position.status === "confirmed") {
+      bgColour = bgConfirmed;
+    } else {
+      bgColour = bgGrey;
+    }
+    console.log(position.positionID, bgColour)
     return (
       <React.Fragment>
 
@@ -102,9 +104,7 @@ export default class Position extends React.Component<any, State> {
           key={position.positionID}
           className="body"
           style={{
-            backgroundColor: this.state.availabilityConfirmed
-              ? bgColourConfirmed
-              : (assigned ? bgColourNotConfirmed : bgWarning)
+            backgroundColor: bgColour
           }}
         >
           <td>{parseRolesAsString(position.roles)}</td>
@@ -114,7 +114,7 @@ export default class Position extends React.Component<any, State> {
               <td width="15%" onClick={this.showHideQualifications} className="view">
                 {this.state.qualificationsVisible ?
                   this.displayQualsList(position.volunteer.qualifications)
-                  : <div>view <img src={require("../assets/expand.png")} alt="" /></div>}
+                  : <div>view <img src={require("../images/expand.png")} alt="" /></div>}
               </td>
               <td width="10%">{position.volunteer.mobileNo}</td>
             </React.Fragment>
@@ -136,15 +136,8 @@ export default class Position extends React.Component<any, State> {
           {assigned ?
             <td width="10%">
               <div >
-                <input //1.5.4
-                  className="confirm"
-                  type="checkbox"
-                  id="availability"
-                  checked={this.state.availabilityConfirmed}
-                  onClick={this.handleToggleColour}
-                />
-            Confirmed
-            </div>
+                {toSentenceCase(position.status)}
+              </div>
             </td> :
             <td width="10%" />
           }

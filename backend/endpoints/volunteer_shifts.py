@@ -65,23 +65,19 @@ class VolunteerShifts(Resource):
             return { "success": False }
         volunteerID = args["volunteerID"]
 
-        # TODO create the mysql query.
-        # may need to use the function 'availabilitiesToDateTime' to convert time block data to date time
-        
         conn = connection()
         if is_connected(conn):
             cur = conn.cursor(prepared=True)
             try:
                 q = re.sub("\s\s+", " ", """
-                    SELECT
+                    SELECT DISTINCT
                         ar.`title` AS `requestTitle`,
-                        v.`id` AS `vehicleID`, v.`type` AS `vehicleType`,
+                        arv.`id` AS `vehicleID`, arv.`type` AS `vehicleType`,
                         arv.`from` AS `vehicleFrom`, arv.`to` AS `vehicleTo`,
                         arp.`roles` AS `volunteerRoles`, arp.`status` AS `volunteerStatus`
                     FROM
                         `asset-request_volunteer` AS arp
                         INNER JOIN `asset-request_vehicle` AS arv ON arp.`idVehicle` = arv.`id`
-                        INNER JOIN `vehicle` AS v ON arv.`idVehicle` = v.`id`
                         INNER JOIN `asset-request` AS ar ON arv.`idRequest` = ar.`id`
                     WHERE
                         `idVolunteer` = %s;

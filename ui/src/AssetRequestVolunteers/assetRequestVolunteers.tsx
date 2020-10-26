@@ -1,7 +1,7 @@
 import React from "react";
 import Asset from "./asset";
-import { Button } from "react-bootstrap";
 import axios, { AxiosResponse, AxiosError } from "axios";
+import { dateToBackend, dateFromBackend } from "../functions";
 
 interface Timeframe {
   startTime: Date;
@@ -26,6 +26,7 @@ interface Position {
   ID: string;
   volunteer: volunteer;
   role: string[];
+  status: string;
 }
 
 interface asset {
@@ -37,21 +38,21 @@ interface asset {
 }
 
 interface State {
+  loading: boolean;
   allow_getInitialData: boolean;
   volunteerList: volunteer[];
   assignedVolunteers: Map<string, { shiftID: number, positionID: number }>;
   assetRequest: asset[];
-  isNew: boolean;
 }
 
 export default class AssetRequestVolunteers extends React.Component<any, State> {
 
   state: State = {
+    loading: true,
     allow_getInitialData: true,
     volunteerList: [],
     assignedVolunteers: new Map(),
     assetRequest: [],
-    isNew: true
   };
 
   constructor(props: any) {
@@ -59,7 +60,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     if (this.state.volunteerList.length > 0) {
       this.identifyAssignedVolunteers(this.state.assetRequest);
     }
-    this.state.isNew = props.isNew;
   }
 
   componentDidMount(): void {
@@ -89,6 +89,33 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     return output;
   }
 
+  getVolunteerList = (): Promise<volunteer[]> => {
+    // Get the current 'global' time from an API using Promise
+    return new Promise((resolve, reject) => {
+      axios.request({
+        url: "volunteer/all",
+        method: "GET",
+        timeout: 15000,
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      }).then((res: AxiosResponse): void => {
+        let tmp = res.data["results"];
+        
+        for (const v of tmp) {
+          let convertedAvailabilities: any = [];
+          for (const a of v.availabilities) {
+            const start = dateFromBackend(a[0]);
+            const end = dateFromBackend(a[1]);
+            convertedAvailabilities.push({ startTime: start, endTime: end });
+          }
+          v.availabilities = convertedAvailabilities;
+        }
+        resolve(tmp);
+      }).catch((err: AxiosError): void => {
+        // alert(err.message);
+        resolve(this.getVolunteerList());
+      });
+    });
+  }
 
   getInitialData = (): void => {
 
@@ -96,167 +123,77 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     let recommendation: any = [];
 
     //get allVolunteers data from database
-    axios.request({
-      url: "volunteer/all",
-      baseURL: "http://localhost:5000/",
-      method: "GET",
-      timeout: 15000,
-      // withCredentials: true,
-      headers: { "X-Requested-With": "XMLHttpRequest" }
-    }).then((res: AxiosResponse): void => {
-      let tmp = res.data["results"]
-      for (const v of tmp) {
-        let convertedAvailabilities: any = [];
-        for (const a of v.availabilities) {
-          const start = new Date(Date.parse(a[0]));
-          const end = new Date(Date.parse(a[1]));
-          convertedAvailabilities.push({ startTime: start, endTime: end });
-        }
-        v.availabilities = convertedAvailabilities;
-      }
-      volunteerList = tmp
+    this.getVolunteerList().then((tmp: volunteer[]): void => {
+      // Assign volunteer list
+      volunteerList = tmp;
       volunteerList.sort((a, b) => ((a.firstName > b.firstName) ? 1 : ((a.firstName === b.firstName) ? ((a.lastName > b.lastName) ? 1 : -1) : -1)));
 
       if (recommendation.length !== 0) {
         let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
         const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
-        this.setState({ assetRequest, volunteerList, assignedVolunteers })
+        this.setState({ assetRequest, volunteerList, assignedVolunteers, loading: false })
+      }
+    });
+
+    //get the request volunteer data from the database
+    axios.request({
+      url: "shift/request?requestID=" + this.props.match.params.id,
+      method: "GET",
+      timeout: 15000,
+      // withCredentials: true,
+      headers: { "X-Requested-With": "XMLHttpRequest" }
+    }).then((res: AxiosResponse): void => {
+      let tmp = res.data["results"];
+      console.log("tmp:", tmp);
+      
+      for (const r of tmp) {
+        r.startTime = dateFromBackend(r.startTime);
+        r.endTime = dateFromBackend(r.endTime);
+      }
+
+      recommendation = tmp;
+      // Both volunteerList and recommendation need to be populated
+      if (volunteerList.length !== 0) {
+        let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
+        const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
+        this.setState({ assetRequest, volunteerList, assignedVolunteers, loading: false })
+      }
+    }).catch((err: AxiosError): void => {
+      // alert(err.message);
+    });
+  }
+
+  submitData = (): void => {
+    const shifts = this.state.assetRequest;
+
+    let requestData: any = [];
+    shifts.forEach(shift => {
+      requestData.push({
+        shiftID: shift.shiftID,
+        assetClass: shift.assetClass,
+        startTime: dateToBackend(shift.startTime),
+        endTime: dateToBackend(shift.endTime),
+        volunteers: shift.volunteers
+      });
+    });
+
+    //TODO implement the patch request
+    axios.request({
+      url: "shift/request?requestID=" + this.props.match.params.id,
+      method: "PATCH",
+      timeout: 15000,
+      data: { "shifts": requestData },
+      // withCredentials: true,
+      headers: { "X-Requested-With": "XMLHttpRequest" }
+    }).then((res: AxiosResponse): void => {
+      if (res.data["success"]) {
+        alert("Save Succeded")
+      } else {
+        alert("Save Failed")
       }
     }).catch((err: AxiosError): void => {
       alert(err.message);
     });
-
-
-
-    if (this.state.isNew) {
-      //TODO get new recommendation from scheduler
-
-      let requestData: any = [];
-      for (const asset of this.props.thisRequest) {
-        requestData.push({
-          shiftID: asset.id,
-          assetClass: asset.type,
-          startTime: asset.startDateTime.toISOString(),
-          endTime: asset.endDateTime.toISOString()
-        });
-      }
-
-      //TODO get the vehicle information for the request
-      axios.request({
-        url: "recommendation",
-        baseURL: "http://localhost:5000/",
-        method: "POST",
-        data: { "request": requestData },
-        timeout: 15000,
-        // withCredentials: true,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      }).then((res: AxiosResponse): void => {
-        let tmp = res.data["results"]
-
-        for (const r of tmp) {
-          r.startTime = new Date(Date.parse(r.startTime));
-          r.endTime = new Date(Date.parse(r.endTime));
-        }
-        recommendation = tmp;
-        // Both volunteerList and recommendation need to be populated
-        if (volunteerList.length !== 0) {
-          let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
-          const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
-          this.setState({ assetRequest, volunteerList, assignedVolunteers })
-        }
-      }).catch((err: AxiosError): void => {
-        alert(err.message);
-      });
-    } else {
-      //TODO get saved asset request data from database
-      axios.request({
-        url: "shift/request?requestID=" + this.props.id,
-        baseURL: "http://localhost:5000/",
-        method: "GET",
-        timeout: 15000,
-        // withCredentials: true,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      }).then((res: AxiosResponse): void => {
-        recommendation = res.data["results"]
-
-        // Both volunteerList and recommendation need to be populated
-        if (volunteerList.length !== 0) {
-          let assetRequest = this.mapVolunteersToRequest(recommendation, volunteerList);
-          const assignedVolunteers = this.identifyAssignedVolunteers(assetRequest);
-          this.setState({ assetRequest, volunteerList, assignedVolunteers })
-        }
-      }).catch((err: AxiosError): void => {
-        alert(err.message);
-      });
-    }
-  }
-
-  submitData = (): void => {
-    //TODO need aman's help with this function (this is 1.3.8)
-    //need to save the 'assetRequest' list in the database (IGNORING the volunteer field in each list of volunteers, i.e. only store the ID not all volunteer data)
-    //can either happen every time a position is updated OR when the captain clicks save
-
-    // format the data as expected by the endpoint
-    //const shifts = this.formatForDB(this.state.assetRequest);
-
-    const shifts = this.state.assetRequest;
-    console.log(shifts)
-
-    if (this.state.isNew === true) {
-      axios.request({
-        url: "shift/request?requestID=" + this.props.id,
-        baseURL: "http://localhost:5000/",
-        method: "POST",
-        timeout: 15000,
-        data: { "shifts": shifts },
-        // withCredentials: true,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      }).then((res: AxiosResponse): void => {
-        console.log(res.data)
-        if (res.data.success) {
-          alert("Save Succeded")
-          this.setState({ isNew: false })
-        } else {
-          alert("Save Failed")
-        }
-      }).catch((err: AxiosError): void => {
-        alert(err.message);
-      });
-    } else {
-      axios.request({
-        url: "shift/request?requestID=" + this.props.id,
-        baseURL: "http://localhost:5000/",
-        method: "PATCH",
-        timeout: 15000,
-        data: { "shifts": shifts },
-        // withCredentials: true,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      }).then((res: AxiosResponse): void => {
-        if (res.data["success"]) {
-          alert("(patch) Save Succeded")
-        } else {
-          alert("(patch) Save Failed")
-        }
-      }).catch((err: AxiosError): void => {
-        alert(err.message);
-      });
-    }
-  }
-
-  //we only need certain fields in the assetRequest for storing in the database
-  //this function returns a new object that only has those required fields
-  formatForDB = (request: any): any => {
-    console.log("inside formatForDB", request)
-    let shifts = [];
-    for (let s of request) {
-      let shift: any = { shiftID: "", volunteers: [] }
-      shift.shiftID = s.shiftID;
-      for (let v of s.volunteers) {
-        shift.volunteers.push({ ID: v.ID, positionID: v.positionID, roles: v.role });
-      }
-      shifts.push(shift);
-    }
-    return shifts;
   }
 
   updateAssetRequest = (updatedAsset: any): void => {
@@ -287,22 +224,23 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
   render() {
 
     return (
-      <React.Fragment>
-        <h4 className="mt-2">Asset Request</h4>
-        <hr />
-        {this.state.assetRequest.map((a: any) => (
-          <Asset
-            key={a.shiftID}
-            asset={a}
-            updateAssetRequest={(a: any) => this.updateAssetRequest(a)} //1.3.5
-            volunteerList={this.state.volunteerList}
-            assignedVolunteers={this.state.assignedVolunteers}
-          />
-        ))}
-        <Button onClick={this.submitData} className="btn-med">
-          Save
-        </Button>
-      </React.Fragment>
+      this.state.loading ? <div className="padding"><h4>Asset Request</h4><hr />Loading...</div> :
+        <div className="padding">
+          <h4>Asset Request</h4>
+          <hr />
+          {this.state.assetRequest.map((a: any) => (
+            <Asset
+              key={a.shiftID}
+              asset={a}
+              updateAssetRequest={(a: any) => this.updateAssetRequest(a)} //1.3.5
+              volunteerList={this.state.volunteerList}
+              assignedVolunteers={this.state.assignedVolunteers}
+            />
+          ))}
+          <button onClick={this.submitData} className="type-1">
+            Save
+        </button>
+        </div>
     );
   }
 }

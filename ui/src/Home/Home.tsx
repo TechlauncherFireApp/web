@@ -1,67 +1,49 @@
 import React from "react";
 import "./Home.scss";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { contains } from "../functions";
 
-interface State {
-  request_title: string;
-  allow_makeNewRequest: boolean;
-}
 
-export default class Home extends React.Component<any, State> {
+export default class Home extends React.Component<any, any> {
 
-  state: State = {
-    request_title: "",
-    allow_makeNewRequest: true
-  };
-
-  makeNewRequest(): void {
-    if (!this.state.allow_makeNewRequest) return;
-    this.setState({ allow_makeNewRequest: false });
-
-    if (!contains(this.state.request_title)) {
-      alert("Title not assigned");
-      this.setState({ allow_makeNewRequest: true });
-      return;
+    captain(): void {
+        window.open(window.location.origin + `/captain`, "_self", "", false)
     }
 
-    axios.request({
-      url: "NewAssetRequest",
-      baseURL: "http://localhost:5000/",
-      method: "POST",
-      data: { "title": this.state.request_title },
-      timeout: 15000,
-      // withCredentials: true,
-      headers: { "X-Requested-With": "XMLHttpRequest" }
-    }).then((res: AxiosResponse): void => {
-      if ((typeof res.data === "object") && contains(res.data["id"])) window.open(window.location.origin + `/assetRequest/${res.data["id"]}`, "_self", "", false);
-      else if (typeof res.data === "string") {
-        alert(res.data);
-        this.setState({ allow_makeNewRequest: true });
-      }
-    }).catch((err: AxiosError): void => {
-      alert(err.message);
-      this.setState({ allow_makeNewRequest: true });
-    });
-  }
+    volunteer(): void {
+        window.open(window.location.origin + `/volunteer`, "_self", "", false)
+    }
 
-  viewExistingRequests(): void {
-    window.open(window.location.origin + `/viewExistingRequest`, "_self", "", false)
-  }
+    test() {
 
-  render() {
-    return (
-      <React.Fragment>
-        <home>
-          <input type="text" placeholder="Title for the request" title="Title for the request" value={this.state.request_title}
-            onChange={(e: any) => this.setState({ request_title: e.target.value })} />
-          <button className="type-1" onClick={() => this.makeNewRequest()}>{this.state.allow_makeNewRequest ? "Make New Request" : "Loading"}</button>
-        </home>
-        <hr />
-        <home>
-          <button className="type-1" onClick={() => this.viewExistingRequests()}>Manage Existing Requests</button>
-        </home>
-      </React.Fragment>
-    );
-  }
+        const info = {
+            idVolunteer: "4fdIPciwWUvj2Fn",
+            idVehicle: "LXmy1Q9cVQpVgNg",
+            //status: "confirmed"
+        }
+
+        axios.request({
+            url: "volunteer/status",
+            method: "GET",//"PATCH",
+            timeout: 15000,
+            params: info,
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        }).then((res: AxiosResponse): void => {
+            let tmp = res.data
+            console.log(tmp);
+        }).catch((err: AxiosError): void => {
+            alert(err.message);
+        });
+
+    }
+
+
+    render() {
+        return (
+            <div className="padding">
+                <button className="type-1 margin" onClick={() => this.captain()}>I am a Brigade Captain</button>
+                <button className="type-1 margin" onClick={() => this.volunteer()}>I am a Volunteer</button>
+                {/* <button onClick={() => this.test()}>test</button> */}
+            </div>
+        );
+    }
 }
