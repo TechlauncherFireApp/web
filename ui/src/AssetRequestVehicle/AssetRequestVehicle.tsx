@@ -238,7 +238,7 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
             <select ref={this.insert_assetType}>
               <option value="" disabled hidden>Select asset type</option>
               <option value="heavyTanker" selected>Heavy Tanker</option>
-              <option value="mediumTanker">Medium Unit</option>
+              <option value="mediumTanker">Medium Tanker</option>
               <option value="lightUnit">Light Unit</option>
             </select>
           </div>
