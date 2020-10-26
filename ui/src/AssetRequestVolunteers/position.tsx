@@ -34,7 +34,7 @@ export default class Position extends React.Component<any, State> {
     newPosition.volunteer = v;
     newPosition.status = "pending";
 
-    if (newPosition.roles.includes("advanced") && v.possibleRoles.includes("basic")) {
+    if (newPosition.roles.includes("advanced") && !v.possibleRoles.includes("advanced")) {
       newPosition.roles = ["basic"];
     } else if (newPosition.roles.includes("basic") && v.possibleRoles.includes("advanced")) {
       newPosition.roles = ["advanced"];
