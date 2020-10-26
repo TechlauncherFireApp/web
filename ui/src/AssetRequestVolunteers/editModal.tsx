@@ -107,7 +107,12 @@ export default class EditModal extends React.Component<any, State> {
     if (filter.position) {
       //let v: any;
       for (const v of allVolunteers) {
-        targetRoles.every((r: string) => v.possibleRoles.includes(r)) && list.push(v); //if the volunteer in question can fulfil all vehicle requirements add this volunteer to the list
+
+        if (targetRoles.length == 1 && targetRoles[0] == "basic") {
+          v.possibleRoles.includes("basic") && !v.possibleRoles.includes("advanced") && list.push(v); //if the volunteer in question is basic but not advanced
+        } else {
+          targetRoles.every((r: string) => v.possibleRoles.includes(r)) && list.push(v); //if the volunteer in question can fulfil all vehicle requirements add this volunteer to the list
+        }
       }
     } else {
       list = [...allVolunteers];
