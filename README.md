@@ -1,4 +1,10 @@
-# fire-app
+# FIRE APP 2.0
+
+*{insert new readme here}*
+
+---
+
+# README for the 2020 TechLauncher project fire-app
 
 Bushfire Volunteer Management Application (TL 20-S1-2-C Fire App)
 
