@@ -8,7 +8,7 @@ class GUID(TypeDecorator):
 
     def process_bind_param(self, value, dialect):
         if value is not None:
-            return "%.32x" % value
+            return value
         else:
             return None
 
@@ -17,6 +17,6 @@ class GUID(TypeDecorator):
             return value
         else:
             try:
-                return uuid.UUID(value)
+                return uuid.UUID(value).hex[0:15]
             except ValueError:
                 return value

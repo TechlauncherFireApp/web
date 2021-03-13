@@ -1,7 +1,8 @@
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
-import uuid
 
+from backend.domain import session_scope
+from backend.repository import new_request
 
 '''
 Define Data Input
@@ -34,26 +35,9 @@ class NewRequest(Resource):
         args = parser.parse_args()
         if args["title"] is None:
             return
-
-        title = args["title"]
-        idAdmin = "jkEM0NW1QsTOqhH"  # Using a single default admin (Brigade Captain)
-
-        conn = connection()
-        if is_connected(conn):
-            id = uuid.uuid4().hex[0:15]  # Make New Request ID
-            conn.start_transaction()  # Transaction type
-            cur = conn.cursor(prepared=True)
-            try:
-                cur.execute("INSERT INTO `asset-request`(`id`,`idAdmin`,`title`) VALUES (%s,%s,%s);",
-                            [id, idAdmin, title])
-                conn.commit()  # Commit
-                cur_conn_close(cur, conn)
-                return {"id": id}  # Success Message
-            except Exception as e:
-                conn.rollback()  # RollBack
-                cur_conn_close(cur, conn)
-                raise Exception(e)
-        raise Exception("0x01")  # Fail Message
+        with session_scope() as session:
+            new_id = new_request(session, args["title"])
+            return {"id": new_id}
 
 
 new_request_bp = Blueprint('new_requests', __name__)

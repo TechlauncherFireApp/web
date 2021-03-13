@@ -1,12 +1,12 @@
 from flask import Flask
-from backend.controllers import existing_requests_bp
+from backend.controllers import existing_requests_bp, new_request_bp
 
 # Register the application
 app = Flask(__name__)
 
 # Register all controllers individually
 app.register_blueprint(existing_requests_bp)
-# app.register_blueprint(new_request_bp)
+app.register_blueprint(new_request_bp)
 # app.register_blueprint(recommendation_bp)
 # app.register_blueprint(shift_request_bp)
 # app.register_blueprint(vehicle_request_bp)
