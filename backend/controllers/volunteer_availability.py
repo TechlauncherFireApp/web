@@ -5,7 +5,7 @@ from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 from .utility import *
 from ..domain import session_scope
-from ..repository.volunteer_repository import get_availabilities, set_availabilities
+from ..repository.volunteer_repository import set_availabilities, get_volunteer
 
 '''
 Define Data Input
@@ -103,8 +103,8 @@ class VolunteerAvailability(Resource):
             return {"success": False}
 
         with session_scope() as session:
-            availabilities = get_availabilities(session, args["volunteerID"])
-            return {"success": True, "availability": availabilities}
+            res = get_volunteer(session, args["volunteerID"])
+            return {"success": True, "availability": res.availabilities}
 
     @marshal_with(patch_resource_fields)
     def patch(self):

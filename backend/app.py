@@ -1,5 +1,5 @@
 from flask import Flask
-from backend.controllers import existing_requests_bp, new_request_bp, volunteer_availability_bp
+from backend.controllers import existing_requests_bp, new_request_bp, volunteer_availability_bp, volunteer_preferred_hours_bp
 
 # Register the application
 app = Flask(__name__)
@@ -13,7 +13,7 @@ app.register_blueprint(new_request_bp)
 # app.register_blueprint(volunteer_bp)
 # app.register_blueprint(volunteer_all_bp)
 app.register_blueprint(volunteer_availability_bp)
-# app.register_blueprint(volunteer_pref_hours_bp)
+app.register_blueprint(volunteer_preferred_hours_bp)
 # app.register_blueprint(volunteer_shifts_bp)
 # app.register_blueprint(volunteer_status_bp)
 
