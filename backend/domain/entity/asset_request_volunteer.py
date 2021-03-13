@@ -13,7 +13,7 @@ class AssetRequestVolunteer(Base):
 
     id = Column(GUID(), primary_key=True, default=uuid.uuid4().hex[0:15])
     volunteer_id = Column(GUID(), ForeignKey('volunteer.id'), name='idVolunteer')
-    vehicle_id = Column(GUID(), ForeignKey('asset-request-vehicle.id'), name='idVehicle')
+    vehicle_id = Column(GUID(), ForeignKey('asset-request_vehicle.id'), name='idVehicle')
     position = Column(Integer, name='position')
     roles = Column(JSON, name='roles')
     status = Column(String, name='status')

@@ -1,6 +1,9 @@
 from flask import Blueprint
 from flask_restful import Resource, fields, marshal_with, Api
 
+from backend.domain import session_scope
+from backend.repository import get_volunteer, list_volunteers
+
 '''
 No Data Input
 --
@@ -22,6 +25,16 @@ Define Data Output
 }
 '''
 
+availability_field = {
+    "Monday": fields.List(fields.List(fields.Integer)),
+    "Tuesday": fields.List(fields.List(fields.Integer)),
+    "Wednesday": fields.List(fields.List(fields.Integer)),
+    "Thursday": fields.List(fields.List(fields.Integer)),
+    "Friday": fields.List(fields.List(fields.Integer)),
+    "Saturday": fields.List(fields.List(fields.Integer)),
+    "Sunday": fields.List(fields.List(fields.Integer)),
+}
+
 volunteer_list_field = {
     'ID': fields.String,
     'firstName': fields.String,
@@ -32,7 +45,7 @@ volunteer_list_field = {
     'expYears': fields.Integer,
     'possibleRoles': fields.List(fields.String),
     'qualifications': fields.List(fields.String),
-    'availabilities': fields.List(fields.List(fields.DateTime(dt_format='iso8601')))
+    'availabilities': fields.Nested(availability_field)
 }
 
 resource_fields = {
@@ -44,23 +57,13 @@ resource_fields = {
 class VolunteerAll(Resource):
     @marshal_with(resource_fields)
     def get(self):
-        # Get all volunteers from mysql
-
-        # TODO Convert possible positions
-        volunteers = volunteer_all(False)
-
-        # Fix possibleRoles values. TODO standardise these
-        for volunteer in volunteers:
-            for index, role in enumerate(volunteer["possibleRoles"]):
-                switcher = {
-                    "Basic": "basic",
-                    "Advanced": "advanced",
-                    "Crew Leader": "crewLeader",
-                    "Driver": "driver"
-                }
-                volunteer["possibleRoles"][index] = switcher[role]
-
-        return {"results": volunteers}
+        with session_scope() as session:
+            rtn = []
+            for row in list_volunteers(session):
+                # Access protected _asdict() to return the keyed tuple as a dict to enable flask_restful to marshal
+                # it correctly. The alternative method is less tidy.
+                rtn.append(row._asdict())
+            return {"success": True, "results": rtn}
 
 
 volunteer_all_bp = Blueprint('volunteer_all', __name__)
