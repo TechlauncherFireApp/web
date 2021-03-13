@@ -8,10 +8,10 @@ from backend.domain.guid import GUID
 
 
 class AssetRequestVehicle(Base):
-    __tablename__ = 'asset-request-vehicle'
+    __tablename__ = 'asset-request_vehicle'
 
     id = Column(GUID(), primary_key=True, default=uuid.uuid4().hex[0:15])
-    request_id = Column(GUID(), ForeignKey('asset-request.id'))
+    request_id = Column(GUID(), ForeignKey('asset-request.id'), name='idRequest')
     type = Column(String, name='type')
     from_date_time = Column(DateTime, name='from')
     to_date_time = Column(DateTime, name='to')

@@ -1,9 +1,7 @@
-import json
-import re
-
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
-from .utility import *
+from ..domain import session_scope
+from ..repository import get_request_by_volunteer
 
 '''
 Define Data Input
@@ -57,42 +55,14 @@ class VolunteerShifts(Resource):
         args = parser.parse_args()
         if args["volunteerID"] is None:
             return {"success": False}
-        volunteerID = args["volunteerID"]
 
-        conn = connection()
-        if is_connected(conn):
-            cur = conn.cursor(prepared=True)
-            try:
-                q = re.sub("\s\s+", " ", """
-                    SELECT DISTINCT
-                        ar.`title` AS `requestTitle`,
-                        arv.`id` AS `vehicleID`, arv.`type` AS `vehicleType`,
-                        arv.`from` AS `vehicleFrom`, arv.`to` AS `vehicleTo`,
-                        arp.`roles` AS `volunteerRoles`, arp.`status` AS `volunteerStatus`
-                    FROM
-                        `asset-request_volunteer` AS arp
-                        INNER JOIN `asset-request_vehicle` AS arv ON arp.`idVehicle` = arv.`id`
-                        INNER JOIN `asset-request` AS ar ON arv.`idRequest` = ar.`id`
-                    WHERE
-                        `idVolunteer` = %s;
-                """)
-
-                cur.execute(q, [volunteerID])
-                res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]
-                o = []
-                for r in res:
-                    r["volunteerRoles"] = json.loads(r["volunteerRoles"])
-                    o.append(r)
-                print(o)
-                if contains(o):
-                    cur_conn_close(cur, conn)
-                    return {"success": True, "results": o}
-                cur_conn_close(cur, conn)
-            except Exception as e:
-                cur_conn_close(cur, conn)
-                print(str(e))
-
-        return {"success": False}
+        with session_scope() as session:
+            rtn = []
+            for row in get_request_by_volunteer(session, args["volunteerID"]):
+                # Access protected _asdict() to return the keyed tuple as a dict to enable flask_restful to marshal
+                # it correctly. The alternative method is less tidy.
+                rtn.append(row._asdict())
+            return {"success": True, "results": rtn}
 
 
 volunteer_shifts_bp = Blueprint('volunteer_shifts', __name__)
