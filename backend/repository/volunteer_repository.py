@@ -1,3 +1,5 @@
+from operator import or_
+
 from backend.domain import Volunteer
 
 
@@ -7,7 +9,7 @@ def get_volunteer(session, volunteer_id):
         .first()
 
 
-def list_volunteers(session):
+def list_volunteers(session, volunteer_id=None):
     return session.query(Volunteer.id.label("ID"),
                          Volunteer.first_name.label('firstName'),
                          Volunteer.last_name.label('lastName'),
@@ -17,7 +19,9 @@ def list_volunteers(session):
                          Volunteer.experience_years.label('expYears'),
                          Volunteer.possibleRoles.label('possibleRoles'),
                          Volunteer.qualifications.label('qualifications'),
-                         Volunteer.availabilities.label('availabilities')).all()
+                         Volunteer.availabilities.label('availabilities'))\
+        .filter(or_(Volunteer.id == volunteer_id, volunteer_id == None))\
+        .all()
 
 
 

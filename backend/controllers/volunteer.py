@@ -1,6 +1,9 @@
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
+from backend.domain import session_scope
+from backend.repository import list_volunteers
+
 '''
 Define Data Input
  {
@@ -12,22 +15,15 @@ Define Data Input
 parser = reqparse.RequestParser()
 parser.add_argument('volunteerID', action='store', type=str)
 
-'''
-Define Data Output
-
-{
-    "id": String
-    "firstName": String
-    "lastName": String
-    "email": String
-    "mobileNo": String
-    "prefHours": Integer
-    "expYears": Integer
-    "possibleRoles": [String]
-    "qualifications": [String]
-    "availabilities": [[DateTimeString iso8601, DateTimeString iso8601]]
+availability_field = {
+    "Monday": fields.List(fields.List(fields.Integer)),
+    "Tuesday": fields.List(fields.List(fields.Integer)),
+    "Wednesday": fields.List(fields.List(fields.Integer)),
+    "Thursday": fields.List(fields.List(fields.Integer)),
+    "Friday": fields.List(fields.List(fields.Integer)),
+    "Saturday": fields.List(fields.List(fields.Integer)),
+    "Sunday": fields.List(fields.List(fields.Integer)),
 }
-'''
 
 resource_fields = {
     'ID': fields.String,
@@ -39,7 +35,7 @@ resource_fields = {
     'expYears': fields.Integer,
     'possibleRoles': fields.List(fields.String),
     'qualifications': fields.List(fields.String),
-    'availabilities': fields.List(fields.List(fields.DateTime(dt_format='iso8601')))
+    'availabilities': fields.Nested(availability_field)
 }
 
 
@@ -52,17 +48,13 @@ class Volunteer(Resource):
         if args["volunteerID"] is None:
             return {"success": False}
 
-        # Get a spepcific volunteer from mysql
-
-        # TODO Convert possible positions
-        volunteerID = args["volunteerID"]
-
-        volunteer_obj = volunteer(False, volunteerID)
-        volunteer_obj["ID"] = volunteerID
-        volunteer_obj["success"] = True
-        print(volunteer_obj)
-
-        return volunteer_obj
+        with session_scope() as session:
+            rtn = []
+            for row in list_volunteers(session, args["volunteerID"]):
+                # Access protected _asdict() to return the keyed tuple as a dict to enable flask_restful to marshal
+                # it correctly. The alternative method is less tidy.
+                rtn.append(row._asdict())
+            return rtn[0]
 
 
 volunteer_bp = Blueprint('volunteer', __name__)
