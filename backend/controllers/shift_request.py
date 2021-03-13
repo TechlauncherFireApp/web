@@ -1,6 +1,11 @@
+import json
+import numpy as np
+import re
+
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
-import re, json, numpy as np
+
+from .utility import *
 
 '''
 Define Data Input

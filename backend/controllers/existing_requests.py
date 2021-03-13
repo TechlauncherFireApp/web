@@ -1,14 +1,8 @@
 from flask import Blueprint
-from flask_restful import reqparse, Resource, fields, marshal_with, Api
+from flask_restful import Resource, fields, marshal_with, Api
 
-'''
-Define Data Input
-
-None
-
-'''
-
-parser = reqparse.RequestParser()
+from ..domain import session_scope
+from ..repository import get_existing_requests
 
 '''
 Define Data Output
@@ -36,24 +30,9 @@ get_resource_list = {
 class ExistingRequests(Resource):
     @marshal_with(get_resource_list)
     def get(self):
-        idAdmin = "jkEM0NW1QsTOqhH"  # Using a single default admin (Brigade Captain)
-        # TODO Get the volunteer's prefHours
-
-        conn = connection()
-        if is_connected(conn):
-            cur = conn.cursor()
-            try:
-                cur.execute("SELECT `id`,`title` FROM `asset-request` WHERE `idAdmin`=%s;", [idAdmin])
-                res = [dict(zip(cur.column_names, r)) for r in cur.fetchall()]
-                if contains(res):
-                    cur_conn_close(cur, conn)
-                    return {"success": True, "results": res}
-                cur_conn_close(cur, conn)
-            except Exception as e:
-                cur_conn_close(cur, conn)
-                print(str(e))
-
-        return {"success": False, "results": None}
+        with session_scope() as session:
+            res = get_existing_requests(session)
+            return {"success": True, "results": res}
 
 
 existing_requests_bp = Blueprint('existing_requests', __name__)

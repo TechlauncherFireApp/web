@@ -1,12 +1,15 @@
+import uuid
 from sqlalchemy import Column, Integer, String, DateTime, JSON
+from sqlalchemy.orm import relationship
 
 from backend.domain.base import Base
+from backend.domain.guid import GUID
 
 
 class Volunteer(Base):
-    __table_name__ = 'volunteer'
+    __tablename__ = 'volunteer'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(GUID(), primary_key=True, default=uuid.uuid4)
     first_name = Column(String, name='firstName')
     last_name = Column(String, name='lastName')
     mobile_number = Column(String, name='mobileNo', unique=True)
@@ -18,3 +21,5 @@ class Volunteer(Base):
     availabilities = Column(JSON, name='availabilities')
     update_date_time = Column(DateTime, name='lastUpdateDt')
     insert_date_time = Column(DateTime, name='rowInsertDT')
+
+    asset_request_volunteer = relationship("AssetRequestVolunteer")

@@ -12,6 +12,7 @@ pipenv = "==2018.11.26"
 python-dotenv = "==0.14.0"
 Flask = "==1.1.2"
 sqlalchemy = "*"
+mysqlclient = "*"
 
 [requires]
 python_version = "3.8"
