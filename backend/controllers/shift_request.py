@@ -5,7 +5,7 @@ from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
 from .utility import *
 from backend.domain import session_scope
-from backend.repository import get_shifts_by_request, update_shift_by_position, add_shift
+from backend.repository.asset_request_volunteer_repository import *
 
 '''
 Define Data Input

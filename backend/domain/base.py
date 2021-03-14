@@ -19,6 +19,12 @@ Session.configure(bind=engine)
 Base = declarative_base()
 
 
+@event.listens_for(Base, 'before_insert')
+def receive_before_update(mapper, connection, target):
+    target.insert_date_time = datetime.now()
+    target.update_date_time = datetime.now()
+
+
 @event.listens_for(Base, 'before_update')
 def receive_before_update(mapper, connection, target):
     target.update_date_time = datetime.now()

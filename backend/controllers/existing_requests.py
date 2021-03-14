@@ -1,8 +1,8 @@
 from flask import Blueprint
 from flask_restful import Resource, fields, marshal_with, Api
 
-from ..domain import session_scope
-from ..repository import get_existing_requests
+from backend.domain import session_scope
+from backend.repository.request_repository import *
 
 '''
 Define Data Output

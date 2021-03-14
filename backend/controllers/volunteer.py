@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
 from backend.domain import session_scope
-from backend.repository import list_volunteers
+from backend.repository.volunteer_repository import *
 
 '''
 Define Data Input

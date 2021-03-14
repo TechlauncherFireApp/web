@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 from .utility import *
 from backend.services.optimiser import schedule
-from backend.repository.volunteer_repository import list_volunteers
+from backend.repository.volunteer_repository import *
 
 '''
 Define data input

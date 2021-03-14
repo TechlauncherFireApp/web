@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
-from ..domain import session_scope
-from ..repository import get_request_by_volunteer
+from backend.domain import session_scope
+from backend.repository.asset_request_volunteer_repository import *
 
 '''
 Define Data Input

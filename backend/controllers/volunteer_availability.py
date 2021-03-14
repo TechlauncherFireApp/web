@@ -4,8 +4,8 @@ import logging
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 from .utility import *
-from ..domain import session_scope
-from ..repository.volunteer_repository import set_availabilities, get_volunteer
+from backend.domain import session_scope
+from backend.repository.volunteer_repository import *
 
 '''
 Define Data Input
