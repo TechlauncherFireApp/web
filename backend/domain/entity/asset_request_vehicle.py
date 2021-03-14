@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, event
 
 from backend.domain.base import Base
 from backend.domain.guid import GUID
@@ -17,3 +17,6 @@ class AssetRequestVehicle(Base):
     to_date_time = Column(DateTime, name='to')
     update_date_time = Column(DateTime, name='lastUpdateDt', default=datetime.now(), nullable=False)
     insert_date_time = Column(DateTime, name='rowInsertDT', default=datetime.now(), nullable=False)
+
+
+

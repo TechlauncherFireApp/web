@@ -1,4 +1,5 @@
 import uuid
+
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import relationship
 
@@ -17,3 +18,5 @@ class Admin(Base):
     insert_date_time = Column(DateTime, name='rowInsertDT', nullable=False)
 
     asset_request = relationship("AssetRequest")
+
+
