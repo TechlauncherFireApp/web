@@ -1,9 +1,8 @@
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 from .utility import *
-from gurobi.Scheduler import Schedule
-from endpoints.helpers.input_validation import *
-from querys.volunteer import volunteer_all
+from backend.services.optimiser import schedule
+from backend.repository.volunteer_repository import list_volunteers
 
 '''
 Define data input
@@ -20,7 +19,7 @@ Define data input
 
 
 # Validate an asset shift_request input
-def input_asset_req(value, name):
+def input_asset_req(value):
     # Validate that request contains dictionaries
     value = type_dict(value)
     if type(value) is dict:
@@ -85,7 +84,7 @@ class Recommendation(Resource):
         if args["request"] is None:
             return
 
-        # Comile an asset request type for the scheduler
+        # Compile an asset request type for the scheduler
         asset_requests = []
         for shift_request in args["request"]:
             asset_request = {
@@ -96,7 +95,7 @@ class Recommendation(Resource):
             asset_requests.append(asset_request)
 
         # Get all volunteers
-        volunteers = volunteer_all(True)
+        volunteers = list_volunteers()
 
         # Shouldn't have to have this switcher
         for volunteer in volunteers:
@@ -113,7 +112,7 @@ class Recommendation(Resource):
             volunteer["possibleRoles"] = roles
 
         # Get the generated recommendation
-        output = Schedule(volunteers, asset_requests)
+        output = schedule(volunteers, asset_requests)
 
         if not output == []:
             print("Optimisation Succeeded")

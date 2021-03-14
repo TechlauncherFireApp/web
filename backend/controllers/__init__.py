@@ -1,6 +1,6 @@
 from .existing_requests import existing_requests_bp
 from .new_request import new_request_bp
-# from .recommendation import recommendation_bp
+from .recommendation import recommendation_bp
 # from .shift_request import shift_request_bp
 # from .vehicle_request import vehicle_request_bp
 from .volunteer import volunteer_bp

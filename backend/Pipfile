@@ -6,11 +6,11 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-minizinc = "==0.3.3"
-numpy = "==1.18.3"
-pipenv = "==2018.11.26"
-python-dotenv = "==0.14.0"
-Flask = "==1.1.2"
+minizinc = "*"
+numpy = "*"
+pipenv = "*"
+python-dotenv = "*"
+Flask = "*"
 sqlalchemy = "*"
 mysqlclient = "*"
 

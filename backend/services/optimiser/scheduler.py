@@ -1,4 +1,4 @@
-from minizinc import *
+import minizinc
 
 
 # range1 and range2 are tuples (or 2 item lists) with a start and end time
@@ -267,9 +267,9 @@ def full_schedule(volunteers, vehicle_request):
         is_driver.append(driver)
 
     # we are using the gecode optimiser
-    gecode = Solver.lookup("gecode")
+    gecode = minizinc.Solver.lookup("gecode")
     # create the model
-    model = Model()
+    model = minizinc.Model()
     # the following string generates the minizinc model for a full solve
     model.add_string(
         """
@@ -362,7 +362,7 @@ def full_schedule(volunteers, vehicle_request):
     )
 
     # initialise all the variables in the minizinc model from the variables we previously created
-    instance = Instance(gecode, model)
+    instance = minizinc.Instance(gecode, model)
     instance["V"] = len(volunteers)
     instance["S"] = len(vehicle_request)
     instance["preferredHours"] = preferred_hours
@@ -476,9 +476,9 @@ def partial_schedule(volunteers, vehicle_request):
         is_driver.append(driver)
 
     # we are using the gecode optimiser
-    gecode = Solver.lookup("gecode")
+    gecode = minizinc.Solver.lookup("gecode")
     # create the model
-    model = Model()
+    model = minizinc.Model()
     # the following string generates the minizinc model for a full solve
     model.add_string(
         """
@@ -569,7 +569,7 @@ def partial_schedule(volunteers, vehicle_request):
         """
     )
     # initialise all the variables in the minizinc model from the variables we previously created
-    instance = Instance(gecode, model)
+    instance = minizinc.Instance(gecode, model)
     instance["V"] = len(volunteers)
     instance["S"] = len(vehicle_request)
     instance["preferredHours"] = preferred_hours
