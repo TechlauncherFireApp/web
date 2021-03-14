@@ -7,5 +7,11 @@
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://ec2-3-25-218-186.ap-southeast-2.compute.amazonaws.com:3000/fireapp</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="appdb@fireapp-dev-db.c9zospotfvth.ap-southeast-2.rds.amazonaws.com" uuid="6d2adbfb-9349-4171-be50-142095fa3ca7">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://fireapp-dev-db.c9zospotfvth.ap-southeast-2.rds.amazonaws.com:5432/appdb</jdbc-url>
+    </data-source>
   </component>
 </project>

@@ -28,7 +28,6 @@ app.register_blueprint(volunteer_status_bp)
 def main():
     return {
         'status': 'OK',
-        'host': os.environ.get('MYSQL_HOST')
     }
 
 
