@@ -26,13 +26,13 @@ Its recommended you use [PyCharm Ultimate](https://www.jetbrains.com/pycharm/dow
     **Note:** Use the `AWS_ACCESS_KEY` and `AWS_SECRET_ACCESS_KEY` provided to you when you joined the team. 
 6. **Restart** your IDE so as to update your path. 
 7. **Create** a run configuration by adding a `Flask` runtime using the settings:\
-    Target Type: `Script Path`\
-    Target: `/backend/app.py`\
-    FLASK_ENV: `development`\
-    FLASK_DEBUG: `true`\
-    Working Directory: `/backend`
-    Add Contents Root to Python Path: `true`
-    Add Source Root to Python Path: `true` 
+    _Target Type:_ `Script Path`\
+    _Target:_ `/backend/app.py`\
+    _FLASK_ENV:_ `development`\
+    _FLASK_DEBUG:_ `true`\
+    _Working Directory:_ `/backend`\
+    _Add Contents Root to Python Path:_ `true`\
+    _Add Source Root to Python Path:_ `true` 
 
 
 ### Frontend Steps
