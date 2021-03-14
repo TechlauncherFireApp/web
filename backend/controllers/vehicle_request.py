@@ -5,6 +5,8 @@ from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
 from .utility import *
+from backend.domain import session_scope
+from backend.repository.asset_request_vehicle_repository import count_vehicles, insert_vehicle
 
 '''
 Define Data Input
@@ -38,19 +40,6 @@ def input_vehicles(value, name):
         value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
         value = input_key_type(value, 'startDateTime', type_string, [])
         value = input_key_type(value, 'endDateTime', type_string, [])
-
-        try:
-            datetime.datetime.strptime(value["startDateTime"], "%Y-%m-%d %H:%M:%S.%f").date()
-        except:
-            raise ValueError("startDateTime not in correct format")
-        try:
-            datetime.datetime.strptime(value["endDateTime"], "%Y-%m-%d %H:%M:%S.%f").date()
-        except:
-            raise ValueError("endDateTime not in correct format")
-
-        # Validate the startTime is before the endTime
-        # if value['startDateTime'] >= value['endDateTime']:
-        #     raise ValueError("The startDateTime '{}' cannot be after the endDateTime '{}'".format(value['startDateTime'], value['endDateTime']))
     return value
 
 
@@ -86,60 +75,18 @@ class VehicleRequest(Resource):
 
         if args["requestID"] is None: return {"success": False}
 
-        requestID = args["requestID"]
-
-        conn = connection()
-        if is_connected(conn):
-            cur = conn.cursor(prepared=True)
-            try:
-                cur.execute(
-                    "SELECT COUNT(`idRequest`) AS `count` FROM `asset-request_vehicle` AS arv WHERE arv.`idRequest`=%s;",
-                    [requestID])
-                res = cur.fetchone()
-                res = dict(zip(cur.column_names, (res if contains(res) else [])))
-                cur_conn_close(cur, conn)
-                return {"success": (res["count"] > 0)}
-            except Exception as e:
-                cur_conn_close(cur, conn)
-                print(str(e))
-                return {"success": False}
-
-        conn_close(conn)
-        return {"success": False}
+        with session_scope() as session:
+            return {"success": (count_vehicles(session, args["requestID"]) > 0)}
 
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()
         if args["requestID"] is None or args["vehicles"] is None: return {"success": False}
 
-        requestID = args["requestID"]
-        vehicles = args["vehicles"]
-
-        # Query Parameter's Data
-        d = []
-        for v in vehicles:
-            d.append([v["vehicleID"], requestID, v["assetClass"], v["startDateTime"], v["endDateTime"]])
-
-        conn = connection()
-        if contains(d) and is_connected(conn):
-            conn.start_transaction()
-            cur = conn.cursor(prepared=True)
-            try:
-                # Insert Vehicle of the Request
-                q = ",".join(["(%s,%s,%s,%s,%s)"] * len(d))
-                d = np.concatenate(d).tolist()
-                cur.execute(
-                    "INSERT INTO `asset-request_vehicle` (`id`,`idRequest`,`type`,`from`,`to`) VALUES " + q + ";", d)
-                conn.commit()
-                cur_conn_close(cur, conn)
-                return {"success": True}
-            except Exception as e:
-                conn.rollback()
-                cur_close(cur)
-                print(str(e))
-
-        conn_close(conn)
-        return {"success": False}
+        with session_scope() as session:
+            for v in args["vehicles"]:
+                new_id = insert_vehicle(session, args["requestID"], v["assetClass"], v["startDateTime"], v["endDateTime"])
+                return {"success": True, 'id': new_id}
 
 
 vehicle_request_bp = Blueprint('vehicle_request', __name__)

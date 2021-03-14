@@ -13,6 +13,7 @@ python-dotenv = "*"
 Flask = "*"
 sqlalchemy = "*"
 mysqlclient = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.8"

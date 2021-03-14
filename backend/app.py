@@ -1,17 +1,21 @@
+import os
 from flask import Flask
-from backend.controllers import existing_requests_bp, new_request_bp, volunteer_availability_bp, \
-    volunteer_preferred_hours_bp, volunteer_status_bp, volunteer_shifts_bp, volunteer_all_bp, volunteer_bp, \
-    recommendation_bp, shift_request_bp
+from flask_cors import CORS
+from backend.controllers import *
 
 # Register the application
 app = Flask(__name__)
+
+# TODO: Tech Debt
+#   - CORS Should be specified at the host level per environment, not a global free-for-all.
+CORS(app)
 
 # Register all controllers individually
 app.register_blueprint(existing_requests_bp)
 app.register_blueprint(new_request_bp)
 app.register_blueprint(recommendation_bp)
 app.register_blueprint(shift_request_bp)
-# app.register_blueprint(vehicle_request_bp)
+app.register_blueprint(vehicle_request_bp)
 app.register_blueprint(volunteer_bp)
 app.register_blueprint(volunteer_all_bp)
 app.register_blueprint(volunteer_availability_bp)
@@ -22,7 +26,10 @@ app.register_blueprint(volunteer_status_bp)
 
 @app.route('/')
 def main():
-    return "Running..."
+    return {
+        'status': 'OK',
+        'host': os.environ.get('MYSQL_HOST')
+    }
 
 
 if __name__ == '__main__':
