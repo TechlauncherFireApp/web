@@ -4,7 +4,7 @@ Bushfire Volunteer Management Application (TL 20-S1-2-C Fire App), a web app to 
 activities.
 
 [Redmine](https://redmine.cecs.anu.edu.au/redmine/projects/bushfire-volunteer-management-application)\
-[Project landing page](https://docs.google.com/document/d/1VTIfrLQDojY8VdxfnAeQHJnm1f4dmMVVjPfmVvs3oQs/edit?usp=sharing)
+[Project landing page](https://fireapp2.atlassian.net/wiki/spaces/F2/overview)
 
 ### Backend Setup
 
