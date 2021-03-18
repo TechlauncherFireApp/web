@@ -16,6 +16,7 @@ mysqlclient = "*"
 flask-cors = "*"
 alembic = "*"
 boto3 = "*"
+bcrypt = "*"
 
 [requires]
 python_version = "3.8"

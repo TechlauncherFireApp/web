@@ -18,5 +18,4 @@ class Admin(Base):
     insert_date_time = Column(DateTime, name='rowInsertDT', nullable=False)
 
     asset_request = relationship("AssetRequest")
-
-
+    user = relationship("User")

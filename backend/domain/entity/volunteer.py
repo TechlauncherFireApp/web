@@ -25,3 +25,4 @@ class Volunteer(Base):
     insert_date_time = Column(DateTime, name='rowInsertDT', default=datetime.now(), nullable=False)
 
     asset_request_volunteer = relationship("AssetRequestVolunteer")
+    user = relationship("User")
