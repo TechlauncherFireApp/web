@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource, marshal_with, reqparse
 
-from backend.domain import session_scope
-from backend.services.authentication import AuthenticationService
+from domain import session_scope
+from services.authentication import AuthenticationService
 
 registration_parser = reqparse.RequestParser()
 registration_parser.add_argument('email', type=str)
@@ -34,10 +34,10 @@ class Login(Resource):
         args = login_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
-            result, token = auth.login(session, args['email'], args['password'])
-        if token == "" or token is None:
+            result, token, role = auth.login(session, args['email'], args['password'])
+        if token is None:
             return jsonify({"result": result.name})
-        return jsonify({"result": result.name, "access_token": token})
+        return jsonify({"result": result.name, "access_token": token, "role": role.name})
 
 
 authentication_bp = Blueprint('authentication', __name__)

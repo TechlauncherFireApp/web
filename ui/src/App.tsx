@@ -9,7 +9,10 @@ import Volunteer from "./Volunteers/volunteer";
 import Availability from "./Volunteers/Availability/Availability";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import ExistingRequestSelector from "./ViewExistingRequests/existingRequestSelector";
+import Login from "./Authentication/login";
+import Register from "./Authentication/register";
 import Home from "./Home/Home";
+import Logout from "./Authentication/logout";
 
 export default function App() {
   return (
@@ -18,6 +21,9 @@ export default function App() {
       <main-body>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/logout" component={Logout} />
+          <Route exact path="/register" component={Register} />
           <Route exact path="/captain" component={BrigadeCaptainHome} />
           <Route exact path="/assetRequest/vehicles/:id" component={AssetRequestVehicle} />
           <Route exact path="/assetRequest/volunteers/:id" component={AssetRequestVolunteers} />

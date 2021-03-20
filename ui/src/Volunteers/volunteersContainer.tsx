@@ -50,12 +50,12 @@ export default class VolunteersContainer extends React.Component<any, State> {
       let tmp = res.data["results"]
       for (const v of tmp) {
         let convertedAvailabilities: any = [];
-        for (const a of v.availabilities) {
+/*        for (const a of v.availabilities) {
           const start = new Date(Date.parse(a[0]));
           const end = new Date(Date.parse(a[1]));
           convertedAvailabilities.push({ startTime: start, endTime: end });
         }
-        v.availabilities = convertedAvailabilities;
+        v.availabilities = convertedAvailabilities;*/
       }
       l = tmp
 

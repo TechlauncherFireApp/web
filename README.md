@@ -37,7 +37,14 @@ Its recommended you use [PyCharm Ultimate](https://www.jetbrains.com/pycharm/dow
 
 ### Frontend Steps
 
-// TODO
+1. **Install NodeJS**: [Steps](https://nodejs.org/en/download/)
+2. **Run** the following commands in a terminal:\
+    a. `cd ui`\
+    b. `npm install`
+3. **Create** a run configuration by adding a `npm` runtime using the settings:\
+    _Package JSON:_ `<where you've cloned the repo>\FireApp2.0\ui\package.json`\
+    _Command:_ `run`\
+    _Script:_ `start`\
 
 
 ### Generate  a Database Migration

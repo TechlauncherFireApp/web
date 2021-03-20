@@ -1,5 +1,5 @@
 import random
-import backend.services.gurobi.data_generator as dg
+import services.gurobi.data_generator as dg
 
 
 def random_availability_generator():

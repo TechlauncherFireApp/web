@@ -87,10 +87,10 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
     let d: any = [];
     for (let x of l) {
       d.push({
-        "vehicleID": x.vehicleID,
+        "vehicleID": this.props.match.params.id,
         "assetClass": x.assetClass,
-        "startDateTime": toPythonDate(x.startDateTime), // toTimeblock()
-        "endDateTime": toPythonDate(x.endDateTime)
+        "startDateTime": x.startDateTime.toISOString(),
+        "endDateTime": x.endDateTime.toISOString(),
       });
     }
 
@@ -115,10 +115,10 @@ export default class AssetRequestVehicle extends React.Component<any, State> {
       let requestData: any = [];
       for (const asset of this.state.requestList) {
         requestData.push({
-          shiftID: asset.vehicleID,
+          shiftID: this.props.match.params.id,
           assetClass: asset.assetClass,
-          startTime: dateToBackend(asset.startDateTime),
-          endTime: dateToBackend(asset.endDateTime),
+          startTime: asset.startDateTime.toISOString(),
+          endTime: asset.endDateTime.toISOString(),
         });
       }
 

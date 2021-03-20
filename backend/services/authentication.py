@@ -1,11 +1,11 @@
-from typing import Tuple
+from typing import Tuple, Any
 
 from sqlalchemy.orm import Session
 
-from backend.domain import User
-from backend.domain.type import UserType, RegisterResult, LoginResult
-from backend.services.jwk import JWKService
-from backend.services.password import PasswordService
+from domain import User
+from domain.type import UserType, RegisterResult, LoginResult
+from services.jwk import JWKService
+from services.password import PasswordService
 
 passwordService = PasswordService()
 jwk_service = JWKService()
@@ -42,19 +42,22 @@ class AuthenticationService():
         # Everything seems fine, so we go ahead and create the user & the linked account.
         password_hash = passwordService.hash(password)
         new_user = User(role=UserType.VOLUNTEER, password=password_hash, first_name=given_name, last_name=last_name,
-                        mobile_number=phone, email=email)
+                        mobile_number=phone, email=email, preferred_hours={}, experience_years=0, possibleRoles=["Basic"],
+                        qualifications=[],
+                        availabilities={"Friday": [], "Monday": [], "Sunday": [], "Tuesday": [], "Saturday": [],
+                                        "Thursday": [], "Wednesday": []})
         session.add(new_user)
         session.flush()
         return RegisterResult.SUCCESS
 
     @staticmethod
-    def login(session: Session, email: str, password: str) -> Tuple[LoginResult, str]:
+    def login(session: Session, email: str, password: str) -> Tuple[LoginResult, Any, Any]:
         user = session.query(User) \
             .filter(User.email == email) \
             .first()
         if user is None:
-            return LoginResult.FAIL, ""
+            return LoginResult.FAIL, None, None
         if not passwordService.compare(password, user.password):
-            return LoginResult.FAIL, ""
+            return LoginResult.FAIL, None, None
 
-        return LoginResult.SUCCESS, jwk_service.generate(user.id, user.email)
+        return LoginResult.SUCCESS, jwk_service.generate(user.id, user.email), user.role

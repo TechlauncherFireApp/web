@@ -3,9 +3,10 @@ import json
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
+from repository.asset_request_volunteer_repository import add_shift, update_shift_by_position, get_shifts_by_request
 from .utility import *
-from backend.domain import session_scope
-from backend.repository.asset_request_volunteer_repository import *
+from domain import session_scope
+from repository.asset_request_volunteer_repository import *
 
 '''
 Define Data Input
@@ -175,6 +176,8 @@ class ShiftRequest(Resource):
         with session_scope() as session:
             for shift in args["shifts"]:
                 for volunteer in shift['volunteers']:
+                    if volunteer['ID'] == '-1':
+                        volunteer['ID'] = None
                     add_shift(session, volunteer['ID'], shift['shiftID'], volunteer['positionID'], volunteer['role'])
         return {"success": True}
 

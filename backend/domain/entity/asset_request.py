@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, String, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
-from backend.domain.base import Base
+from domain.base import Base
 
 
 class AssetRequest(Base):

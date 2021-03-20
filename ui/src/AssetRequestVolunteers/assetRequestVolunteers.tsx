@@ -102,17 +102,17 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         
         for (const v of tmp) {
           let convertedAvailabilities: any = [];
-          for (const a of v.availabilities) {
-            const start = dateFromBackend(a[0]);
-            const end = dateFromBackend(a[1]);
-            convertedAvailabilities.push({ startTime: start, endTime: end });
-          }
+          // for (const a of v.availabilities) {
+          //   const start = dateFromBackend(a[0]);
+          //   const end = dateFromBackend(a[1]);
+          //   convertedAvailabilities.push({ startTime: start, endTime: end });
+          // }
           v.availabilities = convertedAvailabilities;
         }
         resolve(tmp);
       }).catch((err: AxiosError): void => {
-        // alert(err.message);
-        resolve(this.getVolunteerList());
+        alert(err.message);
+        // resolve(this.getVolunteerList());
       });
     });
   }
@@ -144,11 +144,11 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       headers: { "X-Requested-With": "XMLHttpRequest" }
     }).then((res: AxiosResponse): void => {
       let tmp = res.data["results"];
-      console.log("tmp:", tmp);
-      
-      for (const r of tmp) {
-        r.startTime = dateFromBackend(r.startTime);
-        r.endTime = dateFromBackend(r.endTime);
+      if(tmp !== null) {
+        for (const r of tmp) {
+          r.startTime = dateFromBackend(r.startTime);
+          r.endTime = dateFromBackend(r.endTime);
+        }
       }
 
       recommendation = tmp;
@@ -159,7 +159,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         this.setState({ assetRequest, volunteerList, assignedVolunteers, loading: false })
       }
     }).catch((err: AxiosError): void => {
-      // alert(err.message);
+      alert(err.message);
     });
   }
 

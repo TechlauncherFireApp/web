@@ -27,7 +27,7 @@ export const getValidDate = (x: Date): Date => {
 export const getDateSS = (t: Date): string => { return new Date(t.toString().split("GMT")[0] + " UTC").toISOString().split('.')[0]; };
 
 export const toPythonDate = (d: Date): string => {
-  return (`${d.getFullYear()}-${(d.getMonth() + 1)}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds().toString()}`);
+  return d.toISOString();
 };
 
 export const dateToBackend = (d: Date): string => {

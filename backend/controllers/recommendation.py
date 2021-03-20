@@ -1,8 +1,9 @@
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 from .utility import *
-from backend.services.optimiser import schedule
-from backend.repository.volunteer_repository import *
+from services.optimiser import schedule
+from repository.volunteer_repository import *
+from domain import session_scope
 
 '''
 Define data input
@@ -95,30 +96,31 @@ class Recommendation(Resource):
             asset_requests.append(asset_request)
 
         # Get all volunteers
-        volunteers = list_volunteers()
+        with session_scope() as session:
+            volunteers = list_volunteers(session)
 
-        # Shouldn't have to have this switcher
-        for volunteer in volunteers:
-            # Fix possibleRoles values.
-            roles = []
-            for role in volunteer["possibleRoles"]:
-                switcher = {
-                    "Basic": "basic",
-                    "Advanced": "advanced",
-                    "Crew Leader": "crewLeader",
-                    "Driver": "driver"
-                }
-                roles.append(switcher[role])
-            volunteer["possibleRoles"] = roles
+            # Shouldn't have to have this switcher
+            # for volunteer in volunteers:
+            #     # Fix possibleRoles values.
+            #     roles = []
+            #     for role in volunteer["possibleRoles"]:
+            #         switcher = {
+            #             "Basic": "basic",
+            #             "Advanced": "advanced",
+            #             "Crew Leader": "crewLeader",
+            #             "Driver": "driver"
+            #         }
+            #         roles.append(switcher[role])
+            #     volunteer["possibleRoles"] = roles
 
-        # Get the generated recommendation
-        output = schedule(volunteers, asset_requests)
+            # Get the generated recommendation
+            output = schedule(volunteers, asset_requests)
 
-        if not output == []:
-            print("Optimisation Succeeded")
-            # print("Optimisation Succeeded:\n{}".format(output))
+            if not output == []:
+                print("Optimisation Succeeded")
+                # print("Optimisation Succeeded:\n{}".format(output))
 
-        return {"results": output}
+            return {"results": output}
 
 
 recommendation_bp = Blueprint('recommendation', __name__)

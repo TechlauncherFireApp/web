@@ -21,6 +21,7 @@ def range_surrounds(range1, range2):
     start2 = range2[0]
     end1 = range1[1]
     end2 = range2[1]
+    print(range1, range2)
     if start1 <= start2 and end1 >= end2:
         return True
     else:
@@ -163,10 +164,11 @@ def generate_compatibility(volunteers, vehicle_request):
         request_row = []
         request_time = request["timeframe"]
         for volunteer in volunteers:
-            temp = False
-            for availability in volunteer["availabilities"]:
-                if range_surrounds(availability, request_time):
-                    temp = True
+            temp = True
+            # TODO: This comparison is broken
+            #for availability in volunteer["availabilities"]:
+            #    if range_surrounds(availability, request_time):
+            #        temp = True
             request_row.append(temp)
         compatible.append(request_row)
     return compatible

@@ -3,8 +3,8 @@ from datetime import datetime
 from sqlalchemy import Column, String, DateTime, Integer, Enum, JSON
 from sqlalchemy.orm import relationship
 
-from backend.domain.base import Base
-from backend.domain.type import UserType
+from domain.base import Base
+from domain.type import UserType
 
 
 class User(Base):

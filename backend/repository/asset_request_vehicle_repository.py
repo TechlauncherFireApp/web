@@ -1,6 +1,6 @@
 from sqlalchemy import func
 
-from backend.domain import AssetRequestVehicle
+from domain import AssetRequestVehicle
 
 
 def count_vehicles(session, request_id):

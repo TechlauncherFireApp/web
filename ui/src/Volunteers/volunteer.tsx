@@ -53,11 +53,11 @@ export default class Volunteer extends React.Component<any, State> {
         }).then((res: AxiosResponse): void => {
             let tmp = res.data
             let convertedAvailabilities: any = [];
-            for (const a of tmp.availabilities) {
+            /*for (const a of tmp.availabilities) {
                 const start = new Date(Date.parse(a[0]));
                 const end = new Date(Date.parse(a[1]));
                 convertedAvailabilities.push({ startTime: start, endTime: end });
-            }
+            }*/
             tmp.availabilities = convertedAvailabilities;
             this.setState({ thisVolunteer: tmp, loading: false })
         }).catch((err: AxiosError): void => {

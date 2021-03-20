@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 
-from backend.domain.base import Base
+from domain.base import Base
 
 
 class AssetRequestVehicle(Base):

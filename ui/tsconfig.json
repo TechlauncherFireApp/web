@@ -1,7 +1,4 @@
 {
-  // npm i --save typescript @types/node @types/react @types/react-dom @types/jest
-  // npm audit fix
-  
   "compilerOptions": {
     "target": "es3",
     "lib": [
@@ -20,7 +17,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"
