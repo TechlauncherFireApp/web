@@ -15,7 +15,7 @@ class PasswordService:
         :param plaintext: The password to hash.
         :return: The password, hashed as bytes.
         """
-        return bcrypt.hashpw(bytes(plaintext), bcrypt.gensalt())
+        return bcrypt.hashpw(plaintext.encode("utf-8"), bcrypt.gensalt())
 
     @staticmethod
     def compare(plaintext: str, hashed: bytes) -> bool:
@@ -25,7 +25,7 @@ class PasswordService:
         :param hashed: A hashed function to compare to.
         :return: True when they are equal, otherwise false.
         """
-        return bcrypt.checkpw(bytes(plaintext), hashed)
+        return bcrypt.checkpw(plaintext.encode("utf-8"), hashed.encode("utf-8"))
 
     def validate(self, plaintext: str) -> bool:
         """

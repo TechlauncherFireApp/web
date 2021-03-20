@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class RegisterResult(Enum):
     SUCCESS = -1
     USERNAME_ALREADY_REGISTERED = 0

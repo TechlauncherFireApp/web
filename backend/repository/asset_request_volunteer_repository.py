@@ -1,4 +1,4 @@
-from backend.domain import AssetRequestVolunteer, AssetRequest, AssetRequestVehicle, Volunteer
+from backend.domain import AssetRequestVolunteer, AssetRequest, AssetRequestVehicle, User
 
 
 def get_asset_request_volunteer(session, volunteer_id, vehicle_id):

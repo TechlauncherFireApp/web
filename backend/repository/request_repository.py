@@ -1,4 +1,4 @@
-from backend.domain import AssetRequest, Admin
+from backend.domain import AssetRequest, User, UserType
 
 
 def get_existing_requests(session):
@@ -19,7 +19,7 @@ def new_request(session, title):
     """
     # TODO: Permissions
     #   - Source the current as an admin
-    admin = session.query(Admin).first()
+    admin = session.query(User).filter(User.role == UserType.ADMIN).first()
     request = AssetRequest(title=title, admin_id=admin.id)
     session.add(request)
     session.flush()

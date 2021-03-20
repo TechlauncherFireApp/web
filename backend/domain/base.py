@@ -6,7 +6,7 @@ import os
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 
-from backend.services import SecretService
+from backend.services.secrets import SecretService
 
 secret = SecretService(f"database/{os.environ.get('env', 'dev')}/fireapp")
 

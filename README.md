@@ -38,3 +38,12 @@ Its recommended you use [PyCharm Ultimate](https://www.jetbrains.com/pycharm/dow
 ### Frontend Steps
 
 // TODO
+
+
+### Generate  a Database Migration
+1. `cd backend`
+2. `pipenv activate`
+3. `alembic revision --autogenerate -m "<meaningful message>"`
+
+To run the migration: 
+1. `alembic upgrade head`

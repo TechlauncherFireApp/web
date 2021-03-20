@@ -7,7 +7,8 @@ from backend.controllers import *
 app = Flask(__name__)
 
 # TODO: Tech Debt
-#   - CORS Should be specified at the host level per environment, not a global free-for-all.
+#   - CORS Should be specified at the host level per environment, not a global free-for-all. We do this to stop
+#     cross site scripting (XSS) attacks.
 CORS(app)
 
 # Register all controllers individually
@@ -22,6 +23,7 @@ app.register_blueprint(volunteer_availability_bp)
 app.register_blueprint(volunteer_preferred_hours_bp)
 app.register_blueprint(volunteer_shifts_bp)
 app.register_blueprint(volunteer_status_bp)
+app.register_blueprint(authentication_bp)
 
 
 @app.route('/')

@@ -17,6 +17,7 @@ flask-cors = "*"
 alembic = "*"
 boto3 = "*"
 bcrypt = "*"
+jwcrypto = "*"
 
 [requires]
 python_version = "3.8"

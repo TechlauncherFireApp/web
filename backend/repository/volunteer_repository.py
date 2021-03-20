@@ -1,6 +1,6 @@
 from operator import or_
 
-from backend.domain import Volunteer
+from backend.domain import User
 
 
 def get_volunteer(session, volunteer_id):
@@ -10,17 +10,17 @@ def get_volunteer(session, volunteer_id):
 
 
 def list_volunteers(session, volunteer_id=None):
-    return session.query(Volunteer.id.label("ID"),
-                         Volunteer.first_name.label('firstName'),
-                         Volunteer.last_name.label('lastName'),
-                         Volunteer.email.label('email'),
-                         Volunteer.mobile_number.label('mobileNo'),
-                         Volunteer.preferred_hours.label('prefHours'),
-                         Volunteer.experience_years.label('expYears'),
-                         Volunteer.possibleRoles.label('possibleRoles'),
-                         Volunteer.qualifications.label('qualifications'),
-                         Volunteer.availabilities.label('availabilities'))\
-        .filter(or_(Volunteer.id == volunteer_id, volunteer_id == None))\
+    return session.query(User.id.label("ID"),
+                         User.first_name.label('firstName'),
+                         User.last_name.label('lastName'),
+                         User.email.label('email'),
+                         User.mobile_number.label('mobileNo'),
+                         User.preferred_hours.label('prefHours'),
+                         User.experience_years.label('expYears'),
+                         User.possibleRoles.label('possibleRoles'),
+                         User.qualifications.label('qualifications'),
+                         User.availabilities.label('availabilities'))\
+        .filter(or_(User.id == volunteer_id, volunteer_id == None))\
         .all()
 
 
