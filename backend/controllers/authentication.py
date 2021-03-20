@@ -24,8 +24,9 @@ class Register(Resource):
         auth = AuthenticationService()
         with session_scope() as session:
             result = auth.register(session, args['email'], args['password'], args['given_name'], args['last_name'],
-                          args['phone'])
+                                   args['phone'])
         return jsonify({"result": result.name})
+
 
 class Login(Resource):
     def post(self):
