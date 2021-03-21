@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import axios, { AxiosResponse, AxiosError } from "axios";
+import React, { Component } from 'react';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 
 interface AssetRequest {
   id: string;
@@ -12,12 +12,14 @@ interface State {
   loading: boolean;
 }
 
-export default class existingRequestSelector extends React.Component<any, State> {
-
+export default class existingRequestSelector extends React.Component<
+  any,
+  State
+> {
   state: State = {
     requests: [],
     selectedRequest: undefined,
-    loading: true
+    loading: true,
   };
   select_request: React.RefObject<HTMLSelectElement>;
 
@@ -28,43 +30,63 @@ export default class existingRequestSelector extends React.Component<any, State>
 
   componentDidMount(): void {
     let l: AssetRequest[] = [];
-    axios.request({
-      url: "existing_requests",
-      method: "GET",
-      timeout: 15000,
-      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
-    }).then((res: AxiosResponse): void => {
-      l = res.data["results"];
+    axios
+      .request({
+        url: 'existing_requests',
+        method: 'GET',
+        timeout: 15000,
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        },
+      })
+      .then((res: AxiosResponse): void => {
+        l = res.data['results'];
 
-      console.log("Data from backend returned:")
-      console.log(l);
+        console.log('Data from backend returned:');
+        console.log(l);
 
-      this.setState({ requests: l, loading: false })
-    }).catch((err: AxiosError): void => {
-      alert(err.message);
-    });
+        this.setState({ requests: l, loading: false });
+      })
+      .catch((err: AxiosError): void => {
+        // @ts-ignore
+        if (err.response.status === 401) {
+          this.props.history.push('/login');
+        } else {
+          alert(err.message);
+        }
+      });
   }
 
   selectRequest = (): void => {
-    let selectedID: string = this.select_request.current ? this.select_request.current.value : "";
+    let selectedID: string = this.select_request.current
+      ? this.select_request.current.value
+      : '';
 
-    let v: (AssetRequest | undefined) = undefined;
+    let v: AssetRequest | undefined = undefined;
     for (let i = 0; i < this.state.requests.length; i++) {
       if (this.state.requests[i].id === selectedID) {
         v = this.state.requests[i];
         i = this.state.requests.length;
       }
     }
-    this.setState({ selectedRequest: v }, () => { this.loadRequest() });
-  }
+    this.setState({ selectedRequest: v }, () => {
+      this.loadRequest();
+    });
+  };
 
   loadRequest = (): void => {
     if (this.state.selectedRequest === undefined) {
-      console.log("no request selected");
+      console.log('no request selected');
     } else {
-      window.open(window.location.origin + `/assetRequest/volunteers/${this.state.selectedRequest.id}`, "_self", "", false);
+      window.open(
+        window.location.origin +
+          `/assetRequest/volunteers/${this.state.selectedRequest.id}`,
+        '_self',
+        '',
+        false
+      );
     }
-  }
+  };
 
   render() {
     return (
@@ -73,12 +95,16 @@ export default class existingRequestSelector extends React.Component<any, State>
         <hr />
         <p>Select a saved request to see further information.</p>
         <select ref={this.select_request}>
-          <option value="" hidden selected>{this.state.loading ? "Loading..." : "Select saved request"}</option>
-          {this.state.requests.map((v: AssetRequest) =>
+          <option value="" hidden selected>
+            {this.state.loading ? 'Loading...' : 'Select saved request'}
+          </option>
+          {this.state.requests.map((v: AssetRequest) => (
             <option value={v.id}>{v.title}</option>
-          )}
+          ))}
         </select>
-        <button className="type-1 margin" onClick={() => this.selectRequest()}>View Assignment</button>
+        <button className="type-1 margin" onClick={() => this.selectRequest()}>
+          View Assignment
+        </button>
       </div>
     );
   }

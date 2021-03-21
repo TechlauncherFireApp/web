@@ -14,14 +14,14 @@ function Login() {
 
   function submit(e) {
     e.preventDefault();
-    axios.post(backendPath + 'authentication/login', values, {headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }}).then((resp) => {
+    axios.post(backendPath + 'authentication/login', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
           localStorage.setItem('access_token', resp.data['access_token']);
           localStorage.setItem('role', resp.data['role']);
           switch (resp.data['role']) {
             case 'VOLUNTEER':
-              history.push('/volunteer');
+              history.push('/volunteer/' + resp.data['id']);
               break;
             default:
               history.push('/captain');

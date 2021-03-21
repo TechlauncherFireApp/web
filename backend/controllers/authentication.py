@@ -34,10 +34,10 @@ class Login(Resource):
         args = login_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
-            result, token, role = auth.login(session, args['email'], args['password'])
-        if token is None:
-            return jsonify({"result": result.name})
-        return jsonify({"result": result.name, "access_token": token, "role": role.name})
+            result, token, user = auth.login(session, args['email'], args['password'])
+            if token is None:
+                return jsonify({"result": result.name})
+            return jsonify({"result": result.name, "access_token": token, "role": user.role.name, 'id': user.id})
 
 
 authentication_bp = Blueprint('authentication', __name__)

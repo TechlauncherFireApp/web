@@ -60,4 +60,4 @@ class AuthenticationService():
         if not passwordService.compare(password, user.password):
             return LoginResult.FAIL, None, None
 
-        return LoginResult.SUCCESS, jwk_service.generate(user.id, user.email), user.role
+        return LoginResult.SUCCESS, jwk_service.generate(user.id, user.email), user
