@@ -1,22 +1,20 @@
-import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, event
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 
-from backend.domain.base import Base
-from backend.domain.guid import GUID
+from domain.base import Base
 
 
 class AssetRequestVehicle(Base):
-    __tablename__ = 'asset-request_vehicle'
+    __tablename__ = 'asset_request_vehicle'
 
-    id = Column(GUID(), primary_key=True, default=uuid.uuid4().hex[0:15])
-    request_id = Column(GUID(), ForeignKey('asset-request.id'), name='idRequest')
-    type = Column(String, name='type')
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    request_id = Column(Integer, ForeignKey('asset_request.id'), name='request_id')
+    type = Column(String(256), name='type')
     from_date_time = Column(DateTime, name='from')
     to_date_time = Column(DateTime, name='to')
-    update_date_time = Column(DateTime, name='lastUpdateDt', default=datetime.now(), nullable=False)
-    insert_date_time = Column(DateTime, name='rowInsertDT', default=datetime.now(), nullable=False)
+    update_date_time = Column(DateTime, name='last_update_datetime', default=datetime.now(), nullable=False)
+    insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
 
 
 

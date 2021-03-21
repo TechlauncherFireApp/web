@@ -4,7 +4,7 @@ from alembic import context
 
 sys.path = ['', '..'] + sys.path[1:]
 # Do not re-arrange this, the import _must_ come after the sys.path change
-from backend.domain import Base
+from domain import Base
 
 config = context.config
 fileConfig(config.config_file_name)
@@ -26,7 +26,7 @@ def run_migrations_offline():
 
 
 def run_migrations_online():
-    from backend.domain import Engine
+    from domain import Engine
     with Engine.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata

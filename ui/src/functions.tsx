@@ -27,7 +27,7 @@ export const getValidDate = (x: Date): Date => {
 export const getDateSS = (t: Date): string => { return new Date(t.toString().split("GMT")[0] + " UTC").toISOString().split('.')[0]; };
 
 export const toPythonDate = (d: Date): string => {
-  return (`${d.getFullYear()}-${(d.getMonth() + 1)}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds().toString()}`);
+  return d.toISOString();
 };
 
 export const dateToBackend = (d: Date): string => {
@@ -68,26 +68,6 @@ export const parseDateTime = (date1: Date, date2: Date): string => {
       + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
   }
   return str.toLowerCase();
-
-
-
-
-
-  // let str = date1.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" });
-  // if (
-  //   date1.getMonth() === date2.getMonth() &&
-  //   date1.getDate() === date2.getDate() &&
-  //   date1.getFullYear() === date2.getFullYear()
-  // ) {
-  //   //if the request starts and ends on the same day
-  //   str = str + " - " + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
-  //     + date2.toLocaleDateString("en-GB");
-  // } else {
-  //   str = str + " " + date1.toLocaleDateString("en-GB") + " - "
-  //     + date2.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "numeric" }) + " "
-  //     + date2.toLocaleDateString("en-GB");
-  // }
-  // return str.toLowerCase();
 };
 
 export const parseRolesAsString = (list: string[]): string => {

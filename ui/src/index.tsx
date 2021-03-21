@@ -6,7 +6,6 @@ import * as serviceWorker from './serviceWorker';
 import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:5000/";
-axios.defaults.headers = { "X-Requested-With": "XMLHttpRequest" };
 
 declare global {
   namespace JSX {

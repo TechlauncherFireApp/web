@@ -16,6 +16,9 @@ mysqlclient = "*"
 flask-cors = "*"
 alembic = "*"
 boto3 = "*"
+bcrypt = "*"
+jwcrypto = "*"
+flask-restful = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.7"

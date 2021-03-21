@@ -8,8 +8,8 @@ Create Date: ${create_date}
 from alembic import op
 import sqlalchemy as sa
 from alembic import context
+import sys
 sys.path = ['', '..'] + sys.path[1:]
-from backend.domain.guid import GUID
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.

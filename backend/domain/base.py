@@ -6,7 +6,7 @@ import os
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 
-from backend.services import SecretService
+from services.secrets import SecretService
 
 secret = SecretService(f"database/{os.environ.get('env', 'dev')}/fireapp")
 
@@ -16,7 +16,7 @@ Engine = create_engine('mysql+mysqldb://{0}:{1}@{2}:{3}/{4}'.format(secret.get()
                                                                     secret.get()['password'],
                                                                     secret.get()['host'],
                                                                     secret.get()['port'],
-                                                                    secret.get()['dbname']), echo=True)
+                                                                    secret.get()['dbname']), echo=False)
 Session.configure(bind=Engine)
 
 # Configure Declarative Base for ORM

@@ -1,42 +1,15 @@
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
+
+from repository.asset_request_vehicle_repository import get_vehicles
+from repository.asset_request_volunteer_repository import add_shift
 from .utility import *
-from backend.services.optimiser import schedule
-from backend.repository.volunteer_repository import *
-
-'''
-Define data input
-
-{
-  "request" : [{
-    "shiftID": String,
-    "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-    "startTime": DateTimeString iso8601,
-    "endTime": DateTimeString iso8601
-  }]
-}
-'''
-
-
-# Validate an asset shift_request input
-def input_asset_req(value):
-    # Validate that request contains dictionaries
-    value = type_dict(value)
-    if type(value) is dict:
-        # Validate vehicle values
-        value = input_key_type(value, 'shiftID', type_string, [])
-        value = input_key_type(value, 'assetClass', type_enum, [["heavyTanker", "mediumTanker", "lightUnit"]])
-        value = input_key_type(value, 'startTime', type_datetime, [])
-        value = input_key_type(value, 'endTime', type_datetime, [])
-        # Validate the startTime is before the endTime
-        if value['startTime'] >= value['endTime']:
-            raise ValueError(
-                "The startTime '{}' cannot be after the endTime '{}'".format(value['startTime'], value['endTime']))
-    return value
-
+from services.optimiser import schedule
+from repository.volunteer_repository import *
+from domain import session_scope
 
 parser = reqparse.RequestParser()
-parser.add_argument('request', action='append', type=input_asset_req)
+parser.add_argument('requestId', action='append', type=int)
 
 '''
 Define data output
@@ -79,46 +52,41 @@ resource_fields = {
 class Recommendation(Resource):
 
     @marshal_with(resource_fields)
-    def post(self):
+    def get(self):
         args = parser.parse_args()
-        if args["request"] is None:
+        if args["requestId"] is None:
             return
 
-        # Compile an asset request type for the scheduler
-        asset_requests = []
-        for shift_request in args["request"]:
-            asset_request = {
-                "shiftID": shift_request["shiftID"],
-                "assetClass": shift_request["assetClass"],
-                "timeframe": (shift_request["startTime"], shift_request["endTime"])
-            }
-            asset_requests.append(asset_request)
+        with session_scope() as session:
+            asset_requests = []
+            vehicles = get_vehicles(session, args['requestId'])
+            for vehicle in vehicles:
+                vehicle_id, asset_class, start_date, end_date = vehicle
+                asset_requests.append({
+                    "shiftID": vehicle_id,
+                    "assetClass": asset_class,
+                    "timeframe": (start_date, end_date)
+                })
+            volunteers = list_volunteers(session)
 
-        # Get all volunteers
-        volunteers = list_volunteers()
+            # Get the generated recommendation
+            output = schedule(volunteers, asset_requests)
 
-        # Shouldn't have to have this switcher
-        for volunteer in volunteers:
-            # Fix possibleRoles values.
-            roles = []
-            for role in volunteer["possibleRoles"]:
-                switcher = {
-                    "Basic": "basic",
-                    "Advanced": "advanced",
-                    "Crew Leader": "crewLeader",
-                    "Driver": "driver"
-                }
-                roles.append(switcher[role])
-            volunteer["possibleRoles"] = roles
+            if not output == []:
+                print("Optimisation Succeeded")
 
-        # Get the generated recommendation
-        output = schedule(volunteers, asset_requests)
-
-        if not output == []:
-            print("Optimisation Succeeded")
-            # print("Optimisation Succeeded:\n{}".format(output))
-
-        return {"results": output}
+            # Persist the optimisation! we don't ask the fkn front end to manage the backends data! This is completely
+            # insane and the reason the front end is a cluster fk!
+            for vehicle in output:
+                vehicle_id = vehicle['shiftID']
+                for volunteer in vehicle['volunteers']:
+                    volunteer_id = volunteer['ID']
+                    if volunteer_id == -1:
+                        volunteer_id = None
+                    position = volunteer['positionID']
+                    role = volunteer['role']
+                    add_shift(session, volunteer_id, vehicle_id,position, role)
+            return {"results": output}
 
 
 recommendation_bp = Blueprint('recommendation', __name__)

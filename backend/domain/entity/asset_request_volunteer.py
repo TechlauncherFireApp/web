@@ -1,23 +1,21 @@
-import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, event
 from sqlalchemy.orm import relationship
 
-from backend.domain.base import Base
-from backend.domain.guid import GUID
+from domain.base import Base
 
 
 class AssetRequestVolunteer(Base):
-    __tablename__ = 'asset-request_volunteer'
+    __tablename__ = 'asset_request_volunteer'
 
-    id = Column(GUID(), primary_key=True, default=uuid.uuid4().hex[0:15])
-    volunteer_id = Column(GUID(), ForeignKey('volunteer.id'), name='idVolunteer')
-    vehicle_id = Column(GUID(), ForeignKey('asset-request_vehicle.id'), name='idVehicle')
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('user.id'), name='user_id')
+    vehicle_id = Column(Integer, ForeignKey('asset_request_vehicle.id'), name='vehicle_id')
     position = Column(Integer, name='position')
     roles = Column(JSON, name='roles')
-    status = Column(String, name='status')
-    update_date_time = Column(DateTime, name='lastUpdateDt', default=datetime.now(), nullable=False)
-    insert_date_time = Column(DateTime, name='rowInsertDT', default=datetime.now(), nullable=False)
+    status = Column(String(256), name='status')
+    update_date_time = Column(DateTime, name='last_update_datetime', default=datetime.now(), nullable=False)
+    insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
 
     asset_request_vehicle = relationship("AssetRequestVehicle")
