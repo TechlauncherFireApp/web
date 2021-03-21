@@ -103,7 +103,7 @@ export default class Availability extends React.Component<any, State> {
       url: "/volunteer/prefhours",
       method: "GET",
       params: { "volunteerID": this.props.match.params.id },
-      timeout: 15000
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       // console.log(res.data);
       if ((typeof res.data === "object") && (res.data["success"])) {
@@ -124,7 +124,7 @@ export default class Availability extends React.Component<any, State> {
       url: "/volunteer/availability",
       method: "GET",
       params: { "volunteerID": this.props.match.params.id },
-      timeout: 15000
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       // console.log(res.data);
       if ((typeof res.data === "object") && (res.data["success"])) {
@@ -147,7 +147,7 @@ export default class Availability extends React.Component<any, State> {
       url: "/volunteer/prefhours",
       method: "PATCH",
       params: { "volunteerID": this.props.match.params.id, "prefHours": Number(this.state.prefHours) },
-      timeout: 15000
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       // console.log(res.data);
       alert(res.data["success"] ? "Updated - prefHours" : "Request Failed");
@@ -167,7 +167,7 @@ export default class Availability extends React.Component<any, State> {
       method: "PATCH",
       params: { "volunteerID": this.props.match.params.id },
       data: { "availability": this.state.currentSchedule },
-      timeout: 15000
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       // console.log(res.data);
       alert(res.data["success"] ? "Updated - Availability" : "Request Failed");

@@ -49,7 +49,7 @@ export default class Volunteer extends React.Component<any, State> {
             params: { "volunteerID": this.props.match.params.id },
             timeout: 15000,
             // withCredentials: true,
-            headers: { "X-Requested-With": "XMLHttpRequest" }
+            headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
         }).then((res: AxiosResponse): void => {
             let tmp = res.data
             let convertedAvailabilities: any = [];
@@ -70,7 +70,7 @@ export default class Volunteer extends React.Component<any, State> {
             params: { "volunteerID": this.props.match.params.id },
             timeout: 15000,
             // withCredentials: true,
-            headers: { "X-Requested-With": "XMLHttpRequest" }
+            headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
         }).then((res: AxiosResponse): void => {
             let tmp = res.data["results"]
             if (tmp !== null) {
@@ -141,7 +141,7 @@ export default class Volunteer extends React.Component<any, State> {
             method: "PATCH",
             timeout: 15000,
             params: info,
-            headers: { "X-Requested-With": "XMLHttpRequest" }
+            headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
         }).catch((err: AxiosError): void => {
             alert(err.message);
         });

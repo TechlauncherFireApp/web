@@ -37,10 +37,16 @@ function AssetRequestVehicle() {
       endDate: endDate,
       assetType: assetType,
     };
-    axios.post(backendPath + 'vehicle/request', payload).then((resp) => {
-      payload['id'] = resp.data['id'];
-      setVehicles([...vehicles, payload]);
-    });
+    axios
+      .post(backendPath + 'vehicle/request', payload, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        },
+      })
+      .then((resp) => {
+        payload['id'] = resp.data['id'];
+        setVehicles([...vehicles, payload]);
+      });
   }
 
   function submit() {

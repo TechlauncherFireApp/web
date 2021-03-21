@@ -43,9 +43,7 @@ export default class VolunteersContainer extends React.Component<any, State> {
     axios.request({
       url: "volunteer/all",
       method: "GET",
-      timeout: 15000,
-      // withCredentials: true,
-      headers: { "X-Requested-With": "XMLHttpRequest" }
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       let tmp = res.data["results"]
       for (const v of tmp) {

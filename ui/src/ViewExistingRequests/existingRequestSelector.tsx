@@ -32,8 +32,7 @@ export default class existingRequestSelector extends React.Component<any, State>
       url: "existing_requests",
       method: "GET",
       timeout: 15000,
-      // withCredentials: true,
-      headers: { "X-Requested-With": "XMLHttpRequest" }
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       l = res.data["results"];
 

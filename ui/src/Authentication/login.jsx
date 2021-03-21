@@ -14,7 +14,7 @@ function Login() {
 
   function submit(e) {
     e.preventDefault();
-    axios.post(backendPath + 'authentication/login', values).then((resp) => {
+    axios.post(backendPath + 'authentication/login', values, {headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }}).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
           localStorage.setItem('access_token', resp.data['access_token']);

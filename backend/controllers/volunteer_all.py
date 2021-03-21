@@ -3,6 +3,7 @@ from flask_restful import Resource, fields, marshal_with, Api
 
 from domain import session_scope
 from repository.volunteer_repository import *
+from services.jwk import requires_auth
 
 '''
 No Data Input
@@ -55,6 +56,8 @@ resource_fields = {
 
 # Handle the Recommendation endpoint
 class VolunteerAll(Resource):
+
+    @requires_auth
     @marshal_with(resource_fields)
     def get(self):
         with session_scope() as session:

@@ -96,7 +96,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         url: "volunteer/all",
         method: "GET",
         timeout: 15000,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
+        headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
       }).then((res: AxiosResponse): void => {
         let tmp = res.data["results"];
         console.log(res.data['results'])
@@ -141,7 +141,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       method: "GET",
       timeout: 15000,
       // withCredentials: true,
-      headers: { "X-Requested-With": "XMLHttpRequest" }
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       let tmp = res.data["results"];
       if(tmp !== null) {
@@ -150,7 +150,6 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
           r.endTime = dateFromBackend(r.endTime);
         }
       }
-      console.log(tmp)
       recommendation = tmp;
       // Both volunteerList and recommendation need to be populated
       if (volunteerList.length !== 0) {
@@ -184,7 +183,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       timeout: 15000,
       data: { "shifts": requestData },
       // withCredentials: true,
-      headers: { "X-Requested-With": "XMLHttpRequest" }
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       if (res.data["success"]) {
         alert("Save Succeded")

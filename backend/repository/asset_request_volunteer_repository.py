@@ -8,10 +8,11 @@ def get_asset_request_volunteer(session, volunteer_id, vehicle_id):
         .first()
 
 
-def set_asset_request_volunteer_status(session, status, volunteer_id, vehicle_id):
+def set_asset_request_volunteer_status(session, status, volunteer_id, shift_id):
+    print(status, volunteer_id, shift_id)
     record = session.query(AssetRequestVolunteer) \
-        .filter(AssetRequestVolunteer.volunteer_id == volunteer_id) \
-        .filter(AssetRequestVolunteer.vehicle_id == vehicle_id) \
+        .filter(AssetRequestVolunteer.user_id == volunteer_id) \
+        .filter(AssetRequestVolunteer.id == shift_id) \
         .first()
     record.status = status
 

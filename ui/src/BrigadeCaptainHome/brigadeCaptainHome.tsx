@@ -29,9 +29,7 @@ export default class BrigadeCaptainHome extends React.Component<any, State> {
       url: "new_request",
       method: "POST",
       data: { "title": this.state.request_title },
-      timeout: 15000,
-      // withCredentials: true,
-      headers: { "X-Requested-With": "XMLHttpRequest" }
+      headers: { "Authorization": "Bearer "+localStorage.getItem('access_token') }
     }).then((res: AxiosResponse): void => {
       if ((typeof res.data === "object") && contains(res.data["id"])) window.open(window.location.origin + `/assetRequest/vehicles/${res.data["id"]}`, "_self", "", false);
       else if (typeof res.data === "string") {
