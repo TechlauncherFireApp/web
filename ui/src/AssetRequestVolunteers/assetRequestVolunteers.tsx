@@ -99,7 +99,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         headers: { "X-Requested-With": "XMLHttpRequest" }
       }).then((res: AxiosResponse): void => {
         let tmp = res.data["results"];
-        
+        console.log(res.data['results'])
         for (const v of tmp) {
           let convertedAvailabilities: any = [];
           // for (const a of v.availabilities) {
@@ -150,7 +150,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
           r.endTime = dateFromBackend(r.endTime);
         }
       }
-
+      console.log(tmp)
       recommendation = tmp;
       // Both volunteerList and recommendation need to be populated
       if (volunteerList.length !== 0) {

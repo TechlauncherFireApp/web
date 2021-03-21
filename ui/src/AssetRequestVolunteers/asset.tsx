@@ -17,7 +17,6 @@ export default class Asset extends React.Component<any, any> {
         i = asset.volunteers.length;
       }
     }
-    console.log(asset)
     this.props.updateAssetRequest(asset);
   }
 
@@ -71,7 +70,7 @@ export default class Asset extends React.Component<any, any> {
           </tr>
         </thead>
         <tbody>
-          {asset.volunteers.map((position: any) =>
+          {asset.volunteers !== null && asset.volunteers.map((position: any) =>
             <Position key={position.positionID}
               updateAsset={(a: any) => this.updateAsset(a)}
               volunteerList={this.props.volunteerList}

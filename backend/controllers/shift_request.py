@@ -3,6 +3,7 @@ import json
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
+from repository.asset_request_vehicle_repository import insert_vehicle, get_vehicle
 from repository.asset_request_volunteer_repository import add_shift, update_shift_by_position, get_shifts_by_request
 from .utility import *
 from domain import session_scope
@@ -133,39 +134,22 @@ class ShiftRequest(Resource):
         args = parser.parse_args()
         if args["requestID"] is None:
             return {"results": None}
-
-        return self.get_func(args["requestID"])
-
-    # @marshal_with(get_resource_fields)
-    def get_func(self, request_id):
         with session_scope() as session:
-            o = []
             rtn = []
-            for row in get_shifts_by_request(session, request_id):
-                # Access protected _asdict() to return the keyed tuple as a dict to enable flask_restful to marshal
-                # it correctly. The alternative method is less tidy.
-                rtn.append(row._asdict())
+            # Get a list of vehicles
+            for row in get_shifts_by_request(session, args["requestID"]):
+                d = row._asdict()
+                volunteers = []
+                # For each vehicle, get the volunteers in that vehicle
+                for volunteer in get_volunteers(session, d['shiftID']):
+                    volunteer_dict = volunteer._asdict()
+                    if volunteer_dict['ID'] is None:
+                        volunteer_dict['ID'] = '-1'
+                    volunteers.append(volunteer_dict)
+                d['volunteers'] = volunteers
+                rtn.append(d)
+        return {"results": rtn}
 
-            # TODO: Tech Debt
-            #   - Find out what this code is trying to do
-            for y in rtn:
-                if y["ID"] == None:
-                    y["ID"] = "-1"
-                n = True
-                for i, x in enumerate(o):
-                    if x["shiftID"] == y["shiftID"]:
-                        o[i]["volunteers"].append(
-                            {"ID": y["ID"], "positionID": y["positionID"], "role": json.loads(y["role"]),
-                             "status": y["status"]})
-                        n = False
-                        break
-                if n: o.append({"shiftID": y["shiftID"], "assetClass": y["assetClass"], "startTime": y["startTime"],
-                                "endTime": y["endTime"], "volunteers": [
-                        {"ID": y["ID"], "positionID": y["positionID"], "role": y["role"],
-                         "status": y["status"]}]})
-
-                return {"results": o}
-        return {"results": None}
 
     @marshal_with(post_patch_resource_fields)
     def post(self):
@@ -175,10 +159,12 @@ class ShiftRequest(Resource):
 
         with session_scope() as session:
             for shift in args["shifts"]:
+                vehicle_id = get_vehicle(session, shift['shiftID'])
+
                 for volunteer in shift['volunteers']:
                     if volunteer['ID'] == '-1':
                         volunteer['ID'] = None
-                    add_shift(session, volunteer['ID'], shift['shiftID'], volunteer['positionID'], volunteer['role'])
+                    add_shift(session, volunteer['ID'], vehicle_id, volunteer['positionID'], volunteer['role'])
         return {"success": True}
 
     @marshal_with(post_patch_resource_fields)
@@ -190,8 +176,9 @@ class ShiftRequest(Resource):
         with session_scope() as session:
             for shift in args["shifts"]:
                 for volunteer in shift['volunteers']:
-                    update_shift_by_position(session, volunteer['ID'], shift['shiftID'], volunteer['positionID'],
-                                             volunteer['role'])
+                    if volunteer['ID'] == '-1' or volunteer['ID'] == -1:
+                        volunteer['ID'] = None
+                    update_shift_by_position(session, shift['shiftID'], volunteer['positionID'], volunteer['ID'], volunteer['role'])
         return {"success": True}
 
 

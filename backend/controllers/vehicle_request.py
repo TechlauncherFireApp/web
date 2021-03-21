@@ -8,28 +8,6 @@ from .utility import *
 from domain import session_scope
 from repository.asset_request_vehicle_repository import *
 
-'''
-Define Data Input
-
-GET
-{
-  "requestID": String
-}
-
-POST
-{
-  "requestID": String,
-  "vehicles" : [{
-    "vehicleID": String,
-    "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-    "startDateTime": DateTimeString iso8601,
-    "endDateTime": DateTimeString iso8601
-  }]
-}
-
-'''
-
-
 # Validate a shift input
 def input_vehicles(value, name):
     # Validate that it is a dictionary
@@ -44,28 +22,19 @@ def input_vehicles(value, name):
 
 
 parser = reqparse.RequestParser()
-parser.add_argument('requestID', action='store', type=str)
-parser.add_argument('vehicles', action='append', type=input_vehicles)
-
-'''
-Define Data Output
-
-GET
-{
-  "success": Boolean
-}
-
-POST
-{
-  "success": Boolean
-}
-
-'''
+parser.add_argument('requestId', action='store', type=str)
+parser.add_argument('startDate', action='store', type=str)
+parser.add_argument('endDate', action='store', type=str)
+parser.add_argument('assetType', action='store', type=str)
 
 resource_fields = {
-    "success": fields.Boolean
+    "success": fields.Boolean,
+    'id': fields.Integer
 }
 
+delete_parser = reqparse.RequestParser()
+delete_parser.add_argument('requestId', action='store', type=str)
+delete_parser.add_argument('vehicleID', action='store', type=str)
 
 # Make a New Request inside the DataBase
 class VehicleRequest(Resource):
@@ -73,20 +42,24 @@ class VehicleRequest(Resource):
     def get(self):
         args = parser.parse_args()
 
-        if args["requestID"] is None: return {"success": False}
+        if args["requestId"] is None: return {"success": False}
 
         with session_scope() as session:
-            return {"success": (count_vehicles(session, args["requestID"]) > 0)}
+            return {"success": (count_vehicles(session, args["requestId"]) > 0)}
 
     @marshal_with(resource_fields)
     def post(self):
         args = parser.parse_args()
-        if args["requestID"] is None or args["vehicles"] is None: return {"success": False}
-
         with session_scope() as session:
-            for v in args["vehicles"]:
-                new_id = insert_vehicle(session, args["requestID"], v["assetClass"], v["startDateTime"], v["endDateTime"])
-                return {"success": True, 'id': new_id}
+            new_id = insert_vehicle(session, args["requestId"], args["assetType"], args["startDate"], args["endDate"])
+            return {"success": True, 'id': new_id}
+
+    @marshal_with(resource_fields)
+    def delete(self):
+        args = delete_parser.parse_args()
+        with session_scope() as session:
+            result = delete_vehicle(session, args["requestId"], args["vehicleID"])
+            return {"success": result}
 
 
 vehicle_request_bp = Blueprint('vehicle_request', __name__)
