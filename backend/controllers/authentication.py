@@ -23,7 +23,7 @@ class Register(Resource):
         args = registration_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
-            result = auth.register(session, args['email'], args['password'], args['given_name'], args['last_name'],
+            result = auth.register(session, args['email'], args['password'], args['given_name'z], args['last_name'],
                                    args['phone'])
         return jsonify({"result": result.name})
 
