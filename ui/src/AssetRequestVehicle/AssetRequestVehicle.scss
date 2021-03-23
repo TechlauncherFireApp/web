@@ -40,7 +40,7 @@ asset-request-vehicle {
         position: relative;
         bottom: 0;
       } input {
-        width: auto;
+        width: 280px; /* This was set to auto and was creating our datetime overflow. On 280px our issue is resolved but makes box too big for smaller dates. */
       } select {
         width: 200px;
         z-index: 0;
