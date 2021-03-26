@@ -1,3 +1,4 @@
+@import "../node_modules/tachyons-sass/tachyons.scss";
 @import "./variables.css", "./functions.scss";
 
 html, body, app-root, main-body {
@@ -22,6 +23,10 @@ html, body, app-root, main-body {
       margin: 0 auto;
     }
   }
+}
+
+.h4{
+  height: inherit;
 }
 
 /* -------------- Custom Elements ------------- */
