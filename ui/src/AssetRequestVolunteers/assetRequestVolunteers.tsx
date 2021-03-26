@@ -96,7 +96,7 @@ export default class AssetRequestVolunteers extends React.Component<
 
   getVolunteerList = (): Promise<volunteer[]> => {
     // Get the current 'global' time from an API using Promise
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       axios
         .request({
           url: 'volunteer/all',
@@ -108,7 +108,6 @@ export default class AssetRequestVolunteers extends React.Component<
         })
         .then((res: AxiosResponse): void => {
           let tmp = res.data['results'];
-          console.log(res.data['results']);
           for (const v of tmp) {
             let convertedAvailabilities: any = [];
             // for (const a of v.availabilities) {
