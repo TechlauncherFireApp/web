@@ -8,7 +8,6 @@ import VolunteersContainer from './Volunteers/volunteersContainer';
 import Volunteer from './Volunteers/volunteer';
 import Availability from './Volunteers/Availability/Availability';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import ExistingRequestSelector from './ViewExistingRequests/existingRequestSelector';
 import Login from './Authentication/login';
 import Register from './Authentication/register';
 import Home from './Home/Home';
@@ -34,11 +33,6 @@ export default function App() {
             exact
             path="/assetRequest/volunteers/:id"
             component={AssetRequestVolunteers}
-          />
-          <Route
-            exact
-            path="/viewExistingRequest/"
-            component={ExistingRequestSelector}
           />
           <Route exact path="/volunteer" component={VolunteersContainer} />
           <Route exact path="/volunteer/:id" component={Volunteer} />
