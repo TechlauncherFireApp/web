@@ -7,8 +7,14 @@ from repository.request_repository import *
 '''
 Define Data Input
 
+POST
 {
     "title": String
+}
+
+DELETE
+{
+    "id": String
 }
 '''
 
@@ -18,8 +24,14 @@ parser.add_argument('title', action='store', type=str)
 '''
 Define Data Output
 
+POST
 {
     "id": String
+}
+
+DELETE
+{
+    "success": Boolean
 }
 '''
 
@@ -38,6 +50,9 @@ class NewRequest(Resource):
         with session_scope() as session:
             new_id = new_request(session, args["title"])
             return {"id": new_id}
+
+# Delete a Request inside the DataBase
+# TODO
 
 
 new_request_bp = Blueprint('new_requests', __name__)

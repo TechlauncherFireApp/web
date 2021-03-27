@@ -74,6 +74,10 @@ function AssetRequestVehicle() {
       });
   }
 
+  function cancelRequest() {
+    // TODO
+  }
+
   return (
     <asset-request-vehicle>
       <h4>New Asset Request</h4>
@@ -185,6 +189,9 @@ function AssetRequestVehicle() {
       <hr className="thick" />
       <Button className="type-1" onClick={submit}>
         Submit
+      </Button>
+      <Button className="type-2" onClick={cancelRequest}>
+        Cancel
       </Button>
     </asset-request-vehicle>
   );
