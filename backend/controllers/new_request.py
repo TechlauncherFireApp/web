@@ -52,7 +52,7 @@ class NewRequest(Resource):
             return {"id": new_id}
 
 # Delete a Request inside the DataBase
-# TODO
+# TODO: Implement backend to handle deletion of a request
 
 
 new_request_bp = Blueprint('new_requests', __name__)
