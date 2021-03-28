@@ -75,7 +75,21 @@ function AssetRequestVehicle() {
   }
 
   function cancelRequest() {
-    // TODO
+    //TODO: make sure this works with backend properly when backend is done
+    const params = {
+      request: id,
+    };
+    axios
+      .delete('new_request',{ params: params })
+      .then((resp) => {
+        console.log(resp);
+        window.open(
+        window.location.origin + 'captain',
+        'self_',
+        '',
+        false
+        );
+      })
   }
 
   return (

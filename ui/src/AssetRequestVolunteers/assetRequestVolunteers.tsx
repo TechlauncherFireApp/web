@@ -257,7 +257,7 @@ export default class AssetRequestVolunteers extends React.Component<
   };
 
   deleteData = (): void => {
-    // TODO
+    // TODO: Implement frontend for Delete button
   }
 
   updateAssetRequest = (updatedAsset: any): void => {
