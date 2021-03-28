@@ -21,6 +21,9 @@ DELETE
 parser = reqparse.RequestParser()
 parser.add_argument('title', action='store', type=str)
 
+delete_parser = reqparse.RequestParser()
+delete_parser.add_argument('id', action='store', type=str)
+
 '''
 Define Data Output
 
@@ -51,8 +54,13 @@ class NewRequest(Resource):
             new_id = new_request(session, args["title"])
             return {"id": new_id}
 
-# Delete a Request inside the DataBase
-# TODO: Implement backend to handle deletion of a request
+    # Delete a Request inside the DataBase
+    @marshal_with(resource_fields)
+    def delete(self):
+        args = delete_parser.parse_args()
+        with session_scope() as session:
+            result = delete_request(session, args["id"])
+            return result
 
 
 new_request_bp = Blueprint('new_requests', __name__)

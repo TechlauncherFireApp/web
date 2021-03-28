@@ -25,3 +25,9 @@ def new_request(session, title):
     session.flush()
     return request.id
 
+
+# TODO: Create delete request function
+def delete_request(session, id):
+    session.query.filter_by(id).delete()
+    session.flush()
+    return True

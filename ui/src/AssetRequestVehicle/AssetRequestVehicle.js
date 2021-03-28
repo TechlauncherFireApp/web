@@ -77,18 +77,21 @@ function AssetRequestVehicle() {
   function cancelRequest() {
     //TODO: make sure this works with backend properly when backend is done
     const params = {
-      request: id,
+      requestID: id,
+    };
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
     };
     axios
-      .delete('new_request',{ params: params })
+      .delete('new_request',{ params: params, headers: headers })
       .then((resp) => {
         console.log(resp);
-        window.open(
-        window.location.origin + 'captain',
-        'self_',
-        '',
-        false
-        );
+        // window.open(
+        // window.location.origin + 'captain',
+        // 'self_',
+        // '',
+        // false
+        // );
       })
   }
 
