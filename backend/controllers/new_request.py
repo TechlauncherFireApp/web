@@ -14,7 +14,7 @@ POST
 
 DELETE
 {
-    "id": String
+    "requestID": String
 }
 '''
 
@@ -22,7 +22,7 @@ parser = reqparse.RequestParser()
 parser.add_argument('title', action='store', type=str)
 
 delete_parser = reqparse.RequestParser()
-delete_parser.add_argument('id', action='store', type=str)
+delete_parser.add_argument('requestID', action='store', type=str)
 
 '''
 Define Data Output
@@ -59,7 +59,7 @@ class NewRequest(Resource):
     def delete(self):
         args = delete_parser.parse_args()
         with session_scope() as session:
-            result = delete_request(session, args["id"])
+            result = delete_request(session, args["requestID"])
             return result
 
 

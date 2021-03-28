@@ -27,7 +27,7 @@ def new_request(session, title):
 
 
 # TODO: Create delete request function
-def delete_request(session, id):
-    session.query.filter_by(id).delete()
+def delete_request(session, requestID):
+    session.query.filter_by(requestID).first().delete()
     session.flush()
     return True

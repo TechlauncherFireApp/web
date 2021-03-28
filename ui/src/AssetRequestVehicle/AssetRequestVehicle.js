@@ -77,7 +77,7 @@ function AssetRequestVehicle() {
   function cancelRequest() {
     //TODO: make sure this works with backend properly when backend is done
     const params = {
-      requestID: id,
+      id: id
     };
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('access_token'),
