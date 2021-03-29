@@ -2,6 +2,7 @@ import React from 'react';
 import Asset from './asset';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { dateToBackend, dateFromBackend } from '../functions';
+import { backendPath } from '../config';
 
 interface Timeframe {
   startTime: Date;
@@ -99,7 +100,7 @@ export default class AssetRequestVolunteers extends React.Component<
     return new Promise((resolve) => {
       axios
         .request({
-          url: 'volunteer/all',
+          url: backendPath + 'volunteer/all',
           method: 'GET',
           timeout: 15000,
           headers: {
@@ -168,7 +169,8 @@ export default class AssetRequestVolunteers extends React.Component<
     //get the request volunteer data from the database
     axios
       .request({
-        url: 'shift/request?requestID=' + this.props.match.params.id,
+        url:
+          backendPath + 'shift/request?requestID=' + this.props.match.params.id,
         method: 'GET',
         timeout: 15000,
         // withCredentials: true,
@@ -229,7 +231,8 @@ export default class AssetRequestVolunteers extends React.Component<
     //TODO implement the patch request
     axios
       .request({
-        url: 'shift/request?requestID=' + this.props.match.params.id,
+        url:
+          backendPath + 'shift/request?requestID=' + this.props.match.params.id,
         method: 'PATCH',
         timeout: 15000,
         data: { shifts: requestData },

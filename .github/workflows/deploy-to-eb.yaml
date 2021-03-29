@@ -52,7 +52,7 @@ jobs:
 
       # Zip the backend
       - name: Create Backend ZIP deployment package
-        run: cd backend; zip -r ../backend.zip *; cd ..
+        run: cd backend; zip -r ../backend.zip . ; cd ..
 
       # Configure AWS Credentials
       - name: Configure AWS Credentials
