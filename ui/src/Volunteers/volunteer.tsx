@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import React from 'react';
+import { Table } from 'react-bootstrap';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import Shift from './shift';
 
@@ -34,13 +34,7 @@ export default class Volunteer extends React.Component<any, State> {
     myShifts: undefined,
   };
 
-  constructor(props: any) {
-    super(props);
-  }
-
   componentDidMount(): void {
-    let id: string = this.props.match.params.id;
-    let l: volunteer[] = [];
     axios
       .request({
         url: 'volunteer',

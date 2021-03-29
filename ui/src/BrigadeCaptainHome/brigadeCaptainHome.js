@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './brigadeCaptainHome.scss';
 import axios from 'axios';
 import { NavLink, useHistory } from 'react-router-dom';
+import { backendPath } from '../config';
 
 function BrigadeCaptainHome() {
   const [requests, setRequests] = useState([]);
@@ -10,7 +11,7 @@ function BrigadeCaptainHome() {
 
   useEffect(() => {
     axios
-      .get('/existing_requests', {
+      .get(backendPath + '/existing_requests', {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
@@ -24,7 +25,7 @@ function BrigadeCaptainHome() {
     e.preventDefault();
     axios
       .post(
-        '/new_request',
+        backendPath + '/new_request',
         { title: newRequestTitle },
         {
           headers: {

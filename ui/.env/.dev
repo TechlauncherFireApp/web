@@ -2,4 +2,4 @@ REACT_APP_VERSION=$npm_package_version
 REACT_APP_NAME=$npm_package_name
 GENERATE_SOURCEMAP=false
 REACT_APP_ENVIRONMENT=prd
-REACT_APP_BACKEND_URL=http://127.0.0.1:5000/
+REACT_APP_BACKEND_URL=http://fireapp-dev.eba-rszxrzjy.ap-southeast-2.elasticbeanstalk.com/
