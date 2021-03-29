@@ -8,13 +8,13 @@ branches:
     increment: Minor
     track-merge-target: true
     tracks-release-branches: true
-    regex: ^develop
+    regex: ^main
     is-release-branch: false
     prevent-increment-of-merged-branch-version: false
   release:
     regex: release?[/]
     mode: ContinuousDeployment
-    increment: Patch # not working, when merging a bugfix from master
+    increment: Patch # not working, when merging a bugfix from main
     tag: 'beta'
     is-release-branch: true
     prevent-increment-of-merged-branch-version: true
@@ -32,7 +32,7 @@ branches:
     tag: '-bugfix'
     is-release-branch: false
     prevent-increment-of-merged-branch-version: true
-    source-branches: ['master', 'feature', 'release']
+    source-branches: ['main', 'feature', 'release']
   pull-request:
     mode: ContinuousDeployment
     tag: '-pr'
