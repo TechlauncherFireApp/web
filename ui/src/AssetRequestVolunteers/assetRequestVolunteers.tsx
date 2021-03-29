@@ -257,7 +257,6 @@ export default class AssetRequestVolunteers extends React.Component<
   };
 
   deleteData = (): void => {
-    //TODO: make sure this works with backend properly when backend is done
     const params = {
       requestID: String = this.props.match.params.id,
     };
