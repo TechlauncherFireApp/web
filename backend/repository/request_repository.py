@@ -26,8 +26,17 @@ def new_request(session, title):
     return request.id
 
 
-# TODO: Create delete request function
 def delete_request(session, requestID):
-    session.query.filter_by(requestID).first().delete()
-    session.flush()
-    return True
+    """
+    :param session: A database session context
+    :param requestID: The id of the request
+    :return: Boolean indicating whether delete was successful
+    """
+    record = session.query(AssetRequest) \
+        .filter(AssetRequest.id == requestID) \
+        .first()
+    if record is not None:
+        session.delete(record)
+        session.flush()
+        return True
+    return False

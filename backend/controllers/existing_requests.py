@@ -1,8 +1,20 @@
 from flask import Blueprint
-from flask_restful import Resource, fields, marshal_with, Api
+from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
 from domain import session_scope
 from repository.request_repository import *
+
+'''
+Define Data Input
+
+DELETE
+{
+    "id": String
+}
+'''
+
+delete_parser = reqparse.RequestParser()
+delete_parser.add_argument('requestID', action='store', type=str)
 
 '''
 Define Data Output
@@ -13,6 +25,10 @@ GET
     "title": String
 }
 
+DELETE
+{
+    "success": Boolean
+}
 '''
 
 get_resource_obj = {
@@ -33,6 +49,13 @@ class ExistingRequests(Resource):
         with session_scope() as session:
             res = get_existing_requests(session)
             return {"success": True, "results": res}
+
+    @marshal_with(get_resource_list)
+    def delete(self):
+        args = delete_parser.parse_args()
+        with session_scope() as session:
+            result = delete_request(session, args["RequestID"])
+            return result
 
 
 existing_requests_bp = Blueprint('existing_requests', __name__)

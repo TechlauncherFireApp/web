@@ -72,7 +72,7 @@ export default class AssetRequestVolunteers extends React.Component<
     assets: any[],
     volunteerList: volunteer[]
   ): asset[] => {
-    // this is not the most effecient method but it's very simple. I believe it's O(n^2) but as we're working with small data this should be fine
+    // this is not the most efficient method but it's very simple. I believe it's O(n^2) but as we're working with small data this should be fine
     let output = [...assets];
     for (const asset of output) {
       for (const position of asset.volunteers) {
@@ -257,7 +257,24 @@ export default class AssetRequestVolunteers extends React.Component<
   };
 
   deleteData = (): void => {
-    // TODO: Implement frontend for Delete button
+    //TODO: make sure this works with backend properly when backend is done
+    const params = {
+      requestID: String = this.props.match.params.id,
+    };
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+    };
+    axios
+      .delete('new_request',{ params: params, headers: headers })
+      .then((resp) => {
+        console.log(resp);
+        window.open(
+        window.location.origin + '/captain',
+        'self_',
+        '',
+        false
+        );
+      })
   }
 
   updateAssetRequest = (updatedAsset: any): void => {
