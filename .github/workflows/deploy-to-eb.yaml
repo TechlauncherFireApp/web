@@ -63,7 +63,7 @@ jobs:
           aws-region: "ap-southeast-2"
 
       - name: Upload backend package to S3 bucket
-        run: aws s3 cp backend.zip s3://fireapp-fireapp-dev-s3/
+        run: aws s3 cp backend.zip s3://elasticbeanstalk-ap-southeast-2-517938983427/
 
       - name: Create new ElasticBeanstalk Application Version
         run: |
