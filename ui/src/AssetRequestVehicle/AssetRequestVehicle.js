@@ -84,7 +84,6 @@ function AssetRequestVehicle() {
     axios
       .delete('new_request',{ params: params, headers: headers })
       .then((resp) => {
-        console.log(resp);
         window.open(
         window.location.origin + '/captain',
         'self_',
