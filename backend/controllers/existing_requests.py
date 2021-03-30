@@ -33,7 +33,8 @@ DELETE
 
 get_resource_obj = {
     "id": fields.String,
-    "title": fields.String
+    "title": fields.String,
+    "status": fields.String
 }
 
 get_resource_list = {

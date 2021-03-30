@@ -42,17 +42,15 @@ function Login() {
 
   return (
     <div className="padding">
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      )}
       {showRegistrationSuccess && error === undefined && (
-        <div className="alert alert-success" role="alert">
+        <div className="w-50 ml-auto mr-auto alert alert-success" role="alert">
           Registration successful, you may now login.
         </div>
       )}
-      <form onSubmit={submit}>
+      <form
+        onSubmit={submit}
+        className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
+        <h2>Login</h2>
         <div className="form-group">
           <label>Email*:</label>
           <input
@@ -75,11 +73,20 @@ function Login() {
             }}
           />
         </div>
-        <input type="submit" className="btn btn-secondary" value="Submit" />
+        <input
+          type="submit"
+          value="Submit"
+          className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
+        />
+        <div className={'mt2'}>
+          <NavLink to={'/register'}>Register</NavLink>
+        </div>
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
       </form>
-      <div>
-        <NavLink to={'/register'}>Register</NavLink>
-      </div>
     </div>
   );
 }

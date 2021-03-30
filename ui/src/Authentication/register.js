@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { backendPath } from '../config';
-import { useHistory } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 
 function Register() {
   const [values, setValues] = useState({});
@@ -39,7 +39,10 @@ function Register() {
 
   return (
     <div className="padding">
-      <form onSubmit={submit}>
+      <form
+        onSubmit={submit}
+        className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
+        <h2>Register as a volunteer</h2>
         <div className="form-group">
           <label>Email*:</label>
           <input
@@ -99,13 +102,20 @@ function Register() {
             }}
           />
         </div>
-        <input type="submit" value="Submit" />
-      </form>
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
+        <input
+          type="submit"
+          value="Submit"
+          className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
+        />
+        <div className={'mt2'}>
+          <NavLink to={'/login'}>Back</NavLink>
         </div>
-      )}
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
+      </form>
     </div>
   );
 }

@@ -13,6 +13,8 @@ function Home() {
     } else {
       history.push('/captain');
     }
+  } else {
+    history.push('/login');
   }
 
   return <div>Loading...</div>;
