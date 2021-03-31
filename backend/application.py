@@ -8,10 +8,7 @@ application = app = Flask(__name__)
 # TODO: Tech Debt
 #   - CORS Should be specified at the host level per environment, not a global free-for-all. We do this to stop
 #     cross site scripting (XSS) attacks.
-api_v1_cors_config = {
-  "origins": ["http://localhost:3000", "http://fireapp-fireapp-dev-s3.s3-website-ap-southeast-2.amazonaws.com/"]
-}
-CORS(app, resources={"/*": api_v1_cors_config})
+CORS(app)
 
 # Register all controllers individually
 app.register_blueprint(existing_requests_bp)
