@@ -1,4 +1,3 @@
-import os
 from flask import Flask
 from flask_cors import CORS
 from controllers import *
