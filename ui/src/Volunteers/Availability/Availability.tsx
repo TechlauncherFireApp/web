@@ -2,7 +2,6 @@ import React from 'react';
 import './Availability.scss';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { contains, att } from '../../functions';
-import { addBusinessDays } from 'date-fns';
 
 type Day =
   | 'Monday'

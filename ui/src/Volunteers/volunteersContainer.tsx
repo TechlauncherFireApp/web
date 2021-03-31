@@ -38,7 +38,6 @@ export default class VolunteersContainer extends React.Component<any, State> {
   }
 
   componentDidMount(): void {
-    let l: volunteer[] = [];
     axios
       .get(backendPath + 'volunteer/all', {
         headers: {
