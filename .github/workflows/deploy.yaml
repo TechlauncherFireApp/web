@@ -109,4 +109,3 @@ jobs:
             --recursive \
             --region ap-northeast-2 \
             ./ui/build s3://fireapp-fireapp-dev-s3/    
-        run: aws s3 cp backend.zip s3://fireapp-fireapp-dev-s3/
