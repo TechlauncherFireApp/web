@@ -97,16 +97,16 @@ jobs:
       - run: cd ui; npm ci
 
       # Build the code and zip it into a release
-      - run: cd ui; npm run build:dev
-
-      - run: tar -zcvf ../ui.tar.gz .
-        working-directory: ./ui/build
-
-      - uses: actions/upload-release-asset@v1
+      - run: npm run build:dev
+      
+      # Upload to the target s3 bucket
+      - name: Upload backend package to S3 bucket
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./ui/build/ui.tar.gz
-          asset_name: ./ui/build/ui.tar.gz
-          asset_content_type: application/zip     
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp \
+            --recursive \
+            --region ap-northeast-2 \
+            ./ui/build s3://fireapp-fireapp-dev-s3/    
+        run: aws s3 cp backend.zip s3://fireapp-fireapp-dev-s3/
