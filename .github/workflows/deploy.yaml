@@ -99,5 +99,6 @@ jobs:
         run: |
           aws s3 cp \
             --recursive \
+            --acl public-read\
             --region ap-northeast-2 \
             ./ui/build s3://fireapp-fireapp-dev-s3/    
