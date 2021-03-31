@@ -75,19 +75,7 @@ jobs:
 
        
       - name: Deploy new ElasticBeanstalk Application Version
-        run: aws elasticbeanstalk update-environment --environment-name fireapp-dev --version-label "${{ steps.gitversion.outputs.semVer }}"
-        
-        
-      - name: Upload backend asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: backend.zip
-          asset_name: backend.zip
-          asset_content_type: application/zip
-          
+        run: aws elasticbeanstalk update-environment --environment-name fireapp-dev --version-label "${{ steps.gitversion.outputs.semVer }}"          
           
       # Setup node.js and install the package dependencies
       - name: Use Node.js 14.x
@@ -100,10 +88,14 @@ jobs:
       - run: cd ui; npm run build:dev
       
       # Upload to the target s3 bucket
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
+          aws-region: "ap-southeast-2"      
+      
       - name: Upload backend package to S3 bucket
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws s3 cp \
             --recursive \
