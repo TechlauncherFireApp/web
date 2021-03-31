@@ -16,10 +16,6 @@ export default class Position extends React.Component<any, State> {
     qualificationsVisible: false,
   };
 
-  constructor(props: any) {
-    super(props);
-  }
-
   // 1.3.5
   toggleEditModalVisibility = (): void => {
     const showEditModal = !this.state.showEditModal;
@@ -84,7 +80,6 @@ export default class Position extends React.Component<any, State> {
   render() {
     const { position } = this.props;
     const assigned: boolean = this.props.position.assigned;
-    const bgPending = '#ececec';
     const bgGrey = '#ececec';
     const bgConfirmed = '#abff95';
     const bgWarning = '#FFCCCC';

@@ -274,8 +274,8 @@ export default class AssetRequestVolunteers extends React.Component<
     assetRequest: asset[]
   ): Map<string, { shiftID: number; positionID: number }> => {
     let map: Map<string, { shiftID: number; positionID: number }> = new Map();
-    assetRequest.map((a: asset) => {
-      a.volunteers.map((p: Position) => {
+    assetRequest.forEach((a: asset) => {
+      a.volunteers.forEach((p: Position) => {
         let v: volunteer | undefined = p.volunteer;
         if (!(typeof v === 'undefined')) {
           map.set(v.ID, { shiftID: a.shiftID, positionID: p.positionID });

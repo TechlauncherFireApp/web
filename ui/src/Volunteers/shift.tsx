@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './shift.scss';
 import {
   parseRolesAsString,
   parseDateTime,
   toSentenceCase,
 } from '../functions';
-import { isThisMonth } from 'date-fns';
-import { stat } from 'fs';
 
 interface State {
   status: string;

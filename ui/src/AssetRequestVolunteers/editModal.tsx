@@ -47,7 +47,9 @@ export default class EditModal extends React.Component<any, State> {
     // Get Value
     if (!(typeof e === 'string')) {
       e = e.target.value;
-      this.state.searchValue = e;
+      this.setState((state) => {
+        return { ...state, searchValue: e };
+      });
     }
 
     // Validate Value
@@ -126,7 +128,7 @@ export default class EditModal extends React.Component<any, State> {
     if (filter.position) {
       //let v: any;
       for (const v of allVolunteers) {
-        if (targetRoles.length == 1 && targetRoles[0] == 'basic') {
+        if (targetRoles.length === 1 && targetRoles[0] === 'basic') {
           v.possibleRoles.includes('basic') &&
             !v.possibleRoles.includes('advanced') &&
             list.push(v); //if the volunteer in question is basic but not advanced
@@ -161,7 +163,7 @@ export default class EditModal extends React.Component<any, State> {
     return list.filter(
       (l) =>
         !this.props.position.assigned ||
-        l.ID != this.props.position.volunteer.ID
+        l.ID !== this.props.position.volunteer.ID
     );
   };
 
@@ -235,7 +237,7 @@ export default class EditModal extends React.Component<any, State> {
               defaultChecked
               onClick={this.togglePositionFilter}
             />{' '}
-            Only show '{parseRolesAsString(position.roles)}'s
+            Only show &apos;{parseRolesAsString(position.roles)}&apos;s
             <hr />
             <div className="con-vols">
               {typeof this.state.searchResults === 'object' &&

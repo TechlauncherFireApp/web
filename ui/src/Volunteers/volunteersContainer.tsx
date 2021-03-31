@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { backendPath } from '../config';
 
@@ -46,27 +46,21 @@ export default class VolunteersContainer extends React.Component<any, State> {
         },
       })
       .then((res: AxiosResponse): void => {
-        let tmp = res.data['results'];
-        for (const v of tmp) {
-          let convertedAvailabilities: any = [];
-          /*        for (const a of v.availabilities) {
-          const start = new Date(Date.parse(a[0]));
-          const end = new Date(Date.parse(a[1]));
-          convertedAvailabilities.push({ startTime: start, endTime: end });
-        }
-        v.availabilities = convertedAvailabilities;*/
-        }
-        l = tmp;
+        let l = res.data['results'];
 
         //sort the list alphabetically by name
-        l.sort((a, b) =>
-          a.firstName > b.firstName
-            ? 1
-            : a.firstName === b.firstName
-            ? a.lastName > b.lastName
+        l.sort(
+          (
+            a: { firstName: number; lastName: number },
+            b: { firstName: number; lastName: number }
+          ) =>
+            a.firstName > b.firstName
               ? 1
+              : a.firstName === b.firstName
+              ? a.lastName > b.lastName
+                ? 1
+                : -1
               : -1
-            : -1
         );
         console.log(l);
         this.setState({ volunteers: l });
