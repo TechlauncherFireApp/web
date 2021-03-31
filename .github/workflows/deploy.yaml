@@ -97,7 +97,7 @@ jobs:
       - run: cd ui; npm ci
 
       # Build the code and zip it into a release
-      - run: npm run build:dev
+      - run: cd ui; npm run build:dev
       
       # Upload to the target s3 bucket
       - name: Upload backend package to S3 bucket
@@ -105,7 +105,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          aws s3 cp \
+          cd ui; aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
             ./ui/build s3://fireapp-fireapp-dev-s3/    
