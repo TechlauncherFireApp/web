@@ -87,3 +87,27 @@ jobs:
           asset_path: backend.zip
           asset_name: backend.zip
           asset_content_type: application/zip
+          
+          
+      # Setup node.js and install the package dependencies
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: npm ci
+
+      # Build the code and zip it into a release
+      # Dev
+      - run: cd ui; npm run build:dev
+
+      - run: tar -zcvf ../ui.tar.gz .
+        working-directory: ./ui/build
+
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ui.tar.gz
+          asset_name: ui.tar.gz
+          asset_content_type: application/zip     

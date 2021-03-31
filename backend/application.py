@@ -9,7 +9,7 @@ application = app = Flask(__name__)
 #   - CORS Should be specified at the host level per environment, not a global free-for-all. We do this to stop
 #     cross site scripting (XSS) attacks.
 api_v1_cors_config = {
-  "origins": ["http://localhost:3000"]
+  "origins": ["http://localhost:3000", "http://fireapp-dev.eba-rszxrzjy.ap-southeast-2.elasticbeanstalk.com/"]
 }
 CORS(app, resources={"/*": api_v1_cors_config})
 
