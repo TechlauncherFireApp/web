@@ -94,10 +94,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: npm ci
+      - run: cd ui; npm ci
 
       # Build the code and zip it into a release
-      # Dev
       - run: cd ui; npm run build:dev
 
       - run: tar -zcvf ../ui.tar.gz .
