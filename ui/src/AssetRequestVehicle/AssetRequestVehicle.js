@@ -74,6 +74,25 @@ function AssetRequestVehicle() {
       });
   }
 
+  function cancelRequest() {
+    const params = {
+      requestID: id,
+    };
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+    };
+    axios
+      .delete('new_request',{ params: params, headers: headers })
+      .then((resp) => {
+        window.open(
+        window.location.origin + '/captain',
+        'self_',
+        '',
+        false
+        );
+      })
+  }
+
   return (
     <asset-request-vehicle>
       <h4>New Asset Request</h4>
@@ -185,6 +204,9 @@ function AssetRequestVehicle() {
       <hr className="thick" />
       <Button className="type-1" onClick={submit}>
         Submit
+      </Button>
+      <Button className="type-2" onClick={cancelRequest}>
+        Cancel
       </Button>
     </asset-request-vehicle>
   );

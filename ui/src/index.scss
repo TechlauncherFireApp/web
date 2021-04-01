@@ -1,4 +1,3 @@
-@import "../node_modules/tachyons-sass/tachyons.scss";
 @import "./variables.css", "./functions.scss";
 
 html, body, app-root, main-body {
@@ -48,6 +47,24 @@ button {
       color: var(--red-3);
       background-color: var(--white-1);
       border: 1px solid var(--red-1);
+    }
+  } &.type-2 {
+    all: unset;
+    color: var(--white-1);
+    font-size: 15px;
+    background-color: darkorange;
+    border: 1px solid transparent;
+    @include border-radius(5px);
+    @include appearance(none);
+    padding: 10px 20px;
+    margin-left: 20px;
+    cursor: pointer;
+    @include transition(0.5s);
+
+    &:hover, &:focus {
+      color: darkorange;
+      background-color: var(--white-1);
+      border: 1px solid darkorange;
     }
   }
 }

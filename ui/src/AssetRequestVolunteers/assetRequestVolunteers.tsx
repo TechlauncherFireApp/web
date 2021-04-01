@@ -73,7 +73,7 @@ export default class AssetRequestVolunteers extends React.Component<
     assets: any[],
     volunteerList: volunteer[]
   ): asset[] => {
-    // this is not the most effecient method but it's very simple. I believe it's O(n^2) but as we're working with small data this should be fine
+    // this is not the most efficient method but it's very simple. I believe it's O(n^2) but as we're working with small data this should be fine
     let output = [...assets];
     for (const asset of output) {
       for (const position of asset.volunteers) {
@@ -179,6 +179,7 @@ export default class AssetRequestVolunteers extends React.Component<
         },
       })
       .then((res: AxiosResponse): void => {
+        console.log(res);
         let tmp = res.data['results'];
         if (tmp !== null) {
           for (const r of tmp) {
@@ -228,7 +229,7 @@ export default class AssetRequestVolunteers extends React.Component<
       });
     });
 
-    //TODO implement the patch request
+    //Patch request
     axios
       .request({
         url:
@@ -236,14 +237,13 @@ export default class AssetRequestVolunteers extends React.Component<
         method: 'PATCH',
         timeout: 15000,
         data: { shifts: requestData },
-        // withCredentials: true,
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
       .then((res: AxiosResponse): void => {
         if (res.data['success']) {
-          alert('Save Succeded');
+          alert('Save Succeeded');
         } else {
           alert('Save Failed');
         }
@@ -257,6 +257,25 @@ export default class AssetRequestVolunteers extends React.Component<
         }
       });
   };
+
+  deleteData = (): void => {
+    const params = {
+      requestID: String = this.props.match.params.id,
+    };
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+    };
+    axios
+      .delete('new_request',{ params: params, headers: headers })
+      .then((resp) => {
+        window.open(
+        window.location.origin + '/captain',
+        'self_',
+        '',
+        false
+        );
+      })
+  }
 
   updateAssetRequest = (updatedAsset: any): void => {
     let assetRequest = this.state.assetRequest;
@@ -307,6 +326,9 @@ export default class AssetRequestVolunteers extends React.Component<
         ))}
         <button onClick={this.submitData} className="type-1">
           Save
+        </button>
+        <button onClick={this.deleteData} className="type-2">
+          Delete
         </button>
       </div>
     );
