@@ -68,14 +68,14 @@ jobs:
       - name: Create new ElasticBeanstalk Application Version
         run: |
           aws elasticbeanstalk create-application-version \
-          --application-name fireapp \
+          --application-name develop \
           --source-bundle S3Bucket="elasticbeanstalk-ap-southeast-2-517938983427",S3Key="backend.zip" \
           --version-label "${{ steps.gitversion.outputs.semVer }}" \
           --description "commit-sha-${{ github.sha }}"
 
        
       - name: Deploy new ElasticBeanstalk Application Version
-        run: aws elasticbeanstalk update-environment --environment-name fireapp-dev --version-label "${{ steps.gitversion.outputs.semVer }}"          
+        run: aws elasticbeanstalk update-environment --environment-name Develop-dev --version-label "${{ steps.gitversion.outputs.semVer }}"
           
       # Setup node.js and install the package dependencies
       - name: Use Node.js 14.x
