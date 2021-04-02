@@ -12,7 +12,7 @@ secret = SecretService(f"database/{os.environ.get('env', 'dev')}/fireapp")
 
 # Configure Session
 Session = sessionmaker()
-Engine = create_engine('mysql+pymysql://{0}:{1}@{2}:{3}/{4}'.format(secret.get()['username'],
+Engine = create_engine('mysql+mysqldb://{0}:{1}@{2}:{3}/{4}'.format(secret.get()['username'],
                                                                     secret.get()['password'],
                                                                     secret.get()['host'],
                                                                     secret.get()['port'],

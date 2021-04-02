@@ -82,7 +82,7 @@ function AssetRequestVehicle() {
       Authorization: 'Bearer ' + localStorage.getItem('access_token'),
     };
     axios
-      .delete('new_request',{ params: params, headers: headers })
+      .delete(backendPath + 'new_request',{ params: params, headers: headers })
       .then((resp) => {
         window.open(
         window.location.origin + '/captain',

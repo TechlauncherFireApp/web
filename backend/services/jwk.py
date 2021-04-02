@@ -1,9 +1,8 @@
 import flask_restful
 from flask import request
-from jwcrypto import jwt
-from jwcrypto import jwk
+import jwt
 
-__secret__ = jwk.JWK.generate(kty='oct', size=256)
+__secret__ = 'ExcellentSecret'
 __issuer__ = "FIREAPP2.0"
 
 
@@ -19,15 +18,13 @@ class JWKService:
         """
         # TODO: Authentication
         #   - Add token expiry & refreshing, low priority in MVP
-        token = jwt.JWT(header={"alg": "HS256"}, claims={"sub": f"{subject}", "name": name, "iss": __issuer__})
-        token.make_signed_token(__secret__)
-        token = token.serialize()
+        token = jwt.encode({"sub": f"{subject}", "name": name, "iss": __issuer__}, __secret__, algorithm="HS256")
         return token
 
     @staticmethod
     def validate(token) -> bool:
         try:
-            jwt.JWT(key=__secret__, jwt=token)
+            jwt.decode(token, __secret__, algorithm="HS256")
         except Exception:
             return False
         return True
@@ -35,7 +32,7 @@ class JWKService:
     @staticmethod
     def validate_admin(token) -> bool:
         try:
-            decoded = jwt.JWT(key=__secret__, jwt=token)
+            decoded = jwt.decode(token, __secret__, algorithm="HS256")
             print(decoded.claims)
             # TODO: Validate is admin
         except Exception:

@@ -19,6 +19,7 @@ function Login() {
         case 'SUCCESS':
           localStorage.setItem('access_token', resp.data['access_token']);
           localStorage.setItem('role', resp.data['role']);
+          localStorage.setItem('id', resp.data['id']);
           switch (resp.data['role']) {
             case 'VOLUNTEER':
               history.push('/volunteer/' + resp.data['id']);

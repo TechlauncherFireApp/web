@@ -2,6 +2,7 @@ import React from 'react';
 import './Availability.scss';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { contains, att } from '../../functions';
+import { backendPath } from '../../config';
 
 type Day =
   | 'Monday'
@@ -128,7 +129,7 @@ export default class Availability extends React.Component<any, State> {
 
     axios
       .request({
-        url: '/volunteer/prefhours',
+        url: backendPath + '/volunteer/prefhours',
         method: 'GET',
         params: { volunteerID: this.props.match.params.id },
         headers: {
@@ -159,7 +160,7 @@ export default class Availability extends React.Component<any, State> {
 
     axios
       .request({
-        url: '/volunteer/availability',
+        url: backendPath + '/volunteer/availability',
         method: 'GET',
         params: { volunteerID: this.props.match.params.id },
         headers: {
@@ -196,7 +197,7 @@ export default class Availability extends React.Component<any, State> {
 
     axios
       .request({
-        url: '/volunteer/prefhours',
+        url: backendPath + '/volunteer/prefhours',
         method: 'PATCH',
         params: {
           volunteerID: this.props.match.params.id,
@@ -232,7 +233,7 @@ export default class Availability extends React.Component<any, State> {
 
     axios
       .request({
-        url: '/volunteer/availability',
+        url: backendPath + '/volunteer/availability',
         method: 'PATCH',
         params: { volunteerID: this.props.match.params.id },
         data: { availability: this.state.currentSchedule },

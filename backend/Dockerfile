@@ -21,10 +21,11 @@ COPY . /app
 WORKDIR /app
 
 # Install Python dependencies
-RUN apk add gcc g++ make libffi-dev openssl-dev
-RUN pip install pipenv
-RUN pip install gunicorn
-RUN pipenv install --system --deploy
+RUN apk add gcc g++ make libffi-dev openssl-dev libressl-dev musl-dev mysql \
+    && apk add --no-cache mariadb-dev build-base \
+    && pip install pipenv \
+    && pip install gunicorn \
+    && pipenv install --system --deploy
 
 # Expose web server port & execute
 EXPOSE 8080

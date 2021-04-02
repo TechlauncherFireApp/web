@@ -2,6 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import Shift from './shift';
+import { backendPath } from '../config';
 
 interface volunteer {
   ID: string;
@@ -37,7 +38,7 @@ export default class Volunteer extends React.Component<any, State> {
   componentDidMount(): void {
     axios
       .request({
-        url: 'volunteer',
+        url: backendPath + 'volunteer',
         method: 'GET',
         params: { volunteerID: this.props.match.params.id },
         timeout: 15000,
@@ -68,7 +69,7 @@ export default class Volunteer extends React.Component<any, State> {
 
     axios
       .request({
-        url: 'volunteer/shifts',
+        url: backendPath + 'volunteer/shifts',
         method: 'GET',
         params: { volunteerID: this.props.match.params.id },
         timeout: 15000,
@@ -154,7 +155,7 @@ export default class Volunteer extends React.Component<any, State> {
 
     axios
       .request({
-        url: 'volunteer/status',
+        url: backendPath + 'volunteer/status',
         method: 'PATCH',
         timeout: 15000,
         params: info,
