@@ -7,7 +7,6 @@ verify_ssl = true
 
 [packages]
 minizinc = "*"
-numpy = "*"
 pipenv = "*"
 python-dotenv = "*"
 Flask = "*"
