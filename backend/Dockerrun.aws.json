@@ -5,11 +5,11 @@
   },
   "Ports": [
     {
-      "ContainerPort": 8080,
+      "ContainerPort": 5000,
       "HostPort": 80
     }
   ],
   "Volumes": [],
   "Logging": "/var/log/",
-"Command": "gunicorn -b 0.0.0.0:8080 --workers=2 --threads=2 --timeout=180 --pythonpath / application:app"
+"Command": "gunicorn -b 0.0.0.0:5000 --workers=2 --threads=2 --timeout=180 --pythonpath / application:app"
 }

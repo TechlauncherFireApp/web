@@ -1,32 +1,16 @@
-FROM python:3.7-alpine
+FROM minizinc/minizinc:2.5.5
 
-# Minizinc version to use
-ENV asset_version=2.5.5
-
-# Install Minizinc
-ENV asset_filename "MiniZincIDE-$asset_version-bundle-linux-x86_64.tgz"
-ENV asset_url "https://github.com/MiniZinc/MiniZincIDE/releases/download/$asset_version/MiniZincIDE-$asset_version-bundle-linux-x86_64.tgz"
-RUN apk add --no-cache wget \
-    && cd /usr/local \
-    && wget -O $asset_filename $asset_url \
-    && mkdir minizinc \
-    && tar xfz $asset_filename  --directory minizinc --strip-components=1 \
-    && cp minizinc/bin/* bin/ \
-    && cp -ra minizinc/share/* share/ \
-    && rm -rf minizinc \
-    && rm -rf /var/cache/apk/*
+# Install Python3.8 and some packages
+RUN apt update \
+    && apt install -yqq wget git gnupg curl python3.8 python3-pip libmysqlclient-dev
+RUN pip3 install pipenv
+RUN pip3 install gunicorn
 
 # Copy source files
 COPY . /app
 WORKDIR /app
-
-# Install Python dependencies
-RUN apk add gcc g++ make libffi-dev openssl-dev libressl-dev musl-dev mysql \
-    && apk add --no-cache mariadb-dev build-base \
-    && pip install pipenv \
-    && pip install gunicorn \
-    && pipenv install --system --deploy
+RUN pipenv install --system --deploy
 
 # Expose web server port & execute
-EXPOSE 8080
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "--workers=2", "--threads=2", "--timeout=1800", "--log-level=debug", "--pythonpath", "/", "application:app"]
+EXPOSE 5000
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "--workers=2", "--threads=2", "--timeout=1800", "--log-level=debug", "--pythonpath", "/", "application:app"]
