@@ -18,7 +18,7 @@ class JWKService:
         """
         # TODO: Authentication
         #   - Add token expiry & refreshing, low priority in MVP
-        token = jwt.encode({"sub": f"{subject}", "name": name, "iss": __issuer__}, __secret__, algorithms=["HS256"])
+        token = jwt.encode({"sub": f"{subject}", "name": name, "iss": __issuer__}, __secret__, algorithm="HS256")
         return token
 
     @staticmethod
