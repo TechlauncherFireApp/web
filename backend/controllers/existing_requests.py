@@ -55,7 +55,7 @@ class ExistingRequests(Resource):
     def delete(self):
         args = delete_parser.parse_args()
         with session_scope() as session:
-            result = delete_request(session, args["RequestID"])
+            result = delete_request(session, args["requestID"])
             return result
 
 
