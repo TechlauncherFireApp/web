@@ -1,7 +1,7 @@
 import React from 'react';
 import Asset from './asset';
-import axios, { AxiosResponse, AxiosError } from 'axios';
-import { dateToBackend, dateFromBackend } from '../functions';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { dateFromBackend, dateToBackend } from '../functions';
 import { backendPath } from '../config';
 
 interface Timeframe {
@@ -110,13 +110,7 @@ export default class AssetRequestVolunteers extends React.Component<
         .then((res: AxiosResponse): void => {
           let tmp = res.data['results'];
           for (const v of tmp) {
-            let convertedAvailabilities: any = [];
-            // for (const a of v.availabilities) {
-            //   const start = dateFromBackend(a[0]);
-            //   const end = dateFromBackend(a[1]);
-            //   convertedAvailabilities.push({ startTime: start, endTime: end });
-            // }
-            v.availabilities = convertedAvailabilities;
+            v.availabilities = [];
           }
           resolve(tmp);
         })
@@ -260,7 +254,7 @@ export default class AssetRequestVolunteers extends React.Component<
 
   deleteData = (): void => {
     const params = {
-      requestID: String = this.props.match.params.id,
+      requestID: this.props.match.params.id
     };
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('access_token'),
