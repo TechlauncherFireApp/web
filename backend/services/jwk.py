@@ -18,24 +18,24 @@ class JWKService:
         """
         # TODO: Authentication
         #   - Add token expiry & refreshing, low priority in MVP
-        token = jwt.encode({"sub": f"{subject}", "name": name, "iss": __issuer__}, __secret__, algorithm="HS256")
+        token = jwt.encode({"sub": f"{subject}", "name": name, "iss": __issuer__}, __secret__, algorithms=["HS256"])
         return token
 
     @staticmethod
     def validate(token) -> bool:
         try:
-            jwt.decode(token, __secret__, algorithm="HS256")
-        except Exception:
+            jwt.decode(token, __secret__, algorithms=["HS256"])
+        except Exception as e:
             return False
         return True
 
     @staticmethod
     def validate_admin(token) -> bool:
         try:
-            decoded = jwt.decode(token, __secret__, algorithm="HS256")
+            decoded = jwt.decode(token, __secret__, algorithms=["HS256"])
             print(decoded.claims)
             # TODO: Validate is admin
-        except Exception:
+        except Exception as e:
             return False
         return True
 

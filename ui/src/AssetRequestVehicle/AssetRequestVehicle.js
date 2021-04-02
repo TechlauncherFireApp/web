@@ -54,7 +54,9 @@ function AssetRequestVehicle() {
       return;
     }
     axios
-      .get(backendPath + 'recommendation', { params: { requestId: id } })
+      .get(backendPath + 'recommendation', { params: { requestId: id }, headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        }, })
       .then((resp) => {
         history.push('/assetRequest/volunteers/' + id);
       });
@@ -66,7 +68,9 @@ function AssetRequestVehicle() {
       vehicleId: vehicleId,
     };
     axios
-      .delete(backendPath + 'vehicle/request', { params: params })
+      .delete(backendPath + 'vehicle/request', { params: params, headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+    }, })
       .then((resp) => {
         let lcl = vehicles;
         lcl = lcl.filter((x) => x.id !== vehicleId);
