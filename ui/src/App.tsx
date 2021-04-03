@@ -1,17 +1,19 @@
 import React from 'react';
 
-import NavBar from './Navbar/navbar';
-import BrigadeCaptainHome from './BrigadeCaptainHome/brigadeCaptainHome';
-import AssetRequestVehicle from './AssetRequestVehicle/AssetRequestVehicle';
-import AssetRequestVolunteers from './AssetRequestVolunteers/assetRequestVolunteers';
-import VolunteersContainer from './Volunteers/volunteersContainer';
-import Volunteer from './Volunteers/volunteer';
-import Availability from './Volunteers/Availability/Availability';
+import NavBar from './components/Navbar/navbar';
+import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
+import AssetRequestVehicle from './routes/AssetRequestVehicle/AssetRequestVehicle';
+import AssetRequestVolunteers from './routes/AssetRequestVolunteers/assetRequestVolunteers';
+import VolunteersContainer from './routes/Volunteers/volunteersContainer';
+import Volunteer from './routes/Volunteers/volunteer';
+import Availability from './routes/Volunteers/Availability/Availability';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Login from './Authentication/login';
-import Register from './Authentication/register';
-import Home from './Home/Home';
-import Logout from './Authentication/logout';
+import Login from './routes/Authentication/login';
+import Register from './routes/Authentication/register';
+import Home from './routes/Home/Home';
+import Logout from './routes/Authentication/logout';
+import Roles from './routes/Reference/roles';
+import Qualifications from './routes/Reference/qualifications';
 
 export default function App() {
   return (
@@ -23,6 +25,12 @@ export default function App() {
           <Route exact path="/login" component={Login} />
           <Route exact path="/logout" component={Logout} />
           <Route exact path="/register" component={Register} />
+          <Route exact path="/reference/roles" component={Roles} />
+          <Route
+            exact
+            path="/reference/qualifications"
+            component={Qualifications}
+          />
           <Route exact path="/captain" component={BrigadeCaptainHome} />
           <Route
             exact
