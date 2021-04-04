@@ -14,6 +14,7 @@ import Home from './routes/Home/Home';
 import Logout from './routes/Authentication/logout';
 import Roles from './routes/Reference/roles';
 import Qualifications from './routes/Reference/qualifications';
+import AssetTypes from './routes/Reference/assetTypes';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
             path="/reference/qualifications"
             component={Qualifications}
           />
+          <Route exact path="/reference/asset_types" component={AssetTypes} />
           <Route exact path="/captain" component={BrigadeCaptainHome} />
           <Route
             exact

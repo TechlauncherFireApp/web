@@ -27,6 +27,9 @@ function NavBar() {
             <NavDropdown.Item href="/reference/qualifications">
               Qualifications
             </NavDropdown.Item>
+            <NavDropdown.Item href="/reference/asset_types">
+              Asset Types
+            </NavDropdown.Item>
           </NavDropdown>
         )}
         <Nav className="ml-auto navbar-right">

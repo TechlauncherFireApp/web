@@ -5,7 +5,7 @@ import axios from 'axios';
 function Roles() {
   const [roles, setRoles] = useState([]);
   const [refresh, setRefresh] = useState(0);
-  const [newRoleName, setNewRoleName] = useState(undefined);
+  const [newRoleName, setNewRoleName] = useState('');
   const [error, setError] = useState(undefined);
 
   useEffect(() => {
@@ -24,12 +24,14 @@ function Roles() {
     // Validate the new role name
     e.preventDefault();
     setError(undefined);
-    if (newRoleName === undefined) {
+    if (newRoleName === '') {
       setError('Role name is required.');
+      return;
     }
-    const existing = roles.filter((x) => x === newRoleName);
+    const existing = roles.filter((x) => x.name === newRoleName);
     if (existing.length > 0) {
       setError('Role name must be unique.');
+      return;
     }
 
     // Post the new role name and refresh the table
@@ -44,7 +46,7 @@ function Roles() {
         }
       )
       .then((resp) => {
-        setNewRoleName(undefined);
+        setNewRoleName('');
         setRefresh((x) => x + 1);
       });
   }
@@ -75,6 +77,7 @@ function Roles() {
           <label>Role name:</label>
           <input
             className={'form-control w-third'}
+            value={newRoleName}
             type="text"
             name="name"
             onChange={(e) => {

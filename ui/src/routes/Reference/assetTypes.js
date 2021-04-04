@@ -2,21 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { backendPath } from '../../config';
 import axios from 'axios';
 
-function Qualifications() {
-  const [qualifications, setQualifications] = useState([]);
+function AssetTypes() {
+  const [assetTypes, setAssetTypes] = useState([]);
   const [refresh, setRefresh] = useState(0);
-  const [newQualificationName, setNewQualificationName] = useState('');
+  const [newAssetTypeName, setNewAssetTypeName] = useState('');
+  const [newAssetCodeName, setNewAssetCodeName] = useState('');
   const [error, setError] = useState(undefined);
 
   useEffect(() => {
     axios
-      .get(backendPath + 'reference/qualifications', {
+      .get(backendPath + 'reference/asset_types', {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
       .then((resp) => {
-        setQualifications(resp.data);
+        setAssetTypes(resp.data);
       });
   }, [refresh]);
 
@@ -24,12 +25,12 @@ function Qualifications() {
     // Validate the new role name
     e.preventDefault();
     setError(undefined);
-    if (newQualificationName === '') {
-      setError('Qualification name is required.');
+    if (newAssetTypeName === '' || newAssetCodeName === '') {
+      setError('Asset type code and name are required.');
       return;
     }
-    const existing = qualifications.filter(
-      (x) => x.name === newQualificationName
+    const existing = assetTypes.filter(
+      (x) => x.name === newAssetTypeName || x.code === newAssetCodeName
     );
     if (existing.length > 0) {
       setError('Qualification name must be unique.');
@@ -39,25 +40,26 @@ function Qualifications() {
     // Post the new role name and refresh the table
     axios
       .post(
-        backendPath + 'reference/qualifications',
-        { name: newQualificationName },
+        backendPath + 'reference/asset_types',
+        { name: newAssetTypeName, code: newAssetCodeName },
         {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           },
         }
       )
-      .then(() => {
-        setNewQualificationName('');
+      .then((resp) => {
+        setNewAssetTypeName('');
+        setNewAssetCodeName('');
         setRefresh((x) => x + 1);
       });
   }
 
-  function toggle(roleName) {
+  function toggle(assetCode) {
     axios
       .patch(
-        backendPath + 'reference/qualifications',
-        { name: roleName },
+        backendPath + 'reference/asset_types',
+        { code: assetCode },
         {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -71,19 +73,31 @@ function Qualifications() {
 
   return (
     <div className={'w-100 mt4 ba br b--black-10 pa3'}>
-      <h2 className={'mb2'}>Volunteer Qualifications</h2>
+      <h2 className={'mb2'}>Asset Types</h2>
       <hr />
-      <h5>New volunteer qualification</h5>
+      <h5>New Asset Type</h5>
       <form onSubmit={addNew}>
         <div className="form-group">
-          <label>Qualification name:</label>
+          <label>Asset code:</label>
           <input
+            className={'form-control w-third'}
+            value={newAssetCodeName}
+            type="text"
+            name="code"
+            onChange={(e) => {
+              setNewAssetCodeName(e.target.value);
+            }}
+          />
+        </div>
+        <div className="form-group">
+          <label>Asset name:</label>
+          <input
+            value={newAssetTypeName}
             className={'form-control w-third'}
             type="text"
             name="name"
-            value={newQualificationName}
             onChange={(e) => {
-              setNewQualificationName(e.target.value);
+              setNewAssetTypeName(e.target.value);
             }}
           />
         </div>
@@ -96,7 +110,7 @@ function Qualifications() {
         </button>
       </form>
       <hr />
-      <h5>Existing requests</h5>
+      <h5>Existing Asset Types</h5>
       <table className="table">
         <thead>
           <tr>
@@ -107,8 +121,8 @@ function Qualifications() {
           </tr>
         </thead>
         <tbody>
-          {qualifications !== [] &&
-            qualifications.map((x) => {
+          {assetTypes !== [] &&
+            assetTypes.map((x) => {
               return (
                 <tr key={x['name']}>
                   <th scope="row">{x['name']}</th>
@@ -118,7 +132,7 @@ function Qualifications() {
                     <button
                       className={'btn btn-danger'}
                       onClick={() => {
-                        toggle(x['name']);
+                        toggle(x['code']);
                       }}>
                       {x['deleted'] === 'False' ? 'Disable' : 'Enable'}
                     </button>
@@ -126,9 +140,9 @@ function Qualifications() {
                 </tr>
               );
             })}
-          {qualifications.length === 0 && (
+          {assetTypes.length === 0 && (
             <tr key={'error'}>
-              <th colSpan={2}>No qualifications currently defined.</th>
+              <th colSpan={2}>No asset types are currently defined.</th>
             </tr>
           )}
         </tbody>
@@ -137,4 +151,4 @@ function Qualifications() {
   );
 }
 
-export default Qualifications;
+export default AssetTypes;
