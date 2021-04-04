@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from sqlalchemy import Column, String, DateTime, Integer, Enum, JSON
-from sqlalchemy.orm import relationship
 
 from domain.base import Base
 from domain.type import UserType
@@ -26,5 +25,3 @@ class User(Base):
     update_date_time = Column(DateTime, name='last_update_datetime', default=datetime.now(), nullable=False)
     insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
 
-    asset_request = relationship("AssetRequest")
-    asset_request_volunteer = relationship("AssetRequestVolunteer")

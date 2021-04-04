@@ -19,3 +19,4 @@ class AssetRequestVolunteer(Base):
     insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
 
     asset_request_vehicle = relationship("AssetRequestVehicle")
+    user = relationship("User")
