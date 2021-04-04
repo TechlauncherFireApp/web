@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, event
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 
 from domain.base import Base
@@ -19,3 +19,4 @@ class AssetRequestVolunteer(Base):
     insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
 
     asset_request_vehicle = relationship("AssetRequestVehicle")
+    user = relationship("User")

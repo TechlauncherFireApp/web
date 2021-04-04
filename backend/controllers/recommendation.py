@@ -85,7 +85,7 @@ class Recommendation(Resource):
                         volunteer_id = None
                     position = volunteer['positionID']
                     role = volunteer['role']
-                    add_shift(session, volunteer_id, vehicle_id,position, role)
+                    add_shift(session, volunteer_id, vehicle_id, position, role)
             return {"results": output}
 
 
