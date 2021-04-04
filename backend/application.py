@@ -23,6 +23,7 @@ app.register_blueprint(volunteer_preferred_hours_bp)
 app.register_blueprint(volunteer_shifts_bp)
 app.register_blueprint(volunteer_status_bp)
 app.register_blueprint(authentication_bp)
+app.register_blueprint(reference_bp)
 
 
 @app.route('/')

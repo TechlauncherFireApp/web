@@ -1,4 +1,7 @@
 from domain import AssetRequestVolunteer, AssetRequest, AssetRequestVehicle, User
+from services.mail import MailSender
+
+sender = MailSender()
 
 
 def get_asset_request_volunteer(session, volunteer_id, vehicle_id):
@@ -37,17 +40,17 @@ def get_shifts_by_request(session, request_id):
                          AssetRequestVehicle.type.label('assetClass'),
                          AssetRequestVehicle.from_date_time.label('startTime'),
                          AssetRequestVehicle.to_date_time.label('endTime')) \
-        .join(AssetRequestVehicle, AssetRequest.id == AssetRequestVehicle.request_id )\
+        .join(AssetRequestVehicle, AssetRequest.id == AssetRequestVehicle.request_id) \
         .filter(AssetRequestVehicle.request_id == request_id) \
         .all()
 
 
 def get_volunteers(session, vehicle_id):
     return session.query(AssetRequestVolunteer.user_id.label("ID"),
-                AssetRequestVolunteer.position.label("positionID"),
-                AssetRequestVolunteer.roles.label("role"),
-                AssetRequestVolunteer.status.label("status"))\
-        .filter(AssetRequestVolunteer.vehicle_id == vehicle_id)\
+                         AssetRequestVolunteer.position.label("positionID"),
+                         AssetRequestVolunteer.roles.label("role"),
+                         AssetRequestVolunteer.status.label("status")) \
+        .filter(AssetRequestVolunteer.vehicle_id == vehicle_id) \
         .all()
 
 
@@ -59,10 +62,30 @@ def update_shift_by_position(session, vehicle_id, position, user_id, role):
     record.user_id = user_id
     record.roles = role
 
+    if record.user is not None:
+        # Send an email to the person about their assignment
+        data = {
+            'startTime': record.asset_request_vehicle.from_date_time.strftime('%H:%M:%S %d %b %Y'),
+            'endTime': record.asset_request_vehicle.to_date_time.strftime('%H:%M:%S %d %b %Y'),
+            'role': ', '.join(record.roles)
+        }
+        sender.email(record.user.email, 'roster', data)
+        return record.id
+
 
 def add_shift(session, volunteer_id, vehicle_id, position, roles):
+    # Save the record to the database
     record = AssetRequestVolunteer(user_id=volunteer_id, vehicle_id=vehicle_id, position=position, roles=roles,
                                    status='pending')
     session.add(record)
     session.flush()
-    return record.id
+
+    if record.user is not None:
+        # Send an email to the person about their assignment
+        data = {
+            'startTime': record.asset_request_vehicle.from_date_time.strftime('%H:%M:%S %d %b %Y'),
+            'endTime': record.asset_request_vehicle.to_date_time.strftime('%H:%M:%S %d %b %Y'),
+            'role': ', '.join(record.roles)
+        }
+        sender.email(record.user.email, 'roster', data)
+        return record.id
