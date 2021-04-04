@@ -1,5 +1,5 @@
 import './AssetRequestVehicle.scss';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import DatePicker from 'react-datepicker';
 import { toSentenceCase } from '../../common/functions';
@@ -9,11 +9,24 @@ import axios from 'axios';
 
 function AssetRequestVehicle() {
   const [startDate, setStartDate] = useState(new Date());
+  const [assetTypes, setAssetTypes] = useState([]);
   const [endDate, setEndDate] = useState(new Date());
   const [assetType, setAssetType] = useState('heavyTanker');
   const [vehicles, setVehicles] = useState([]);
   const { id } = useParams();
   const history = useHistory();
+
+  useEffect(() => {
+    axios
+      .get(backendPath + 'reference/asset_types', {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        },
+      })
+      .then((resp) => {
+        setAssetTypes(resp.data);
+      });
+  }, []);
 
   function insertAsset() {
     // Validate Data
@@ -113,9 +126,13 @@ function AssetRequestVehicle() {
             <option value="" disabled hidden>
               Select asset type
             </option>
-            <option value="heavyTanker">Heavy Tanker</option>
-            <option value="mediumTanker">Medium Tanker</option>
-            <option value="lightUnit">Light Unit</option>
+            {assetTypes.map((x) => {
+              return (
+                <option key={x.code} value={x.code}>
+                  {x.name}
+                </option>
+              );
+            })}
           </select>
         </div>
         <div className="con">
