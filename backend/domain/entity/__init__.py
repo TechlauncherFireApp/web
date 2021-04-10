@@ -6,3 +6,4 @@ from .role import Role
 from .qualification import Qualification
 from .asset_type import AssetType
 from .user_role import UserRole
+from .asset_type_role import AssetTypeRole

@@ -6,6 +6,7 @@ function Roles() {
   const [roles, setRoles] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [newRoleName, setNewRoleName] = useState('');
+  const [newRoleCode, setNewRoleCode] = useState('');
   const [error, setError] = useState(undefined);
 
   useEffect(() => {
@@ -24,13 +25,13 @@ function Roles() {
     // Validate the new role name
     e.preventDefault();
     setError(undefined);
-    if (newRoleName === '') {
-      setError('Role name is required.');
+    if (newRoleCode === '') {
+      setError('Role code is required.');
       return;
     }
-    const existing = roles.filter((x) => x.name === newRoleName);
+    const existing = roles.filter((x) => x.code === newRoleCode);
     if (existing.length > 0) {
-      setError('Role name must be unique.');
+      setError('Role code must be unique.');
       return;
     }
 
@@ -38,7 +39,7 @@ function Roles() {
     axios
       .post(
         backendPath + 'reference/roles',
-        { name: newRoleName },
+        { name: newRoleName, code: newRoleCode },
         {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -47,15 +48,16 @@ function Roles() {
       )
       .then((resp) => {
         setNewRoleName('');
+        setNewRoleCode('');
         setRefresh((x) => x + 1);
       });
   }
 
-  function toggle(roleNmae) {
+  function toggle(id) {
     axios
       .patch(
         backendPath + 'reference/roles',
-        { name: roleNmae },
+        { id: id },
         {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -73,6 +75,18 @@ function Roles() {
       <hr />
       <h5>New volunteer role</h5>
       <form onSubmit={addNew}>
+        <div className="form-group">
+          <label>Role code:</label>
+          <input
+            className={'form-control w-third'}
+            value={newRoleCode}
+            type="text"
+            name="code"
+            onChange={(e) => {
+              setNewRoleCode(e.target.value);
+            }}
+          />
+        </div>
         <div className="form-group">
           <label>Role name:</label>
           <input
@@ -98,9 +112,9 @@ function Roles() {
       <table className="table">
         <thead>
           <tr>
-            <th scope="col">Role Name</th>
+            <th scope="col">Code</th>
+            <th scope="col">Name</th>
             <th scope="col">Last Updated</th>
-            <th scope="col">Enabled</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -108,15 +122,15 @@ function Roles() {
           {roles !== [] &&
             roles.map((x) => {
               return (
-                <tr key={x['name']}>
-                  <th scope="row">{x['name']}</th>
+                <tr key={x['id']}>
+                  <th scope="row">{x['code']}</th>
+                  <td>{x['name']}</td>
                   <td>{x['updated']}</td>
-                  <td>{x['deleted'] === 'False' ? 'Yes' : 'No'}</td>
                   <td>
                     <button
                       className={'btn btn-danger'}
                       onClick={() => {
-                        toggle(x['name']);
+                        toggle(x['id']);
                       }}>
                       {x['deleted'] === 'False' ? 'Disable' : 'Enable'}
                     </button>

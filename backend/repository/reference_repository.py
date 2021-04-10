@@ -2,20 +2,21 @@ from domain import Role, Qualification, AssetType
 
 
 def get_roles(session):
-    return session.query(Role.id, Role.name, Role.insert_date_time, Role.update_date_time, Role.deleted) \
+    return session.query(Role.id, Role.name, Role.code, Role.insert_date_time, Role.update_date_time, Role.deleted) \
         .all()
 
 
-def add_role(session, role_name):
-    role = Role(name=role_name)
+def add_role(session, role_name, role_code):
+    role = Role(name=role_name, code=role_code)
     session.add(role)
     session.flush()
     return role.id
 
 
-def toggle_role(session, role_name):
+def toggle_role(session, role_id):
+    print(role_id)
     existing_role = session.query(Role) \
-        .filter(Role.name == role_name) \
+        .filter(Role.id == role_id) \
         .first()
     if existing_role is None:
         return
