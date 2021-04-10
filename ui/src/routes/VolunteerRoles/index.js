@@ -59,7 +59,44 @@ function VolunteerRoles() {
           });
       });
     });
-  }, [refresh, config]);
+  }, [config]);
+
+  // Run when the data is changed on the form to only refresh the part that can change.
+  useEffect(() => {
+    if (roles.length === 0 || volunteers.length === 0) {
+      return;
+    }
+    axios
+      .get(backendPath + 'user-role', config)
+      .then((resp) => {
+        // Build a usable data structure of the 3 results
+        const rtn = {};
+        volunteers.forEach((u) => {
+          const user = {};
+          // Put each role into the users map
+          roles.forEach((role) => {
+            let enabled = false;
+            if (
+              resp.data.find(
+                ({ roleId, userId }) =>
+                  `${roleId}` === `${role['id']}` &&
+                  `${u['ID']}` === `${userId}`
+              ) !== undefined
+            ) {
+              enabled = true;
+            }
+            user[role['id']] = enabled;
+          });
+          // Store the user in the return list
+          rtn[u['ID']] = user;
+        });
+        setVolunteerRoles(rtn);
+      })
+      .finally(() => {
+        setLoading((x) => x - 1);
+      });
+    // eslint-disable-next-line
+  }, [config, refresh]);
 
   function handleRole(userId, roleId, enabled) {
     if (enabled) {
@@ -93,7 +130,7 @@ function VolunteerRoles() {
           <thead>
             <tr>
               <th scope="col">Volunteer Name</th>
-              <th scope="col">Roles</th>
+              <th className={'tc'}>Roles</th>
             </tr>
           </thead>
           <tbody>
