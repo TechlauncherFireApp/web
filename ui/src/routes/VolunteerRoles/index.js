@@ -107,7 +107,7 @@ function VolunteerRoles() {
                     <td className={'flex justify-around'}>
                       {Object.keys(volunteerRoles[x['ID']]).map((key) => {
                         return (
-                          <label>
+                          <label key={key}>
                             {roles.find(({ id }) => `${id}` === key)['name']}{' '}
                             <input
                               type="checkbox"
