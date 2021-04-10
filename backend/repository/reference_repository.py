@@ -1,21 +1,21 @@
-from domain import Roles, Qualifications, AssetType
+from domain import Role, Qualification, AssetType
 
 
 def get_roles(session):
-    return session.query(Roles.name, Roles.insert_date_time, Roles.update_date_time, Roles.deleted) \
+    return session.query(Role.id, Role.name, Role.insert_date_time, Role.update_date_time, Role.deleted) \
         .all()
 
 
 def add_role(session, role_name):
-    role = Roles(name=role_name)
+    role = Role(name=role_name)
     session.add(role)
     session.flush()
     return role.id
 
 
 def toggle_role(session, role_name):
-    existing_role = session.query(Roles) \
-        .filter(Roles.name == role_name) \
+    existing_role = session.query(Role) \
+        .filter(Role.name == role_name) \
         .first()
     if existing_role is None:
         return
@@ -23,21 +23,21 @@ def toggle_role(session, role_name):
 
 
 def get_qualifications(session):
-    return session.query(Qualifications.name, Qualifications.insert_date_time, Qualifications.update_date_time,
-                         Qualifications.deleted) \
+    return session.query(Qualification.id, Qualification.name, Qualification.insert_date_time, Qualification.update_date_time,
+                         Qualification.deleted) \
         .all()
 
 
 def add_qualification(session, qualification_name):
-    qualification = Qualifications(name=qualification_name)
+    qualification = Qualification(name=qualification_name)
     session.add(qualification)
     session.flush()
     return qualification.id
 
 
 def toggle_qualification(session, qualification_name):
-    existing_qualification = session.query(Qualifications) \
-        .filter(Qualifications.name == qualification_name) \
+    existing_qualification = session.query(Qualification) \
+        .filter(Qualification.name == qualification_name) \
         .first()
     if existing_qualification is None:
         return
@@ -45,7 +45,7 @@ def toggle_qualification(session, qualification_name):
 
 
 def get_asset_type(session):
-    return session.query(AssetType.name, AssetType.code, AssetType.insert_date_time, AssetType.update_date_time,
+    return session.query(AssetType.id, AssetType.name, AssetType.code, AssetType.insert_date_time, AssetType.update_date_time,
                          AssetType.deleted) \
         .all()
 

@@ -24,6 +24,7 @@ app.register_blueprint(volunteer_shifts_bp)
 app.register_blueprint(volunteer_status_bp)
 app.register_blueprint(authentication_bp)
 app.register_blueprint(reference_bp)
+app.register_blueprint(user_role_bp)
 
 
 @app.route('/')

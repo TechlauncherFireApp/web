@@ -6,6 +6,7 @@ from repository.reference_repository import get_roles, get_qualifications, add_q
     toggle_qualification, toggle_role, get_asset_type, add_asset_type, toggle_asset_type
 
 get_role_fields = {
+    'id': fields.Integer,
     'name': fields.String,
     'created': fields.DateTime(attribute='insert_date_time', dt_format='iso8601'),
     'updated': fields.DateTime(attribute='update_date_time', dt_format='iso8601'),
@@ -45,6 +46,7 @@ class RoleRequest(Resource):
 
 
 get_qualifications_fields = {
+    'id': fields.Integer,
     'name': fields.String,
     'created': fields.DateTime(attribute='insert_date_time', dt_format='iso8601'),
     'updated': fields.DateTime(attribute='update_date_time', dt_format='iso8601'),
@@ -84,6 +86,7 @@ class QualificationsRequest(Resource):
     
     
 get_asset_type_fields = {
+    'id': fields.Integer,
     'name': fields.String,
     'code': fields.String,
     'created': fields.DateTime(attribute='insert_date_time', dt_format='iso8601'),

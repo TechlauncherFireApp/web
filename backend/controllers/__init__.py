@@ -11,3 +11,4 @@ from .volunteer_shifts import volunteer_shifts_bp
 from .volunteer_status import volunteer_status_bp
 from .authentication import authentication_bp
 from .reference_data import reference_bp
+from .user_role import user_role_bp
