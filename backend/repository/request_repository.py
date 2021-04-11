@@ -1,4 +1,4 @@
-from domain import AssetRequest, User, UserType
+from domain import AssetRequest, User, UserType, AssetRequestVehicle, AssetRequestVolunteer
 
 
 def get_existing_requests(session):
@@ -36,7 +36,16 @@ def delete_request(session, requestID):
         .filter(AssetRequest.id == requestID) \
         .first()
     if record is not None:
+        vehicles = session.query(AssetRequestVehicle) \
+            .filter(AssetRequestVehicle.request_id == record.id) \
+            .all()
+        for vehicle in vehicles:
+            vehicle_volunteers = session.query(AssetRequestVolunteer) \
+                .filter(AssetRequestVolunteer.vehicle_id == vehicle.id) \
+                .all()
+            for vehicle_volunteer in vehicle_volunteers:
+                session.delete(vehicle_volunteer)
+            session.delete(vehicle)
         session.delete(record)
-        session.flush()
         return True
     return False
