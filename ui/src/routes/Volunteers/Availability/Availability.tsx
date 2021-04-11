@@ -10,6 +10,11 @@ import { Helmet } from "react-helmet";
 
 export default class Availability extends React.Component {
   render() {
-    return <DayPicker />
+    return <DayPicker
+        showOutsideDays
+        showWeekNumbers
+        todayButton = "Click to go to today."
+        fromMonth={new Date()}
+    />
   };
 }
