@@ -20,7 +20,9 @@ function NavBar() {
         <Navbar.Brand href="/">FireApp</Navbar.Brand>
         {authenticated && role === 'ADMIN' && (
           <>
+            <Nav.Link href="/captain">Request Administration</Nav.Link>
             <Nav.Link href="/volunteer-roles">Volunteer Roles</Nav.Link>
+            <Nav.Link href="/asset-type-roles">Asset Planning</Nav.Link>
             <NavDropdown
               title="Reference Data"
               id="basic-nav-dropdown"

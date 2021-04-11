@@ -96,11 +96,11 @@ function Qualifications() {
         </button>
       </form>
       <hr />
-      <h5>Existing requests</h5>
+      <h5>Existing qualifications</h5>
       <table className="table">
         <thead>
           <tr>
-            <th scope="col">Role Name</th>
+            <th scope="col">Qualification Name</th>
             <th scope="col">Last Updated</th>
             <th scope="col">Enabled</th>
             <th scope="col">Action</th>

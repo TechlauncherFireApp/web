@@ -108,7 +108,7 @@ function Roles() {
         </button>
       </form>
       <hr />
-      <h5>Existing requests</h5>
+      <h5>Existing roles</h5>
       <table className="table">
         <thead>
           <tr>

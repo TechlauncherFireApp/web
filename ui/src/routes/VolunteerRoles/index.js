@@ -130,7 +130,12 @@ function VolunteerRoles() {
           <thead>
             <tr>
               <th scope="col">Volunteer Name</th>
-              <th className={'tc'}>Roles</th>
+
+              {roles
+                .sort((a, b) => a.ID > b.ID)
+                .map((x) => (
+                  <th key={x['ID']}>{x['name']}</th>
+                ))}
             </tr>
           </thead>
           <tbody>
@@ -141,22 +146,19 @@ function VolunteerRoles() {
                     <td>
                       {x['firstName']} {x['lastName']}
                     </td>
-                    <td className={'flex justify-around'}>
-                      {Object.keys(volunteerRoles[x['ID']]).map((key) => {
-                        return (
-                          <label key={key}>
-                            {roles.find(({ id }) => `${id}` === key)['name']}{' '}
-                            <input
-                              type="checkbox"
-                              checked={volunteerRoles[x['ID']][key]}
-                              onChange={(e) => {
-                                handleRole(x['ID'], key, e.target.checked);
-                              }}
-                            />
-                          </label>
-                        );
-                      })}
-                    </td>
+                    {Object.keys(volunteerRoles[x['ID']]).map((key) => {
+                      return (
+                        <td key={key} className={'w-20'}>
+                          <input
+                            type="checkbox"
+                            checked={volunteerRoles[x['ID']][key]}
+                            onChange={(e) => {
+                              handleRole(x['ID'], key, e.target.checked);
+                            }}
+                          />
+                        </td>
+                      );
+                    })}
                   </tr>
                 );
               })}

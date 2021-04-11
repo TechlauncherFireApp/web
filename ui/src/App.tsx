@@ -16,6 +16,7 @@ import Roles from './routes/Reference/roles';
 import Qualifications from './routes/Reference/qualifications';
 import AssetTypes from './routes/Reference/assetTypes';
 import VolunteerRoles from './routes/VolunteerRoles';
+import AssetTypeRoles from './routes/AssetTypeRoles';
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
           />
           <Route exact path="/volunteer" component={VolunteersContainer} />
           <Route exact path="/volunteer-roles" component={VolunteerRoles} />
+          <Route exact path="/asset-type-roles" component={AssetTypeRoles} />
           <Route exact path="/volunteer/:id" component={Volunteer} />
           <Route
             exact

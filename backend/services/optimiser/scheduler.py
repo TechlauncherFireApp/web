@@ -112,39 +112,6 @@ def add_heavy_tanker_to_output(seats, currentRequest, volunteers):
     return output
 
 
-""" Test Code
-volunteers = []
-for i in range(6):
-    volunteer = {}
-    volunteer["ID"] = i
-    volunteer["prefHours"] = 69945585 - 1
-    volunteer["possibleRoles"] = ["basic", "advanced", "crewLeader", "driver"]
-    start = datetime.min
-    end = datetime.max
-    volunteer["availabilities"] = [(start,end)]
-    volunteers.append(volunteer)
-
-AssetRequests = []
-for i in range(1):
-    assetrequest = {}
-    assetrequest["shiftID"] = i
-    assetrequest["assetClass"] = "lightUnit"
-    start = datetime.now()
-    end = datetime.max
-    assetrequest["timeframe"] = (start,end)
-    AssetRequests.append(assetrequest)
-
-for i in range(1):
-    assetrequest = {}
-    assetrequest["shiftID"] = i
-    assetrequest["assetClass"] = "heavyTanker"
-    start = datetime.now()
-    end = datetime.max
-    assetrequest["timeframe"] = (start,end)
-    AssetRequests.append(assetrequest)
-"""
-
-
 # this is a helper function which generates a list of shift lengths given a list of vehicle requests
 def generate_shift_lengths(vehicle_request):
     shift_lengths = []
@@ -166,7 +133,7 @@ def generate_compatibility(volunteers, vehicle_request):
         for volunteer in volunteers:
             temp = True
             # TODO: This comparison is broken
-            #for availability in volunteer["availabilities"]:
+            # for availability in volunteer["availabilities"]:
             #    if range_surrounds(availability, request_time):
             #        temp = True
             request_row.append(temp)
