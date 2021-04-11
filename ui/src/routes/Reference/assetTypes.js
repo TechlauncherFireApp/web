@@ -114,7 +114,7 @@ function AssetTypes() {
       <table className="table">
         <thead>
           <tr>
-            <th scope="col">Role Name</th>
+            <th scope="col">Asset Type Name</th>
             <th scope="col">Last Updated</th>
             <th scope="col">Enabled</th>
             <th scope="col">Action</th>

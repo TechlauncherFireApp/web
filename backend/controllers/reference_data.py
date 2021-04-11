@@ -6,6 +6,8 @@ from repository.reference_repository import get_roles, get_qualifications, add_q
     toggle_qualification, toggle_role, get_asset_type, add_asset_type, toggle_asset_type
 
 get_role_fields = {
+    'id': fields.Integer,
+    'code': fields.String,
     'name': fields.String,
     'created': fields.DateTime(attribute='insert_date_time', dt_format='iso8601'),
     'updated': fields.DateTime(attribute='update_date_time', dt_format='iso8601'),
@@ -17,7 +19,9 @@ post_role_fields = {
 }
 
 role_parser = reqparse.RequestParser()
+role_parser.add_argument('id', action='store', type=str)
 role_parser.add_argument('name', action='store', type=str)
+role_parser.add_argument('code', action='store', type=str)
 
 
 class RoleRequest(Resource):
@@ -29,22 +33,23 @@ class RoleRequest(Resource):
     @marshal_with(post_role_fields)
     def post(self):
         args = role_parser.parse_args()
-        if args['name'] is None or args['name'] == '':
+        if args['name'] is None or args['name'] == '' or args['code'] is None or args['code'] == '':
             return
         with session_scope() as session:
-            role_id = add_role(session, args['name'])
+            role_id = add_role(session, args['name'], args['code'])
             return {'id': role_id}
 
     def patch(self):
         args = role_parser.parse_args()
-        if args['name'] is None or args['name'] == '':
+        if args['id'] is None or args['id'] == '':
             return
         with session_scope() as session:
-            toggle_role(session, args['name'])
+            toggle_role(session, args['id'])
         return
 
 
 get_qualifications_fields = {
+    'id': fields.Integer,
     'name': fields.String,
     'created': fields.DateTime(attribute='insert_date_time', dt_format='iso8601'),
     'updated': fields.DateTime(attribute='update_date_time', dt_format='iso8601'),
@@ -84,6 +89,7 @@ class QualificationsRequest(Resource):
     
     
 get_asset_type_fields = {
+    'id': fields.Integer,
     'name': fields.String,
     'code': fields.String,
     'created': fields.DateTime(attribute='insert_date_time', dt_format='iso8601'),
