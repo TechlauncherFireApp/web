@@ -1,64 +1,36 @@
-@import "../../../styles/functions.scss";
+@import "../../../styles/functions.scss","../../../../node_modules/react-day-picker/lib/style.css";
 
 availability {
   display: block;
   padding-top: 25px;
 
-  input[type="number"] {
-    all: unset;
-    display: block;
-    width: 300px;
-    font-size: 20px;
-    border: 1px solid var(--black-1);
-    @include box-sizing(border-box);
-    @include border-radius(5px);
-    margin: 0 auto 10px auto;
-    padding: 9px 10px;
-  } table {
-    border-collapse: collapse;
-    @include box-sizing(unset);
-    margin: 25px auto 50px auto;
+  div.exterior {
+    width: 100%;
+    position: relative;
+    align-items: center;
 
-    tr {
-      th {
-        min-width: 100px;
-        text-align: center;
-        font-size: 15px;
-        padding: 5px;
-        // @include transition(0.5s);
-      }
-
-      &:not(:first-child) {
-        th {
-          min-width: unset;
-          width: auto;
-          text-align: right;
-          padding-right: 15px;
-
-          &:first-child {
-            // WIDTH NOT BEHAVING WELL
-            width: 5px;
-          }
-
-          &:not(:first-child) {
-            border: 1px solid var(--white-1);
-            background-color: var(--silver-3);
-
-            &:not([selectd]):hover {
-              background-color: var(--purple-1);
-              opacity: 0.5;
-            }
-
-            &[selectd] {
-              background-color: var(--purple-1);
-            }
-          }
-        }
-      }
+    .calendar {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
     }
-  }
 
-  button.type-1 {
-    margin: 0 0 50px 50px;
+    .time-range {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .con {
+      margin-top: 70px;
+      margin-left: 50px;
+    }
   }
 }

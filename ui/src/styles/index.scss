@@ -67,6 +67,24 @@ button {
       background-color: var(--white-1);
       border: 1px solid darkorange;
     }
+  } &.type-3 {
+    all: unset;
+    color: var(--white-1);
+    font-size: 15px;
+    background-color: var(--red-1);
+    border: 1px solid transparent;
+    @include border-radius(5px);
+    @include appearance(none);
+    padding: 10px 20px;
+    margin-left: 20px;
+    cursor: pointer;
+    @include transition(0.5s);
+
+    &:hover, &:focus {
+      color: var(--red-1);
+      background-color: var(--white-1);
+      border: 1px solid var(--red-1);
+    }
   }
 }
 
