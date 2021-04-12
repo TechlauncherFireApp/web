@@ -30,7 +30,15 @@ availability {
 
     .con {
       margin-top: 70px;
-      margin-left: 50px;
+      align-items: center;
+      align-content: center;
+      text-align: center;
+    }
+
+    .sen {
+      color: black;
+      font-size: 25px;
+      padding-right: 10px;
     }
   }
 }
