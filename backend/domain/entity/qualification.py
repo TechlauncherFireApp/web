@@ -3,8 +3,8 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from domain.base import Base
 
 
-class Qualifications(Base):
-    __tablename__ = 'qualifications'
+class Qualification(Base):
+    __tablename__ = 'qualification'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(256), nullable=False)
     deleted = Column(Boolean, nullable=False, default=False)

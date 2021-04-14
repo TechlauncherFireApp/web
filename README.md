@@ -27,7 +27,7 @@ Its recommended you use [PyCharm Ultimate](https://www.jetbrains.com/pycharm/dow
 6. **Restart** your IDE so as to update your path. 
 7. **Create** a run configuration by adding a `Flask` runtime using the settings:\
     _Target Type:_ `Script Path`\
-    _Target:_ `/backend/app.py`\
+    _Target:_ `/backend/application.py`\
     _FLASK_ENV:_ `development`\
     _FLASK_DEBUG:_ `true`\
     _Working Directory:_ `/backend`\

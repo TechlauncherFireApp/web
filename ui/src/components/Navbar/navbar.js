@@ -19,18 +19,23 @@ function NavBar() {
       <Navbar.Collapse>
         <Navbar.Brand href="/">FireApp</Navbar.Brand>
         {authenticated && role === 'ADMIN' && (
-          <NavDropdown
-            title="Reference Data"
-            id="basic-nav-dropdown"
-            className={'white'}>
-            <NavDropdown.Item href="/reference/roles">Roles</NavDropdown.Item>
-            <NavDropdown.Item href="/reference/qualifications">
-              Qualifications
-            </NavDropdown.Item>
-            <NavDropdown.Item href="/reference/asset_types">
-              Asset Types
-            </NavDropdown.Item>
-          </NavDropdown>
+          <>
+            <Nav.Link href="/captain">Request Administration</Nav.Link>
+            <Nav.Link href="/volunteer-roles">Volunteer Roles</Nav.Link>
+            <Nav.Link href="/asset-type-roles">Asset Planning</Nav.Link>
+            <NavDropdown
+              title="Reference Data"
+              id="basic-nav-dropdown"
+              className={'white'}>
+              <NavDropdown.Item href="/reference/roles">Roles</NavDropdown.Item>
+              <NavDropdown.Item href="/reference/qualifications">
+                Qualifications
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/reference/asset_types">
+                Asset Types
+              </NavDropdown.Item>
+            </NavDropdown>
+          </>
         )}
         <Nav className="ml-auto navbar-right">
           {authenticated ? (
