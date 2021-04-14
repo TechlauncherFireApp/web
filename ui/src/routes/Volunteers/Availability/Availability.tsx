@@ -5,7 +5,7 @@ import {backendPath} from '../../../config';
 import DayPicker, {DateUtils} from "react-day-picker";
 // @ts-ignore
 import TimeRange from 'react-timeline-range-slider';
-import {endOfToday, getDay, set} from 'date-fns';
+import {endOfToday, getDay, getHours, getMinutes, set} from 'date-fns';
 import {contains} from "../../../common/functions";
 
 type Day =
@@ -27,7 +27,7 @@ const getSelectedAtSpecificHour = (date: Date, hour = 12, minutes = 0) =>
     set(date, {hours: hour, minutes: minutes, seconds: 0, milliseconds: 0})
 
 const selectedStart = getTodayAtSpecificHour()
-const selectedEnd = getTodayAtSpecificHour()
+const selectedEnd = getTodayAtSpecificHour(12,30)
 
 const startTime = getTodayAtSpecificHour(0)
 const endTime = endOfToday()
@@ -103,6 +103,7 @@ export default class Availability extends React.Component<any, State> {
                 let interval = {start: startInterval, end: endInterval};
                 prevIntervals = prevIntervals.concat(interval);
             }
+            this.setState({selectedInterval: [selectedStart, selectedEnd]})
             this.setState({previousIntervals: prevIntervals});
         }
 
@@ -137,7 +138,24 @@ export default class Availability extends React.Component<any, State> {
         this.setState({selectedInterval});
     };
 
-    deleteAvailability= (): void => {
+    addAvailability = (): void => {
+        if (this.state.schedule && contains(this.state.schedule) && this.state.selectedDay && contains(this.state.selectedDay)) {
+            let interval = this.state.selectedInterval;
+            let startAvailability: number = this.convertDateToNum(interval[0]);
+            let endAvailability: number = this.convertDateToNum(interval[1]);
+            let availability: number[] = [startAvailability, endAvailability];
+            let k: Day = this.convertNumToDay(getDay(this.state.selectedDay));
+            let s: Schedule = this.state.schedule;
+            let i: number = s[k].length;
+            s[k][i] = availability;
+            console.log(s);
+            this.setState({schedule: s}, () : void => {
+                this.displaySchedule();
+            });
+        }
+    }
+
+    deleteAvailability = (): void => {
         if (this.state.schedule && contains(this.state.schedule) && this.state.selectedDay && contains(this.state.selectedDay)){
             let k: Day = this.convertNumToDay(getDay(this.state.selectedDay));
             let s: Schedule = this.state.schedule;
@@ -147,6 +165,16 @@ export default class Availability extends React.Component<any, State> {
             });
         }
     }
+
+    convertDateToNum(d: Date): number {
+        let hour = getHours(d);
+        let minutes = getMinutes(d);
+        if (minutes > 0) {
+            minutes = 0.5;
+        }
+        let time = hour + minutes;
+        return time;
+}
 
     // Backend Requests
     getPrefHours(): void {
@@ -314,7 +342,7 @@ export default class Availability extends React.Component<any, State> {
                             disabledIntervals={previousIntervals}
                         />
                     </div>
-                    <div className="time-range">
+                    <div className="hours">
                         <p className="sen">Preferred number of hours per week:</p>
                         <input
                             type="number"
@@ -327,18 +355,23 @@ export default class Availability extends React.Component<any, State> {
                         />
                     </div>
                     <div className="con">
-                        <button className="type-1" onClick={(): void => {
-                            this.patchPrefHours();
-                            this.patchSchedule();
-                        }}>
-                            {this.state.allow_patchSchedule ? 'Save Availability & Preferred Hours' : 'Loading'}
+                        <button className="type-3" onClick={this.addAvailability}>
+                            Add Availability
                         </button>
                         <button className="type-3" onClick={this.deleteAvailability}>
                             Delete Today's Availabilities
                         </button>
+                        <div className="con-2">
+                        <button className="type-1" onClick={(): void => {
+                            this.patchPrefHours();
+                            this.patchSchedule();
+                        }}>
+                            {this.state.allow_patchSchedule ? 'Save All' : 'Loading'}
+                        </button>
                         <button className="type-2" onClick={this.exit}>
                             Return
                         </button>
+                            </div>
                     </div>
                 </div>
             </availability>

@@ -25,11 +25,29 @@ availability {
       justify-content: center;
       align-items: center;
       text-align: center;
-      margin-top: 40px;
+      margin-top: 18px;
+    }
+
+    .hours {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      margin-top: 38px;
     }
 
     .con {
-      margin-top: 70px;
+      margin-top: 50px;
+      align-items: center;
+      align-content: center;
+      text-align: center;
+    }
+
+
+    .con-2 {
+      margin-top: 45px;
       align-items: center;
       align-content: center;
       text-align: center;
