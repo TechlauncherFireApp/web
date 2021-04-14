@@ -26,7 +26,7 @@ const getTodayAtSpecificHour = (hour = 12, minutes = 0) =>
 const getSelectedAtSpecificHour = (date: Date, hour = 12, minutes = 0) =>
     set(date, {hours: hour, minutes: minutes, seconds: 0, milliseconds: 0})
 
-const selectedStart = getTodayAtSpecificHour(3, 30)
+const selectedStart = getTodayAtSpecificHour()
 const selectedEnd = getTodayAtSpecificHour()
 
 const startTime = getTodayAtSpecificHour(0)
@@ -81,31 +81,34 @@ export default class Availability extends React.Component<any, State> {
     // @ts-ignore
     handleDayClick(day, {selected}) {
         this.setState({
-            selectedDay: selected ? undefined : day,
+            selectedDay: selected ? undefined: day,
+        }, () => {
+            this.displaySchedule();
         });
     }
 
     // TimeRange Methods
 
-    displaySchedule(date: Date) {
-        if (this.state.schedule && contains(this.state.schedule)){
-            let k: Day = this.convertNumToDay(getDay(date));
+    displaySchedule() {
+        if (this.state.schedule && contains(this.state.schedule) && this.state.selectedDay && contains(this.state.selectedDay)){
+            let selected = this.state.selectedDay;
+            let k: Day = this.convertNumToDay(getDay(selected));
             let s: Schedule = this.state.schedule;
             let prevIntervals: {start: Date, end:Date}[] = [];
             for (let l of s[k]) {
                 let startTime: [number, number] = this.convertNumToTime(l[0]);
-                let startInterval = getSelectedAtSpecificHour(date, startTime[0], startTime[1]);
+                let startInterval = getSelectedAtSpecificHour(now, startTime[0], startTime[1]);
                 let endTime: [number, number] = this.convertNumToTime(l[1]);
-                let endInterval = getSelectedAtSpecificHour(date, endTime[0], endTime[1]);
+                let endInterval = getSelectedAtSpecificHour(now, endTime[0], endTime[1]);
                 let interval = {start: startInterval, end: endInterval};
                 prevIntervals = prevIntervals.concat(interval);
             }
-            this.setState({previousIntervals: prevIntervals})
-            console.log(this.state.previousIntervals);
+            this.setState({previousIntervals: prevIntervals});
         }
 
     }
 
+    // Converts float value to the nearest half hour interval (6.5 becomes [6, 30])
     convertNumToTime(n: number): [number, number] {
         let hour = Math.floor(n);
         let minutes = n - hour;
@@ -116,6 +119,7 @@ export default class Availability extends React.Component<any, State> {
         return time;
     }
 
+    // Converts number representation of weekday to the day
     convertNumToDay(n: number): Day {
         if (n == 0) return 'Sunday';
         if (n == 1) return 'Monday';
@@ -133,8 +137,15 @@ export default class Availability extends React.Component<any, State> {
         this.setState({selectedInterval});
     };
 
-    deleteAvailability = (): void => {
-
+    deleteAvailability= (): void => {
+        if (this.state.schedule && contains(this.state.schedule) && this.state.selectedDay && contains(this.state.selectedDay)){
+            let k: Day = this.convertNumToDay(getDay(this.state.selectedDay));
+            let s: Schedule = this.state.schedule;
+            s[k] = [];
+            this.setState({schedule: s}, () : void => {
+                this.displaySchedule();
+            });
+        }
     }
 
     // Backend Requests
@@ -187,7 +198,7 @@ export default class Availability extends React.Component<any, State> {
                 if (typeof res.data === 'object' && res.data['success']) {
                     let n: Schedule = res.data['availability'] as Schedule;
                     this.setState({schedule: n});
-                    this.displaySchedule(new Date());
+                    this.displaySchedule();
                 } else alert('Request Failed');
                 this.setState({allow_getSchedule: true});
             })
@@ -222,7 +233,6 @@ export default class Availability extends React.Component<any, State> {
                 },
             })
             .then((res: AxiosResponse): void => {
-                // console.log(res.data);
                 alert(res.data['success'] ? 'Updated - prefHours' : 'Request Failed');
                 this.setState({allow_patchPrefHours: true});
             })
@@ -324,7 +334,7 @@ export default class Availability extends React.Component<any, State> {
                             {this.state.allow_patchSchedule ? 'Save Availability & Preferred Hours' : 'Loading'}
                         </button>
                         <button className="type-3" onClick={this.deleteAvailability}>
-                            Delete Today's Shifts
+                            Delete Today's Availabilities
                         </button>
                         <button className="type-2" onClick={this.exit}>
                             Return
