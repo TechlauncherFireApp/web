@@ -2,7 +2,7 @@ import React from 'react';
 import './Availability.scss';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import {backendPath} from '../../../config';
-import DayPicker, {DateUtils} from "react-day-picker";
+import DayPicker from "react-day-picker";
 // @ts-ignore
 import TimeRange from 'react-timeline-range-slider';
 import {endOfToday, getDay, getHours, getMinutes, set} from 'date-fns';
@@ -116,18 +116,17 @@ export default class Availability extends React.Component<any, State> {
         if (minutes > 0.1) {
             minutes = 30;
         }
-        let time: [number, number] = [hour, minutes]
-        return time;
+        return [hour, minutes];
     }
 
     // Converts number representation of weekday to the day
     convertNumToDay(n: number): Day {
-        if (n == 0) return 'Sunday';
-        if (n == 1) return 'Monday';
-        if (n == 2) return 'Tuesday';
-        if (n == 3) return 'Wednesday';
-        if (n == 4) return 'Thursday';
-        if (n == 5) return 'Friday';
+        if (n === 0) return 'Sunday';
+        if (n === 1) return 'Monday';
+        if (n === 2) return 'Tuesday';
+        if (n === 3) return 'Wednesday';
+        if (n === 4) return 'Thursday';
+        if (n === 5) return 'Friday';
         return 'Saturday';
     }
 
@@ -172,8 +171,7 @@ export default class Availability extends React.Component<any, State> {
         if (minutes > 0) {
             minutes = 0.5;
         }
-        let time = hour + minutes;
-        return time;
+        return hour + minutes;
 }
 
     // Backend Requests
