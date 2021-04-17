@@ -37,6 +37,9 @@ def get_duration(start, end):
 
 # this is a helper function, it formats the output of light units for the scheduler
 def add_light_unit_to_output(seats, currentRequest, volunteers):
+    print(seats)
+    print(currentRequest)
+    print(volunteers)
     output = []
     already_added = []
     for i in range(2):
@@ -56,6 +59,7 @@ def add_light_unit_to_output(seats, currentRequest, volunteers):
         volunteer_dict["role"] = role
         already_added.append(index)
         output.append(volunteer_dict)
+    print(output)
 
     return output
 
