@@ -1,12 +1,7 @@
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
-from repository.asset_request_vehicle_repository import get_vehicles
-from repository.asset_request_volunteer_repository import add_shift
-from services.optimiser2.optimiser import Optimiser
-from .utility import *
-from services.optimiser import schedule
-from repository.volunteer_repository import *
+from services.optimiser2 import Optimiser
 from domain import session_scope
 
 parser = reqparse.RequestParser()
