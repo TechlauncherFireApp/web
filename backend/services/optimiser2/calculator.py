@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from typing import List
 from sqlalchemy import orm
 
-from domain import session_scope, User, AssetRequestVehicle, AssetType
+from domain import session_scope, User, AssetRequestVehicle, AssetType, Role, UserRole
 
 
 class Calculator:
@@ -20,6 +20,9 @@ class Calculator:
 
     # Master list of all asset types available
     _asset_types_ = []
+
+    # Master list of all available roles
+    _roles_ = []
 
     # A single database session is used for all transactions in the optimiser. This is initialised by the calling
     # function.
@@ -64,6 +67,9 @@ class Calculator:
             .all()
         self._asset_types_ = self._session_.query(AssetType) \
             .filter(AssetType.deleted == False) \
+            .all()
+        self._roles_ = self._session_.query(Role) \
+            .filter(Role.deleted == False) \
             .all()
 
     def get_preferred_hours(self) -> List[int]:
@@ -225,10 +231,24 @@ class Calculator:
               User 2  [T,         T,          F]]
         @return: A 2D array explaining what users can perform what roles.
         """
-        
+        is_roles = []
+        for user in self._users_:
+            user_roles = []
+            for role in self._roles_:
+                user_has_role = self._session_.query(UserRole)\
+                    .filter(UserRole.user == user)\
+                    .filter(UserRole.role == role)\
+                    .first()
+                user_roles.append(user_has_role is not None)
+            is_roles.append(user_roles)
+        print(f"User role map is: {is_roles}")
+        return is_roles
+
 
 with session_scope() as s:
     optimiser = Calculator(s, 110)
     optimiser.calculate_compatibility()
     optimiser.calculate_clashes()
     optimiser.calculate_asset_types()
+    optimiser.calculate_roles()
+    
