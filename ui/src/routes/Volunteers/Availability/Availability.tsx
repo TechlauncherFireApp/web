@@ -18,7 +18,6 @@ type Day =
     | 'Saturday';
 type Schedule = { [key in Day]: number[][] };
 
-
 // States for TimeRange
 const now = new Date()
 const getTodayAtSpecificHour = (hour = 12, minutes = 0) =>
