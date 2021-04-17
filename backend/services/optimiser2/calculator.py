@@ -83,11 +83,11 @@ class Calculator:
         """
         @return: The number of seats on the biggest asset type
         """
-        max = 0
+        max_num = 0
         for seat in self._asset_type_seats_:
-            if seat.seat_number > max:
-                max = seat.seat_number
-        return max
+            if seat.seat_number > max_num:
+                max_num = seat.seat_number
+        return max_num
 
     def get_seats_per_asset_type(self) -> List[int]:
         """
@@ -106,9 +106,9 @@ class Calculator:
         """
         @return: The number of seat on a particular asset type
         """
-        return len(self._session_.query(AssetTypeRole) \
-                   .join(AssetType, AssetType.id == AssetTypeRole.asset_type_id) \
-                   .filter(AssetType.code == asset_type_code) \
+        return len(self._session_.query(AssetTypeRole)
+                   .join(AssetType, AssetType.id == AssetTypeRole.asset_type_id)
+                   .filter(AssetType.code == asset_type_code)
                    .all())
 
     def get_asset_type_by_code(self, asset_type_code: str) -> AssetType:
@@ -117,8 +117,8 @@ class Calculator:
         @param asset_type_code: The asset type code to fetch
         @return: The asset type or none
         """
-        return self._session_.query(AssetType)\
-            .filter(AssetType.code == asset_type_code)\
+        return self._session_.query(AssetType) \
+            .filter(AssetType.code == asset_type_code) \
             .first()
 
     def get_seat_roles(self, seat_number: int, asset_type: AssetType) -> Role or None:
@@ -282,7 +282,8 @@ class Calculator:
             for other_vehicle in self._asset_request_vehicles_:
                 is_clash = False
                 for this_shift_block in this_shift_blocks:
-                    if other_vehicle.from_date_time <= this_shift_block <= other_vehicle.to_date_time and other_vehicle.id != this_vehicle.id:
+                    if other_vehicle.from_date_time <= this_shift_block <= other_vehicle.to_date_time \
+                            and other_vehicle.id != this_vehicle.id:
                         is_clash = True
                 this_vehicle_clashes.append(is_clash)
             clashes.append(this_vehicle_clashes)

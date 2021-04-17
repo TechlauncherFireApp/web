@@ -1,7 +1,6 @@
 import minizinc
 from sqlalchemy import orm
 
-from domain import session_scope
 from repository.asset_request_volunteer_repository import add_shift
 from services.optimiser2.calculator import Calculator
 
@@ -136,6 +135,7 @@ class Optimiser:
     def save_result(self, session, result) -> None:
         """
         Save a model result to the database.
+        @param session: SQL Alchemy session to use
         @param result: The model result
         """
         for index, asset_request_vehicle in enumerate(self.calculator.get_asset_request_vehicles()):
@@ -152,11 +152,10 @@ class Optimiser:
     def save_empty_result(self, session):
         """
         Save empty rows when a optimisation fails so you can manually assign people.
-        @param session: The database session
+        @param session: SQL Alchemy session to use
         @return: None
         """
         for index, asset_request_vehicle in enumerate(self.calculator.get_asset_request_vehicles()):
-            output = {}
             seats = self.calculator.get_seats_for_asset_type(asset_request_vehicle.type)
             for seat_number in range(1, self.calculator.get_maximum_number_of_seats() + 1):
                 if seat_number <= seats:
