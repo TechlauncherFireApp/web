@@ -38,10 +38,10 @@ asset-request-vehicle {
         @include border-radius(0);
         padding: 5px;
         position: relative;
-        text-align: center;  /* Changed text to align in the centre. Looks better to me */
+        text-align: center;
         bottom: 0;
       } input {
-        width: 280px; /* This was set to auto and was creating our datetime overflow. On 280px our issue is resolved but makes box too big for smaller dates. */
+        width: 280px;
         box-sizing: border-box;
       } select {
         width: 200px;

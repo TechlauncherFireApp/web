@@ -1,337 +1,464 @@
 import React from 'react';
 import './Availability.scss';
-import axios, { AxiosResponse, AxiosError } from 'axios';
-import { contains, att } from '../../../common/functions';
-import { backendPath } from '../../../config';
+import axios, {AxiosError, AxiosResponse} from 'axios';
+import {backendPath} from '../../../config';
+import DayPicker from "react-day-picker";
+// @ts-ignore
+import TimeRange from 'react-timeline-range-slider';
+import {endOfToday, getDay, getHours, getMinutes, set} from 'date-fns';
+import {contains} from "../../../common/functions";
 
 type Day =
-  | 'Monday'
-  | 'Tuesday'
-  | 'Wednesday'
-  | 'Thursday'
-  | 'Friday'
-  | 'Saturday'
-  | 'Sunday';
+    | 'Sunday'
+    | 'Monday'
+    | 'Tuesday'
+    | 'Wednesday'
+    | 'Thursday'
+    | 'Friday'
+    | 'Saturday';
 type Schedule = { [key in Day]: number[][] };
 
-interface State {
-  // Pref Hours
-  prefHours?: number;
-  allow_getPrefHours: boolean;
-  allow_patchPrefHours: boolean;
-  // Availability
-  currentSchedule?: Schedule;
-  allow_getCurrentSchedule: boolean;
-  allow_patchCurrentSchedule: boolean;
 
-  // Click Function
-  key?: Day;
+// States for TimeRange
+const now = new Date()
+const getTodayAtSpecificHour = (hour = 12, minutes = 0) =>
+    set(now, {hours: hour, minutes: minutes, seconds: 0, milliseconds: 0})
+const getSelectedAtSpecificHour = (date: Date, hour = 12, minutes = 0) =>
+    set(date, {hours: hour, minutes: minutes, seconds: 0, milliseconds: 0})
+
+const selectedStart = getTodayAtSpecificHour()
+const selectedEnd = getTodayAtSpecificHour(12, 30)
+
+const startTime = getTodayAtSpecificHour(0)
+const endTime = endOfToday()
+
+const modifierStyles = {
+    previous: {
+        color: '#000000',
+        backgroundColor: '#ffb3b3',
+    },
+}
+
+interface State {
+    // Calendar state
+    modifiedDays: [];
+    selectedDay?: Date;
+    modifiers: {},
+
+    // Preferred Date and Time
+    prefHours?: number;
+    allow_getPrefHours: boolean;
+    allow_patchPrefHours: boolean;
+
+    // Availability
+    schedule?: Schedule;
+    allow_getSchedule: boolean;
+    allow_patchSchedule: boolean;
+
+    // State referring to TimeRange
+    error: boolean;
+    selectedInterval: any;
+    previousIntervals: { start: Date, end: Date }[];
 }
 
 export default class Availability extends React.Component<any, State> {
-  // Initial Fields and Methods
-  state: State = {
-    allow_getPrefHours: true,
-    allow_patchPrefHours: true,
-    allow_getCurrentSchedule: true,
-    allow_patchCurrentSchedule: true,
-  };
-
-  componentDidMount(): void {
-    this.getPrefHours();
-    this.getCurrentSchedule();
-  }
-
-  // Component Methods
-  inData(k: Day, n: number): boolean {
-    if (
-      this.state.currentSchedule &&
-      contains(this.state.currentSchedule, this.state.currentSchedule[k])
-    )
-      for (let l of this.state.currentSchedule[k])
-        if (n === l[0] || (n > l[0] && n < l[1])) return true;
-    return false;
-  }
-
-  editData(k: Day, n: number): void {
-    if (this.state.currentSchedule && contains(this.state.currentSchedule)) {
-      // console.clear();
-      if (this.inData(k, n)) this.deleteData(k, n);
-      else this.insertData(k, n);
-      console.log(JSON.stringify(this.state.currentSchedule[k]), '\n');
+    constructor(props: any) {
+        super(props);
+        this.handleDayClick = this.handleDayClick.bind(this);
+        this.state = {
+            modifiedDays: [],
+            selectedDay: undefined,
+            allow_getPrefHours: true,
+            allow_patchPrefHours: true,
+            allow_getSchedule: true,
+            allow_patchSchedule: true,
+            error: false,
+            selectedInterval: [selectedStart, selectedEnd],
+            previousIntervals: [],
+            modifiers: { previous: new Date(),}
+        }
     }
-  }
 
-  insertData(k: Day, n: number): void {
-    if (
-      this.state.currentSchedule &&
-      contains(this.state.currentSchedule) &&
-      !this.inData(k, n)
-    ) {
-      const d: Schedule = this.state.currentSchedule;
-      let b: boolean = true;
-
-      for (let i: number = 0; i < d[k].length; i++) {
-        if (d[k][i][0] - 0.5 === n) {
-          d[k][i][0] = n;
-          b = false;
-        } else if (d[k][i][1] + 0.5 === n + 0.5) {
-          d[k][i][1] = n + 0.5;
-          b = false;
-        }
-
-        if (contains(d[k][i + 1]) && d[k][i][1] === d[k][i + 1][0]) {
-          d[k][i][1] = d[k][i + 1][1];
-          d[k].splice(i + 1, 1);
-          b = false;
-        }
-        if (!b) break;
-      }
-      if (b) d[k].push([n, n + 0.5]);
-      d[k].sort(function (a, b: number[]): number {
-        return a[0] === b[0] ? 0 : a[0] < b[0] ? -1 : 1;
-      });
-      this.setState({ currentSchedule: d });
+    componentDidMount(): void {
+        this.getPrefHours();
+        this.getSchedule();
     }
-  }
 
-  deleteData(k: Day, n: number): void {
-    if (
-      this.state.currentSchedule &&
-      contains(this.state.currentSchedule) &&
-      this.inData(k, n)
-    ) {
-      const d: Schedule = this.state.currentSchedule;
+    // Calendar Methods
 
-      for (let i: number = 0; i < d[k].length; i++) {
-        if (d[k][i][0] === n || d[k][i][1] === n + 0.5) {
-          if (d[k][i][0] === d[k][i][1] - 0.5) d[k].splice(i, 1);
-          else if (d[k][i][0] === n) d[k][i][0] += 0.5;
-          else if (d[k][i][1] === n + 0.5) d[k][i][1] -= 0.5;
-          break;
-        } else if (n > d[k][i][0] && n < d[k][i][1]) {
-          d[k].push([n + 0.5, d[k][i][1]]);
-          d[k][i][1] = n;
-          break;
-        }
-      }
-      d[k].sort(function (a, b: number[]): number {
-        return a[0] === b[0] ? 0 : a[0] < b[0] ? -1 : 1;
-      });
-      this.setState({ currentSchedule: d });
+    // @ts-ignore
+    handleDayClick(day, {selected}) {
+        this.setState({
+            selectedDay: selected ? undefined : day,
+        }, () => {
+            this.displaySchedule();
+        });
     }
-  }
 
-  // Backend Requests
-  getPrefHours(): void {
-    if (!this.state.allow_getPrefHours) return;
-    this.setState({ allow_getPrefHours: false });
+    // TimeRange Methods
 
-    axios
-      .request({
-        url: backendPath + '/volunteer/prefhours',
-        method: 'GET',
-        params: { volunteerID: this.props.match.params.id },
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-      })
-      .then((res: AxiosResponse): void => {
-        // console.log(res.data);
-        if (typeof res.data === 'object' && res.data['success']) {
-          this.setState({ prefHours: res.data['prefHours'] as number });
-        } else alert('Request Failed');
-        this.setState({ allow_getPrefHours: true });
-      })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
-          this.props.history.push('/login');
-        } else {
-          alert(err.message);
-          this.setState({ allow_getPrefHours: true });
+    displaySchedule() {
+        if (this.state.schedule && contains(this.state.schedule) && this.state.selectedDay && contains(this.state.selectedDay)) {
+            let selected = this.state.selectedDay;
+            let k: Day = this.convertNumToDay(getDay(selected));
+            let s: Schedule = this.state.schedule;
+            let prevIntervals: { start: Date, end: Date }[] = [];
+            for (let l of s[k]) {
+                let startTime: [number, number] = this.convertNumToTime(l[0]);
+                let startInterval = getSelectedAtSpecificHour(now, startTime[0], startTime[1]);
+                let endTime: [number, number] = this.convertNumToTime(l[1]);
+                let endInterval = getSelectedAtSpecificHour(now, endTime[0], endTime[1]);
+                let interval = {start: startInterval, end: endInterval};
+                prevIntervals = prevIntervals.concat(interval);
+                this.addModifiedDay(k);
+            }
+            this.setState({selectedInterval: [selectedStart, selectedEnd]})
+            this.setState({previousIntervals: prevIntervals});
         }
-      });
-  }
+    }
 
-  getCurrentSchedule(): void {
-    if (!this.state.allow_getCurrentSchedule) return;
-    this.setState({ allow_getCurrentSchedule: false });
-
-    axios
-      .request({
-        url: backendPath + '/volunteer/availability',
-        method: 'GET',
-        params: { volunteerID: this.props.match.params.id },
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-      })
-      .then((res: AxiosResponse): void => {
-        // console.log(res.data);
-        if (typeof res.data === 'object' && res.data['success']) {
-          let n: Schedule = res.data['availability'] as Schedule;
-          // console.log(n instanceof Schedule);
-          this.setState({ currentSchedule: n });
-        } else alert('Request Failed');
-        this.setState({ allow_getCurrentSchedule: true });
-      })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
-          this.props.history.push('/login');
-        } else {
-          alert(err.message);
-          this.setState({ allow_getCurrentSchedule: true });
+    displayModifiedDays() {
+        let modified = this.state.modifiedDays;
+        let numberDay: number;
+        let arrDays: number[] = [];
+        for (let i: number = 0; i < modified.length; i++) {
+            if (JSON.stringify(modified[i]) === JSON.stringify("Sunday")) {
+                numberDay = 0;
+            } if (JSON.stringify(modified[i]) === JSON.stringify("Monday")) {
+                numberDay = 1;
+            } if (JSON.stringify(modified[i]) === JSON.stringify("Tuesday")) {
+                numberDay = 2;
+            } if (JSON.stringify(modified[i]) === JSON.stringify("Wednesday")) {
+                numberDay = 3;
+            } if (JSON.stringify(modified[i]) === JSON.stringify("Thursday")) {
+                numberDay = 4;
+            } if (JSON.stringify(modified[i]) === JSON.stringify("Friday")) {
+                numberDay = 5;
+            } if (JSON.stringify(modified[i]) === JSON.stringify("Saturday")) {
+                numberDay = 6
+            }
+            // @ts-ignore
+            arrDays = arrDays.concat(numberDay);
         }
-      });
-  }
+        let mod = {
+        previous: {daysOfWeek: arrDays},
+        };
+        console.log(arrDays);
+        this.setState({modifiers: mod});
+    }
 
-  patchPrefHours(): void {
-    if (
-      !this.state.allow_patchPrefHours &&
-      !contains(this.state.allow_patchPrefHours)
-    )
-      return;
-    this.setState({ allow_patchPrefHours: false });
-
-    axios
-      .request({
-        url: backendPath + '/volunteer/prefhours',
-        method: 'PATCH',
-        params: {
-          volunteerID: this.props.match.params.id,
-          prefHours: Number(this.state.prefHours),
-        },
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-      })
-      .then((res: AxiosResponse): void => {
-        // console.log(res.data);
-        alert(res.data['success'] ? 'Updated - prefHours' : 'Request Failed');
-        this.setState({ allow_patchPrefHours: true });
-      })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
-          this.props.history.push('/login');
-        } else {
-          alert(err.message);
-          this.setState({ allow_patchPrefHours: true });
+    // Converts float value to the nearest half hour interval (6.5 becomes [6, 30])
+    convertNumToTime(n: number): [number, number] {
+        let hour = Math.floor(n);
+        let minutes = n - hour;
+        if (minutes > 0.1) {
+            minutes = 30;
         }
-      });
-  }
+        return [hour, minutes];
+    }
 
-  patchCurrentSchedule(): void {
-    if (
-      !this.state.allow_patchCurrentSchedule &&
-      !contains(this.state.currentSchedule)
-    )
-      return;
-    this.setState({ allow_patchCurrentSchedule: false });
+    // Converts number representation of weekday to the day
+    convertNumToDay(n: number): Day {
+        if (n === 0) return 'Sunday';
+        if (n === 1) return 'Monday';
+        if (n === 2) return 'Tuesday';
+        if (n === 3) return 'Wednesday';
+        if (n === 4) return 'Thursday';
+        if (n === 5) return 'Friday';
+        return 'Saturday';
+    }
 
-    axios
-      .request({
-        url: backendPath + '/volunteer/availability',
-        method: 'PATCH',
-        params: { volunteerID: this.props.match.params.id },
-        data: { availability: this.state.currentSchedule },
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-      })
-      .then((res: AxiosResponse): void => {
-        // console.log(res.data);
-        alert(
-          res.data['success'] ? 'Updated - Availability' : 'Request Failed'
-        );
-        this.setState({ allow_patchCurrentSchedule: true });
-      })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
-          this.props.history.push('/login');
-        } else {
-          alert(err.message);
-          this.setState({ allow_patchCurrentSchedule: true });
+    getModifiedDays = (): void => {
+        if (this.state.schedule && contains(this.state.schedule)) {
+            let s: Schedule = this.state.schedule;
+            let modified: Day[] = [];
+            for (let key in s) {
+                // @ts-ignore
+                let val = s[key];
+                if (val.length > 0) {
+                    // @ts-ignore
+                    modified = modified.concat(key)
+                }
+            }
+            // @ts-ignore
+            this.setState({modifiedDays: modified}, (): void => {
+                this.displaySchedule();
+                this.displayModifiedDays();
+            })
         }
-      });
-  }
+    }
 
-  exit(): void {
-    window.open(
-      `${window.location.origin}/volunteer/${this.props.match.params.id}`,
-      '_self',
-      '',
-      false
-    );
-  }
+    addModifiedDay(day: Day) {
+        let modified = this.state.modifiedDays;
+        // @ts-ignore
+        if (modified.includes(day)) {
+            return;
+        }
+        // @ts-ignore
+        modified = modified.concat(day);
+        console.log(modified);
+        this.setState({modifiedDays: modified}, (): void => {
+            this.displaySchedule();
+            this.displayModifiedDays();
+        })
+    }
 
-  // Render Component
-  render(): JSX.Element {
-    let l: number[] = [];
-    for (let i = 0; i <= 23.5; i += 0.5) l.push(i);
+    removeModifiedDay(day: Day) {
+        let modified = this.state.modifiedDays;
+        // @ts-ignore
+        let index = modified.indexOf(day);
+        if (index > -1) {
+            // @ts-ignore
+            modified.splice(index, 1);
+        }
+        this.setState({modifiedDays: modified}, (): void => {
+            this.displaySchedule();
+            this.displayModifiedDays();
+        });
+    }
 
-    return (
-      <availability is="x3d">
-        <input
-          type="number"
-          placeholder="Select PrefHours"
-          title="Set PrefHours"
-          value={this.state.prefHours}
-          onChange={(e: any): void =>
-            this.setState({ prefHours: Number(e.target.value) })
-          }
-        />
-        {contains(this.state.currentSchedule) ? (
-          <>
-            <table>
-              <tr>
-                <th></th>
-                {this.state.currentSchedule &&
-                  Object.keys(this.state.currentSchedule).map((k: string) => (
-                    <th>{k}</th>
-                  ))}
-              </tr>
-              {l.map((i: number) => (
-                <tr>
-                  <th>
-                    {i % 1 === 0
-                      ? `${i < 10 ? '0' : ''}${i}:00`
-                      : `${Math.floor(i) < 10 ? '0' : ''}${Math.floor(i)}:30`}
-                  </th>
-                  {this.state.currentSchedule &&
-                    Object.keys(this.state.currentSchedule).map((k: string) => (
-                      <th
-                        {...att('selectd', this.inData(k as Day, i))}
-                        onClick={(): void => this.editData(k as Day, i)}></th>
-                    ))}
-                </tr>
-              ))}
-            </table>
-            <button
-              className="type-1"
-              onClick={(): void => {
-                this.patchPrefHours();
-                this.patchCurrentSchedule();
-              }}>
-              {this.state.allow_patchCurrentSchedule ? 'Update' : 'Loading'}
-            </button>
-          </>
-        ) : (
-          <>
-            <h1 onClick={(): void => this.getCurrentSchedule()}>
-              {this.state.allow_getCurrentSchedule
-                ? 'Nothing Found'
-                : 'Loading'}
-            </h1>
-          </>
-        )}
-        <button className="type-1" onClick={(): void => this.exit()}>
-          Return
-        </button>
-      </availability>
-    );
-  }
+    // @ts-ignore
+    errorHandler = ({error}) => this.setState({error});
+
+    onChangeCallback = (selectedInterval: any) => {
+        this.setState({selectedInterval});
+    };
+
+    addAvailability = (): void => {
+        if (this.state.schedule && contains(this.state.schedule) && this.state.selectedDay && contains(this.state.selectedDay)) {
+            let interval = this.state.selectedInterval;
+            let startAvailability: number = this.convertDateToNum(interval[0]);
+            let endAvailability: number = this.convertDateToNum(interval[1]);
+            let availability: number[] = [startAvailability, endAvailability];
+            let k: Day = this.convertNumToDay(getDay(this.state.selectedDay));
+            let s: Schedule = this.state.schedule;
+            let i: number = s[k].length;
+            s[k][i] = availability;
+            this.setState({schedule: s}, (): void => {
+                this.displaySchedule();
+            });
+        }
+    }
+
+    deleteAvailability = (): void => {
+        if (this.state.schedule && contains(this.state.schedule) && this.state.selectedDay && contains(this.state.selectedDay)) {
+            let k: Day = this.convertNumToDay(getDay(this.state.selectedDay));
+            let s: Schedule = this.state.schedule;
+            s[k] = [];
+            this.setState({schedule: s}, (): void => {
+                this.displaySchedule();
+            });
+            this.removeModifiedDay(k);
+        }
+    }
+
+    convertDateToNum(d: Date): number {
+        let hour = getHours(d);
+        let minutes = getMinutes(d);
+        if (minutes > 0) {
+            minutes = 0.5;
+        }
+        return hour + minutes;
+    }
+
+    // Backend Requests
+    getPrefHours(): void {
+        if (!this.state.allow_getPrefHours) return;
+        this.setState({allow_getPrefHours: false});
+
+        axios
+            .request({
+                url: backendPath + '/volunteer/prefhours',
+                method: 'GET',
+                params: {volunteerID: this.props.match.params.id},
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((res: AxiosResponse): void => {
+                if (typeof res.data === 'object' && res.data['success']) {
+                    this.setState({prefHours: res.data['prefHours'] as number})
+                } else alert('Request Failed');
+                this.setState({allow_getPrefHours: true});
+            })
+            .catch((err: AxiosError): void => {
+                // @ts-ignore
+                if (err.response.status === 401) {
+                    this.props.history.push('/login');
+                } else {
+                    alert(err.message);
+                    this.setState({allow_getPrefHours: true});
+                }
+            });
+    };
+
+    getSchedule(): void {
+        if (!this.state.allow_getSchedule) return;
+        this.setState({allow_getSchedule: false});
+
+        axios
+            .request({
+                url: backendPath + '/volunteer/availability',
+                method: 'GET',
+                params: {volunteerID: this.props.match.params.id},
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((res: AxiosResponse): void => {
+                if (typeof res.data === 'object' && res.data['success']) {
+                    let n: Schedule = res.data['availability'] as Schedule;
+                    this.setState({schedule: n});
+                    this.getModifiedDays();
+                } else alert('Request Failed');
+                this.setState({allow_getSchedule: true});
+            })
+            .catch((err: AxiosError): void => {
+                // @ts-ignore
+                if (err.response.status === 401) {
+                    this.props.history.push('/login');
+                } else {
+                    alert(err.message);
+                    this.setState({allow_getSchedule: true});
+                }
+            });
+    }
+
+    patchPrefHours = (): void => {
+        if (
+            !this.state.allow_patchPrefHours ||
+            !contains(this.state.allow_patchPrefHours)
+        ) return;
+        this.setState({allow_patchPrefHours: false})
+
+        axios
+            .request({
+                url: backendPath + '/volunteer/prefhours',
+                method: 'PATCH',
+                params: {
+                    volunteerID: this.props.match.params.id,
+                    prefHours: Number(this.state.prefHours),
+                },
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((res: AxiosResponse): void => {
+                alert(res.data['success'] ? 'Updated - prefHours' : 'Request Failed');
+                this.setState({allow_patchPrefHours: true});
+            })
+            .catch((err: AxiosError): void => {
+                // @ts-ignore
+                if (err.response.status === 401) {
+                    this.props.history.push('/login');
+                } else {
+                    alert(err.message);
+                    this.setState({allow_patchPrefHours: true});
+                }
+            });
+    }
+
+    patchSchedule = (): void => {
+        if (
+            !this.state.allow_patchSchedule ||
+            !contains(this.state.schedule)
+        ) return;
+        this.setState({allow_patchSchedule: false});
+        axios
+            .request({
+                url: backendPath + '/volunteer/availability',
+                method: 'PATCH',
+                params: {volunteerID: this.props.match.params.id},
+                data: {availability: this.state.schedule},
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((res: AxiosResponse): void => {
+                alert(
+                    res.data['success'] ? 'Updated - Availability' : 'Request Failed'
+                );
+                this.setState({allow_patchSchedule: true});
+            })
+            .catch((err: AxiosError): void => {
+                // @ts-ignore
+                if (err.response.status === 401) {
+                    this.props.history.push('/login');
+                } else {
+                    alert(err.message);
+                    this.setState({allow_patchSchedule: true});
+                }
+            });
+    }
+
+    exit = (): void => {
+        window.open(
+            `${window.location.origin}/volunteer/${this.props.match.params.id}`,
+            '_self',
+            '',
+            false)
+    }
+
+    render() {
+        const {selectedInterval, previousIntervals, error} = this.state;
+        return (
+            <availability>
+                <div className="exterior">
+                    <div className="calendar">
+                        <DayPicker
+                            showWeekNumbers
+                            selectedDays={this.state.selectedDay}
+                            // @ts-ignore
+                            onDayClick={this.handleDayClick}
+                            fromMonth={new Date()}
+                            todayButton="Return to today"
+                            modifiers={this.state.modifiers}
+                            modifiersStyles={modifierStyles}
+                        />
+                    </div>
+                    <div className="time-range">
+                        <TimeRange
+                            error={error}
+                            selectedInterval={selectedInterval}
+                            timelineInterval={[startTime, endTime]}
+                            onUpdateCallback={this.errorHandler}
+                            onChangeCallback={this.onChangeCallback}
+                            disabledIntervals={previousIntervals}
+                        />
+                    </div>
+                    <div className="hours">
+                        <p className="sen">Preferred number of hours per week:</p>
+                        <input
+                            type="number"
+                            placeholder="Select PrefHours"
+                            title="Set PrefHours"
+                            value={this.state.prefHours}
+                            onChange={(e: any): void =>
+                                this.setState({prefHours: Number(e.target.value)})
+                            }
+                        />
+                    </div>
+                    <div className="con">
+                        <button className="type-3" onClick={this.addAvailability}>
+                            Add Availability
+                        </button>
+                        <button className="type-3" onClick={this.deleteAvailability}>
+                            Delete Availabilities For This Day
+                        </button>
+                        <div className="con-2">
+                            <button className="type-1" onClick={(): void => {
+                                this.patchPrefHours();
+                                this.patchSchedule();
+                            }}>
+                                {this.state.allow_patchSchedule ? 'Save All' : 'Loading'}
+                            </button>
+                            <button className="type-2" onClick={this.exit}>
+                                Return
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </availability>
+        )
+    };
 }

@@ -38,7 +38,7 @@ def input_pair_list(pair, key):
     return pair
 
 
-# Validate an avaiability input
+# Validate an availability input
 def input_availability(value, name):
     # Validate that availability contains dictionaries
     value = type_dict(value)

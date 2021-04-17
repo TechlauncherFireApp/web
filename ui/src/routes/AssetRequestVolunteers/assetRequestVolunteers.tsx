@@ -46,10 +46,7 @@ interface State {
   assetRequest: asset[];
 }
 
-export default class AssetRequestVolunteers extends React.Component<
-  any,
-  State
-> {
+export default class AssetRequestVolunteers extends React.Component<any, State> {
   state: State = {
     loading: true,
     allow_getInitialData: true,
@@ -308,7 +305,7 @@ export default class AssetRequestVolunteers extends React.Component<
           <Asset
             key={a.shiftID}
             asset={a}
-            updateAssetRequest={(a: any) => this.updateAssetRequest(a)} //1.3.5
+            updateAssetRequest={(a: any) => this.updateAssetRequest(a)}
             volunteerList={this.state.volunteerList}
             assignedVolunteers={this.state.assignedVolunteers}
           />
