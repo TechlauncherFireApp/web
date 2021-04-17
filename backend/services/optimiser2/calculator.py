@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from typing import List
 from sqlalchemy import orm
 
-from domain import session_scope, User, AssetRequestVehicle, AssetType, Role, UserRole
+from domain import User, AssetRequestVehicle, AssetType, Role, UserRole, AssetTypeRole
 
 
 class Calculator:
@@ -11,18 +11,13 @@ class Calculator:
     is split out to enable testing and ease of understanding.
     """
 
-    # Master list of all volunteers, fetched once so that the order of the records in the list is deterministic.
+    # Master list of all volunteers, these fetched once so that the order of the records in the list is deterministic.
     # This matters as the lists passed to Minizinc are not keyed and are instead used by index.
     _users_ = []
-
-    # Master list of all asset requests in this shift assignment.
     _asset_request_vehicles_ = []
-
-    # Master list of all asset types available
     _asset_types_ = []
-
-    # Master list of all available roles
     _roles_ = []
+    _asset_type_seats_ = []
 
     # A single database session is used for all transactions in the optimiser. This is initialised by the calling
     # function.
@@ -54,6 +49,96 @@ class Calculator:
         # Fetch all the request data that will be used in the optimisation functions once.
         self.__get_request_data()
 
+    def get_number_of_volunteers(self) -> int:
+        """
+        @return: The number of users to be optimised.
+        """
+        return len(self._users_)
+
+    def get_number_of_vehicles(self) -> int:
+        """
+        @return: The number of vehicles to be optimised.
+        """
+        return len(self._asset_request_vehicles_)
+
+    def get_asset_request_vehicles(self) -> List[AssetRequestVehicle]:
+        """
+        @return: All asset request vehicles used.
+        """
+        return self._asset_request_vehicles_
+
+    def get_roles(self) -> List[Role]:
+        """
+        @return: A list of roles we are using
+        """
+        return self._roles_
+
+    def get_asset_types(self) -> List[AssetType]:
+        """
+        @return: A list of asset type swe are using
+        """
+        return self._asset_types_
+
+    def get_maximum_number_of_seats(self) -> int:
+        """
+        @return: The number of seats on the biggest asset type
+        """
+        max = 0
+        for seat in self._asset_type_seats_:
+            if seat.seat_number > max:
+                max = seat.seat_number
+        return max
+
+    def get_seats_per_asset_type(self) -> List[int]:
+        """
+        @return: A list of asset types and the number of seats they require
+        """
+        rtn = []
+        for asset_type in self._asset_types_:
+            required_seats = 0
+            for seat in self._asset_type_seats_:
+                if seat.asset_type_id == asset_type.id:
+                    required_seats += 1
+            rtn.append(required_seats)
+        return rtn
+
+    def get_seats_for_asset_type(self, asset_type_code) -> int:
+        """
+        @return: The number of seat on a particular asset type
+        """
+        return len(self._session_.query(AssetTypeRole) \
+                   .join(AssetType, AssetType.id == AssetTypeRole.asset_type_id) \
+                   .filter(AssetType.code == asset_type_code) \
+                   .all())
+
+    def get_asset_type_by_code(self, asset_type_code: str) -> AssetType:
+        """
+        Get a asset type by its code.
+        @param asset_type_code: The asset type code to fetch
+        @return: The asset type or none
+        """
+        return self._session_.query(AssetType)\
+            .filter(AssetType.code == asset_type_code)\
+            .first()
+
+    def get_seat_roles(self, seat_number: int, asset_type: AssetType) -> Role or None:
+        """
+        Get the role requirements for a seat on an asset.
+        @param seat_number: The seat number (1 indexed)
+        @param asset_type: The asset type
+        @return: A role or None if that seat doesn't exist.
+        """
+        for seat in self._asset_type_seats_:
+            if seat.seat_number == seat_number and seat.asset_type_id == asset_type.id:
+                return seat.role
+        return None
+
+    def get_users(self) -> List[User]:
+        """
+        @return: The list of users.
+        """
+        return self._users_
+
     def __get_request_data(self):
         """
         Initialising function that fetches a list of reference data from the database. This is done to simplify future
@@ -69,6 +154,10 @@ class Calculator:
             .filter(AssetType.deleted == False) \
             .all()
         self._roles_ = self._session_.query(Role) \
+            .filter(Role.deleted == False) \
+            .all()
+        self._asset_type_seats_ = self._session_.query(AssetTypeRole) \
+            .join(Role, Role.id == AssetTypeRole.role_id) \
             .filter(Role.deleted == False) \
             .all()
 
@@ -89,7 +178,7 @@ class Calculator:
         """
         shift_lengths = []
         for shift in self._asset_request_vehicles_:
-            shift_lengths.append((shift.to_date_time - shift.from_date_time).total_seconds() / 3600)
+            shift_lengths.append(int((shift.to_date_time - shift.from_date_time).total_seconds() / 3600))
         return shift_lengths
 
     def calculate_deltas(self, start: datetime, end: datetime) -> List[datetime]:
@@ -193,7 +282,7 @@ class Calculator:
             for other_vehicle in self._asset_request_vehicles_:
                 is_clash = False
                 for this_shift_block in this_shift_blocks:
-                    if other_vehicle.from_date_time <= this_shift_block <= other_vehicle.to_date_time:
+                    if other_vehicle.from_date_time <= this_shift_block <= other_vehicle.to_date_time and other_vehicle.id != this_vehicle.id:
                         is_clash = True
                 this_vehicle_clashes.append(is_clash)
             clashes.append(this_vehicle_clashes)
@@ -207,7 +296,7 @@ class Calculator:
         name the indexes:
                           Light   Medium  Heavy
                          ----------------------
-              Vehicle 1 [[F,       T,      F]
+              Vehicle 1  [[F,       T,      F]
               Vehicle 2  [F,       F,      F]]
         @return: A 2D array explaining what asset types are which parts of the request
         """
@@ -232,23 +321,14 @@ class Calculator:
         @return: A 2D array explaining what users can perform what roles.
         """
         is_roles = []
-        for user in self._users_:
+        for role in self._roles_:
             user_roles = []
-            for role in self._roles_:
-                user_has_role = self._session_.query(UserRole)\
-                    .filter(UserRole.user == user)\
-                    .filter(UserRole.role == role)\
+            for user in self._users_:
+                user_has_role = self._session_.query(UserRole) \
+                    .filter(UserRole.user == user) \
+                    .filter(UserRole.role == role) \
                     .first()
                 user_roles.append(user_has_role is not None)
             is_roles.append(user_roles)
         print(f"User role map is: {is_roles}")
         return is_roles
-
-
-with session_scope() as s:
-    optimiser = Calculator(s, 110)
-    optimiser.calculate_compatibility()
-    optimiser.calculate_clashes()
-    optimiser.calculate_asset_types()
-    optimiser.calculate_roles()
-    
