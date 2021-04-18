@@ -1,10 +1,28 @@
 {
   "extends": [
-    "plugin:react/recommended"
+    "prettier",
+    "plugin:react-hooks/recommended",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:jsx-a11y/recommended"
   ],
+
   "parser": "babel-eslint",
-  "plugins": [],
+  "plugins": ["flowtype", "prettier", "simple-import-sort", "jest"],
   "rules": {
+    "jsx-a11y/no-onchange": "off",
+    "no-unused-expressions": "off",
+    "simple-import-sort/imports": "error",
+    "jsx-a11y/no-noninteractive-element-interactions": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jest/no-disabled-tests": "warn",
+    "react/prop-types": 0,
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error"
   },
   "env": {
     "browser": true,

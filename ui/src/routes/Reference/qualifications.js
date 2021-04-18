@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { backendPath } from '../../config';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+
+import { backendPath } from '../../config';
 
 function Qualifications() {
   const [qualifications, setQualifications] = useState([]);
@@ -64,7 +65,7 @@ function Qualifications() {
           },
         }
       )
-      .then((resp) => {
+      .then(() => {
         setRefresh((x) => x + 1);
       });
   }
@@ -76,8 +77,9 @@ function Qualifications() {
       <h5>New volunteer qualification</h5>
       <form onSubmit={addNew}>
         <div className="form-group">
-          <label>Qualification name:</label>
+          <label htmlFor={'qualName'}>Qualification name:</label>
           <input
+            id={'qualName'}
             className={'form-control w-third'}
             type="text"
             name="name"

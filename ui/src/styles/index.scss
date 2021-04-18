@@ -1,7 +1,7 @@
 @import "variables.css", "functions";
 @import "../../node_modules/tachyons-sass/tachyons";
 
-html, body, app-root, main-body {
+html, body, app-root, .main-body {
   height: 100%;
   width: 100%;
   padding: 0;
@@ -17,7 +17,7 @@ html, body, app-root, main-body {
   app-root {
     display: block;
     
-    main-body {
+    .main-body {
       display: block;
       max-width: 1080px;
       margin: 0 auto;

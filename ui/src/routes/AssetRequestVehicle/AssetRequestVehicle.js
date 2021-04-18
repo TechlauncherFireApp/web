@@ -1,11 +1,13 @@
 import './AssetRequestVehicle.scss';
-import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
-import DatePicker from 'react-datepicker';
-import { toSentenceCase } from '../../common/functions';
-import { Button } from 'react-bootstrap';
-import { backendPath } from '../../config';
+
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+import { useHistory, useParams } from 'react-router';
+
+import { toSentenceCase } from '../../common/functions';
+import { backendPath } from '../../config';
 
 function AssetRequestVehicle() {
   const [startDate, setStartDate] = useState(new Date());
@@ -73,7 +75,7 @@ function AssetRequestVehicle() {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
-      .then((resp) => {
+      .then(() => {
         history.push('/assetRequest/volunteers/' + id);
       });
   }
@@ -90,7 +92,7 @@ function AssetRequestVehicle() {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
-      .then((resp) => {
+      .then(() => {
         let lcl = vehicles;
         lcl = lcl.filter((x) => x.id !== vehicleId);
         setVehicles(lcl);
@@ -106,7 +108,7 @@ function AssetRequestVehicle() {
     };
     axios
       .delete(backendPath + 'new_request', { params: params, headers: headers })
-      .then((resp) => {
+      .then(() => {
         window.open(window.location.origin + '/captain', 'self_', '', false);
       });
   }
@@ -117,8 +119,9 @@ function AssetRequestVehicle() {
       <hr />
       <div className="entry">
         <div className="con">
-          <label>Asset Type</label>
+          <label htmlFor={'assetType'}>Asset Type</label>
           <select
+            id={'assetType'}
             value={assetType}
             onChange={(e) => {
               setAssetType(e.target.value);
@@ -136,8 +139,9 @@ function AssetRequestVehicle() {
           </select>
         </div>
         <div className="con">
-          <label>Start Time Date</label>
+          <label htmlFor={'startDate'}>Start Time Date</label>
           <DatePicker
+            id={'startDate'}
             selected={startDate}
             onChange={(i) => {
               setStartDate(i);
@@ -149,8 +153,9 @@ function AssetRequestVehicle() {
           />
         </div>
         <div className="con">
-          <label>End Time Date</label>
+          <label htmlFor={'endDate'}>End Time Date</label>
           <DatePicker
+            id={'endDate'}
             selected={endDate}
             onChange={(e) => {
               setEndDate(e);
@@ -183,7 +188,7 @@ function AssetRequestVehicle() {
               <h2>{toSentenceCase(x.assetType)}</h2>
               <div className="cont-1">
                 <div className="cont-2">
-                  <label>Start</label>
+                  <span>Start</span>
                   <br />
                   <div className="cont-3">
                     {x.startDate.toLocaleDateString('en-GB', {
@@ -201,7 +206,7 @@ function AssetRequestVehicle() {
                   </div>
                 </div>
                 <div className="cont-2">
-                  <label>End</label>
+                  <span>End</span>
                   <br />
                   <div className="cont-3">
                     {x.endDate.toLocaleDateString('en-GB', {

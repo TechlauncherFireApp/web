@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
 import './brigadeCaptainHome.scss';
+
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+
 import { backendPath } from '../../config';
 
 function BrigadeCaptainHome() {
@@ -53,7 +55,7 @@ function BrigadeCaptainHome() {
           requestID: id,
         },
       })
-      .then((resp) => {
+      .then(() => {
         setDeletions((x) => x + 1);
       });
   }
@@ -65,8 +67,9 @@ function BrigadeCaptainHome() {
       <h5>New request</h5>
       <form onSubmit={addNew}>
         <div className="form-group">
-          <label>Request Name:</label>
+          <label htmlFor={'requestName'}>Request Name:</label>
           <input
+            id={'requestName'}
             className={'form-control w-third'}
             type="text"
             name="name"

@@ -1,30 +1,26 @@
-import React from 'react';
 import './position.scss';
+
+import React from 'react';
 import { Button } from 'react-bootstrap';
+
 import { parseRolesAsString, toSentenceCase } from '../../common/functions';
 import EditModal from './editModal';
 
-interface State {
-  //related to display elements
-  showEditModal: boolean; // Is the edit modal being displayed
-  qualificationsVisible: boolean; //are qualifications being displayed for the volunteer in this position
-}
-
-export default class Position extends React.Component<any, State> {
-  state: State = {
+export default class Position extends React.Component {
+  state = {
     showEditModal: false,
     qualificationsVisible: false,
   };
 
   // 1.3.5
-  toggleEditModalVisibility = (): void => {
+  toggleEditModalVisibility = () => {
     const showEditModal = !this.state.showEditModal;
     this.setState({ showEditModal });
   };
 
   // 1.3.5, if a volunteer is changed update the relevant fields and propogate the change up through parent components
-  updatePosition = (v: any): void => {
-    let newPosition = this.props.position;
+  updatePosition = (v) => {
+    const newPosition = this.props.position;
     newPosition.assigned = true;
     newPosition.volunteer = v;
     newPosition.status = 'pending';
@@ -47,8 +43,8 @@ export default class Position extends React.Component<any, State> {
     this.props.updateAsset(newPosition);
   };
 
-  removeVolunteer = (): void => {
-    let newPosition: any = this.props.position;
+  removeVolunteer = () => {
+    const newPosition = this.props.position;
     newPosition.assigned = false;
     newPosition.volunteer = undefined;
     newPosition.status = 'pending';
@@ -56,14 +52,14 @@ export default class Position extends React.Component<any, State> {
   };
 
   // 1.2.3, toggles the visibility of qualifications for this volunteer
-  showHideQualifications = (): void => {
+  showHideQualifications = () => {
     const qualificationsVisible = !this.state.qualificationsVisible;
     this.setState({ qualificationsVisible });
   };
 
   // 1.2.3, handles displaying the list of qualifications
-  displayQualsList = (quals: string[]): any => {
-    let result: any = [];
+  displayQualsList = (quals) => {
+    const result = [];
     for (let i = 0; i < quals.length - 1; i++) {
       result.push(<div>- {quals[i]}</div>);
     }
@@ -76,14 +72,13 @@ export default class Position extends React.Component<any, State> {
     return result;
   };
 
-  // 1.2.3
   render() {
     const { position } = this.props;
-    const assigned: boolean = this.props.position.assigned;
+    const assigned = this.props.position.assigned;
     const bgGrey = '#ececec';
     const bgConfirmed = '#abff95';
     const bgWarning = '#FFCCCC';
-    let bgColour: string;
+    let bgColour;
     if (!assigned || position.status === 'rejected') {
       bgColour = bgWarning;
     } else if (position.status === 'confirmed') {
@@ -97,7 +92,7 @@ export default class Position extends React.Component<any, State> {
         <EditModal //1.3.5
           show={this.state.showEditModal}
           onHide={this.toggleEditModalVisibility}
-          onSave={(v: any) => this.updatePosition(v)}
+          onSave={(v) => this.updatePosition(v)}
           removeVolunteer={this.removeVolunteer}
           volunteerList={this.props.volunteerList}
           assignedVolunteers={this.props.assignedVolunteers}
@@ -117,6 +112,8 @@ export default class Position extends React.Component<any, State> {
                 {position.volunteer.firstName} {position.volunteer.lastName}
               </td>
               <td
+                onKeyPress={() => {}}
+                key={position.volunteer.id}
                 width="15%"
                 onClick={this.showHideQualifications}
                 className="view">

@@ -1,29 +1,18 @@
-import React from 'react';
 import './editModal.scss';
+
+import React from 'react';
+import { Button, Modal, Table } from 'react-bootstrap';
+
 import {
   contains,
+  isAvailable,
   parseDateTime,
   parseRolesAsString,
-  isAvailable,
   toSentenceCase,
 } from '../../common/functions';
-import { Modal, Button, Table } from 'react-bootstrap';
 
-interface State {
-  //related to display elements
-  searchValue: string;
-  filteredVolunteerList: any; //list of volunteers
-  searchResults: any; //list of volunteers
-  filter: {
-    position: boolean; //should search results be filtered by position
-  };
-  //related to data needed
-  volunteerList: any; //list of volunteers
-  selectedVolunteer: any; //the replacement volunteer selected from the list
-}
-
-export default class EditModal extends React.Component<any, State> {
-  state: State = {
+export default class EditModal extends React.Component {
+  state = {
     searchValue: '',
     filteredVolunteerList: [],
     searchResults: [],
@@ -34,16 +23,16 @@ export default class EditModal extends React.Component<any, State> {
     selectedVolunteer: undefined,
   };
 
-  constructor(props: any) {
+  constructor(props) {
     super(props);
-    const volunteerList: any = props.volunteerList;
+    const volunteerList = props.volunteerList;
     this.state.volunteerList = volunteerList;
     const l = this.filterVolunteerList(volunteerList, this.state.filter);
     this.state.filteredVolunteerList = l;
     this.state.searchResults = l;
   }
 
-  insertSearch = (e: any): void => {
+  insertSearch = (e) => {
     // Get Value
     if (!(typeof e === 'string')) {
       e = e.target.value;
@@ -60,9 +49,9 @@ export default class EditModal extends React.Component<any, State> {
     e = e.toLowerCase();
 
     // Search Value
-    let a = [];
-    for (let x of this.state.filteredVolunteerList) {
-      let name: string = x.firstName + ' ' + x.lastName;
+    const a = [];
+    for (const x of this.state.filteredVolunteerList) {
+      const name = x.firstName + ' ' + x.lastName;
       if (name.toLowerCase().indexOf(e) >= 0) a.push(x);
     }
 
@@ -71,10 +60,10 @@ export default class EditModal extends React.Component<any, State> {
     else this.setState({ searchResults: '' });
   };
 
-  saveChange = (): void => {
+  saveChange = () => {
     if (!(typeof this.state.selectedVolunteer === 'undefined')) {
-      const map: any = this.props.assignedVolunteers;
-      const vol: any = this.state.selectedVolunteer;
+      const map = this.props.assignedVolunteers;
+      const vol = this.state.selectedVolunteer;
       if (
         this.props.position.assigned &&
         vol.ID === this.props.position.volunteer.ID
@@ -97,13 +86,13 @@ export default class EditModal extends React.Component<any, State> {
     }
   };
 
-  removeVolunteer = (): void => {
+  removeVolunteer = () => {
     this.props.removeVolunteer();
     this.onHide();
   };
 
-  togglePositionFilter = (): void => {
-    let filter: { position: boolean } = this.state.filter;
+  togglePositionFilter = () => {
+    const filter = this.state.filter;
     filter.position = !filter.position;
     const l = this.filterVolunteerList(this.state.volunteerList, filter);
     const searchValue = this.state.searchValue;
@@ -116,25 +105,21 @@ export default class EditModal extends React.Component<any, State> {
     }
   };
 
-  filterVolunteerList = (
-    allVolunteers: any,
-    filter: { position: boolean }
-  ): any => {
+  filterVolunteerList = (allVolunteers, filter) => {
     // exclude the volunteer themselves from this list (position.assignedVolunteer.id if position.assignedVolunteer != null)
     // rework this to do both filters in one pass
 
     const targetRoles = this.props.position.roles;
     let list = [];
     if (filter.position) {
-      //let v: any;
+      //let v;
       for (const v of allVolunteers) {
         if (targetRoles.length === 1 && targetRoles[0] === 'basic') {
           v.possibleRoles.includes('basic') &&
             !v.possibleRoles.includes('advanced') &&
             list.push(v); //if the volunteer in question is basic but not advanced
         } else {
-          targetRoles.every((r: string) => v.possibleRoles.includes(r)) &&
-            list.push(v); //if the volunteer in question can fulfil all vehicle requirements add this volunteer to the list
+          targetRoles.every((r) => v.possibleRoles.includes(r)) && list.push(v); //if the volunteer in question can fulfil all vehicle requirements add this volunteer to the list
         }
       }
     } else {
@@ -142,10 +127,10 @@ export default class EditModal extends React.Component<any, State> {
     }
 
     // work out who is available
-    let yes: any = [];
-    let no: any = [];
-    for (const l of list) {
-      let l_copy = { ...l };
+    const yes = [];
+    const no = [];
+    list.forEach((l) => {
+      const l_copy = { ...l };
       if (
         isAvailable(l.availabilities, {
           startTime: this.props.position.startTime,
@@ -158,7 +143,7 @@ export default class EditModal extends React.Component<any, State> {
         l_copy.available = false;
         no.push(l_copy);
       }
-    }
+    });
     list = [...yes, ...no];
     return list.filter(
       (l) =>
@@ -167,7 +152,7 @@ export default class EditModal extends React.Component<any, State> {
     );
   };
 
-  onHide = (): void => {
+  onHide = () => {
     //need to reset if you've selected a volunteer.
     const l = this.filterVolunteerList(this.state.volunteerList, {
       position: true,
@@ -182,10 +167,10 @@ export default class EditModal extends React.Component<any, State> {
     this.props.onHide();
   };
 
-  generateModalHeading = (): string => {
+  generateModalHeading = () => {
     // UNTESTED
     const position = this.props.position;
-    let s: string = '';
+    let s = '';
     s += toSentenceCase(position.assetClass) + ' - ';
     s += parseRolesAsString(position.roles);
     return s;
@@ -251,8 +236,9 @@ export default class EditModal extends React.Component<any, State> {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.searchResults.map((t: any) => (
+                      {this.state.searchResults.map((t) => (
                         <tr
+                          key={t.ID}
                           className="view"
                           onClick={() => {
                             this.setState({ selectedVolunteer: t });
@@ -273,8 +259,8 @@ export default class EditModal extends React.Component<any, State> {
                             )}
                           </td>
                           <td>
-                            {t.qualifications.map((q: string) => (
-                              <div>- {q}</div>
+                            {t.qualifications.map((q) => (
+                              <div key={q}>- {q}</div>
                             ))}
                           </td>
                           <td>{t.available ? 'Available' : 'Unavailable'}</td>
@@ -304,11 +290,9 @@ export default class EditModal extends React.Component<any, State> {
                       {this.state.selectedVolunteer.lastName}
                     </td>
                     <td>
-                      {this.state.selectedVolunteer.qualifications.map(
-                        (q: string) => (
-                          <div>- {q}</div>
-                        )
-                      )}
+                      {this.state.selectedVolunteer.qualifications.map((q) => (
+                        <div key={q}>- {q}</div>
+                      ))}
                     </td>
                     <td>
                       {this.state.selectedVolunteer.available

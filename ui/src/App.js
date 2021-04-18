@@ -1,28 +1,28 @@
 import React from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import NavBar from './components/Navbar/navbar';
-import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
 import AssetRequestVehicle from './routes/AssetRequestVehicle/AssetRequestVehicle';
 import AssetRequestVolunteers from './routes/AssetRequestVolunteers/assetRequestVolunteers';
-import VolunteersContainer from './routes/Volunteers/volunteersContainer';
-import Volunteer from './routes/Volunteers/volunteer';
-import Availability from './routes/Volunteers/Availability/Availability';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Login from './routes/Authentication/login';
-import Register from './routes/Authentication/register';
-import Home from './routes/Home/Home';
-import Logout from './routes/Authentication/logout';
-import Roles from './routes/Reference/roles';
-import Qualifications from './routes/Reference/qualifications';
-import AssetTypes from './routes/Reference/assetTypes';
-import VolunteerRoles from './routes/VolunteerRoles';
 import AssetTypeRoles from './routes/AssetTypeRoles';
+import Login from './routes/Authentication/login';
+import Logout from './routes/Authentication/logout';
+import Register from './routes/Authentication/register';
+import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
+import Home from './routes/Home/Home';
+import AssetTypes from './routes/Reference/assetTypes';
+import Qualifications from './routes/Reference/qualifications';
+import Roles from './routes/Reference/roles';
+import VolunteerRoles from './routes/VolunteerRoles';
+import Availability from './routes/Volunteers/Availability/Availability';
+import Volunteer from './routes/Volunteers/volunteer';
+import VolunteersContainer from './routes/Volunteers/volunteersContainer';
 
 export default function App() {
   return (
     <BrowserRouter>
       <NavBar />
-      <main-body>
+      <div className={'main-body'}>
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />
@@ -56,7 +56,7 @@ export default function App() {
             component={Availability}
           />
         </Switch>
-      </main-body>
+      </div>
     </BrowserRouter>
   );
 }

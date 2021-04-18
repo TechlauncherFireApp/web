@@ -1,26 +1,24 @@
-import React from 'react';
 import './shift.scss';
+
+import React from 'react';
+
 import {
-  parseRolesAsString,
   parseDateTime,
+  parseRolesAsString,
   toSentenceCase,
 } from '../../common/functions';
 
-interface State {
-  status: string;
-}
-
-export default class Shift extends React.Component<any, any> {
-  state: State = {
+export default class Shift extends React.Component {
+  state = {
     status: '',
   };
 
-  constructor(props: any) {
+  constructor(props) {
     super(props);
     this.state.status = props.shift.volunteerStatus;
   }
 
-  updateStatus = (e: any): void => {
+  updateStatus = (e) => {
     this.setState({ status: e.target.value });
     this.props.updateStatus(e.target.value, this.props.shift);
   };

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { backendPath } from '../../config';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+
+import { backendPath } from '../../config';
 
 function AssetTypes() {
   const [assetTypes, setAssetTypes] = useState([]);
@@ -48,7 +49,7 @@ function AssetTypes() {
           },
         }
       )
-      .then((resp) => {
+      .then(() => {
         setNewAssetTypeName('');
         setNewAssetCodeName('');
         setRefresh((x) => x + 1);
@@ -66,7 +67,7 @@ function AssetTypes() {
           },
         }
       )
-      .then((resp) => {
+      .then(() => {
         setRefresh((x) => x + 1);
       });
   }
@@ -78,8 +79,9 @@ function AssetTypes() {
       <h5>New Asset Type</h5>
       <form onSubmit={addNew}>
         <div className="form-group">
-          <label>Asset code:</label>
+          <label htmlFor={'assetCode'}>Asset code:</label>
           <input
+            id={'assetCode'}
             className={'form-control w-third'}
             value={newAssetCodeName}
             type="text"
@@ -90,8 +92,9 @@ function AssetTypes() {
           />
         </div>
         <div className="form-group">
-          <label>Asset name:</label>
+          <label htmlFor={'assetName'}>Asset name:</label>
           <input
+            id={'assetName'}
             value={newAssetTypeName}
             className={'form-control w-third'}
             type="text"

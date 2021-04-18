@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
 import axios from 'axios';
 import queryString from 'query-string';
-import { NavLink, useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router';
+import { NavLink, useHistory } from 'react-router-dom';
+
 import { backendPath } from '../../config';
 
 function Login() {
@@ -53,7 +54,7 @@ function Login() {
         className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
         <h2>Login</h2>
         <div className="form-group">
-          <label>Email*:</label>
+          <label htmlFor={'email'}>Email*:</label>
           <input
             className={'form-control'}
             type="text"
@@ -64,7 +65,7 @@ function Login() {
           />
         </div>
         <div className="form-group">
-          <label>Password*:</label>
+          <label htmlFor={'password'}>Password*:</label>
           <input
             className={'form-control'}
             type="password"

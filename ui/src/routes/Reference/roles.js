@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { backendPath } from '../../config';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+
+import { backendPath } from '../../config';
 
 function Roles() {
   const [roles, setRoles] = useState([]);
@@ -46,7 +47,7 @@ function Roles() {
           },
         }
       )
-      .then((resp) => {
+      .then(() => {
         setNewRoleName('');
         setNewRoleCode('');
         setRefresh((x) => x + 1);
@@ -64,7 +65,7 @@ function Roles() {
           },
         }
       )
-      .then((resp) => {
+      .then(() => {
         setRefresh((x) => x + 1);
       });
   }
@@ -76,8 +77,9 @@ function Roles() {
       <h5>New volunteer role</h5>
       <form onSubmit={addNew}>
         <div className="form-group">
-          <label>Role code:</label>
+          <label htmlFor={'roleCode'}>Role code:</label>
           <input
+            id={'roleCode'}
             className={'form-control w-third'}
             value={newRoleCode}
             type="text"
@@ -88,8 +90,9 @@ function Roles() {
           />
         </div>
         <div className="form-group">
-          <label>Role name:</label>
+          <label htmlFor={'roleName'}>Role name:</label>
           <input
+            id={'roleName'}
             className={'form-control w-third'}
             value={newRoleName}
             type="text"
