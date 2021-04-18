@@ -1,53 +1,12 @@
+import axios from 'axios';
 import React from 'react';
-import Asset from './asset';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+
 import { dateFromBackend, dateToBackend } from '../../common/functions';
 import { backendPath } from '../../config';
+import Asset from './asset';
 
-interface Timeframe {
-  startTime: Date;
-  endTime: Date;
-}
-
-interface volunteer {
-  ID: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobileNo: string;
-  prefHours: number;
-  expYears: number;
-  possibleRoles: string[];
-  qualifications: string[];
-  availabilities: Timeframe[];
-}
-
-interface Position {
-  positionID: number;
-  ID: string;
-  volunteer: volunteer;
-  role: string[];
-  status: string;
-}
-
-interface asset {
-  shiftID: number;
-  assetClass: string;
-  startTime: Date;
-  endTime: Date;
-  volunteers: Position[];
-}
-
-interface State {
-  loading: boolean;
-  allow_getInitialData: boolean;
-  volunteerList: volunteer[];
-  assignedVolunteers: Map<string, { shiftID: number; positionID: number }>;
-  assetRequest: asset[];
-}
-
-export default class AssetRequestVolunteers extends React.Component<any, State> {
-  state: State = {
+export default class AssetRequestVolunteers extends React.Component {
+  state = {
     loading: true,
     allow_getInitialData: true,
     volunteerList: [],
@@ -55,23 +14,20 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     assetRequest: [],
   };
 
-  constructor(props: any) {
+  constructor(props) {
     super(props);
     if (this.state.volunteerList.length > 0) {
       this.identifyAssignedVolunteers(this.state.assetRequest);
     }
   }
 
-  componentDidMount(): void {
+  componentDidMount() {
     this.getInitialData();
   }
 
-  mapVolunteersToRequest = (
-    assets: any[],
-    volunteerList: volunteer[]
-  ): asset[] => {
+  mapVolunteersToRequest = (assets, volunteerList) => {
     // this is not the most efficient method but it's very simple. I believe it's O(n^2) but as we're working with small data this should be fine
-    let output = [...assets];
+    const output = [...assets];
     for (const asset of output) {
       for (const position of asset.volunteers) {
         //find the corresponding volunteer
@@ -92,7 +48,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     return output;
   };
 
-  getVolunteerList = (): Promise<volunteer[]> => {
+  getVolunteerList = () => {
     // Get the current 'global' time from an API using Promise
     return new Promise((resolve) => {
       axios
@@ -104,16 +60,15 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           },
         })
-        .then((res: AxiosResponse): void => {
-          let tmp = res.data['results'];
+        .then((res) => {
+          const tmp = res.data['results'];
           for (const v of tmp) {
             v.availabilities = [];
           }
           resolve(tmp);
         })
-        .catch((err: AxiosError): void => {
-          // @ts-ignore
-          if (err.response.status === 401) {
+        .catch((err) => {
+          if (err.response !== undefined && err.response.status === 401) {
             this.props.history.push('/login');
           } else {
             alert(err.message);
@@ -122,12 +77,12 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     });
   };
 
-  getInitialData = (): void => {
-    let volunteerList: volunteer[] = [];
-    let recommendation: any = [];
+  getInitialData = () => {
+    let volunteerList = [];
+    let recommendation = [];
 
     //get allVolunteers data from database
-    this.getVolunteerList().then((tmp: volunteer[]): void => {
+    this.getVolunteerList().then((tmp) => {
       // Assign volunteer list
       volunteerList = tmp;
       volunteerList.sort((a, b) =>
@@ -141,7 +96,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       );
 
       if (recommendation.length !== 0) {
-        let assetRequest = this.mapVolunteersToRequest(
+        const assetRequest = this.mapVolunteersToRequest(
           recommendation,
           volunteerList
         );
@@ -169,9 +124,9 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
-      .then((res: AxiosResponse): void => {
+      .then((res) => {
         console.log(res);
-        let tmp = res.data['results'];
+        const tmp = res.data['results'];
         if (tmp !== null) {
           for (const r of tmp) {
             r.startTime = dateFromBackend(r.startTime);
@@ -181,7 +136,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
         recommendation = tmp;
         // Both volunteerList and recommendation need to be populated
         if (volunteerList.length !== 0) {
-          let assetRequest = this.mapVolunteersToRequest(
+          const assetRequest = this.mapVolunteersToRequest(
             recommendation,
             volunteerList
           );
@@ -196,9 +151,8 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
           });
         }
       })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
+      .catch((err) => {
+        if (err.response !== undefined && err.response.status === 401) {
           this.props.history.push('/login');
         } else {
           alert(err.message);
@@ -206,10 +160,10 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       });
   };
 
-  submitData = (): void => {
+  submitData = () => {
     const shifts = this.state.assetRequest;
 
-    let requestData: any = [];
+    const requestData = [];
     shifts.forEach((shift) => {
       requestData.push({
         shiftID: shift.shiftID,
@@ -232,16 +186,15 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
-      .then((res: AxiosResponse): void => {
+      .then((res) => {
         if (res.data['success']) {
           alert('Save Succeeded');
         } else {
           alert('Save Failed');
         }
       })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
+      .catch((err) => {
+        if (err.response !== undefined && err.response.status === 401) {
           this.props.history.push('/login');
         } else {
           alert(err.message);
@@ -249,7 +202,7 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       });
   };
 
-  deleteData = (): void => {
+  deleteData = () => {
     const params = {
       requestID: this.props.match.params.id,
     };
@@ -258,14 +211,14 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     };
     axios
       .delete(backendPath + 'new_request', { params: params, headers: headers })
-      .then((resp) => {
+      .then(() => {
         window.open(window.location.origin + '/captain', 'self_', '', false);
       });
   };
 
-  updateAssetRequest = (updatedAsset: any): void => {
-    let assetRequest = this.state.assetRequest;
-    for (let i: number = 0; i < assetRequest.length; i++) {
+  updateAssetRequest = (updatedAsset) => {
+    const assetRequest = this.state.assetRequest;
+    for (let i = 0; i < assetRequest.length; i++) {
       if (assetRequest[i].shiftID === updatedAsset.shiftID) {
         assetRequest[i].volunteers = updatedAsset.volunteers;
         i = assetRequest.length;
@@ -275,13 +228,11 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
     this.setState({ assetRequest, assignedVolunteers });
   };
 
-  identifyAssignedVolunteers = (
-    assetRequest: asset[]
-  ): Map<string, { shiftID: number; positionID: number }> => {
-    let map: Map<string, { shiftID: number; positionID: number }> = new Map();
-    assetRequest.forEach((a: asset) => {
-      a.volunteers.forEach((p: Position) => {
-        let v: volunteer | undefined = p.volunteer;
+  identifyAssignedVolunteers = (assetRequest) => {
+    const map = new Map();
+    assetRequest.forEach((a) => {
+      a.volunteers.forEach((p) => {
+        const v = p.volunteer;
         if (!(typeof v === 'undefined')) {
           map.set(v.ID, { shiftID: a.shiftID, positionID: p.positionID });
         }
@@ -301,11 +252,11 @@ export default class AssetRequestVolunteers extends React.Component<any, State> 
       <div className="padding">
         <h4>Asset Request</h4>
         <hr />
-        {this.state.assetRequest.map((a: any) => (
+        {this.state.assetRequest.map((a) => (
           <Asset
             key={a.shiftID}
             asset={a}
-            updateAssetRequest={(a: any) => this.updateAssetRequest(a)}
+            updateAssetRequest={(a) => this.updateAssetRequest(a)}
             volunteerList={this.state.volunteerList}
             assignedVolunteers={this.state.assignedVolunteers}
           />

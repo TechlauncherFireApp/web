@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import './navbar.scss';
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+
+import React, { useEffect, useState } from 'react';
+import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 
 function NavBar() {

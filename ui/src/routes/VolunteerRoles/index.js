@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { backendPath } from '../../config';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+
+import { backendPath } from '../../config';
 
 function VolunteerRoles() {
   const [roles, setRoles] = useState([]);
@@ -103,14 +104,14 @@ function VolunteerRoles() {
       // Adding a role to the user
       axios
         .post(backendPath + 'user-role', { userId, roleId }, config)
-        .then((x) => {
+        .then(() => {
           setRefresh((x) => x + 1);
         });
     } else {
       // Removing a role from a user
       axios
         .patch(backendPath + 'user-role', { userId, roleId }, config)
-        .then((x) => {
+        .then(() => {
           setRefresh((x) => x + 1);
         });
     }

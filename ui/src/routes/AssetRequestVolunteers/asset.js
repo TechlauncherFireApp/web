@@ -1,12 +1,13 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
+
 import { parseDateTime, toSentenceCase } from '../../common/functions';
 import Position from './position';
 
-export default class Asset extends React.Component<any, any> {
-  updateAsset = (newPosition: any): void => {
-    let asset = this.props.asset;
-    for (let i: number = 0; i < asset.volunteers.length; i++) {
+export default class Asset extends React.Component {
+  updateAsset = (newPosition) => {
+    const asset = this.props.asset;
+    for (let i = 0; i < asset.volunteers.length; i++) {
       if (asset.volunteers[i].positionID === newPosition.positionID) {
         asset.volunteers[i].volunteer = newPosition.volunteer;
         asset.volunteers[i].role = newPosition.roles;
@@ -20,7 +21,7 @@ export default class Asset extends React.Component<any, any> {
     this.props.updateAssetRequest(asset);
   };
 
-  formatPositionInfo = (position: any): any => {
+  formatPositionInfo = (position) => {
     /* 
     position: {
     shiftID: number
@@ -32,8 +33,8 @@ export default class Asset extends React.Component<any, any> {
     startTime: Date
     endTime: Date
     } */
-    let asset = this.props.asset;
-    let positionInfo = {
+    const asset = this.props.asset;
+    const positionInfo = {
       shiftID: asset.shiftID,
       positionID: position.positionID,
       assigned: true,
@@ -67,10 +68,10 @@ export default class Asset extends React.Component<any, any> {
         </thead>
         <tbody>
           {asset.volunteers !== null &&
-            asset.volunteers.map((position: any) => (
+            asset.volunteers.map((position) => (
               <Position
                 key={position.positionID}
-                updateAsset={(a: any) => this.updateAsset(a)}
+                updateAsset={(a) => this.updateAsset(a)}
                 volunteerList={this.props.volunteerList}
                 assignedVolunteers={this.props.assignedVolunteers}
                 position={this.formatPositionInfo(position)}

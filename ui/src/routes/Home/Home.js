@@ -1,5 +1,6 @@
-import React from 'react';
 import './Home.scss';
+
+import React from 'react';
 import { useHistory } from 'react-router';
 
 function Home() {

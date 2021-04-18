@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
 import axios from 'axios';
-import { backendPath } from '../../config';
+import React, { useState } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
+
+import { backendPath } from '../../config';
 
 function Register() {
   const [values, setValues] = useState({});
@@ -44,7 +45,7 @@ function Register() {
         className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
         <h2>Register as a volunteer</h2>
         <div className="form-group">
-          <label>Email*:</label>
+          <label htmlFor={'email'}>Email*:</label>
           <input
             className={'form-control'}
             type="text"
@@ -55,7 +56,7 @@ function Register() {
           />
         </div>
         <div className="form-group">
-          <label>Password*:</label>
+          <label htmlFor={'password'}>Password*:</label>
           <input
             className={'form-control'}
             type="password"
@@ -70,18 +71,18 @@ function Register() {
           </small>
         </div>
         <div className="form-group">
-          <label>Given Name*:</label>
+          <label htmlFor={'givenName'}>Given Name*:</label>
           <input
             className={'form-control'}
             type="text"
-            name="giveNName"
+            name="givenName"
             onChange={(e) => {
               handleChange('given_name', e.target.value);
             }}
           />
         </div>
         <div className="form-group">
-          <label>Last Name*:</label>
+          <label htmlFor={'lastName'}>Last Name*:</label>
           <input
             className={'form-control'}
             type="text"
@@ -92,7 +93,7 @@ function Register() {
           />
         </div>
         <div className="form-group">
-          <label>Phone Number*:</label>
+          <label htmlFor={'phoneNumber'}>Phone Number*:</label>
           <input
             className={'form-control'}
             type="text"

@@ -1,41 +1,18 @@
+import axios from 'axios';
 import React from 'react';
 import { Table } from 'react-bootstrap';
-import axios, { AxiosResponse, AxiosError } from 'axios';
-import Shift from './shift';
+
 import { backendPath } from '../../config';
+import Shift from './shift';
 
-interface volunteer {
-  ID: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobileNo: string;
-  prefHours: number;
-  expYears: number;
-  possibleRoles: string[];
-  qualifications: string[];
-  availabilities: Timeframe[];
-}
-
-interface Timeframe {
-  startTime: Date;
-  endTime: Date;
-}
-
-interface State {
-  loading: boolean;
-  thisVolunteer?: volunteer;
-  myShifts: any;
-}
-
-export default class Volunteer extends React.Component<any, State> {
-  state: State = {
+export default class Volunteer extends React.Component {
+  state = {
     loading: true,
     thisVolunteer: undefined,
     myShifts: undefined,
   };
 
-  componentDidMount(): void {
+  componentDidMount() {
     axios
       .request({
         url: backendPath + 'volunteer',
@@ -47,20 +24,13 @@ export default class Volunteer extends React.Component<any, State> {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
-      .then((res: AxiosResponse): void => {
-        let tmp = res.data;
-        let convertedAvailabilities: any = [];
-        /*for (const a of tmp.availabilities) {
-                const start = new Date(Date.parse(a[0]));
-                const end = new Date(Date.parse(a[1]));
-                convertedAvailabilities.push({ startTime: start, endTime: end });
-            }*/
-        tmp.availabilities = convertedAvailabilities;
+      .then((res) => {
+        const tmp = res.data;
+        tmp.availabilities = [];
         this.setState({ thisVolunteer: tmp, loading: false });
       })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
+      .catch((err) => {
+        if (err.response !== undefined && err.response.status === 401) {
           this.props.history.push('/login');
         } else {
           alert(err.message);
@@ -78,8 +48,8 @@ export default class Volunteer extends React.Component<any, State> {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
-      .then((res: AxiosResponse): void => {
-        let tmp = res.data['results'];
+      .then((res) => {
+        const tmp = res.data['results'];
         if (tmp !== null) {
           for (const t of tmp) {
             t.vehicleFrom = new Date(Date.parse(t.vehicleFrom));
@@ -88,9 +58,8 @@ export default class Volunteer extends React.Component<any, State> {
           this.setState({ myShifts: tmp });
         }
       })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
+      .catch((err) => {
+        if (err.response !== undefined && err.response.status === 401) {
           this.props.history.push('/login');
         } else {
           alert(err.message);
@@ -98,7 +67,7 @@ export default class Volunteer extends React.Component<any, State> {
       });
   }
 
-  manageAvailability = (): void => {
+  manageAvailability = () => {
     window.open(
       window.location.origin +
         `/volunteer/${this.props.match.params.id}/availability`,
@@ -108,7 +77,7 @@ export default class Volunteer extends React.Component<any, State> {
     );
   };
 
-  updateStatus = (newStatus: string, shiftData: any): void => {
+  updateStatus = (newStatus, shiftData) => {
     //console.log(newStatus, shiftData);
     const info = {
       idVolunteer: this.state.thisVolunteer?.ID,
@@ -126,9 +95,8 @@ export default class Volunteer extends React.Component<any, State> {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
       })
-      .catch((err: AxiosError): void => {
-        // @ts-ignore
-        if (err.response.status === 401) {
+      .catch((err) => {
+        if (err.response !== undefined && err.response.status === 401) {
           this.props.history.push('/login');
         } else {
           alert(err.message);
@@ -136,7 +104,6 @@ export default class Volunteer extends React.Component<any, State> {
       });
   };
 
-  //state = {};
   render() {
     return this.state.loading ? (
       <div className="padding">
@@ -182,13 +149,11 @@ export default class Volunteer extends React.Component<any, State> {
                   <td colSpan={5}>None</td>
                 </tr>
               ) : (
-                this.state.myShifts.map((s: any) => (
+                this.state.myShifts.map((s) => (
                   <Shift
                     key={s.vehicleID}
                     shift={s}
-                    updateStatus={(a: string, b: any) =>
-                      this.updateStatus(a, b)
-                    }
+                    updateStatus={(a, b) => this.updateStatus(a, b)}
                   />
                 ))
               )}

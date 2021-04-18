@@ -1,6 +1,7 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
-import axios from 'axios';
+
 import { backendPath } from '../../config';
 
 function AssetTypeRoles() {
