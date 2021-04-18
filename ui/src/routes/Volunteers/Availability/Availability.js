@@ -333,7 +333,7 @@ export default class Availability extends React.Component {
         },
       })
       .then((res) => {
-        alert(res.data['success'] ? 'Updated - prefHours' : 'Request Failed');
+        if (res['success'] === false) alert('Failed to save preferred hours!');
         this.setState({ allow_patchPrefHours: true });
       })
       .catch((err) => {
@@ -361,9 +361,7 @@ export default class Availability extends React.Component {
         },
       })
       .then((res) => {
-        alert(
-          res.data['success'] ? 'Updated - Availability' : 'Request Failed'
-        );
+        if (res['success'] === false) alert('Failed to save availabilities!');
         this.setState({ allow_patchSchedule: true });
       })
       .catch((err) => {
@@ -424,21 +422,25 @@ export default class Availability extends React.Component {
             />
           </div>
           <div className="con">
-            <button className="type-3" onClick={this.addAvailability}>
-              Add Availability
-            </button>
-            <button className="type-3" onClick={this.deleteAvailability}>
-              Delete Availabilities For This Day
-            </button>
-            <div className="con-2">
-              <button
-                className="type-1"
+            <button
+                className="type-3"
                 onClick={() => {
+                  this.addAvailability();
                   this.patchPrefHours();
                   this.patchSchedule();
                 }}>
-                {this.state.allow_patchSchedule ? 'Save All' : 'Loading'}
-              </button>
+              Add Availability
+            </button>
+            <button
+                className="type-3"
+                onClick={() => {
+                  this.deleteAvailability();
+                  this.patchPrefHours();
+                  this.patchSchedule();
+                }}>
+              Delete Availabilities For This Day
+            </button>
+            <div className="con-2">
               <button className="type-2" onClick={this.exit}>
                 Return
               </button>
