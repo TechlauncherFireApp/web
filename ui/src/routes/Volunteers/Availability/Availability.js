@@ -215,14 +215,26 @@ export default class Availability extends React.Component {
       const availability = [startAvailability, endAvailability];
       const k = this.convertNumToDay(getDay(this.state.selectedDay));
       let s = this.state.schedule;
-      // Check new availability does not overlap
+      // Check new availability does not overlap, if adjacent they combine
       let overlaps = false;
       for (let j = 0; j < s[k].length; j++) {
         const current = s[k][j];
-        if (((startAvailability >= current[0]) && (startAvailability <= current[1]))
-            || ((endAvailability >= current[0]) && (endAvailability <= current[1]))
-        || ((startAvailability <= current[0]) && (endAvailability >= current[1]))) {
+        if (((startAvailability >= current[0]) && (startAvailability < current[1]))
+            || ((endAvailability > current[0]) && (endAvailability <= current[1]))
+            || ((startAvailability <= current[0]) && (endAvailability >= current[1]))) {
           overlaps = true;
+        } if (startAvailability === current[1]) {
+          s[k][j][1] = endAvailability;
+          this.setState({schedule:s}, () => {
+            this.displaySchedule();
+          })
+          return;
+        } if (endAvailability === current[0]) {
+          s[k][j][0] = startAvailability;
+          this.setState({schedule:s}, () => {
+            this.displaySchedule();
+          })
+          return;
         }
       }
       if (!overlaps) {
