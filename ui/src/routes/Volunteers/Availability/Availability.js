@@ -230,19 +230,27 @@ export default class Availability extends React.Component {
             this.setState({schedule: s}, () => {
               this.displaySchedule();
             })
-          } if ((startAvailability === next[1]) && (endAvailability === current[0])) {
+          }
+          if ((startAvailability === next[1]) && (endAvailability === current[0])) {
             s[k][j][0] = s[k][m][0];
-            s[k] = s[k].splice(j,1);
+            s[k] = s[k].splice(j, 1);
             this.setState({schedule: s}, () => {
               this.displaySchedule();
             })
+          }
+          if (((startAvailability >= next[0]) && (startAvailability < next[1]))
+              || ((endAvailability > next[0]) && (endAvailability <= next[1]))
+              || ((startAvailability <= next[0]) && (endAvailability >= next[1]))) {
+            overlaps = true;
           }
         }
         if (((startAvailability >= current[0]) && (startAvailability < current[1]))
             || ((endAvailability > current[0]) && (endAvailability <= current[1]))
             || ((startAvailability <= current[0]) && (endAvailability >= current[1]))) {
           overlaps = true;
-        } if (startAvailability === current[1]) {
+          break;
+        }
+        if (startAvailability === current[1]) {
           s[k][j][1] = endAvailability;
           this.setState({schedule:s}, () => {
             this.displaySchedule();
