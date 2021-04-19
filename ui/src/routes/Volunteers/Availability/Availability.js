@@ -23,10 +23,14 @@ const startTime = getTodayAtSpecificHour(0);
 const endTime = endOfToday();
 
 const modifierStyles = {
+  selected: {
+    color: '#000000',
+    backgroundColor: '#87CEFA',
+  },
   previous: {
     color: '#000000',
     backgroundColor: '#ffb3b3',
-  },
+  }
 };
 
 export default class Availability extends React.Component {
