@@ -240,8 +240,16 @@ export default class Availability extends React.Component {
           }
           if (((startAvailability >= next[0]) && (startAvailability < next[1]))
               || ((endAvailability > next[0]) && (endAvailability <= next[1]))
-              || ((startAvailability <= next[0]) && (endAvailability >= next[1]))) {
-            overlaps = true;
+              || ((startAvailability <= next[0]) && (endAvailability >= next[1]))
+              || ((startAvailability === current[1]) && (endAvailability >= next[0]))
+              || ((startAvailability === next[1]) && (endAvailability >= current[0]))
+              || ((endAvailability === current[0]) && (startAvailability <= next[1]))
+              || ((endAvailability === next[0]) && (startAvailability <= current[1]))
+              || ((endAvailability === current[1]) && (startAvailability >= next[0]))
+              || ((endAvailability === next[1]) && (startAvailability >= current[0]))
+              || ((startAvailability === current[0]) && (endAvailability <= next[1]))
+              || ((startAvailability === next[0]) && (endAvailability <= current[1]))) {
+            return;
           }
         }
         if (((startAvailability >= current[0]) && (startAvailability < current[1]))
