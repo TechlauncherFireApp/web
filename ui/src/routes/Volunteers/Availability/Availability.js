@@ -35,7 +35,7 @@ export default class Availability extends React.Component {
     this.handleDayClick = this.handleDayClick.bind(this);
     this.state = {
       modifiedDays: [],
-      selectedDay: undefined,
+      selectedDay: now,
       allow_getPrefHours: true,
       allow_patchPrefHours: true,
       allow_getSchedule: true,
@@ -131,7 +131,6 @@ export default class Availability extends React.Component {
     const mod = {
       previous: { daysOfWeek: arrDays },
     };
-    console.log(arrDays);
     this.setState({ modifiers: mod });
   }
 
@@ -179,7 +178,6 @@ export default class Availability extends React.Component {
       return;
     }
     modified = modified.concat(day);
-    console.log(modified);
     this.setState({ modifiedDays: modified }, () => {
       this.displaySchedule();
       this.displayModifiedDays();
@@ -216,12 +214,24 @@ export default class Availability extends React.Component {
       const endAvailability = this.convertDateToNum(interval[1]);
       const availability = [startAvailability, endAvailability];
       const k = this.convertNumToDay(getDay(this.state.selectedDay));
-      const s = this.state.schedule;
-      const i = s[k].length;
-      s[k][i] = availability;
-      this.setState({ schedule: s }, () => {
-        this.displaySchedule();
-      });
+      let s = this.state.schedule;
+      // Check new availability does not overlap
+      let overlaps = false;
+      for (let j = 0; j < s[k].length; j++) {
+        const current = s[k][j];
+        if (((startAvailability >= current[0]) && (startAvailability <= current[1]))
+            || ((endAvailability >= current[0]) && (endAvailability <= current[1]))
+        || ((startAvailability <= current[0]) && (endAvailability >= current[1]))) {
+          overlaps = true;
+        }
+      }
+      if (!overlaps) {
+        const i = s[k].length;
+        s[k][i] = availability;
+        this.setState({schedule: s}, () => {
+          this.displaySchedule();
+        });
+      }
     }
   };
 
@@ -383,6 +393,10 @@ export default class Availability extends React.Component {
     );
   };
 
+  handlePrefHoursChange(event) {
+    this.setState({prefHours: event.target.value}, () => {this.patchPrefHours()});
+  }
+
   render() {
     const { selectedInterval, previousIntervals, error } = this.state;
     return (
@@ -394,7 +408,7 @@ export default class Availability extends React.Component {
               selectedDays={this.state.selectedDay}
               onDayClick={this.handleDayClick}
               fromMonth={new Date()}
-              todayButton="Return to today"
+              todayButton="Return to current month"
               modifiers={this.state.modifiers}
               modifiersStyles={modifierStyles}
             />
@@ -416,9 +430,7 @@ export default class Availability extends React.Component {
               placeholder="Select PrefHours"
               title="Set PrefHours"
               value={this.state.prefHours}
-              onChange={(e) =>
-                this.setState({ prefHours: Number(e.target.value) })
-              }
+              onChange={(e) => this.handlePrefHoursChange(e)}
             />
           </div>
           <div className="con">
