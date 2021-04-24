@@ -29,6 +29,7 @@ def get_vehicle(session, vehicle_id):
 
 
 def insert_vehicle(session, request_id, type, date_from, date_to):
+    print(date_from, date_to)
     record = AssetRequestVehicle(request_id=request_id, type=type, from_date_time=date_from, to_date_time=date_to)
     session.add(record)
     session.flush()
