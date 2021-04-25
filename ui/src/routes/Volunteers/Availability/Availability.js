@@ -38,6 +38,7 @@ export default class Availability extends React.Component {
     super(props);
     this.handleDayClick = this.handleDayClick.bind(this);
     this.state = {
+      prefMatchesAvailable: false,
       modifiedDays: [],
       selectedDay: now,
       allow_getPrefHours: true,
@@ -68,6 +69,29 @@ export default class Availability extends React.Component {
       }
     );
   }
+
+  checkAvailabilityAndPref = () => {
+    if (this.state.prefHours && contains(this.state.prefHours) &&
+        this.state.schedule && contains(this.state.schedule)) {
+      const s = this.state.schedule;
+      const preferred = this.state.prefHours;
+      let totalAvailableHours = 0;
+      for (let k = 0; k < 7; k++) {
+        let day = this.convertNumToDay(k);
+        for (const l of s[day]) {
+          let start = l[0];
+          let end = l[1];
+          totalAvailableHours = totalAvailableHours + (end - start);
+        }
+      }
+      if (preferred <= totalAvailableHours &&
+          preferred != null && preferred != 0) {
+        this.setState({prefMatchesAvailable: true});
+      } else {
+        this.setState({prefMatchesAvailable: false});
+      }
+    }
+}
 
   // TimeRange Methods
 
@@ -101,6 +125,7 @@ export default class Availability extends React.Component {
       }
       this.setState({ selectedInterval: [selectedStart, selectedEnd] });
       this.setState({ previousIntervals: prevIntervals });
+      this.checkAvailabilityAndPref();
     }
   }
 
@@ -445,11 +470,12 @@ export default class Availability extends React.Component {
   };
 
   handlePrefHoursChange(event) {
-    this.setState({prefHours: event.target.value}, () => {this.patchPrefHours()});
+    this.setState({prefHours: event.target.value}, () => {this.patchPrefHours(), this.checkAvailabilityAndPref()});
   }
 
   render() {
     const { selectedInterval, previousIntervals, error } = this.state;
+    const prefMatchesAv = this.state.prefMatchesAvailable;
     return (
       <availability>
         <div className="exterior">
@@ -483,6 +509,9 @@ export default class Availability extends React.Component {
               value={this.state.prefHours}
               onChange={(e) => this.handlePrefHoursChange(e)}
             />
+            <div className="popup" onClick="displayPopup" role="img">{prefMatchesAv ?
+                <span role="img" aria-label="tick">&#9989;</span> :
+                <span role="img" aria-label="cross">&#10060;</span>}</div>
           </div>
           <div className="con">
             <button
