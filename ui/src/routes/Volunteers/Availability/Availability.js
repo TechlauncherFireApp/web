@@ -470,7 +470,8 @@ export default class Availability extends React.Component {
   };
 
   handlePrefHoursChange(event) {
-    this.setState({prefHours: event.target.value}, () => {this.patchPrefHours(), this.checkAvailabilityAndPref()});
+    this.setState({prefHours: event.target.value},
+        () => {this.patchPrefHours(), this.checkAvailabilityAndPref()});
   }
 
   render() {
@@ -509,9 +510,18 @@ export default class Availability extends React.Component {
               value={this.state.prefHours}
               onChange={(e) => this.handlePrefHoursChange(e)}
             />
-            <div className="popup" onClick="displayPopup" role="img">{prefMatchesAv ?
-                <span role="img" aria-label="tick">&#9989;</span> :
-                <span role="img" aria-label="cross">&#10060;</span>}</div>
+            <div className="popup" onClick="displayPopup" role="img">
+              {prefMatchesAv ?
+                <span
+                    role="img"
+                    aria-label="tick">
+                  &#9989;</span> :
+                <span
+                    className="red-cross"
+                    role="img"
+                    aria-label="cross"
+                    data-tooltip="The preferred hours exceed the total available hours or have not been selected">
+                  &#10060;</span>}</div>
           </div>
           <div className="con">
             <button
