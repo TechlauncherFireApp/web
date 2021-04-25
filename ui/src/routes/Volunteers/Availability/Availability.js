@@ -23,10 +23,14 @@ const startTime = getTodayAtSpecificHour(0);
 const endTime = endOfToday();
 
 const modifierStyles = {
+  selected: {
+    color: '#000000',
+    backgroundColor: '#87CEFA',
+  },
   previous: {
     color: '#000000',
     backgroundColor: '#ffb3b3',
-  },
+  }
 };
 
 export default class Availability extends React.Component {
@@ -35,7 +39,7 @@ export default class Availability extends React.Component {
     this.handleDayClick = this.handleDayClick.bind(this);
     this.state = {
       modifiedDays: [],
-      selectedDay: undefined,
+      selectedDay: now,
       allow_getPrefHours: true,
       allow_patchPrefHours: true,
       allow_getSchedule: true,
@@ -131,7 +135,6 @@ export default class Availability extends React.Component {
     const mod = {
       previous: { daysOfWeek: arrDays },
     };
-    console.log(arrDays);
     this.setState({ modifiers: mod });
   }
 
@@ -179,7 +182,6 @@ export default class Availability extends React.Component {
       return;
     }
     modified = modified.concat(day);
-    console.log(modified);
     this.setState({ modifiedDays: modified }, () => {
       this.displaySchedule();
       this.displayModifiedDays();
@@ -216,12 +218,71 @@ export default class Availability extends React.Component {
       const endAvailability = this.convertDateToNum(interval[1]);
       const availability = [startAvailability, endAvailability];
       const k = this.convertNumToDay(getDay(this.state.selectedDay));
-      const s = this.state.schedule;
-      const i = s[k].length;
-      s[k][i] = availability;
-      this.setState({ schedule: s }, () => {
-        this.displaySchedule();
-      });
+      let s = this.state.schedule;
+      // Check new availability does not overlap, if adjacent they combine
+      let overlaps = false;
+      for (let j = 0; j < s[k].length; j++) {
+        const current = s[k][j];
+        for (let m = 0; m < s[k].length; m++) {
+          const next = s[k][m];
+          if (current === next) {
+            continue;
+          }
+          if ((startAvailability === current[1]) && (endAvailability === next[0])) {
+            s[k][j][1] = s[k][m][1];
+            s[k] = s[k].splice(j, 1);
+            this.setState({schedule: s}, () => {
+              this.displaySchedule();
+            })
+          }
+          if ((startAvailability === next[1]) && (endAvailability === current[0])) {
+            s[k][j][0] = s[k][m][0];
+            s[k] = s[k].splice(j, 1);
+            this.setState({schedule: s}, () => {
+              this.displaySchedule();
+            })
+          }
+          if (((startAvailability >= next[0]) && (startAvailability < next[1]))
+              || ((endAvailability > next[0]) && (endAvailability <= next[1]))
+              || ((startAvailability <= next[0]) && (endAvailability >= next[1]))
+              || ((startAvailability === current[1]) && (endAvailability >= next[0]))
+              || ((startAvailability === next[1]) && (endAvailability >= current[0]))
+              || ((endAvailability === current[0]) && (startAvailability <= next[1]))
+              || ((endAvailability === next[0]) && (startAvailability <= current[1]))
+              || ((endAvailability === current[1]) && (startAvailability >= next[0]))
+              || ((endAvailability === next[1]) && (startAvailability >= current[0]))
+              || ((startAvailability === current[0]) && (endAvailability <= next[1]))
+              || ((startAvailability === next[0]) && (endAvailability <= current[1]))) {
+            return;
+          }
+        }
+        if (((startAvailability >= current[0]) && (startAvailability < current[1]))
+            || ((endAvailability > current[0]) && (endAvailability <= current[1]))
+            || ((startAvailability <= current[0]) && (endAvailability >= current[1]))) {
+          overlaps = true;
+          break;
+        }
+        if (startAvailability === current[1]) {
+          s[k][j][1] = endAvailability;
+          this.setState({schedule:s}, () => {
+            this.displaySchedule();
+          })
+          return;
+        } if (endAvailability === current[0]) {
+          s[k][j][0] = startAvailability;
+          this.setState({schedule:s}, () => {
+            this.displaySchedule();
+          })
+          return;
+        }
+      }
+      if (!overlaps) {
+        const i = s[k].length;
+        s[k][i] = availability;
+        this.setState({schedule: s}, () => {
+          this.displaySchedule();
+        });
+      }
     }
   };
 
@@ -333,7 +394,7 @@ export default class Availability extends React.Component {
         },
       })
       .then((res) => {
-        alert(res.data['success'] ? 'Updated - prefHours' : 'Request Failed');
+        if (res['success'] === false) alert('Failed to save preferred hours!');
         this.setState({ allow_patchPrefHours: true });
       })
       .catch((err) => {
@@ -361,9 +422,7 @@ export default class Availability extends React.Component {
         },
       })
       .then((res) => {
-        alert(
-          res.data['success'] ? 'Updated - Availability' : 'Request Failed'
-        );
+        if (res['success'] === false) alert('Failed to save availabilities!');
         this.setState({ allow_patchSchedule: true });
       })
       .catch((err) => {
@@ -385,6 +444,10 @@ export default class Availability extends React.Component {
     );
   };
 
+  handlePrefHoursChange(event) {
+    this.setState({prefHours: event.target.value}, () => {this.patchPrefHours()});
+  }
+
   render() {
     const { selectedInterval, previousIntervals, error } = this.state;
     return (
@@ -396,7 +459,7 @@ export default class Availability extends React.Component {
               selectedDays={this.state.selectedDay}
               onDayClick={this.handleDayClick}
               fromMonth={new Date()}
-              todayButton="Return to today"
+              todayButton="Return to current month"
               modifiers={this.state.modifiers}
               modifiersStyles={modifierStyles}
             />
@@ -418,27 +481,29 @@ export default class Availability extends React.Component {
               placeholder="Select PrefHours"
               title="Set PrefHours"
               value={this.state.prefHours}
-              onChange={(e) =>
-                this.setState({ prefHours: Number(e.target.value) })
-              }
+              onChange={(e) => this.handlePrefHoursChange(e)}
             />
           </div>
           <div className="con">
-            <button className="type-3" onClick={this.addAvailability}>
-              Add Availability
-            </button>
-            <button className="type-3" onClick={this.deleteAvailability}>
-              Delete Availabilities For This Day
-            </button>
-            <div className="con-2">
-              <button
-                className="type-1"
+            <button
+                className="type-3"
                 onClick={() => {
+                  this.addAvailability();
                   this.patchPrefHours();
                   this.patchSchedule();
                 }}>
-                {this.state.allow_patchSchedule ? 'Save All' : 'Loading'}
-              </button>
+              Add Availability
+            </button>
+            <button
+                className="type-3"
+                onClick={() => {
+                  this.deleteAvailability();
+                  this.patchPrefHours();
+                  this.patchSchedule();
+                }}>
+              Delete Availabilities For This Day
+            </button>
+            <div className="con-2">
               <button className="type-2" onClick={this.exit}>
                 Return
               </button>
