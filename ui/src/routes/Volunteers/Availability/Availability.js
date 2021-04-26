@@ -58,7 +58,6 @@ export default class Availability extends React.Component {
     this.getSchedule();
     this.checkAvailabilityAndPref();
     this.displaySchedule();
-    this.forceUpdate();
   }
 
   // Calendar Methods
@@ -129,8 +128,7 @@ export default class Availability extends React.Component {
         this.addModifiedDay(k);
       }
       this.setState({ selectedInterval: [selectedStart, selectedEnd] });
-      this.setState({ previousIntervals: prevIntervals });
-      this.checkAvailabilityAndPref();
+      this.setState({ previousIntervals: prevIntervals }, () => {this.checkAvailabilityAndPref()});
     }
   }
 
@@ -476,7 +474,7 @@ export default class Availability extends React.Component {
 
   handlePrefHoursChange(event) {
     this.setState({prefHours: event.target.value},
-        () => {this.patchPrefHours(), this.checkAvailabilityAndPref()});
+        () => {this.patchPrefHours(); this.checkAvailabilityAndPref()});
   }
 
   render() {

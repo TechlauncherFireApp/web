@@ -29,7 +29,7 @@ function BrigadeCaptainHome() {
     axios
       .post(
         backendPath + 'new_request',
-        { title: newRequestTitle },
+        { title: newRequestTitle, status: "un-submitted", },
         {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),

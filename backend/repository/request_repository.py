@@ -10,17 +10,18 @@ def get_existing_requests(session):
     return session.query(AssetRequest)
 
 
-def new_request(session, title):
+def new_request(session, title, status):
     """
     Add a new request to the database.
     :param session: A database session context
     :param title: The name of the request
+    :param status: The status of the request
     :return: The id of the newly created request.
     """
     # TODO: Permissions
     #   - Source the current as an admin
     admin = session.query(User).filter(User.role == UserType.ADMIN).first()
-    request = AssetRequest(title=title, user_id=admin.id)
+    request = AssetRequest(title=title, user_id=admin.id, status=status)
     session.add(request)
     session.flush()
     return request.id
