@@ -38,6 +38,7 @@ export default class Availability extends React.Component {
     super(props);
     this.handleDayClick = this.handleDayClick.bind(this);
     this.state = {
+      availableHours: 0,
       prefMatchesAvailable: false,
       modifiedDays: [],
       selectedDay: now,
@@ -55,6 +56,9 @@ export default class Availability extends React.Component {
   componentDidMount() {
     this.getPrefHours();
     this.getSchedule();
+    this.checkAvailabilityAndPref();
+    this.displaySchedule();
+    this.forceUpdate();
   }
 
   // Calendar Methods
@@ -84,6 +88,7 @@ export default class Availability extends React.Component {
           totalAvailableHours = totalAvailableHours + (end - start);
         }
       }
+      this.setState({availableHours: totalAvailableHours});
       if (preferred <= totalAvailableHours &&
           preferred != null && preferred != 0) {
         this.setState({prefMatchesAvailable: true});
@@ -477,6 +482,7 @@ export default class Availability extends React.Component {
   render() {
     const { selectedInterval, previousIntervals, error } = this.state;
     const prefMatchesAv = this.state.prefMatchesAvailable;
+    const avHours = this.state.availableHours;
     return (
       <availability>
         <div className="exterior">
@@ -520,7 +526,9 @@ export default class Availability extends React.Component {
                     className="red-cross"
                     role="img"
                     aria-label="cross"
-                    data-tooltip="The preferred hours exceed the total available hours or have not been selected">
+                    data-tooltip=
+                        {"Preferred hours have not been indicated or exceed the " +
+                        "currently selected availability of " + avHours +" hours per week."}>
                   &#10060;</span>}</div>
           </div>
           <div className="con">
