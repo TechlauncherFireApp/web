@@ -28,6 +28,27 @@ function AssetRequestVehicle() {
             .then((resp) => {
                 setAssetTypes(resp.data);
             });
+        axios
+            .get(backendPath + 'vehicle/request', {
+                params: {requestId: id},
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((resp) => {
+                let results = resp.data.results;
+                let payloads = [];
+                for (let asset of results) {
+                    const payload = {
+                        requestId: asset["ID"],
+                        startDate: new Date(asset["From_Time"]),
+                        endDate: new Date(asset["To_Time"]),
+                        assetType: asset["Type"]
+                    }
+                    payloads.push(payload);
+                }
+                setVehicles([...vehicles, ...payloads]);
+            })
     }, []);
 
     function insertAsset() {
@@ -45,7 +66,6 @@ function AssetRequestVehicle() {
             alert('Start DateTime has to be earlier than End DateTime');
             return;
         }
-        // Submit Request
         const payload = {
             requestId: id,
             startDate: startDate,
@@ -92,7 +112,8 @@ function AssetRequestVehicle() {
                     Authorization: 'Bearer ' + localStorage.getItem('access_token'),
                 },
             })
-            .then(() => {
+            .then((resp) => {
+                console.log(resp.data);
                 let lcl = vehicles;
                 lcl = lcl.filter((x) => x.id !== vehicleId);
                 setVehicles(lcl);
