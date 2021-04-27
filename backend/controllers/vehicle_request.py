@@ -65,6 +65,7 @@ class VehicleRequest(Resource):
 
     @marshal_with(resource_fields)
     def delete(self):
+        # TODO: Fix this delete controller so it detects args
         args = delete_parser.parse_args()
         with session_scope() as session:
             result = delete_vehicle(session, args["requestId"], args["vehicleID"])

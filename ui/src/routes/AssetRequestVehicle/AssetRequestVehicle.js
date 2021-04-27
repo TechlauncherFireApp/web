@@ -99,7 +99,6 @@ function AssetRequestVehicle() {
                 },
             })
             .then((resp) => {
-                console.log(resp.data)
                 if (resp.data["success"]) {
                     axios
                         .get(backendPath + 'recommendation', {
@@ -120,9 +119,10 @@ function AssetRequestVehicle() {
             requestId: id,
             vehicleId: vehicleId,
         };
+        // TODO: Fix this delete request
         axios
             .delete(backendPath + 'vehicle/request', {
-                params: params,
+                data: params,
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('access_token'),
                 },
