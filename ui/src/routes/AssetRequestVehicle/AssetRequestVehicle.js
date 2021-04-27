@@ -88,15 +88,30 @@ function AssetRequestVehicle() {
         if (vehicles.length === 0) {
             return;
         }
+        const payload = {
+            requestId: id,
+            status: "waiting",
+        };
         axios
-            .get(backendPath + 'recommendation', {
-                params: {requestId: id},
+            .patch(backendPath + 'existing_requests', payload, {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('access_token'),
                 },
             })
-            .then(() => {
-                history.push('/assetRequest/volunteers/' + id);
+            .then((resp) => {
+                console.log(resp.data)
+                if (resp.data["success"]) {
+                    axios
+                        .get(backendPath + 'recommendation', {
+                            params: {requestId: id},
+                            headers: {
+                                Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                            },
+                        })
+                        .then(() => {
+                            history.push('/assetRequest/volunteers/' + id);
+                        });
+                }
             });
     }
 

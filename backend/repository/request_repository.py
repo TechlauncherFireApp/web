@@ -50,3 +50,19 @@ def delete_request(session, requestID):
         session.delete(record)
         return True
     return False
+
+
+def update_request_status(session, request_id, status):
+    """
+    :param session: A database session context
+    :param request_id: The id of the request
+    :param status: The new status of the request
+    :return: Boolean indicating whether the update was successful
+    """
+    record = session.query(AssetRequest) \
+        .filter(AssetRequest.id == request_id) \
+        .first()
+    if record is not None:
+        record.status = status
+        return True
+    return False

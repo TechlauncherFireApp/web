@@ -7,11 +7,21 @@ from repository.request_repository import *
 '''
 Define Data Input
 
+PATCH
+{
+    "requestId": Int
+    "status": String
+}
+
 DELETE
 {
     "id": String
 }
 '''
+
+parser = reqparse.RequestParser()
+parser.add_argument('requestId', action='store', type=int)
+parser.add_argument('status', action='store', type=str)
 
 delete_parser = reqparse.RequestParser()
 delete_parser.add_argument('requestID', action='store', type=str)
@@ -23,6 +33,11 @@ GET
 {
     "id": String,
     "title": String
+}
+
+PATCH
+{
+    "success": Boolean
 }
 
 DELETE
@@ -50,6 +65,13 @@ class ExistingRequests(Resource):
         with session_scope() as session:
             res = get_existing_requests(session)
             return {"success": True, "results": res}
+
+    @marshal_with(get_resource_list)
+    def patch(self):
+        args = parser.parse_args()
+        with session_scope() as session:
+            result = update_request_status(session, args["requestId"], args["status"])
+            return {"success": result}
 
     @marshal_with(get_resource_list)
     def delete(self):
