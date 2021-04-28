@@ -47,6 +47,7 @@ function AssetRequestVehicle() {
                     }
                     payloads.push(payload);
                 }
+                console.log(payloads)
                 setVehicles([...vehicles, ...payloads]);
             })
     }, []);
@@ -119,16 +120,16 @@ function AssetRequestVehicle() {
             requestId: id,
             vehicleId: vehicleId,
         };
-        // TODO: Fix this delete request
+        console.log(id)
+        console.log(vehicleId)
         axios
             .delete(backendPath + 'vehicle/request', {
-                data: params,
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('access_token'),
                 },
+                params: params,
             })
-            .then((resp) => {
-                console.log(resp.data);
+            .then(() => {
                 let lcl = vehicles;
                 lcl = lcl.filter((x) => x.id !== vehicleId);
                 setVehicles(lcl);
@@ -159,7 +160,7 @@ function AssetRequestVehicle() {
 
     return (
         <asset-request-vehicle>
-            <h4>New Asset Request</h4>
+            <h4>Asset Request</h4>
             <hr/>
             <div className="entry">
                 <div className="con">

@@ -42,5 +42,6 @@ def delete_vehicle(session, request_id, vehicle_id):
         .first()
     if record is not None:
         session.delete(record)
+        session.flush()
         return True
     return False

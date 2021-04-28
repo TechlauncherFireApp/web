@@ -39,17 +39,15 @@ resource_fields = {
 
 delete_parser = reqparse.RequestParser()
 delete_parser.add_argument('requestId', action='store', type=str)
-delete_parser.add_argument('vehicleID', action='store', type=str)
+delete_parser.add_argument('vehicleId', action='store', type=str)
 
 # Make a New Request inside the DataBase
 class VehicleRequest(Resource):
     @marshal_with(resource_fields)
     def get(self):
         args = parser.parse_args()
-
         if args["requestId"] is None:
             return {"success": False}
-
         with session_scope() as session:
             rtn = []
             for row in get_vehicles(session, args["requestId"]):
@@ -65,10 +63,9 @@ class VehicleRequest(Resource):
 
     @marshal_with(resource_fields)
     def delete(self):
-        # TODO: Fix this delete controller so it detects args
         args = delete_parser.parse_args()
         with session_scope() as session:
-            result = delete_vehicle(session, args["requestId"], args["vehicleID"])
+            result = delete_vehicle(session, args["requestId"], args["vehicleId"])
             return {"success": result}
 
 

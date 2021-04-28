@@ -15,7 +15,7 @@ PATCH
 
 DELETE
 {
-    "id": String
+    "requestId": String
 }
 '''
 
@@ -24,7 +24,7 @@ parser.add_argument('requestId', action='store', type=int)
 parser.add_argument('status', action='store', type=str)
 
 delete_parser = reqparse.RequestParser()
-delete_parser.add_argument('requestID', action='store', type=str)
+delete_parser.add_argument('requestId', action='store', type=str)
 
 '''
 Define Data Output
@@ -77,8 +77,8 @@ class ExistingRequests(Resource):
     def delete(self):
         args = delete_parser.parse_args()
         with session_scope() as session:
-            result = delete_request(session, args["requestID"])
-            return result
+            result = delete_request(session, args["requestId"])
+            return {"success": result}
 
 
 existing_requests_bp = Blueprint('existing_requests', __name__)

@@ -56,7 +56,7 @@ function BrigadeCaptainHome() {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
         params: {
-          requestID: id,
+          requestId: id,
         },
       })
       .then(() => {
