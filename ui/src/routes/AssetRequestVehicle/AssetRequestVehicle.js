@@ -40,14 +40,13 @@ function AssetRequestVehicle() {
                 let payloads = [];
                 for (let asset of results) {
                     const payload = {
-                        requestId: asset["ID"],
+                        id: asset["ID"],
                         startDate: new Date(asset["From_Time"]),
                         endDate: new Date(asset["To_Time"]),
                         assetType: asset["Type"]
                     }
                     payloads.push(payload);
                 }
-                console.log(payloads)
                 setVehicles([...vehicles, ...payloads]);
             })
     }, []);
@@ -120,8 +119,6 @@ function AssetRequestVehicle() {
             requestId: id,
             vehicleId: vehicleId,
         };
-        console.log(id)
-        console.log(vehicleId)
         axios
             .delete(backendPath + 'vehicle/request', {
                 headers: {
