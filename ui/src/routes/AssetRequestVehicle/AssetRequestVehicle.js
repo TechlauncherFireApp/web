@@ -49,7 +49,7 @@ function AssetRequestVehicle() {
                 }
                 setVehicles([...vehicles, ...payloads]);
             })
-    }, []);
+    }, [id, vehicles]);
 
     function insertAsset() {
         // Validate Data
