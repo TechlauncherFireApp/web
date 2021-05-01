@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 from typing import List
-from sqlalchemy import orm
+from sqlalchemy import orm, func, alias
 
 from domain import User, AssetRequestVehicle, AssetType, Role, UserRole, AssetTypeRole
 
@@ -49,96 +49,23 @@ class Calculator:
         # Fetch all the request data that will be used in the optimisation functions once.
         self.__get_request_data()
 
-    def get_number_of_volunteers(self) -> int:
-        """
-        @return: The number of users to be optimised.
-        """
-        return len(self._users_)
-
-
     def get_number_of_vehicles(self) -> int:
         """
         @return: The number of vehicles to be optimised.
         """
         return len(self._asset_request_vehicles_)
 
-    def get_asset_request_vehicles(self) -> List[AssetRequestVehicle]:
+    def get_number_of_roles(self):
         """
-        @return: All asset request vehicles used.
+        @return: The number of roles to be optimised
         """
-        return self._asset_request_vehicles_
+        return len(self._roles_)
 
-    def get_roles(self) -> List[Role]:
+    def get_number_of_volunteers(self) -> int:
         """
-        @return: A list of roles we are using
+        @return: The number of users to be optimised.
         """
-        return self._roles_
-
-    def get_asset_types(self) -> List[AssetType]:
-        """
-        @return: A list of asset type swe are using
-        """
-        return self._asset_types_
-
-    def get_maximum_number_of_seats(self) -> int:
-        """
-        @return: The number of seats on the biggest asset type
-        """
-        max_num = 0
-        for seat in self._asset_type_seats_:
-            if seat.seat_number > max_num:
-                max_num = seat.seat_number
-        return max_num
-
-    def get_seats_per_asset_type(self) -> List[int]:
-        """
-        @return: A list of asset types and the number of seats they require
-        """
-        rtn = []
-        for asset_type in self._asset_types_:
-            required_seats = 0
-            for seat in self._asset_type_seats_:
-                if seat.asset_type_id == asset_type.id:
-                    required_seats += 1
-            rtn.append(required_seats)
-        return rtn
-
-    def get_seats_for_asset_type(self, asset_type_code) -> int:
-        """
-        @return: The number of seat on a particular asset type
-        """
-        return len(self._session_.query(AssetTypeRole)
-                   .join(AssetType, AssetType.id == AssetTypeRole.asset_type_id)
-                   .filter(AssetType.code == asset_type_code)
-                   .all())
-
-    def get_asset_type_by_code(self, asset_type_code: str) -> AssetType:
-        """
-        Get a asset type by its code.
-        @param asset_type_code: The asset type code to fetch
-        @return: The asset type or none
-        """
-        return self._session_.query(AssetType) \
-            .filter(AssetType.code == asset_type_code) \
-            .first()
-
-    def get_seat_roles(self, seat_number: int, asset_type: AssetType) -> Role or None:
-        """
-        Get the role requirements for a seat on an asset.
-        @param seat_number: The seat number (1 indexed)
-        @param asset_type: The asset type
-        @return: A role or None if that seat doesn't exist.
-        """
-        for seat in self._asset_type_seats_:
-            if seat.seat_number == seat_number and seat.asset_type_id == asset_type.id:
-                return seat.role
-        return None
-
-    def get_users(self) -> List[User]:
-        """
-        @return: The list of users.
-        """
-        return self._users_
+        return len(self._users_)
 
     def __get_request_data(self):
         """
@@ -161,26 +88,6 @@ class Calculator:
             .join(Role, Role.id == AssetTypeRole.role_id) \
             .filter(Role.deleted == False) \
             .all()
-
-    def get_preferred_hours(self) -> List[int]:
-        """
-        Get all the preferred hours for active users and return them in a list.
-        @return: The preferred hours for users in a list of integers.
-        """
-        preferred_hours = []
-        for user in self._users_:
-            preferred_hours.append(user.preferred_hours)
-        return preferred_hours
-
-    def get_shift_lengths(self) -> List[int]:
-        """
-        For all shifts in the request, get the length of the shifts as an array of ints.
-        @return: A list of shift lengths.
-        """
-        shift_lengths = []
-        for shift in self._asset_request_vehicles_:
-            shift_lengths.append(int((shift.to_date_time - shift.from_date_time).total_seconds() / 3600))
-        return shift_lengths
 
     def calculate_deltas(self, start: datetime, end: datetime) -> List[datetime]:
         """
@@ -236,8 +143,6 @@ class Calculator:
             # Its calculated by finding all the 30 minute slots between the start time and end time (inclusive)
             shift_blocks = self.calculate_deltas(asset_request_vehicle.from_date_time,
                                                  asset_request_vehicle.to_date_time)
-            print(f"Shift has the following blocks:{[x.strftime('%d/%m/%y %H:%M:%S') for x in shift_blocks]}")
-
             # Iterate through the users, this makes each element of the array
             for user in self._users_:
                 # We start by assuming the user is available, then prove this wrong.
@@ -265,7 +170,6 @@ class Calculator:
             # Append the shift compatibilities to the overall result
             compatibilities.append(shift_compatibility)
         # Return the 2D array
-        print(f"Shift compatibilities are: {compatibilities}")
         return compatibilities
 
     def calculate_clashes(self) -> List[List[bool]]:
@@ -288,30 +192,45 @@ class Calculator:
                         is_clash = True
                 this_vehicle_clashes.append(is_clash)
             clashes.append(this_vehicle_clashes)
-        print(f"Shift clashes are: {clashes}")
         return clashes
 
-    def calculate_asset_types(self) -> List[List[bool]]:
+    def calculate_skill_requirement(self):
         """
-        For all active asset types, return a 2D array of what asset type the vehicle request is.
-        For example, if the request has 1 heavy and 1 light, the result might look something like this if you were to
-        name the indexes:
-                          Light   Medium  Heavy
-                         ----------------------
-              Vehicle 1  [[F,       T,      F]
-              Vehicle 2  [F,       F,      F]]
-        @return: A 2D array explaining what asset types are which parts of the request
+        Return a 2D array showing the number of people required for each skill in a asset shift. Might look something
+        like:
+                        Driver Pilot  Ninja
+                      ----------------------
+           Vehicle 1  [[1,       0,      0]
+           Vehicle 2  [F,       1,      1]]
+        @return:
         """
-        is_types = []
-        for asset_type in self._asset_types_:
-            this_asset_type = []
-            for vehicle_request in self._asset_request_vehicles_:
-                this_asset_type.append(vehicle_request.type == asset_type.code)
-            is_types.append(this_asset_type)
-        print(f"Asset types are: {is_types}")
-        return is_types
+        rtn = []
+        for vehicle in self._asset_request_vehicles_:
+            this_vehicle = []
+            for role in self._roles_:
+                this_vehicle.append(self.get_role_count(vehicle.asset_type.id, role.id))
+            rtn.append(this_vehicle)
+        return rtn
 
-    def calculate_roles(self) -> List[List[bool]]:
+    def get_role_count(self, asset_type_id, role_id):
+        """
+        Determines the number of each role required for each asset type or 0 if not required.
+        @param asset_type_id: The asset type to search for.
+        @param role_id: The role to search for.
+        @return: The volunteers required or 0 if not required.
+        """
+        query = self._session_.query(AssetTypeRole) \
+            .join(Role, Role.id == AssetTypeRole.role_id) \
+            .join(AssetType, AssetType.id == AssetTypeRole.asset_type_id) \
+            .filter(Role.deleted == False) \
+            .filter(Role.id == role_id) \
+            .filter(AssetType.id == asset_type_id)
+        result = self._session_.query(func.count('*')).select_from(alias(query)).scalar()
+        if result is None:
+            result = 0
+        return result
+
+    def calculate_mastery(self):
         """
         For all active roles, return a 2D array of what user can perform what roles.
         For example, if the database has two users, both can drive but only 1 is advanced, the result would look like:
@@ -322,23 +241,27 @@ class Calculator:
               User 2  [T,         T,          F]]
         @return: A 2D array explaining what users can perform what roles.
         """
-        is_roles = []
-        for role in self._roles_:
-            user_roles = []
-            for user in self._users_:
+        rtn = []
+        for user in self._users_:
+            user_role = []
+            for role in self._roles_:
                 user_has_role = self._session_.query(UserRole) \
                     .filter(UserRole.user == user) \
                     .filter(UserRole.role == role) \
                     .first()
-                user_roles.append(user_has_role is not None)
-            is_roles.append(user_roles)
-        print(f"User role map is: {is_roles}")
-        return is_roles
-
-    def calculate_skill_requirement(self):
-        pass
-
-    def calculate_mastery(self):
-        pass
+                user_role.append(user_has_role is not None)
+            rtn.append(user_role)
+        return rtn
 
 
+        # is_roles = []
+        # for role in self._roles_:
+        #     user_roles = []
+        #     for user in self._users_:
+        #         user_has_role = self._session_.query(UserRole) \
+        #             .filter(UserRole.user == user) \
+        #             .filter(UserRole.role == role) \
+        #             .first()
+        #         user_roles.append(user_has_role is not None)
+        #     is_roles.append(user_roles)
+        # return is_roles
