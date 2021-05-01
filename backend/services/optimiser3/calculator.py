@@ -252,16 +252,3 @@ class Calculator:
                 user_role.append(user_has_role is not None)
             rtn.append(user_role)
         return rtn
-
-
-        # is_roles = []
-        # for role in self._roles_:
-        #     user_roles = []
-        #     for user in self._users_:
-        #         user_has_role = self._session_.query(UserRole) \
-        #             .filter(UserRole.user == user) \
-        #             .filter(UserRole.role == role) \
-        #             .first()
-        #         user_roles.append(user_has_role is not None)
-        #     is_roles.append(user_roles)
-        # return is_roles
