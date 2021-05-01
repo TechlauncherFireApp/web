@@ -1,6 +1,7 @@
 import './AssetRequestVehicle.scss';
 
 import axios from 'axios';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
@@ -48,8 +49,8 @@ function AssetRequestVehicle() {
     // Submit Request
     const payload = {
       requestId: id,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: moment(startDate).utc(true).toDate(),
+      endDate: moment(endDate).utc(true).toDate(),
       assetType: assetType,
     };
     axios
@@ -109,7 +110,7 @@ function AssetRequestVehicle() {
     axios
       .delete(backendPath + 'new_request', { params: params, headers: headers })
       .then(() => {
-        window.open(window.location.origin + '/captain', 'self_', '', false);
+        history.push('/captain');
       });
   }
 

@@ -19,6 +19,7 @@ flask-restful = "*"
 mysqlclient = "*"
 pyjwt = "*"
 sendgrid = "*"
+ics = "*"
 
 [requires]
 python_version = "3.8"

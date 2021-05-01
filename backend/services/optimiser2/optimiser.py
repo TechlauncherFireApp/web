@@ -1,6 +1,7 @@
 import minizinc
 from sqlalchemy import orm
 
+from domain import session_scope
 from repository.asset_request_volunteer_repository import add_shift
 from services.optimiser2.calculator import Calculator
 
@@ -142,12 +143,23 @@ class Optimiser:
             seats = self.calculator.get_seats_for_asset_type(asset_request_vehicle.type)
             for seat_number in range(1, self.calculator.get_maximum_number_of_seats() + 1):
                 if seat_number <= seats:
-                    user = self.calculator.get_users()[result[f'seat{seat_number}'][index]]
                     # TODO: Tech Debt:
                     #   - Make this a FK reference, not a string
                     asset_type = self.calculator.get_asset_type_by_code(asset_request_vehicle.type)
                     role = self.calculator.get_seat_roles(seat_number, asset_type)
-                    add_shift(session, user.id, asset_request_vehicle.id, seat_number, [f'{role.code}'])
+
+                    # Determine which user is being referenced.
+                    # TODO: Question:
+                    #  Is Minizinc 0 indexed or 1 indexed?
+                    user_index = result[f'seat{seat_number}'][index]
+                    if user_index == len(self.calculator.get_users()):
+                        add_shift(session, None, asset_request_vehicle.id, seat_number, [f'{role.code}'])
+                    else:
+                        user = self.calculator.get_users()[result[f'seat{seat_number}'][index]]
+                        add_shift(session, user.id, asset_request_vehicle.id, seat_number, [f'{role.code}'])
+
+
+
 
     def save_empty_result(self, session):
         """
