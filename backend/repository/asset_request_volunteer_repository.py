@@ -69,7 +69,8 @@ def update_shift_by_position(session, vehicle_id, position, user_id, role):
             'endTime': record.asset_request_vehicle.to_date_time.strftime('%H:%M:%S %d %b %Y'),
             'role': ', '.join(record.roles)
         }
-        sender.email(record.user.email, 'roster', data)
+        sender.email(record.user.email, 'roster', data, record.asset_request_vehicle.from_date_time,
+                     record.asset_request_vehicle.to_date_time)
         return record.id
 
 
@@ -87,5 +88,6 @@ def add_shift(session, volunteer_id, vehicle_id, position, roles):
             'endTime': record.asset_request_vehicle.to_date_time.strftime('%H:%M:%S %d %b %Y'),
             'role': ', '.join(record.roles)
         }
-        sender.email(record.user.email, 'roster', data)
+        sender.email(record.user.email, 'roster', data, record.asset_request_vehicle.from_date_time,
+                     record.asset_request_vehicle.to_date_time)
         return record.id
