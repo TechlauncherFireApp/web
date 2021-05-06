@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta, datetime
 from typing import List
 from sqlalchemy import orm, func, alias
@@ -172,26 +173,27 @@ class Calculator:
         # Return the 2D array
         return compatibilities
 
-    def calculate_clashes(self) -> List[List[bool]]:
+    def calculate_clashes(self) -> List[List[int]]:
         """
         Generate a 2d array of vehicle requests that overlap. This is to ensure that a single user isn't assigned to
         multiple vehicles simultaneously. Its expected that each shift is incompatible with itself too.
         @return: A 2D array of clashes.
         """
         clashes = []
+        mapping = {}
         # Iterate through each shift in the request
-        for this_vehicle in self._asset_request_vehicles_:
-            this_vehicle_clashes = []
+        for this_index, this_vehicle  in enumerate(self._asset_request_vehicles_):
             this_shift_blocks = self.calculate_deltas(this_vehicle.from_date_time,
                                                       this_vehicle.to_date_time)
-            for other_vehicle in self._asset_request_vehicles_:
-                is_clash = False
+            for that_index, other_vehicle in enumerate(self._asset_request_vehicles_):
                 for this_shift_block in this_shift_blocks:
                     if other_vehicle.from_date_time <= this_shift_block <= other_vehicle.to_date_time \
                             and other_vehicle.id != this_vehicle.id:
-                        is_clash = True
-                this_vehicle_clashes.append(is_clash)
-            clashes.append(this_vehicle_clashes)
+                        keys = [this_vehicle.id.__str__(), other_vehicle.id.__str__()]
+                        keys.sort()
+                        mapping[', '.join(keys)] = "|" + ','.join([this_index.__str__(), that_index.__str__()]) + "|"
+        for key in mapping.keys():
+            clashes.append(mapping[key])
         return clashes
 
     def calculate_skill_requirement(self):

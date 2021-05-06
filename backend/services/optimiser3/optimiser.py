@@ -27,19 +27,15 @@ class Optimiser:
         @return:
         """
         model_str = """
-        int: C;
-        set of int: CLASH = 1..C;
+        int: C; set of int: CLASH = 1..C;
         
-        int: A;
-        set of int: ASSETSHIFT = 1..A;
+        int: A; set of int: ASSETSHIFT = 1..A;
         
-        int: S;
-        set of int: ROLE = 1..S;      
+        int: S; set of int: ROLE = 1..S;      
         
-        int: R;
-        set of int: VOLUNTEER = 1..R;
+        int: R; set of int: VOLUNTEER = 1..R;
         
-        array[ASSETSHIFT,ASSETSHIFT] of bool: clashing; % NxM array storing pairs of clashing shifts
+        array[CLASH,1..2] of ASSETSHIFT: clashing; % Nx2 array storing pairs of clashing shifts
         array[ASSETSHIFT, ROLE] of int: sreq; % NxM array storing asset shifts (rows) and roles(columns), [n,m] is how many of those roles are required. 
         array[ASSETSHIFT,VOLUNTEER] of bool: compatible; % NxM array storing if the volunteer is available for that asset shift. 
         array[VOLUNTEER, ROLE] of bool: mastery; %NxM array storing the volunteer can perform that action 
@@ -53,7 +49,7 @@ class Optimiser:
         % Constraints
         % ROLE constraint: ROLE requirements are satisfied
         constraint forall(a in ASSETSHIFT, s in ROLE where sreq[a,s]>0)(
-          sum(r in VOLUNTEER)(contrib[a,r,s]) <= sreq[a,s]
+          sum(r in VOLUNTEER)(contrib[a,r,s]) == sreq[a,s]
         );
         
         % Non-Multi-Tasking constraint: Maximum of one contribution to each activity
@@ -83,7 +79,9 @@ class Optimiser:
         
         %~~~~~~~~~~~~~~~~~~~
         % Objective
-        solve satisfy;
+        % solve maximize sum(s in Shifts)(sum(v in volunteers)(assignments[s,v]))
+        solve maximize sum(a in ASSETSHIFT)(sum(r in VOLUNTEER)(sum(s in ROLE)(contrib[a, r, s])));
+        % solve satisfy;
         """
         return model_str
 
@@ -127,5 +125,5 @@ class Optimiser:
 
 
 with session_scope() as session:
-    o = Optimiser(session, 135, True)
+    o = Optimiser(session, 234, True)
     o.solve()
