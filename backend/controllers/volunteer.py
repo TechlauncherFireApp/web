@@ -33,9 +33,9 @@ resource_fields = {
     'mobileNo': fields.String,
     'prefHours': fields.Integer,
     'expYears': fields.Integer,
-    'possibleRoles': fields.List(fields.String),
     'qualifications': fields.List(fields.String),
-    'availabilities': fields.Nested(availability_field)
+    'availabilities': fields.Nested(availability_field),
+    'possibleRoles': fields.List(fields.String),
 }
 
 
@@ -53,7 +53,7 @@ class Volunteer(Resource):
             for row in list_volunteers(session, args["volunteerID"]):
                 # Access protected _asdict() to return the keyed tuple as a dict to enable flask_restful to marshal
                 # it correctly. The alternative method is less tidy.
-                rtn.append(row._asdict())
+                rtn.append(row)
             return rtn[0]
 
 

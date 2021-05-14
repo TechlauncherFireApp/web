@@ -12,8 +12,6 @@ class AssetRequestVehicle(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     request_id = Column(Integer, ForeignKey('asset_request.id'), name='request_id')
     asset_type_id = Column(Integer, ForeignKey('asset_type.id'), name='asset_type_id')
-    # TODO: Remove this column
-    type = Column(String(256), name='type')
     from_date_time = Column(DateTime, name='from')
     to_date_time = Column(DateTime, name='to')
     update_date_time = Column(DateTime, name='last_update_datetime', default=datetime.now(), nullable=False)

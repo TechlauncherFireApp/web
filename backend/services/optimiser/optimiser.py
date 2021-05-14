@@ -158,7 +158,7 @@ class Optimiser:
                 for assign_count in range(asset_request_roles[role_id]['count']):
                     if assign_count < len(asset_request_roles[role_id]['assigned']):
                         ar = AssetRequestVolunteer(user_id=asset_request_roles[role_id]['assigned'][assign_count],
-                                                   vehicle_id=asset_request.id, role_id=role_id)
+                                                   vehicle_id=asset_request.id, role_id=role_id, status='pending')
                     else:
                         ar = AssetRequestVolunteer(user_id=None, vehicle_id=asset_request.id, role_id=role_id)
                     session.add(ar)
