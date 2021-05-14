@@ -1,326 +1,189 @@
 import './editModal.scss';
 
-import React from 'react';
+import axios from 'axios';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal, Table } from 'react-bootstrap';
 
-import {
-  contains,
-  isAvailable,
-  parseDateTime,
-  parseRolesAsString,
-  toSentenceCase,
-} from '../../common/functions';
+import { backendPath } from '../../config';
 
-export default class EditModal extends React.Component {
-  state = {
-    searchValue: '',
-    filteredVolunteerList: [],
-    searchResults: [],
-    filter: {
-      position: true,
-    },
-    volunteerList: [],
-    selectedVolunteer: undefined,
-  };
+function EditModal(props) {
+  const { position, asset, assigned, volunteers, onUpdate, onHide } = props;
+  const [loading, setLoading] = useState(false);
+  const [positionFilter, setPositionFilter] = useState(false);
+  const [selectedVolunteer, setSelectedVolunteer] = useState(undefined);
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
-  constructor(props) {
-    super(props);
-    const volunteerList = props.volunteerList;
-    this.state.volunteerList = volunteerList;
-    const l = this.filterVolunteerList(volunteerList, this.state.filter);
-    this.state.filteredVolunteerList = l;
-    this.state.searchResults = l;
+  function saveChange() {
+    setLoading(true);
+    axios
+      .patch(
+        backendPath + 'shift/request',
+        {},
+        {
+          params: {
+            shift_id: asset.shiftID,
+            position_id: position.positionId,
+            volunteer_id: selectedVolunteer,
+          },
+        }
+      )
+      .then(() => {
+        setLoading(false);
+        onHide();
+        onUpdate();
+      });
   }
 
-  insertSearch = (e) => {
-    // Get Value
-    if (!(typeof e === 'string')) {
-      e = e.target.value;
-      this.setState((state) => {
-        return { ...state, searchValue: e };
+  function removeVolunteer() {
+    setLoading(true);
+    axios
+      .delete(backendPath + 'shift/request', {
+        params: {
+          shift_id: asset.shiftID,
+          position_id: position.positionId,
+        },
+      })
+      .then(() => {
+        setLoading(false);
+        onHide();
+        onUpdate();
+      });
+  }
+
+  useEffect(() => {
+    let lcl = [...volunteers];
+    lcl = lcl.filter((v) => {
+      const name = `${v.firstName} ${v.lastName}`;
+      return name.indexOf(searchText) > -1;
+    });
+    if (positionFilter) {
+      lcl = lcl.filter((v) => {
+        return v.possibleRoles.includes(position.role);
       });
     }
 
-    // Validate Value
-    if (!contains(e)) {
-      this.setState({ searchResults: this.state.filteredVolunteerList });
-      return;
-    }
-    e = e.toLowerCase();
+    setSearchResults(lcl);
+  }, [position.role, volunteers, searchText, positionFilter]);
 
-    // Search Value
-    const a = [];
-    for (const x of this.state.filteredVolunteerList) {
-      const name = x.firstName + ' ' + x.lastName;
-      if (name.toLowerCase().indexOf(e) >= 0) a.push(x);
-    }
-
-    // Search Found
-    if (a.length > 0) this.setState({ searchResults: a });
-    else this.setState({ searchResults: '' });
-  };
-
-  saveChange = () => {
-    if (!(typeof this.state.selectedVolunteer === 'undefined')) {
-      const map = this.props.assignedVolunteers;
-      const vol = this.state.selectedVolunteer;
-      if (
-        this.props.position.assigned &&
-        vol.ID === this.props.position.volunteer.ID
-      ) {
-        alert("You can't change a volunteer to themselves");
-      } else if (map.has(vol.ID)) {
-        alert(
-          vol.name +
-            ' is already assigned to asset ' +
-            map.get(vol.ID).shiftID +
-            ' position ' +
-            map.get(vol.ID).positionID
-        );
-      } else {
-        this.props.onSave(this.state.selectedVolunteer);
-        this.onHide();
-      }
-    } else {
-      this.onHide();
-    }
-  };
-
-  removeVolunteer = () => {
-    this.props.removeVolunteer();
-    this.onHide();
-  };
-
-  togglePositionFilter = () => {
-    const filter = this.state.filter;
-    filter.position = !filter.position;
-    const l = this.filterVolunteerList(this.state.volunteerList, filter);
-    const searchValue = this.state.searchValue;
-    if (searchValue === '') {
-      this.setState({ filter, filteredVolunteerList: l, searchResults: l });
-    } else {
-      this.setState({ filter, filteredVolunteerList: l }, () => {
-        this.insertSearch(searchValue);
-      });
-    }
-  };
-
-  filterVolunteerList = (allVolunteers, filter) => {
-    // exclude the volunteer themselves from this list (position.assignedVolunteer.id if position.assignedVolunteer != null)
-    // rework this to do both filters in one pass
-
-    const targetRoles = this.props.position.roles;
-    let list = [];
-    if (filter.position) {
-      //let v;
-      for (const v of allVolunteers) {
-        if (targetRoles.length === 1 && targetRoles[0] === 'basic') {
-          v.possibleRoles.includes('basic') &&
-            !v.possibleRoles.includes('advanced') &&
-            list.push(v); //if the volunteer in question is basic but not advanced
-        } else {
-          targetRoles.every((r) => v.possibleRoles.includes(r)) && list.push(v); //if the volunteer in question can fulfil all vehicle requirements add this volunteer to the list
-        }
-      }
-    } else {
-      list = [...allVolunteers];
-    }
-
-    // work out who is available
-    const yes = [];
-    const no = [];
-    list.forEach((l) => {
-      const l_copy = { ...l };
-      if (
-        isAvailable(l.availabilities, {
-          startTime: this.props.position.startTime,
-          endTime: this.props.position.endTime,
-        })
-      ) {
-        l_copy.available = true;
-        yes.push(l_copy);
-      } else {
-        l_copy.available = false;
-        no.push(l_copy);
-      }
-    });
-    list = [...yes, ...no];
-    return list.filter(
-      (l) =>
-        !this.props.position.assigned ||
-        l.ID !== this.props.position.volunteer.ID
-    );
-  };
-
-  onHide = () => {
-    //need to reset if you've selected a volunteer.
-    const l = this.filterVolunteerList(this.state.volunteerList, {
-      position: true,
-    });
-    this.setState({
-      filter: { position: true },
-      searchValue: '',
-      searchResults: l,
-      filteredVolunteerList: l,
-      selectedVolunteer: undefined,
-    });
-    this.props.onHide();
-  };
-
-  generateModalHeading = () => {
-    // UNTESTED
-    const position = this.props.position;
-    let s = '';
-    s += toSentenceCase(position.assetClass) + ' - ';
-    s += parseRolesAsString(position.roles);
-    return s;
-  };
-
-  render() {
-    const { position } = this.props;
-
-    return (
-      <Modal
-        {...this.props} //TODO unsure what this does
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        backdrop="static">
-        <Modal.Header closeButton closeLabel="cancel" onHide={this.onHide}>
-          <Modal.Title id="contained-modal-title-vcenter">
-            {this.generateModalHeading()}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>{parseDateTime(position.startTime, position.endTime)}</p>
-          {!this.props.position.assigned ? (
-            <p>
-              <i>This position is currently unassigned</i>
-            </p>
-          ) : (
-            <p>
-              Assigned to:{' '}
-              <b>
-                {position.volunteer.firstName} {position.volunteer.lastName}
-              </b>
-            </p>
-          )}
-
-          <form>
-            <input
-              id="searchBar"
-              type="text"
-              placeholder="Search Volunteer via Name"
-              value={this.state.searchValue}
-              onChange={this.insertSearch}
-            />
-            &nbsp;
-            <input
-              className="positionFilter"
-              type="checkbox"
-              id="positionFilter"
-              defaultChecked
-              onClick={this.togglePositionFilter}
-            />{' '}
-            Only show &apos;{parseRolesAsString(position.roles)}&apos;s
-            <hr />
-            <div className="con-vols">
-              {typeof this.state.searchResults === 'object' &&
-                this.state.searchResults.length > 0 && (
-                  <Table striped bordered hover size="sm">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Qualifications</th>
-                        <th>Available For This Shift</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.searchResults.map((t) => (
-                        <tr
-                          key={t.ID}
-                          className="view"
-                          onClick={() => {
-                            this.setState({ selectedVolunteer: t });
-                          }}>
-                          <td>
-                            {this.props.assignedVolunteers.has(t.ID) ? (
-                              <div title="Already assigned">
-                                {t.firstName} {t.lastName}{' '}
-                                <img
-                                  src={require('../../images/assigned.png')}
-                                  alt=""
-                                />
-                              </div>
-                            ) : (
-                              <div>
-                                {t.firstName} {t.lastName}
-                              </div>
-                            )}
-                          </td>
-                          <td>
-                            {t.qualifications.map((q) => (
-                              <div key={q}>- {q}</div>
-                            ))}
-                          </td>
-                          <td>{t.available ? 'Available' : 'Unavailable'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                )}
-              {this.state.searchResults === '' && <p>Nothing found</p>}
-            </div>
-          </form>
-          <div className="con-vol">
-            {position.assigned ? (
-              <p>
-                {position.volunteer.firstName} {position.volunteer.lastName}{' '}
-                will be replaced with:
-              </p>
-            ) : (
-              <p>Position will be assigned to:</p>
-            )}
-            {contains(this.state.selectedVolunteer) ? (
+  return (
+    <Modal
+      show={props.show}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      backdrop="static">
+      <Modal.Header closeButton closeLabel="cancel" onHide={props.onHide}>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {asset.assetClass} - {position.role}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>
+          {moment(asset.startTime).format('LLL')} -{' '}
+          {moment(asset.endTime).format('LLL')}
+        </p>
+        {assigned === true ? (
+          <p>
+            Assigned to:{' '}
+            <b>
+              {position.volunteerGivenName} {position.volunteerSurname}
+            </b>
+          </p>
+        ) : (
+          <p>
+            <i>This position is currently unassigned</i>
+          </p>
+        )}
+        <form>
+          <input
+            id="searchBar"
+            type="text"
+            placeholder="Search Volunteer via Name"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+          />
+          &nbsp;
+          <input
+            className="positionFilter"
+            type="checkbox"
+            id="positionFilter"
+            value={positionFilter}
+            onClick={(e) => {
+              setPositionFilter(e.target.checked);
+            }}
+          />{' '}
+          Only show &apos;{position.role}&apos;s
+          <hr />
+          <div className="con-vols">
+            {searchResults.length > 0 && (
               <Table striped bordered hover size="sm">
-                <tbody>
+                <thead>
                   <tr>
-                    <td>
-                      {this.state.selectedVolunteer.firstName}{' '}
-                      {this.state.selectedVolunteer.lastName}
-                    </td>
-                    <td>
-                      {this.state.selectedVolunteer.qualifications.map((q) => (
-                        <div key={q}>- {q}</div>
-                      ))}
-                    </td>
-                    <td>
-                      {this.state.selectedVolunteer.available
-                        ? 'Available'
-                        : 'Unavailable'}
-                    </td>
+                    <th width={'33%'}>Name</th>
+                    <th width={'33%'}>Roles</th>
+                    <th width={'33%'}>Status</th>
                   </tr>
+                </thead>
+                <tbody>
+                  {searchResults.map((t) => (
+                    <tr
+                      key={t.ID}
+                      className="view"
+                      onClick={() => {
+                        setSelectedVolunteer(t.ID);
+                      }}>
+                      <td>
+                        {t.firstName} {t.lastName}
+                      </td>
+                      <td>
+                        {t.possibleRoles.map((q) => (
+                          <div key={q}>- {q}</div>
+                        ))}
+                      </td>
+                      <td>
+                        {`${position.volunteerId}` === t.ID && <b>Assigned</b>}
+                        {`${selectedVolunteer}` === t.ID &&
+                          `${position.volunteerId}` !== t.ID && (
+                            <i>Assign Volunteer</i>
+                          )}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
-            ) : (
-              <i>Select a volunteer</i>
             )}
+            {searchResults.length === 0 && <p>Nothing found</p>}
           </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button className="danger" onClick={this.saveChange}>
-            {position.assigned ? 'Replace' : 'Assign Volunteer'}
+        </form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          className="btn btn-primary"
+          onClick={saveChange}
+          disabled={loading}>
+          {assigned === true ? 'Replace' : 'Assign Volunteer'}
+        </Button>
+        {assigned === true && (
+          <Button
+            className="btn btn-danger"
+            onClick={removeVolunteer}
+            disabled={loading}>
+            Remove
           </Button>
-          {position.assigned && (
-            <Button className="danger" onClick={this.removeVolunteer}>
-              Remove
-            </Button>
-          )}
-          <Button className="danger" onClick={this.onHide}>
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
+        )}
+        <Button
+          className="btn btn-danger"
+          onClick={props.onHide}
+          disabled={loading}>
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 }
+
+export default EditModal;

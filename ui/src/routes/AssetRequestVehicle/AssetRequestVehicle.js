@@ -192,36 +192,20 @@ function AssetRequestVehicle() {
                   <span>Start</span>
                   <br />
                   <div className="cont-3">
-                    {x.startDate.toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
+                    {moment(x.startDate).utc(false).format('DD MMM YYYY')}
                   </div>
                   <div className="cont-3">
-                    {x.startDate.toLocaleTimeString('en-US', {
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true,
-                    })}
+                    {moment(x.startDate).utc(false).format('hh:mm A')}
                   </div>
                 </div>
                 <div className="cont-2">
                   <span>End</span>
                   <br />
                   <div className="cont-3">
-                    {x.endDate.toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
+                    {moment(x.endDate).utc(false).format('DD MMM YYYY')}
                   </div>
                   <div className="cont-3">
-                    {x.endDate.toLocaleTimeString('en-US', {
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true,
-                    })}
+                    {moment(x.endDate).utc(false).format('hh:mm A')}
                   </div>
                 </div>
               </div>

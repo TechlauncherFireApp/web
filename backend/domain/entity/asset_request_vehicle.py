@@ -11,12 +11,13 @@ class AssetRequestVehicle(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     request_id = Column(Integer, ForeignKey('asset_request.id'), name='request_id')
-    type = Column(String(256), name='type')
+    asset_type_id = Column(Integer, ForeignKey('asset_type.id'), name='asset_type_id')
     from_date_time = Column(DateTime, name='from')
     to_date_time = Column(DateTime, name='to')
     update_date_time = Column(DateTime, name='last_update_datetime', default=datetime.now(), nullable=False)
     insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
 
     asset_request = relationship("AssetRequest")
+    asset_type = relationship("AssetType")
 
 

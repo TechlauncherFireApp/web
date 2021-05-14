@@ -12,11 +12,11 @@ class AssetRequestVolunteer(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('user.id'), name='user_id')
     vehicle_id = Column(Integer, ForeignKey('asset_request_vehicle.id'), name='vehicle_id')
-    position = Column(Integer, name='position')
-    roles = Column(JSON, name='roles')
+    role_id = Column(Integer, ForeignKey('role.id'), name='role_id')
     status = Column(String(256), name='status')
     update_date_time = Column(DateTime, name='last_update_datetime', default=datetime.now(), nullable=False)
     insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
 
     asset_request_vehicle = relationship("AssetRequestVehicle")
     user = relationship("User")
+    role = relationship("Role")

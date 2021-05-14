@@ -1,6 +1,6 @@
 from sqlalchemy import func
 
-from domain import AssetRequestVehicle
+from domain import AssetRequestVehicle, AssetType
 
 
 def count_vehicles(session, request_id):
@@ -29,8 +29,8 @@ def get_vehicle(session, vehicle_id):
 
 
 def insert_vehicle(session, request_id, type, date_from, date_to):
-    print(date_from, date_to)
-    record = AssetRequestVehicle(request_id=request_id, type=type, from_date_time=date_from, to_date_time=date_to)
+    asset_type = session.query(AssetType).filter(AssetType.code == type).first()
+    record = AssetRequestVehicle(request_id=request_id, asset_type_id=asset_type.id, from_date_time=date_from, to_date_time=date_to)
     session.add(record)
     session.flush()
     return record.id

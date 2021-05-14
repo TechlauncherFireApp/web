@@ -38,7 +38,7 @@ result_list_field = {
     'vehicleType': fields.String,
     'vehicleFrom': fields.DateTime(dt_format='iso8601'),
     'vehicleTo': fields.DateTime(dt_format='iso8601'),
-    'volunteerRoles': fields.List(fields.String),
+    'volunteerRoles': fields.String,
     'volunteerStatus': fields.String,
 }
 
