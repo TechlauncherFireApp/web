@@ -27,7 +27,6 @@ function AssetRequestVehicle() {
                 },
             })
             .then((resp) => {
-                console.log(resp.data)
                 setAssetTypes(resp.data);
             });
         axios
@@ -39,13 +38,14 @@ function AssetRequestVehicle() {
             })
             .then((resp) => {
                 let results = resp.data.results;
+                console.log(results)
                 let payloads = [];
                 for (let asset of results) {
                     const payload = {
                         id: asset["ID"],
                         startDate: new Date(asset["From_Time"]),
                         endDate: new Date(asset["To_Time"]),
-                        assetType: asset["Type"]
+                        assetType: asset["Type"],
                     }
                     payloads.push(payload);
                 }
