@@ -30,7 +30,7 @@ const modifierStyles = {
   previous: {
     color: '#000000',
     backgroundColor: '#ffb3b3',
-  }
+  },
 };
 
 export default class Availability extends React.Component {
@@ -256,58 +256,63 @@ export default class Availability extends React.Component {
           if (current === next) {
             continue;
           }
-          if ((startAvailability === current[1]) && (endAvailability === next[0])) {
+          if (startAvailability === current[1] && endAvailability === next[0]) {
             s[k][j][1] = s[k][m][1];
             s[k] = s[k].splice(j, 1);
-            this.setState({schedule: s}, () => {
+            this.setState({ schedule: s }, () => {
               this.displaySchedule();
-            })
+            });
           }
-          if ((startAvailability === next[1]) && (endAvailability === current[0])) {
+          if (startAvailability === next[1] && endAvailability === current[0]) {
             s[k][j][0] = s[k][m][0];
             s[k] = s[k].splice(j, 1);
-            this.setState({schedule: s}, () => {
+            this.setState({ schedule: s }, () => {
               this.displaySchedule();
-            })
+            });
           }
-          if (((startAvailability >= next[0]) && (startAvailability < next[1]))
-              || ((endAvailability > next[0]) && (endAvailability <= next[1]))
-              || ((startAvailability <= next[0]) && (endAvailability >= next[1]))
-              || ((startAvailability === current[1]) && (endAvailability >= next[0]))
-              || ((startAvailability === next[1]) && (endAvailability >= current[0]))
-              || ((endAvailability === current[0]) && (startAvailability <= next[1]))
-              || ((endAvailability === next[0]) && (startAvailability <= current[1]))
-              || ((endAvailability === current[1]) && (startAvailability >= next[0]))
-              || ((endAvailability === next[1]) && (startAvailability >= current[0]))
-              || ((startAvailability === current[0]) && (endAvailability <= next[1]))
-              || ((startAvailability === next[0]) && (endAvailability <= current[1]))) {
+          if (
+            (startAvailability >= next[0] && startAvailability < next[1]) ||
+            (endAvailability > next[0] && endAvailability <= next[1]) ||
+            (startAvailability <= next[0] && endAvailability >= next[1]) ||
+            (startAvailability === current[1] && endAvailability >= next[0]) ||
+            (startAvailability === next[1] && endAvailability >= current[0]) ||
+            (endAvailability === current[0] && startAvailability <= next[1]) ||
+            (endAvailability === next[0] && startAvailability <= current[1]) ||
+            (endAvailability === current[1] && startAvailability >= next[0]) ||
+            (endAvailability === next[1] && startAvailability >= current[0]) ||
+            (startAvailability === current[0] && endAvailability <= next[1]) ||
+            (startAvailability === next[0] && endAvailability <= current[1])
+          ) {
             return;
           }
         }
-        if (((startAvailability >= current[0]) && (startAvailability < current[1]))
-            || ((endAvailability > current[0]) && (endAvailability <= current[1]))
-            || ((startAvailability <= current[0]) && (endAvailability >= current[1]))) {
+        if (
+          (startAvailability >= current[0] && startAvailability < current[1]) ||
+          (endAvailability > current[0] && endAvailability <= current[1]) ||
+          (startAvailability <= current[0] && endAvailability >= current[1])
+        ) {
           overlaps = true;
           break;
         }
         if (startAvailability === current[1]) {
           s[k][j][1] = endAvailability;
-          this.setState({schedule:s}, () => {
+          this.setState({ schedule: s }, () => {
             this.displaySchedule();
-          })
+          });
           return;
-        } if (endAvailability === current[0]) {
+        }
+        if (endAvailability === current[0]) {
           s[k][j][0] = startAvailability;
-          this.setState({schedule:s}, () => {
+          this.setState({ schedule: s }, () => {
             this.displaySchedule();
-          })
+          });
           return;
         }
       }
       if (!overlaps) {
         const i = s[k].length;
         s[k][i] = availability;
-        this.setState({schedule: s}, () => {
+        this.setState({ schedule: s }, () => {
           this.displaySchedule();
         });
       }
@@ -531,21 +536,21 @@ export default class Availability extends React.Component {
           </div>
           <div className="con">
             <button
-                className="type-3"
-                onClick={() => {
-                  this.addAvailability();
-                  this.patchPrefHours();
-                  this.patchSchedule();
-                }}>
+              className="type-3"
+              onClick={() => {
+                this.addAvailability();
+                this.patchPrefHours();
+                this.patchSchedule();
+              }}>
               Add Availability
             </button>
             <button
-                className="type-3"
-                onClick={() => {
-                  this.deleteAvailability();
-                  this.patchPrefHours();
-                  this.patchSchedule();
-                }}>
+              className="type-3"
+              onClick={() => {
+                this.deleteAvailability();
+                this.patchPrefHours();
+                this.patchSchedule();
+              }}>
               Delete Availabilities For This Day
             </button>
             <div className="con-2">

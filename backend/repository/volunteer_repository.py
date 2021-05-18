@@ -1,6 +1,6 @@
 from operator import or_
 
-from domain import User
+from domain import User, Qualification, UserRole, Role
 
 
 def get_volunteer(session, volunteer_id):
@@ -10,20 +10,31 @@ def get_volunteer(session, volunteer_id):
 
 
 def list_volunteers(session, volunteer_id=None):
-    return session.query(User.id.label("ID"),
+    users = session.query(User.id.label("ID"),
                          User.first_name.label('firstName'),
                          User.last_name.label('lastName'),
                          User.email.label('email'),
                          User.mobile_number.label('mobileNo'),
                          User.preferred_hours.label('prefHours'),
                          User.experience_years.label('expYears'),
-                         User.possibleRoles.label('possibleRoles'),
                          User.qualifications.label('qualifications'),
                          User.availabilities.label('availabilities'))\
         .filter(or_(User.id == volunteer_id, volunteer_id == None))\
         .all()
 
+    rtn = []
+    # Set their roles
+    for user in users:
+        user = user._asdict()
+        roles = session.query(Role.name) \
+            .join(UserRole, Role.id == UserRole.role_id)\
+            .filter(UserRole.user_id == user['ID'])\
+            .all()
+        user['possibleRoles'] = [x[0] for x in roles]
+        rtn.append(user)
 
+    # TODO: Do the same thing here for qualifications
+    return rtn
 
 def set_availabilities(session, volunteer_id, availability_json):
     volunteer = session.query(User) \

@@ -2,11 +2,7 @@ import './shift.scss';
 
 import React from 'react';
 
-import {
-  parseDateTime,
-  parseRolesAsString,
-  toSentenceCase,
-} from '../../common/functions';
+import { parseDateTime, toSentenceCase } from '../../common/functions';
 
 export default class Shift extends React.Component {
   state = {
@@ -30,7 +26,7 @@ export default class Shift extends React.Component {
     return (
       <tr>
         <td>{parseDateTime(shift.vehicleFrom, shift.vehicleTo)}</td>
-        <td>{parseRolesAsString(shift.volunteerRoles)}</td>
+        <td>{shift.volunteerRoles}</td>
         <td>{toSentenceCase(shift.vehicleType)}</td>
         <td>{shift.requestTitle}</td>
         <td>

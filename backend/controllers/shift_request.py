@@ -1,47 +1,9 @@
-import json
-
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
-from repository.asset_request_vehicle_repository import insert_vehicle, get_vehicle
-from repository.asset_request_volunteer_repository import add_shift, update_shift_by_position, get_shifts_by_request
 from .utility import *
 from domain import session_scope
 from repository.asset_request_volunteer_repository import *
-
-'''
-Define Data Input
-
-GET
-{
-    "requestID": String
-}
-
-POST
-{
-    "shifts": [{
-        "shiftID": String,
-        "volunteers": [{
-            "ID": String,
-            "positionID": Integer,
-            "role": [String], [basic | advanced | crewLeader | driver]
-        }]
-    }]
-}
-
-PATCH
-{
-    "shifts": [{
-        "shiftID": String,
-        "volunteers": [{
-            "ID": String,
-            "positionID": Integer,
-            "role": [String], [basic | advanced | crewLeader | driver]
-        }]
-    }]
-}
-
-'''
 
 
 # Validate a volunteer's position and role
@@ -51,9 +13,7 @@ def input_volunteer_position(value):
     if type(value) is dict:
         # Validate volunteer values
         value = input_key_type(value, 'ID', type_string, [])
-        value = input_key_type(value, 'positionID', type_natural, [])
-        value = input_key_type(value, 'role', type_list_of,
-                               [type_enum, [["basic", "advanced", "crewLeader", "driver"]]])
+        value = input_key_type(value, 'role', type_string, [])
     return value
 
 
@@ -70,43 +30,16 @@ def input_shift(value, name):
 
 
 parser = reqparse.RequestParser()
-# Define search criteria
 parser.add_argument('requestID', action='store', type=str)
 parser.add_argument('shifts', action='append', type=input_shift)
 
-'''
-Define data output
-
-GET
-{
-    "results" : [{
-        "shiftID": String,
-        "assetClass": String, [lightUnit | mediumTanker | heavyTanker]
-        "startTime": DateTimeString iso8601,
-        "endTime": DateTimeString iso8601,
-        "volunteers": [{
-            "ID": String,
-            "positionID": Integer,
-            "roles": [String], [basic | advanced | crewLeader | driver]
-        }]
-    }]
-}
-
-POST
-{
-    "success" : Boolean
-}
-
-PATCH
-{
-    "success" : Boolean
-}
-'''
-
 shift_volunteers_list_field = {
-    "ID": fields.String,
-    "positionID": fields.Integer,
-    "role": fields.List(fields.String),
+    "volunteerId": fields.Integer,
+    "volunteerGivenName": fields.String,
+    "volunteerSurname": fields.String,
+    "mobile_number": fields.String,
+    "positionId": fields.Integer,
+    "role": fields.String,
     "status": fields.String,
 }
 
@@ -126,6 +59,11 @@ post_patch_resource_fields = {
     "success": fields.Boolean
 }
 
+modify_parser = reqparse.RequestParser()
+modify_parser.add_argument('shift_id', action='store', type=int)
+modify_parser.add_argument('position_id', action='store', type=int)
+modify_parser.add_argument('volunteer_id', action='store', type=int)
+
 
 # Handle the ShiftRequest endpoint
 class ShiftRequest(Resource):
@@ -143,42 +81,26 @@ class ShiftRequest(Resource):
                 # For each vehicle, get the volunteers in that vehicle
                 for volunteer in get_volunteers(session, d['shiftID']):
                     volunteer_dict = volunteer._asdict()
-                    if volunteer_dict['ID'] is None:
-                        volunteer_dict['ID'] = '-1'
+                    if volunteer_dict['volunteerId'] is None:
+                        volunteer_dict['volunteerId'] = -1
                     volunteers.append(volunteer_dict)
                 d['volunteers'] = volunteers
                 rtn.append(d)
         return {"results": rtn}
 
-
     @marshal_with(post_patch_resource_fields)
-    def post(self):
-        args = parser.parse_args()
-        if args["shifts"] is None:
-            return {"success": False}
-
+    def delete(self):
+        args = modify_parser.parse_args()
         with session_scope() as session:
-            for shift in args["shifts"]:
-                vehicle_id = get_vehicle(session, shift['shiftID'])
-
-                for volunteer in shift['volunteers']:
-                    if volunteer['ID'] == '-1':
-                        volunteer['ID'] = None
-                    add_shift(session, volunteer['ID'], vehicle_id, volunteer['positionID'], volunteer['role'])
+            remove_assignment(session, args['shift_id'], args['position_id'])
         return {"success": True}
 
     @marshal_with(post_patch_resource_fields)
     def patch(self):
-        args = parser.parse_args()
-        if args["shifts"] is None:
-            return {"success": False}
-
+        args = modify_parser.parse_args()
+        print(args)
         with session_scope() as session:
-            for shift in args["shifts"]:
-                for volunteer in shift['volunteers']:
-                    if volunteer['ID'] == '-1' or volunteer['ID'] == -1:
-                        volunteer['ID'] = None
-                    update_shift_by_position(session, shift['shiftID'], volunteer['positionID'], volunteer['ID'], volunteer['role'])
+            update_shift_by_position(session, args['shift_id'], args['position_id'], args['volunteer_id'])
         return {"success": True}
 
 

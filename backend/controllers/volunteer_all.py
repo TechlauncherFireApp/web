@@ -44,9 +44,9 @@ volunteer_list_field = {
     'mobileNo': fields.String,
     'prefHours': fields.Integer,
     'expYears': fields.Integer,
-    'possibleRoles': fields.List(fields.String),
     'qualifications': fields.List(fields.String),
-    'availabilities': fields.Nested(availability_field)
+    'availabilities': fields.Nested(availability_field),
+    'possibleRoles': fields.List(fields.String),
 }
 
 resource_fields = {
@@ -61,12 +61,7 @@ class VolunteerAll(Resource):
     @marshal_with(resource_fields)
     def get(self):
         with session_scope() as session:
-            rtn = []
-            for row in list_volunteers(session):
-                # Access protected _asdict() to return the keyed tuple as a dict to enable flask_restful to marshal
-                # it correctly. The alternative method is less tidy.
-                rtn.append(row._asdict())
-            return {"success": True, "results": rtn}
+            return {"success": True, "results": list_volunteers(session)}
 
 
 volunteer_all_bp = Blueprint('volunteer_all', __name__)

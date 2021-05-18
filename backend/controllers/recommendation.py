@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
-from services.optimiser2 import Optimiser
+from services.optimiser import Optimiser
 from domain import session_scope
 
 parser = reqparse.RequestParser()
@@ -22,22 +22,9 @@ class Recommendation(Resource):
             return
 
         with session_scope() as session:
-            optimiser = Optimiser(session, args['requestId'], True)
-            # Attempt a full model
-            model = optimiser.generate_model_string(True)
-            result = optimiser.solve(model)
-            print(result, result is None)
-            if result.solution:
-                optimiser.save_result(session, result)
-            else:
-                # Attempt a partial model
-                model = optimiser.generate_model_string(False)
-                result = optimiser.solve(model)
-                if result.solution:
-                    optimiser.save_result(session, result)
-                else:
-                    optimiser.save_empty_result(session)
-
+            o = Optimiser(session, args['requestId'], True)
+            result = o.solve()
+            o.save_result(session, result)
             return {"results": result is not None}
 
 
