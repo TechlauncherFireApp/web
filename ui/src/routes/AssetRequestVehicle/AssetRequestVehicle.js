@@ -27,6 +27,7 @@ function AssetRequestVehicle() {
                 },
             })
             .then((resp) => {
+                console.log(resp.data)
                 setAssetTypes(resp.data);
             });
         axios

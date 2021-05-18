@@ -12,7 +12,7 @@ def count_vehicles(session, request_id):
 
 def get_vehicles(session, request_id):
     return session.query(AssetRequestVehicle.id.label("ID"),
-                         AssetRequestVehicle.type.label("Type"),
+                         AssetRequestVehicle.asset_type_id.label("Type"),
                          AssetRequestVehicle.from_date_time.label("From_Time"),
                          AssetRequestVehicle.to_date_time.label("To_Time")) \
         .filter(AssetRequestVehicle.request_id == request_id) \
