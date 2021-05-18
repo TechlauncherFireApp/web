@@ -1,5 +1,3 @@
-import datetime
-
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
@@ -26,25 +24,35 @@ parser.add_argument('startDate', action='store', type=str)
 parser.add_argument('endDate', action='store', type=str)
 parser.add_argument('assetType', action='store', type=str)
 
+vehicle_list_field = {
+    "ID": fields.Integer,
+    "Type": fields.String,
+    "From_Time": fields.DateTime,
+    "To_Time": fields.DateTime
+}
+
 resource_fields = {
     "success": fields.Boolean,
-    'id': fields.Integer
+    "id": fields.Integer,
+    "results": fields.List(fields.Nested(vehicle_list_field))
 }
 
 delete_parser = reqparse.RequestParser()
 delete_parser.add_argument('requestId', action='store', type=str)
-delete_parser.add_argument('vehicleID', action='store', type=str)
+delete_parser.add_argument('vehicleId', action='store', type=str)
 
 # Make a New Request inside the DataBase
 class VehicleRequest(Resource):
     @marshal_with(resource_fields)
     def get(self):
         args = parser.parse_args()
-
-        if args["requestId"] is None: return {"success": False}
-
+        if args["requestId"] is None:
+            return {"success": False}
         with session_scope() as session:
-            return {"success": (count_vehicles(session, args["requestId"]) > 0)}
+            rtn = []
+            for row in get_vehicles(session, args["requestId"]):
+                rtn.append(row)
+            return {"success": (count_vehicles(session, args["requestId"]) > 0), "results": rtn}
 
     @marshal_with(resource_fields)
     def post(self):
@@ -57,7 +65,7 @@ class VehicleRequest(Resource):
     def delete(self):
         args = delete_parser.parse_args()
         with session_scope() as session:
-            result = delete_vehicle(session, args["requestId"], args["vehicleID"])
+            result = delete_vehicle(session, args["requestId"], args["vehicleId"])
             return {"success": result}
 
 

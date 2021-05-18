@@ -45,9 +45,8 @@ availability {
       text-align: center;
     }
 
-
     .con-2 {
-      margin-top: 45px;
+      margin-top: 35px;
       align-items: center;
       align-content: center;
       text-align: center;
@@ -58,5 +57,37 @@ availability {
       font-size: 25px;
       padding-right: 10px;
     }
+  }
+
+  .red-cross {
+    position: relative;
+    cursor: default;
+  }
+
+  .red-cross::after {
+    position: absolute;
+    width: 350px;
+    left: calc(50% - 175px);
+    top: 135%;
+    text-align: center;
+    box-sizing: border-box;
+    content: attr(data-tooltip);
+    color: #dddddd;
+    background: dimgray;
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 0.75em;
+    font-weight: bold;
+
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s, transform 0.2s;
+  }
+
+  .red-cross:hover::after {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
   }
 }

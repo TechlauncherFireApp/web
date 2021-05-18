@@ -29,7 +29,7 @@ function BrigadeCaptainHome() {
     axios
       .post(
         backendPath + 'new_request',
-        { title: newRequestTitle },
+        { title: newRequestTitle, status: "un-submitted", },
         {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -41,8 +41,12 @@ function BrigadeCaptainHome() {
       });
   }
 
-  function view(id) {
-    history.push('/assetRequest/volunteers/' + id);
+  function view(id, status) {
+      if (status === "un-submitted") {
+          history.push('/assetRequest/vehicles/' + id);
+      } else {
+          history.push('/assetRequest/volunteers/' + id);
+      }
   }
 
   function deleteRecord(id) {
@@ -52,7 +56,7 @@ function BrigadeCaptainHome() {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
         params: {
-          requestID: id,
+          requestId: id,
         },
       })
       .then(() => {
@@ -107,7 +111,7 @@ function BrigadeCaptainHome() {
                   <button
                     className={'btn btn-secondary ml2'}
                     onClick={() => {
-                      view(x.id);
+                      view(x.id, x.status);
                     }}>
                     View
                   </button>

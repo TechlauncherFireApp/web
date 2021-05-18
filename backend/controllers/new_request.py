@@ -10,6 +10,7 @@ Define Data Input
 POST
 {
     "title": String
+    "status": String
 }
 
 DELETE
@@ -20,6 +21,7 @@ DELETE
 
 parser = reqparse.RequestParser()
 parser.add_argument('title', action='store', type=str)
+parser.add_argument('status', action='store', type=str)
 
 delete_parser = reqparse.RequestParser()
 delete_parser.add_argument('requestID', action='store', type=str)
@@ -51,7 +53,7 @@ class NewRequest(Resource):
         if args["title"] is None:
             return
         with session_scope() as session:
-            new_id = new_request(session, args["title"])
+            new_id = new_request(session, args["title"], args["status"])
             return {"id": new_id}
 
     # Delete a Request inside the DataBase

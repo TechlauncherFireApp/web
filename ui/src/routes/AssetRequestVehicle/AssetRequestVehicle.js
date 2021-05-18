@@ -19,17 +19,39 @@ function AssetRequestVehicle() {
   const { id } = useParams();
   const history = useHistory();
 
-  useEffect(() => {
-    axios
-      .get(backendPath + 'reference/asset_types', {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-      })
-      .then((resp) => {
-        setAssetTypes(resp.data);
-      });
-  }, []);
+    useEffect(() => {
+        axios
+            .get(backendPath + 'reference/asset_types', {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((resp) => {
+                setAssetTypes(resp.data);
+            });
+        axios
+            .get(backendPath + 'vehicle/request', {
+                params: {requestId: id},
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((resp) => {
+                let results = resp.data.results;
+                console.log(results)
+                let payloads = [];
+                for (let asset of results) {
+                    const payload = {
+                        id: asset["ID"],
+                        startDate: new Date(asset["From_Time"]),
+                        endDate: new Date(asset["To_Time"]),
+                        assetType: asset["Type"],
+                    }
+                    payloads.push(payload);
+                }
+                setVehicles([...vehicles, ...payloads]);
+            })
+    }, []);
 
   function insertAsset() {
     // Validate Data
@@ -65,54 +87,76 @@ function AssetRequestVehicle() {
       });
   }
 
-  function submit() {
-    if (vehicles.length === 0) {
-      return;
+    function submit() {
+        if (vehicles.length === 0) {
+            return;
+        }
+        const payload = {
+            requestId: id,
+            status: "waiting",
+        };
+        axios
+            .patch(backendPath + 'existing_requests', payload, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((resp) => {
+                if (resp.data["success"]) {
+                    axios
+                        .get(backendPath + 'recommendation', {
+                            params: {requestId: id},
+                            headers: {
+                                Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                            },
+                        })
+                        .then(() => {
+                            history.push('/assetRequest/volunteers/' + id);
+                        });
+                }
+            });
     }
-    axios
-      .get(backendPath + 'recommendation', {
-        params: { requestId: id },
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-      })
-      .then(() => {
-        history.push('/assetRequest/volunteers/' + id);
-      });
-  }
 
-  function removeAsset(vehicleId) {
-    const params = {
-      requestId: id,
-      vehicleId: vehicleId,
-    };
-    axios
-      .delete(backendPath + 'vehicle/request', {
-        params: params,
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-      })
-      .then(() => {
-        let lcl = vehicles;
-        lcl = lcl.filter((x) => x.id !== vehicleId);
-        setVehicles(lcl);
-      });
-  }
+    function removeAsset(vehicleId) {
+        const params = {
+            requestId: id,
+            vehicleId: vehicleId,
+        };
+        axios
+            .delete(backendPath + 'vehicle/request', {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+                params: params,
+            })
+            .then(() => {
+                let lcl = vehicles;
+                lcl = lcl.filter((x) => x.id !== vehicleId);
+                setVehicles(lcl);
+            });
+    }
 
-  function cancelRequest() {
-    const params = {
-      requestID: id,
-    };
-    const headers = {
-      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-    };
-    axios
-      .delete(backendPath + 'new_request', { params: params, headers: headers })
-      .then(() => {
-        history.push('/captain');
-      });
-  }
+    function saveRequest() {
+        if (vehicles.length === 0) {
+            deleteRequest();
+            return;
+        }
+        window.open(window.location.origin + '/captain', 'self_', '', false)
+    }
+
+    function deleteRequest() {
+        const params = {
+            requestID: id,
+        };
+        const headers = {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        };
+        axios
+            .delete(backendPath + 'new_request', {params: params, headers: headers})
+            .then(() => {
+                window.open(window.location.origin + '/captain', 'self_', '', false);
+            });
+    }
 
   return (
     <asset-request-vehicle>
@@ -213,13 +257,16 @@ function AssetRequestVehicle() {
           );
         })}
       </div>
-      <hr className="thick" />
-      <Button className="type-1" onClick={submit}>
-        Submit
-      </Button>
-      <Button className="type-2" onClick={cancelRequest}>
-        Cancel
-      </Button>
+        <hr className="thick"/>
+        <Button className="type-1" onClick={submit}>
+            Submit
+        </Button>
+        <Button className="type-3" onClick={saveRequest}>
+            Save and Exit
+        </Button>
+        <Button className="type-2" onClick={deleteRequest}>
+            Delete and Exit
+        </Button>
     </asset-request-vehicle>
   );
 }
