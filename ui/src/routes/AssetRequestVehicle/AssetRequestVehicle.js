@@ -38,7 +38,6 @@ function AssetRequestVehicle() {
             })
             .then((resp) => {
                 let results = resp.data.results;
-                console.log(results)
                 let payloads = [];
                 for (let asset of results) {
                     const payload = {
@@ -50,8 +49,8 @@ function AssetRequestVehicle() {
                     payloads.push(payload);
                 }
                 setVehicles([...vehicles, ...payloads]);
-            })
-    }, []);
+            });
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function insertAsset() {
     // Validate Data
