@@ -12,6 +12,8 @@ The following steps describe the _operations_ required to get the backend enviro
 The specific steps for _your_ system will vary and are therefore not detailed beyond linking to the individual install
 instructions. If  you require help getting started, please post in the discord #general.
 
+Please note that the versions used here are quite specific, please follow them. 
+
 Its recommended you use [PyCharm Ultimate](https://www.jetbrains.com/pycharm/download/), you get it for free with you
 `anu.edu.au` email address. 
 
