@@ -39,7 +39,7 @@ Its recommended you use [PyCharm Ultimate](https://www.jetbrains.com/pycharm/dow
 
 ### Frontend Steps
 
-1. **Install NodeJS**: [Steps](https://nodejs.org/en/download/)
+1. **Install NodeJS (LTS)**: [Steps](https://nodejs.org/en/download/)
 2. **Run** the following commands in a terminal:\
     a. `cd ui`\
     b. `npm install`
