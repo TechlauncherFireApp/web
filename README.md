@@ -46,7 +46,7 @@ Its recommended you use [PyCharm Ultimate](https://www.jetbrains.com/pycharm/dow
 3. **Create** a run configuration by adding a `npm` runtime using the settings:\
     _Package JSON:_ `<where you've cloned the repo>\FireApp2.0\ui\package.json`\
     _Command:_ `run`\
-    _Script:_ `start`\
+    _Script:_ `debug`\
 
 
 ### Generate  a Database Migration
