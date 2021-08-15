@@ -499,14 +499,16 @@ export default class Availability extends React.Component {
                   modifiers={this.state.modifiers}
                   modifiersStyles={modifierStyles}
               />
-              <div className="help">
-                <span
+                <span className="help"
                 role="img"
-                aria-label="tick2">
+                aria-label="question"
+                data-help=
+                    {"Begin by selecting your available day, then use the slider to select your available times. " +
+                    "Select your preferred working hours and click 'Add Availability'. Add more availabilities or " +
+                    "delete them as best fits."}>
                   &#x2370;
                 </span>
               </div>
-            </div>
           <div className="time-range">
             <TimeRange
                 error={error}
