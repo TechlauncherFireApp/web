@@ -489,25 +489,32 @@ export default class Availability extends React.Component {
     return (
       <availability>
         <div className="exterior">
-          <div className="calendar">
-            <DayPicker
-              showWeekNumbers
-              selectedDays={this.state.selectedDay}
-              onDayClick={this.handleDayClick}
-              fromMonth={new Date()}
-              todayButton="Return to current month"
-              modifiers={this.state.modifiers}
-              modifiersStyles={modifierStyles}
-            />
-          </div>
+            <div className="calendar">
+              <DayPicker
+                  showWeekNumbers
+                  selectedDays={this.state.selectedDay}
+                  onDayClick={this.handleDayClick}
+                  fromMonth={new Date()}
+                  todayButton="Return to current month"
+                  modifiers={this.state.modifiers}
+                  modifiersStyles={modifierStyles}
+              />
+              <div className="help">
+                <span
+                role="img"
+                aria-label="tick2">
+                  &#x2370;
+                </span>
+              </div>
+            </div>
           <div className="time-range">
             <TimeRange
-              error={error}
-              selectedInterval={selectedInterval}
-              timelineInterval={[startTime, endTime]}
-              onUpdateCallback={this.errorHandler}
-              onChangeCallback={this.onChangeCallback}
-              disabledIntervals={previousIntervals}
+                error={error}
+                selectedInterval={selectedInterval}
+                timelineInterval={[startTime, endTime]}
+                onUpdateCallback={this.errorHandler}
+                onChangeCallback={this.onChangeCallback}
+                disabledIntervals={previousIntervals}
             />
           </div>
           <div className="hours">

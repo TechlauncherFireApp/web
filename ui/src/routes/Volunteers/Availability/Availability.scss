@@ -1,4 +1,4 @@
-@import "../../../styles/functions.scss","../../../../node_modules/react-day-picker/lib/style.css";
+@import "../../../styles/functions.scss", "../../../../node_modules/react-day-picker/lib/style.css";
 
 availability {
   display: block;
@@ -9,20 +9,30 @@ availability {
     position: relative;
     align-items: center;
 
+
     .calendar {
+      child-align: right;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+
+      .help {
+        position: absolute;
+        top: 0px;
+        margin-left: 310px;
+      }
     }
 
-    .time-range {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
+  .time-range {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
       align-items: center;
       text-align: center;
       margin-top: 18px;
