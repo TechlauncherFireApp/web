@@ -6,6 +6,7 @@ import { backendPath } from '../../config';
 function Qualifications() {
   const [qualifications, setQualifications] = useState([]);
   const [refresh, setRefresh] = useState(0);
+  const [deletions, setDeletions] = useState(0);
   const [newQualificationName, setNewQualificationName] = useState('');
   const [error, setError] = useState(undefined);
 
@@ -19,7 +20,7 @@ function Qualifications() {
       .then((resp) => {
         setQualifications(resp.data);
       });
-  }, [refresh]);
+  }, [refresh, deletions]);
 
   function addNew(e) {
     // Validate the new role name
@@ -70,6 +71,23 @@ function Qualifications() {
       });
   }
 
+  function deleteQualification(id) {
+        axios
+            .delete(
+                backendPath + 'reference/qualifications',
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                    },
+                    params: {
+                        id: id,
+                    }
+                })
+            .then(() => {
+                setDeletions((x) => x + 1);
+            });
+    }
+
   return (
     <div className={'w-100 mt4 ba br b--black-10 pa3'}>
       <h2 className={'mb2'}>Volunteer Qualifications</h2>
@@ -106,6 +124,7 @@ function Qualifications() {
             <th scope="col">Last Updated</th>
             <th scope="col">Enabled</th>
             <th scope="col">Action</th>
+            <th scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -123,6 +142,15 @@ function Qualifications() {
                         toggle(x['name']);
                       }}>
                       {x['deleted'] === 'False' ? 'Disable' : 'Enable'}
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className={'btn btn-danger'}
+                      onClick={() => {
+                        deleteQualification(x['id']);
+                      }}>
+                      Remove
                     </button>
                   </td>
                 </tr>
