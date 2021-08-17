@@ -116,9 +116,25 @@ function VolunteerRoles() {
         });
     }
   }
+  // Delete this function and the test button div after testing is complete.
+  function deleteThisFunction() {
+    axios
+        .get(backendPath + 'volunteer/all', config).then((volunteerResp) => {
+          console.log(volunteerResp.data.results)
+    });
+  }
 
   return (
     <div className={'w-100 mt4 ba br b--black-10 pa3'}>
+      <div className='deleteThisDiv'>
+        <button
+          className='type-3'
+          onClick={() => {
+            deleteThisFunction()
+          }}>
+          Test Button, check console in browser for results.
+        </button>
+      </div>
       <h2 className={'mb2'}>Volunteer Roles</h2>
       <hr />
       <p>
