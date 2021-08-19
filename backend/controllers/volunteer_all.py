@@ -47,7 +47,7 @@ volunteer_list_field = {
     'qualifications': fields.List(fields.String),
     'availabilities': fields.Nested(availability_field),
     'possibleRoles': fields.List(fields.String),
-    # Delete role (below) after testing
+    # TODO: Delete role (below) after testing
     'role': fields.Integer
 }
 

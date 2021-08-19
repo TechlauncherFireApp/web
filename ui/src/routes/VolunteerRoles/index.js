@@ -118,9 +118,12 @@ function VolunteerRoles() {
   }
   // Delete this function and the test button div after testing is complete.
   function deleteThisFunction() {
+    axios.patch(backendPath + '/user-type', {userId: 4, typeChange:'demote'}, config).
+    then((a) => {console.log(a.data)})
     axios
         .get(backendPath + 'volunteer/all', config).then((volunteerResp) => {
           console.log(volunteerResp.data.results)
+          console.log(backendPath + 'volunteer/all')
     });
   }
 
