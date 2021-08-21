@@ -2,10 +2,15 @@ from flask import Blueprint
 from flask_restful import fields, Resource, marshal_with, Api, reqparse
 
 from domain import session_scope
-from repository.user_repository import demote_user, promote_user, self_demote
+from repository.user_repository import demote_user, promote_user, self_demote, get_user_role
 
 patch_fields = {
     'success': fields.Boolean
+}
+
+get_fields = {
+    'userId': fields.Integer,
+    'role_type': fields.Integer,
 }
 
 parser = reqparse.RequestParser()
@@ -14,6 +19,17 @@ parser.add_argument('typeChange', action='store', type=str)
 
 
 class UserType(Resource):
+    @marshal_with(get_fields)
+    def get(self):
+        args = parser.parse_args()
+        if args['userId'] is None:
+            return {'userId': -1,
+                    'role_type': -1}
+        with session_scope() as session:
+            role_type = get_user_role(session, args['userId'])
+            print(role_type, type(role_type))
+        return {'userId': args['userId'],
+                'role_type': role_type}
 
     @marshal_with(patch_fields)
     def patch(self):

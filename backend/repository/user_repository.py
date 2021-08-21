@@ -2,6 +2,14 @@ from domain import User, UserType
 from operator import or_
 
 
+def get_user_role(session, user_id):
+    user = session.query(User). \
+        filter(User.id == user_id).first()
+    if user:
+        return int(user.role.value)
+    return -1
+
+
 def promote_user(session, user_id):
     user = session.query(User). \
         filter(User.id == user_id).first()
@@ -20,7 +28,7 @@ def promote_user(session, user_id):
 
 
 def demote_user(session, user_id):
-    user = session.query(User).\
+    user = session.query(User). \
         filter(User.id == user_id).first()
     print('user:', user.id, 'is now demote from', user.role)
     if user:
@@ -33,7 +41,7 @@ def demote_user(session, user_id):
 
 
 def self_demote(session, user_id):
-    user = session.query(User).\
+    user = session.query(User). \
         filter(User.id == user_id).first()
     print('user:', user.id, 'is now demote from', user.role)
     if user:
@@ -45,4 +53,3 @@ def self_demote(session, user_id):
             print(user.role)
             return True
     return False
-
