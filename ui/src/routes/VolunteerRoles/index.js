@@ -120,8 +120,8 @@ function VolunteerRoles() {
   function deleteThisFunction() {
 
     // Change user type
-    // axios.patch(backendPath + '/user-type', {userId: 4, typeChange:'promote'}, config).
-    // then((a) => {console.log(a.data)});
+    axios.patch(backendPath + '/user-type', {userId: 4, typeChange:'demote'}, config).
+    then((a) => {console.log(a.data)});
 
     // Check user type
     axios
