@@ -37,7 +37,6 @@ class UserType(Resource):
         result = False
         if args['userId'] is None or args['typeChange'] not in ('promote', 'demote', 'self-demote'):
             return {'success': result}
-        # print('patch', args['userId'], args['typeChange'])
         with session_scope() as session:
             if args['typeChange'] == 'promote':
                 result = promote_user(session, args['userId'])

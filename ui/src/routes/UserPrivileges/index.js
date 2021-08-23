@@ -9,6 +9,8 @@ function UserPrivileges() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(1);
 
+    const [refresh, setRefresh] = useState(0);
+
     const [config] = useState({
         headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -20,18 +22,41 @@ function UserPrivileges() {
     axios
         .get(backendPath + 'volunteer/all', config)
         .then((resp) => {
-            console.log(resp.data.results)
             setUsers(resp.data.results)
         })
         .finally(() => {setLoading(x => x - 1)});
-  }, [config])
+  }, [config, refresh])
 
     function promote(user_id) {
       console.log(user_id)
+        axios
+            .request({
+                    url: backendPath + 'user-type',
+                    method: 'PATCH',
+                    params: {userId: user_id, typeChange: 'promote'},
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                    },
+                }
+            ).then(() => {
+            setRefresh((x) => x + 1)
+        });
     }
 
     function demote(user_id) {
       console.log(user_id)
+        axios
+            .request({
+                    url: backendPath + 'user-type',
+                    method: 'PATCH',
+                    params: {userId: user_id, typeChange: 'demote'},
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                    },
+                }
+            ).then(() => {
+            setRefresh((x) => x + 1)
+        });
     }
 
   return (
@@ -59,15 +84,20 @@ function UserPrivileges() {
                     return (
                     <tr key={x['ID']}>
                         <td>
-                            {x['firstName']} {x['lastName']}
+                            {x['firstName']} {x['lastName']} {x['ID']}
                         </td>
-                        <td>{x['role']}</td>
+                        <td>{
+                            x['role'] === 0 ? 'Volunteer' :
+                            x['role'] === 1 ? 'Administrator' :
+                            x['role'] === 2 ? 'Root Administrator' :
+                            'null'
+                        }</td>
                         <td>
                             {x['role'] === 0 ?
                                 <button
                                     className={'btn btn-danger'}
                                     onClick={() => {
-                                        promote(x['id']);
+                                        promote(x['ID']);
                                 }}>
                                     Promote
                                 </button>
@@ -78,7 +108,7 @@ function UserPrivileges() {
                                 <button
                                     className={'btn btn-danger'}
                                     onClick={() => {
-                                        demote(x['id']);
+                                        demote(x['ID']);
                                 }}>
                                     Demote
                                 </button>

@@ -11,6 +11,7 @@ def get_volunteer(session, volunteer_id):
 
 def list_volunteers(session, volunteer_id=None):
     users = session.query(User.id.label("ID"),
+                         User.role.label('role'),
                          User.first_name.label('firstName'),
                          User.last_name.label('lastName'),
                          User.email.label('email'),
@@ -31,6 +32,14 @@ def list_volunteers(session, volunteer_id=None):
             .filter(UserRole.user_id == user['ID'])\
             .all()
         user['possibleRoles'] = [x[0] for x in roles]
+        if int(user['role'].value) == 0:
+            user['role'] = 0
+        elif int(user['role'].value) == 1:
+            user['role'] = 1
+        elif int(user['role'].value) == 2:
+            user['role'] = 2
+        else:
+            user['role'] = -1
         rtn.append(user)
 
     # TODO: Do the same thing here for qualifications
