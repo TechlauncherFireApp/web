@@ -51,7 +51,8 @@ function Login() {
       )}
       <form
         onSubmit={submit}
-        className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
+        className={'mt6 w-50 w-10 mr-auto ba br2 b--black-10 pa3'}>   {/*FIXME -- jasmeen*/}
+        {/*className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>*/}
         <h2>Login</h2>
         <div className="form-group">
           <label htmlFor={'email'}>Email*:</label>
