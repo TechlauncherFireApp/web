@@ -13,7 +13,7 @@ def get_user_role(session, user_id):
 def promote_user(session, user_id):
     user = session.query(User). \
         filter(User.id == user_id).first()
-    print('user:', user.id, 'is now promote from', user.role)
+    print('user:', user.id, 'is now promoted from', user.role)
     if user and user.role != '':
         current_type = user.role
         if current_type == UserType.VOLUNTEER:
@@ -30,7 +30,7 @@ def promote_user(session, user_id):
 def demote_user(session, user_id):
     user = session.query(User). \
         filter(User.id == user_id).first()
-    print('user:', user.id, 'is now demote from', user.role)
+    print('user:', user.id, 'is now demoted from', user.role)
     if user:
         current_type = user.role
         if current_type == UserType.ADMIN:
@@ -43,7 +43,7 @@ def demote_user(session, user_id):
 def self_demote(session, user_id):
     user = session.query(User). \
         filter(User.id == user_id).first()
-    print('user:', user.id, 'is now demote from', user.role)
+    print('user:', user.id, 'is now demoted from', user.role)
     if user:
         if user.role == '':
             user.role = UserType.ROOT_ADMIN

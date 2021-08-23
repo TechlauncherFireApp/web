@@ -36,6 +36,7 @@ def list_volunteers(session, volunteer_id=None):
     # TODO: Do the same thing here for qualifications
     return rtn
 
+
 def set_availabilities(session, volunteer_id, availability_json):
     volunteer = session.query(User) \
         .filter(User.id == volunteer_id) \

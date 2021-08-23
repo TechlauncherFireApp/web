@@ -116,39 +116,9 @@ function VolunteerRoles() {
         });
     }
   }
-  // Delete this function and the test button div after testing is complete.
-  function deleteThisFunction() {
-
-    // Change user type
-    axios.patch(backendPath + '/user-type', {userId: 4, typeChange:'demote'}, config).
-    then((a) => {console.log(a.data)});
-
-    // Check user type
-    axios
-        .get(backendPath + '/user-type', {params: {userId: 4}, headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-    }}).then((volunteerResp) => {
-          console.log(volunteerResp.data)
-    });
-
-    axios
-        .get(backendPath + 'volunteer/all', config).then((volunteerResp) => {
-          console.log(volunteerResp.data.results)
-          console.log(backendPath + 'volunteer/all')
-    });
-  }
 
   return (
     <div className={'w-100 mt4 ba br b--black-10 pa3'}>
-      <div className='deleteThisDiv'>
-        <button
-          className='type-3'
-          onClick={() => {
-            deleteThisFunction()
-          }}>
-          Test Button, check console in browser for results.
-        </button>
-      </div>
       <h2 className={'mb2'}>Volunteer Roles</h2>
       <hr />
       <p>

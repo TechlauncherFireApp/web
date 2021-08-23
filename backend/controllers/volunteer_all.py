@@ -38,6 +38,7 @@ availability_field = {
 
 volunteer_list_field = {
     'ID': fields.String,
+    'role': fields.Integer,
     'firstName': fields.String,
     'lastName': fields.String,
     'email': fields.String,
@@ -47,8 +48,6 @@ volunteer_list_field = {
     'qualifications': fields.List(fields.String),
     'availabilities': fields.Nested(availability_field),
     'possibleRoles': fields.List(fields.String),
-    # TODO: Delete role (below) after testing
-    'role': fields.Integer
 }
 
 resource_fields = {
