@@ -8,6 +8,7 @@ import {backendPath} from "../../config";
 function UserPrivileges() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(1);
+    const [user] = useState(localStorage.getItem('id'));
 
     const [refresh, setRefresh] = useState(0);
 
@@ -29,7 +30,6 @@ function UserPrivileges() {
   }, [config, refresh])
 
     function promote(user_id) {
-      console.log(user_id)
         axios
             .request({
                     url: backendPath + 'user-type',
@@ -45,12 +45,26 @@ function UserPrivileges() {
     }
 
     function demote(user_id) {
-      console.log(user_id)
         axios
             .request({
                     url: backendPath + 'user-type',
                     method: 'PATCH',
                     params: {userId: user_id, typeChange: 'demote'},
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                    },
+                }
+            ).then(() => {
+            setRefresh((x) => x + 1)
+        });
+    }
+
+    function selfDemote(user_id) {
+      axios
+            .request({
+                    url: backendPath + 'user-type',
+                    method: 'PATCH',
+                    params: {userId: user_id, typeChange: 'self-demote'},
                     headers: {
                         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
                     },
@@ -85,7 +99,7 @@ function UserPrivileges() {
                     return (
                     <tr key={x['ID']}>
                         <td>
-                            {x['firstName']} {x['lastName']} {x['ID']}
+                            {x['firstName']} {x['lastName']}
                         </td>
                         <td>{
                             x['role'] === 0 ? 'Volunteer' :
@@ -105,7 +119,7 @@ function UserPrivileges() {
                                 : ''}
                         </td>
                         <td>
-                            {x['role'] >= 1 ?
+                            {x['role'] == 1 ?
                                 <button
                                     className={'btn btn-danger'}
                                     onClick={() => {
@@ -113,7 +127,18 @@ function UserPrivileges() {
                                 }}>
                                     Demote
                                 </button>
-                                : ''}
+                                :
+                                x['role'] == 2 && x['ID'] == user ?
+                                    <button
+                                        className={'btn btn-danger'}
+                                        onClick={() => {
+                                            if (window.confirm('Are you sure you want to demote ' +
+                                                'yourself from Root Admin to Admin?'))
+                                                selfDemote(x['ID'])
+                                        }}>
+                                        Self Demote
+                                    </button>
+                                    : ''}
                         </td>
                     </tr>
                     );
