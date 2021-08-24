@@ -22,6 +22,7 @@ function UserPrivileges() {
     axios
         .get(backendPath + 'volunteer/all', config)
         .then((resp) => {
+            console.log(resp.data.results)
             setUsers(resp.data.results)
         })
         .finally(() => {setLoading(x => x - 1)});
@@ -93,7 +94,7 @@ function UserPrivileges() {
                             'null'
                         }</td>
                         <td>
-                            {x['role'] === 0 ?
+                            {(x['role'] === 0 || x['role'] === 1)  ?
                                 <button
                                     className={'btn btn-danger'}
                                     onClick={() => {
