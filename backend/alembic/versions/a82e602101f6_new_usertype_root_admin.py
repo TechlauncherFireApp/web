@@ -9,6 +9,8 @@ from alembic import op
 import sqlalchemy as sa
 from alembic import context
 import sys
+from sqlalchemy.dialects import mysql
+from sqlalchemy.sql import text
 sys.path = ['', '..'] + sys.path[1:]
 
 # revision identifiers, used by Alembic.
@@ -30,25 +32,19 @@ tcr = sa.sql.table('user',
                    sa.Column('role', new_type, nullable=False))
 
 def upgrade():
-    op.execute('ALTER TYPE ' + name + ' RENAME TO ' + tmp_name)
-
-    new_type.create(op.get_bind())
-    op.execute('ALTER TABLE user ALTER COLUMN role ' +
-               'TYPE ' + name + ' USING status::text::' + name)
-    op.execute('DROP TYPE ' + tmp_name)
+    op.alter_column('user', 'user_type',
+               existing_type=mysql.ENUM('VOLUNTEER', 'ADMIN'),
+               nullable=False, type_=mysql.ENUM('ROOT_ADMIN', 'VOLUNTEER', 'ADMIN'), server_default='VOLUNTEER')
 
 
 def downgrade():
-    # Convert 'output_limit_exceeded' status into 'timed_out'
-    op.execute(tcr.update().where(tcr.c.status=='ROOT_ADMIN')
-               .values(status='ADMIN'))
 
-    op.execute('ALTER TYPE ' + name + ' RENAME TO ' + tmp_name)
+    conn = op.get_bind()
+    conn.execute(text("UPDATE user SET user_type = 'VOLUNTEER' WHERE user_type = 'ROOT_ADMIN'"))
+    op.alter_column('user', 'user_type',
+               existing_type=mysql.ENUM('ROOT_ADMIN', 'VOLUNTEER', 'ADMIN'),
+               nullable=False, type_=mysql.ENUM('VOLUNTEER', 'ADMIN'), server_default='VOLUNTEER')
 
-    old_type.create(op.get_bind())
-    op.execute('ALTER TABLE user ALTER COLUMN role ' +
-               'TYPE ' + name + ' USING status::text::' + name)
-    op.execute('DROP TYPE ' + tmp_name)
 
 # # noinspection SqlResolve
 # def upgrade():
