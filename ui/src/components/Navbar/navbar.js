@@ -19,7 +19,7 @@ function NavBar() {
     <Navbar>
       <Navbar.Collapse>
         <Navbar.Brand href="/">FireApp</Navbar.Brand>
-        {authenticated && (role === 'ROOT_ADMIN') && (
+        {authenticated && (role === 'ROOT_ADMIN' || role === 'ADMIN') && (
           <>
             <Nav.Link href="/captain">Request Administration</Nav.Link>
             <Nav.Link href="/asset-type-roles">Asset Planning</Nav.Link>
@@ -30,26 +30,6 @@ function NavBar() {
               <NavDropdown.Item href="/volunteer-roles">Volunteer Roles</NavDropdown.Item>
               <NavDropdown.Item href="/user-privileges">User Privileges</NavDropdown.Item>
             </NavDropdown>
-            <NavDropdown
-              title="Reference Data"
-              id="basic-nav-dropdown"
-              className={'white'}>
-              <NavDropdown.Item href="/reference/roles">Roles</NavDropdown.Item>
-              <NavDropdown.Item href="/reference/qualifications">
-                Qualifications
-              </NavDropdown.Item>
-              <NavDropdown.Item href="/reference/asset_types">
-                Asset Types
-              </NavDropdown.Item>
-            </NavDropdown>
-          </>
-        )}
-
-        {authenticated && (role === 'ADMIN') && (
-          <>
-            <Nav.Link href="/captain">Request Administration</Nav.Link>
-            <Nav.Link href="/asset-type-roles">Asset Planning</Nav.Link>
-            <Nav.Link href="/volunteer-roles">Volunteer Roles</Nav.Link>
             <NavDropdown
               title="Reference Data"
               id="basic-nav-dropdown"
