@@ -491,13 +491,13 @@ export default class Availability extends React.Component {
         <div className="exterior">
           <div className="calendar">
             <DayPicker
-              showWeekNumbers
-              selectedDays={this.state.selectedDay}
-              onDayClick={this.handleDayClick}
-              fromMonth={new Date()}
-              todayButton="Return to current month"
-              modifiers={this.state.modifiers}
-              modifiersStyles={modifierStyles}
+                showWeekNumbers
+                selectedDays={this.state.selectedDay}
+                onDayClick={this.handleDayClick}
+                fromMonth={new Date()}
+                todayButton="Return to current month"
+                modifiers={this.state.modifiers}
+                modifiersStyles={modifierStyles}
             />
           </div>
           <div className="time-range">
@@ -521,18 +521,22 @@ export default class Availability extends React.Component {
             />
             <div className="popup" onClick="displayPopup" role="img">
               {prefMatchesAv ?
-                <span
-                    role="img"
-                    aria-label="tick">
-                  &#9989;</span> :
-                <span
-                    className="red-cross"
-                    role="img"
-                    aria-label="cross"
-                    data-tooltip=
-                        {"Preferred hours have not been indicated or exceed the " +
-                        "currently selected availability of " + avHours +" hours per week."}>
-                  &#10060;</span>}</div>
+                  <span
+                      role="img"
+                      aria-label="tick">
+                  &#9989;
+                  </span> :
+                  <span
+                      className="red-cross"
+                      role="img"
+                      aria-label="cross"
+                      data-tooltip=
+                          {"Preferred hours have not been indicated or exceed the " +
+                          "currently selected availability of " + avHours + " hours per week."}>
+                  &#10060;
+                  </span>
+              }
+            </div>
           </div>
           <div className="con">
             <button
