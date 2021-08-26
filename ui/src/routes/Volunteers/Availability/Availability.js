@@ -478,7 +478,7 @@ export default class Availability extends React.Component {
   };
 
   handlePrefHoursChange(event) {
-    event.target.value < 0 ? (event.target.value = 0) : (event.target.value)
+    (event.target.value < 0 || event.target.value > 168) ? (event.target.value = 0) : (event.target.value)
     this.setState({prefHours: event.target.value},
         () => {this.patchPrefHours(); this.checkAvailabilityAndPref()});
   }
@@ -526,7 +526,8 @@ export default class Availability extends React.Component {
               type="number"
               min="0"
               step="1"
-              placeholder="Select PrefHours"
+              max="168"
+              placeholder="Select"
               title="Set PrefHours"
               value={this.state.prefHours}
               onChange={(e) => this.handlePrefHoursChange(e)}

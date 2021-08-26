@@ -1,5 +1,6 @@
 @import "../../../styles/functions.scss", "../../../../node_modules/react-day-picker/lib/style.css";
 
+
 availability {
   display: block;
   padding-top: 25px;
@@ -41,7 +42,6 @@ availability {
         border-radius: 10px;
         font-size: 0.75em;
         font-weight: bold;
-
         visibility: hidden;
         opacity: 0;
         transform: translateY(-10px);
@@ -60,9 +60,12 @@ availability {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-      align-items: center;
-      text-align: center;
-      margin-top: 18px;
+    align-items: center;
+    text-align: center;
+    margin-top: 18px;
+    @media (max-width: 900px) {
+      //transform: rotate(90deg);
+    }
     }
 
     .hours {
