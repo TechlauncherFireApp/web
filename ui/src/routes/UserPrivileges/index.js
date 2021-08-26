@@ -25,18 +25,23 @@ function UserPrivileges() {
         axios
             .get(backendPath + 'volunteer/all', config)
             .then((resp) => {
-                console.log(resp.data.results)
                 setUsers(resp.data.results)
             })
             .finally(() => {
-                users.forEach((u) => {
-                    if (u['role'] === 2) {
-                        setRootAdmins(x => x + 1);
-                    }
-                })
                 setLoading(x => x - 1)
             });
     }, [config, refresh])
+
+    useEffect(() => {
+        let n = 0
+        users.forEach((u) => {
+            if (u['role'] === 2) {
+                n = n + 1;
+            }
+        })
+        setRootAdmins(n)
+        setLoading(x => x - 1)
+    }, [users])
 
     function promote(user_id) {
         axios
@@ -109,7 +114,7 @@ function UserPrivileges() {
                         return (
                             <tr key={x['ID']}>
                                 <td>
-                                    {x['firstName']} {x['lastName']}
+                                    {x['firstName']} {x['lastName']} {x['ID']}
                                 </td>
                                 <td>{
                                     x['role'] === 0 ? 'Volunteer' :
