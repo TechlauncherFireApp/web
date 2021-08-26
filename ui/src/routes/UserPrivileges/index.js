@@ -114,7 +114,7 @@ function UserPrivileges() {
                         return (
                             <tr key={x['ID']}>
                                 <td>
-                                    {x['firstName']} {x['lastName']} {x['ID']}
+                                    {x['firstName']} {x['lastName']}
                                 </td>
                                 <td>{
                                     x['role'] === 0 ? 'Volunteer' :
