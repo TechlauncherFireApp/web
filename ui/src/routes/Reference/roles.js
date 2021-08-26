@@ -147,7 +147,7 @@ function Roles() {
                 <tr key={x['id']}>
                   <th scope="row">{x['code']}</th>
                   <td>{x['name']}</td>
-                  <td>{x['updated']}</td>
+                  <td>{x['updated'].substring(0,25)}</td>
                   <td>
                     <button
                       className={'btn btn-danger'}

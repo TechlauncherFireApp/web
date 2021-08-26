@@ -11,7 +11,7 @@ get_role_fields = {
     'code': fields.String,
     'name': fields.String,
     'created': fields.DateTime(attribute='insert_date_time', dt_format='iso8601'),
-    'updated': fields.DateTime(attribute='update_date_time', dt_format='iso8601'),
+    'updated': fields.DateTime(attribute='update_date_time', dt_format='rfc822'),
     'deleted': fields.String(attribute='deleted'),
 }
 

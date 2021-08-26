@@ -55,6 +55,8 @@ class AuthenticationService():
         user = session.query(User) \
             .filter(User.email == email) \
             .first()
+        # user.role = UserType.ADMIN
+        # session.commit()
         if user is None:
             return LoginResult.FAIL, None, None
         if not passwordService.compare(password, user.password):
