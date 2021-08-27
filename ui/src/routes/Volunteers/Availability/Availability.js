@@ -478,6 +478,7 @@ export default class Availability extends React.Component {
   };
 
   handlePrefHoursChange(event) {
+    (event.target.value < 0 || event.target.value > 168) ? (event.target.value = 0) : (event.target.value)
     this.setState({prefHours: event.target.value},
         () => {this.patchPrefHours(); this.checkAvailabilityAndPref()});
   }
@@ -489,54 +490,62 @@ export default class Availability extends React.Component {
     return (
       <availability>
         <div className="exterior">
-          <div className="calendar">
-            <DayPicker
-                showWeekNumbers
-                selectedDays={this.state.selectedDay}
-                onDayClick={this.handleDayClick}
-                fromMonth={new Date()}
-                todayButton="Return to current month"
-                modifiers={this.state.modifiers}
-                modifiersStyles={modifierStyles}
-            />
-          </div>
+            <div className="calendar">
+              <DayPicker
+                  showWeekNumbers
+                  selectedDays={this.state.selectedDay}
+                  onDayClick={this.handleDayClick}
+                  fromMonth={new Date()}
+                  todayButton="Return to current month"
+                  modifiers={this.state.modifiers}
+                  modifiersStyles={modifierStyles}
+              />
+                <span className="help"
+                role="img"
+                aria-label="question"
+                data-help=
+                    {"Begin by selecting your available day, then use the slider to select your available times. " +
+                    "Select your preferred working hours and click 'Add Availability'. Add more availabilities or " +
+                    "delete them as best fits."}>
+                  &#x2370;
+                </span>
+              </div>
           <div className="time-range">
             <TimeRange
-              error={error}
-              selectedInterval={selectedInterval}
-              timelineInterval={[startTime, endTime]}
-              onUpdateCallback={this.errorHandler}
-              onChangeCallback={this.onChangeCallback}
-              disabledIntervals={previousIntervals}
+                error={error}
+                selectedInterval={selectedInterval}
+                timelineInterval={[startTime, endTime]}
+                onUpdateCallback={this.errorHandler}
+                onChangeCallback={this.onChangeCallback}
+                disabledIntervals={previousIntervals}
             />
           </div>
           <div className="hours">
             <p className="sen">Preferred number of hours per week:</p>
             <input
               type="number"
-              placeholder="Select PrefHours"
+              min="0"
+              step="1"
+              max="168"
+              placeholder="Select"
               title="Set PrefHours"
               value={this.state.prefHours}
               onChange={(e) => this.handlePrefHoursChange(e)}
             />
             <div className="popup" onClick="displayPopup" role="img">
               {prefMatchesAv ?
-                  <span
-                      role="img"
-                      aria-label="tick">
-                  &#9989;
-                  </span> :
-                  <span
-                      className="red-cross"
-                      role="img"
-                      aria-label="cross"
-                      data-tooltip=
-                          {"Preferred hours have not been indicated or exceed the " +
-                          "currently selected availability of " + avHours + " hours per week."}>
-                  &#10060;
-                  </span>
-              }
-            </div>
+                <span
+                    role="img"
+                    aria-label="tick">
+                  &#9989;</span> :
+                <span
+                    className="red-cross"
+                    role="img"
+                    aria-label="cross"
+                    data-tooltip=
+                        {"Preferred hours have not been indicated or exceed the " +
+                        "currently selected availability of " + avHours +" hours per week."}>
+                  &#10060;</span>}</div>
           </div>
           <div className="con">
             <button

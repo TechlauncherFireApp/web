@@ -10,6 +10,7 @@ function NavBar() {
     localStorage.getItem('access_token') !== null
   );
   const [role] = useState(localStorage.getItem('role'));
+  const [id] = useState(localStorage.getItem('id'))
 
   useEffect(() => {
     setAuthenticated(localStorage.getItem('access_token') !== null);
@@ -29,6 +30,7 @@ function NavBar() {
               className={'white'}>
               <NavDropdown.Item href="/volunteer-roles">Volunteer Roles</NavDropdown.Item>
               <NavDropdown.Item href="/user-privileges">User Privileges</NavDropdown.Item>
+              <NavDropdown.Item href={"/volunteer/" + id}>My Volunteer Page</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown
               title="Reference Data"
