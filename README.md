@@ -4,7 +4,7 @@ Bushfire Volunteer Management Application (TL 20-S1-2-C Fire App), a web app to 
 activities.
 
 [Redmine](https://redmine.cecs.anu.edu.au/redmine/projects/bushfire-volunteer-management-application)\
-[Project landing page](https://fireapp2.atlassian.net/wiki/spaces/F2/overview)
+[Project landing page] https://fireapp-sem2-2021.atlassian.net/wiki/spaces/FIREAPP/overview
 
 ### Backend Setup
 
@@ -39,7 +39,7 @@ Its recommended you use [PyCharm Ultimate](https://www.jetbrains.com/pycharm/dow
 
 ### Frontend Steps
 
-1. **Install NodeJS**: [Steps](https://nodejs.org/en/download/)
+1. **Install NodeJS (LTS)**: [Steps](https://nodejs.org/en/download/)
 2. **Run** the following commands in a terminal:\
     a. `cd ui`\
     b. `npm install`

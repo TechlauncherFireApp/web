@@ -1,4 +1,5 @@
-@import "../../../styles/functions.scss","../../../../node_modules/react-day-picker/lib/style.css";
+@import "../../../styles/functions.scss", "../../../../node_modules/react-day-picker/lib/style.css";
+
 
 availability {
   display: block;
@@ -9,23 +10,62 @@ availability {
     position: relative;
     align-items: center;
 
+
     .calendar {
+      child-align: right;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+
+      .help {
+        position: absolute;
+        top: 0px;
+        margin-left: 310px;
+      }
+
+      .help::after {
+        position: absolute;
+        width: 350px;
+        left: calc(1100% - 175px);
+        top: 105%;
+        text-align: center;
+        box-sizing: border-box;
+        content: attr(data-help);
+        color: #dddddd;
+        background: dimgray;
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 0.75em;
+        font-weight: bold;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 0.3s, transform 0.2s;
+      }
+
+      .help:hover::after {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .time-range {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      margin-top: 18px;
+  .time-range {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 18px;
+    @media (max-width: 900px) {
+      //transform: rotate(90deg);
+    }
     }
 
     .hours {

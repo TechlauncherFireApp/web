@@ -6,6 +6,7 @@ import { backendPath } from '../../config';
 function AssetTypes() {
   const [assetTypes, setAssetTypes] = useState([]);
   const [refresh, setRefresh] = useState(0);
+  const [deletions, setDeletions] = useState(0)
   const [newAssetTypeName, setNewAssetTypeName] = useState('');
   const [newAssetCodeName, setNewAssetCodeName] = useState('');
   const [error, setError] = useState(undefined);
@@ -20,7 +21,7 @@ function AssetTypes() {
       .then((resp) => {
         setAssetTypes(resp.data);
       });
-  }, [refresh]);
+  }, [refresh, deletions]);
 
   function addNew(e) {
     // Validate the new role name
@@ -72,6 +73,23 @@ function AssetTypes() {
       });
   }
 
+  function deleteAssetType(assetCode) {
+      axios
+          .delete(
+              backendPath + 'reference/asset_types',
+              {
+                  headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                  },
+                  params: {
+                      code: assetCode,
+                  }
+              })
+          .then(() => {
+              setDeletions((x) => x + 1);
+          });
+  }
+
   return (
     <div className={'w-100 mt4 ba br b--black-10 pa3'}>
       <h2 className={'mb2'}>Asset Types</h2>
@@ -121,6 +139,7 @@ function AssetTypes() {
             <th scope="col">Last Updated</th>
             <th scope="col">Enabled</th>
             <th scope="col">Action</th>
+            <th scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -138,6 +157,15 @@ function AssetTypes() {
                         toggle(x['code']);
                       }}>
                       {x['deleted'] === 'False' ? 'Disable' : 'Enable'}
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className={'btn btn-danger'}
+                      onClick={() => {
+                        deleteAssetType(x['code']);
+                      }}>
+                      Remove
                     </button>
                   </td>
                 </tr>

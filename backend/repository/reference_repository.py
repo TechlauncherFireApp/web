@@ -14,13 +14,21 @@ def add_role(session, role_name, role_code):
 
 
 def toggle_role(session, role_id):
-    print(role_id)
     existing_role = session.query(Role) \
         .filter(Role.id == role_id) \
         .first()
     if existing_role is None:
         return
     existing_role.deleted = not existing_role.deleted
+
+
+def delete_role(session, role_id):
+    existing_role = session.query(Role) \
+        .filter(Role.id == role_id) \
+        .first()
+    if existing_role is None:
+        return
+    session.delete(existing_role)
 
 
 def get_qualifications(session):
@@ -45,6 +53,15 @@ def toggle_qualification(session, qualification_name):
     existing_qualification.deleted = not existing_qualification.deleted
 
 
+def delete_qualification(session, qualification_id):
+    existing_qualification = session.query(Qualification) \
+        .filter(Qualification.id == qualification_id) \
+        .first()
+    if existing_qualification is None:
+        return
+    session.delete(existing_qualification)
+
+
 def get_asset_type(session):
     return session.query(AssetType.id, AssetType.name, AssetType.code, AssetType.insert_date_time, AssetType.update_date_time,
                          AssetType.deleted) \
@@ -65,3 +82,12 @@ def toggle_asset_type(session, asset_type_code):
     if existing_asset_type is None:
         return
     existing_asset_type.deleted = not existing_asset_type.deleted
+
+
+def delete_asset_type(session, asset_type_code):
+    existing_asset_type = session.query(AssetType) \
+        .filter(AssetType.code == asset_type_code) \
+        .first()
+    if existing_asset_type is None:
+        return
+    session.delete(existing_asset_type)

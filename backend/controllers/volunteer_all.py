@@ -38,6 +38,7 @@ availability_field = {
 
 volunteer_list_field = {
     'ID': fields.String,
+    'role': fields.Integer,
     'firstName': fields.String,
     'lastName': fields.String,
     'email': fields.String,

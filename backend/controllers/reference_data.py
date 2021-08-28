@@ -3,14 +3,15 @@ from flask_restful import fields, Resource, marshal_with, Api, reqparse
 
 from domain import session_scope
 from repository.reference_repository import get_roles, get_qualifications, add_qualification, add_role, \
-    toggle_qualification, toggle_role, get_asset_type, add_asset_type, toggle_asset_type
+    toggle_qualification, toggle_role, get_asset_type, add_asset_type, toggle_asset_type, delete_role, \
+    delete_qualification, delete_asset_type
 
 get_role_fields = {
     'id': fields.Integer,
     'code': fields.String,
     'name': fields.String,
     'created': fields.DateTime(attribute='insert_date_time', dt_format='iso8601'),
-    'updated': fields.DateTime(attribute='update_date_time', dt_format='iso8601'),
+    'updated': fields.DateTime(attribute='update_date_time', dt_format='rfc822'),
     'deleted': fields.String(attribute='deleted'),
 }
 
@@ -47,6 +48,14 @@ class RoleRequest(Resource):
             toggle_role(session, args['id'])
         return
 
+    def delete(self):
+        args = role_parser.parse_args()
+        if args['id'] is None or args['id'] == '':
+            return
+        with session_scope() as session:
+            delete_role(session, args['id'])
+        return
+
 
 get_qualifications_fields = {
     'id': fields.Integer,
@@ -62,6 +71,7 @@ post_qualification_fields = {
 
 qualification_parser = reqparse.RequestParser()
 qualification_parser.add_argument('name', action='store', type=str)
+qualification_parser.add_argument('id', action="store", type=str)
 
 
 class QualificationsRequest(Resource):
@@ -85,6 +95,14 @@ class QualificationsRequest(Resource):
             return
         with session_scope() as session:
             toggle_qualification(session, args['name'])
+        return
+
+    def delete(self):
+        args = qualification_parser.parse_args()
+        if args['id'] is None or args['id'] == '':
+            return
+        with session_scope() as session:
+            delete_qualification(session, args['id'])
         return
     
     
@@ -130,6 +148,13 @@ class AssetTypeRequest(Resource):
         with session_scope() as session:
             toggle_asset_type(session, args['code'])
         return
+
+    def delete(self):
+        args = asset_type_parser.parse_args()
+        if args['code'] is None or args['code'] == '':
+            return
+        with session_scope() as session:
+            delete_asset_type(session, args['code'])
 
 
 reference_bp = Blueprint('reference', __name__)

@@ -1,74 +1,92 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-import { backendPath } from '../../config';
+import {backendPath} from '../../config';
 
 function Roles() {
-  const [roles, setRoles] = useState([]);
-  const [refresh, setRefresh] = useState(0);
-  const [newRoleName, setNewRoleName] = useState('');
-  const [newRoleCode, setNewRoleCode] = useState('');
-  const [error, setError] = useState(undefined);
+    const [roles, setRoles] = useState([]);
+    const [refresh, setRefresh] = useState(0);
+    const [deletions, setDeletions] = useState(0);
+    const [newRoleName, setNewRoleName] = useState('');
+    const [newRoleCode, setNewRoleCode] = useState('');
+    const [error, setError] = useState(undefined);
 
-  useEffect(() => {
-    axios
-      .get(backendPath + 'reference/roles', {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        },
-      })
-      .then((resp) => {
-        setRoles(resp.data);
-      });
-  }, [refresh]);
+    useEffect(() => {
+        axios
+            .get(backendPath + 'reference/roles', {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                },
+            })
+            .then((resp) => {
+                setRoles(resp.data);
+            });
+    }, [refresh, deletions]);
 
-  function addNew(e) {
-    // Validate the new role name
-    e.preventDefault();
-    setError(undefined);
-    if (newRoleCode === '') {
-      setError('Role code is required.');
-      return;
-    }
-    const existing = roles.filter((x) => x.code === newRoleCode);
-    if (existing.length > 0) {
-      setError('Role code must be unique.');
-      return;
-    }
-
-    // Post the new role name and refresh the table
-    axios
-      .post(
-        backendPath + 'reference/roles',
-        { name: newRoleName, code: newRoleCode },
-        {
-          headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-          },
+    function addNew(e) {
+        // Validate the new role name
+        e.preventDefault();
+        setError(undefined);
+        if (newRoleCode === '') {
+            setError('Role code is required.');
+            return;
         }
-      )
-      .then(() => {
-        setNewRoleName('');
-        setNewRoleCode('');
-        setRefresh((x) => x + 1);
-      });
-  }
-
-  function toggle(id) {
-    axios
-      .patch(
-        backendPath + 'reference/roles',
-        { id: id },
-        {
-          headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-          },
+        const existing = roles.filter((x) => x.code === newRoleCode);
+        if (existing.length > 0) {
+            setError('Role code must be unique.');
+            return;
         }
-      )
-      .then(() => {
-        setRefresh((x) => x + 1);
-      });
-  }
+
+        // Post the new role name and refresh the table
+        axios
+            .post(
+                backendPath + 'reference/roles',
+                {name: newRoleName, code: newRoleCode},
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                    },
+                }
+            )
+            .then(() => {
+                setNewRoleName('');
+                setNewRoleCode('');
+                setRefresh((x) => x + 1);
+            });
+    }
+
+    function toggle(id) {
+        axios
+            .patch(
+                backendPath + 'reference/roles',
+                {id: id},
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                    },
+                }
+            )
+            .then(() => {
+                setRefresh((x) => x + 1);
+            });
+    }
+
+    function deleteRole(id) {
+        axios
+            .delete(
+                backendPath + 'reference/roles',
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                    },
+                    params: {
+                        id: id,
+                    }
+                })
+            .then(() => {
+                setDeletions((x) => x + 1);
+            });
+    }
 
   return (
     <div className={'w-100 mt4 ba br b--black-10 pa3'}>
@@ -114,12 +132,13 @@ function Roles() {
       <h5>Existing roles</h5>
       <table className="table">
         <thead>
-          <tr>
+        <tr>
             <th scope="col">Code</th>
             <th scope="col">Name</th>
             <th scope="col">Last Updated</th>
             <th scope="col">Action</th>
-          </tr>
+            <th scope="col">Deletion</th>
+        </tr>
         </thead>
         <tbody>
           {roles !== [] &&
@@ -128,7 +147,7 @@ function Roles() {
                 <tr key={x['id']}>
                   <th scope="row">{x['code']}</th>
                   <td>{x['name']}</td>
-                  <td>{x['updated']}</td>
+                  <td>{x['updated'].substring(0,25)}</td>
                   <td>
                     <button
                       className={'btn btn-danger'}
@@ -136,6 +155,15 @@ function Roles() {
                         toggle(x['id']);
                       }}>
                       {x['deleted'] === 'False' ? 'Disable' : 'Enable'}
+                    </button>
+                  </td>
+                    <td>
+                    <button
+                      className={'btn btn-danger'}
+                      onClick={() => {
+                        deleteRole(x['id']);
+                      }}>
+                      Remove
                     </button>
                   </td>
                 </tr>
