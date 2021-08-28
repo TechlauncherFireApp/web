@@ -4,7 +4,36 @@ div .margin {
     margin: 5px;
 }
 
+// Padding class is for the rest of the volunteer pages.
 div.padding {
     display: block;
     padding: 15px 15px 0 15px;
-  }
+}
+
+// Padding1 class is the formatting of the login page.
+div.padding1 {
+    display: block;
+    width: 40%;                    //  <form> width on login page.
+    height: 50%;
+    float: left;                   // this is important - it enables to have image and text aligned side-by-side.
+}
+
+div.login-page {
+    max-width: max-content;
+}
+
+// This is the div containing fire fighter image.
+div.login-ff-image {
+    width: 40%;
+    height: auto;
+    object-fit: contain;   // contain allows to fit according to the aspect ratio
+    opacity: 100%;
+}
+
+// This is the fire fighter image attributes
+img {
+    max-width: 60%;
+    opacity: 100%;
+    float: right;
+}
+
