@@ -5,7 +5,7 @@ import { useLocation } from 'react-router';
 import { NavLink, useHistory } from 'react-router-dom';
 
 import { backendPath } from '../../config';
-import ff_image from './fire-fighters.jpg';
+import ff_image from './assets-auth/fire-fighters.jpg';
 
 function Login() {
   const [values, setValues] = useState({});
@@ -44,7 +44,7 @@ function Login() {
   }
 
   return (
-    <>
+    <div className="login-page">
       <div className="padding1">
         {showRegistrationSuccess && error === undefined && (
           <div className="w-50 ml-auto mr-auto alert alert-success" role="alert">
@@ -53,11 +53,14 @@ function Login() {
         )}
         <form
           onSubmit={submit}
-          className={'mt1 mb1 ml1 mr1 ba br2 b--black-10 pa3'}>   {/*FIXME -- change1 - jasmeen*/}
+          className={'mt1 mb1 ml1 mr1 bn br2 pa3'}>   {/*FIXME -- change1 - jasmeen*/}
           {/*className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>*/}
           {/*top-margin bottom-margin left-margin right-margin border-style border-radius border-color padding*/}
-          <h2>Login</h2>
-          <div className="form-group">
+          <div className="Fireapp-logo">
+            <h2 align="center">FIREAPP</h2>
+          </div>
+
+          <div className="form-group-auth">
             <label htmlFor={'email'}>Email*:</label>
             <input
               className={'form-control'}
@@ -68,7 +71,7 @@ function Login() {
               }}
             />
           </div>
-          <div className="form-group">
+          <div className="form-group-auth">
             <label htmlFor={'password'}>Password*:</label>
             <input
               className={'form-control'}
@@ -79,12 +82,17 @@ function Login() {
               }}
             />
           </div>
-          <input
-            type="submit"
-            value="Submit"
-            className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
-          />
-          <div className={'mt2'}>
+          <div className="submit-btn">
+            <input
+              type="submit"
+              value="Sign In"
+              className={'btn w-80 bg-red pv2 ph3 br2 b black dim'}      // IMP!! width should be w-80. button color padd-top-bott padd-left-right border-radius font-weight text-color dim-upon-hover
+            />
+          </div>
+          <div className={'change-pass-option'}>
+            <NavLink to={'changepass'}>Change Password?</NavLink>
+          </div>
+          <div id="register-btn" className={'mt5'}>
             <NavLink to={'/register'}>Register</NavLink>
           </div>
           {error && (
@@ -97,7 +105,7 @@ function Login() {
       <div id="login-ff-image" align="top">
         <img src={ff_image} alt="Fire fighters" align={"right"}/>
       </div>
-   </>
+   </div>
   );
 }
 

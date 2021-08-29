@@ -1,39 +1,68 @@
 @import "../../styles/functions.scss";
 
+// This is the font face for Login page (as discussed on miro).
+@font-face {
+    font-family: FredokaOne-Regular;
+    src: url("../../routes/Authentication/assets-auth/FredokaOne-Regular.ttf");
+}
+
 div .margin {
     margin: 5px;
 }
 
 // Padding class is for the rest of the volunteer pages.
-div.padding {
-    display: block;
-    padding: 15px 15px 0 15px;
+div.login-page {
+    max-width: 100vw;
+    font-family: FredokaOne-Regular, serif;
 }
 
 // Padding1 class is the formatting of the login page.
 div.padding1 {
     display: block;
     width: 40%;                    //  <form> width on login page.
-    height: 50%;
+    height: 100vh;
     float: left;                   // this is important - it enables to have image and text aligned side-by-side.
-}
-
-div.login-page {
-    max-width: max-content;
 }
 
 // This is the div containing fire fighter image.
 div.login-ff-image {
     width: 40%;
-    height: auto;
+    //height: auto;
     object-fit: contain;   // contain allows to fit according to the aspect ratio
     opacity: 100%;
+}
+
+// This is the form fields in the login page.
+div.form-group-auth {
+    margin: 10%;
 }
 
 // This is the fire fighter image attributes
 img {
     max-width: 60%;
     opacity: 100%;
+    //max-width: 40vw;
+    height: 100vh;           // use 100% of the full screen height
     float: right;
 }
 
+// change password link on login page
+div.change-pass-option {
+    text-align: center;
+}
+
+div.submit-btn {
+    text-align: center;
+    margin-bottom: 2%;
+}
+
+div.Fireapp-logo {
+    background-color: #E6E6E6;
+    //width: 40%
+    text-align: center;
+    padding: 1%;
+}
+
+div.mt5{
+    text-align: center;
+}
