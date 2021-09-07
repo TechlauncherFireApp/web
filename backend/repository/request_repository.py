@@ -1,3 +1,5 @@
+from sqlalchemy import or_
+
 from domain import AssetRequest, User, UserType, AssetRequestVehicle, AssetRequestVolunteer
 
 
@@ -20,7 +22,7 @@ def new_request(session, title, status):
     """
     # TODO: Permissions
     #   - Source the current as an admin
-    admin = session.query(User).filter(User.role == UserType.ADMIN).first()
+    admin = session.query(User).filter(or_(User.role == UserType.ADMIN, User.role == UserType.ROOT_ADMIN)).first()
     request = AssetRequest(title=title, user_id=admin.id, status=status)
     session.add(request)
     session.flush()

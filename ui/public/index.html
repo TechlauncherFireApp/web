@@ -31,6 +31,27 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
+
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<df-messenger
+  intent="WELCOME"
+  chat-title="fireapp_main_agent"
+  agent-id="e6ae3218-a927-40a7-8086-58fc999246a0"
+  language-code="en"
+></df-messenger>
+
+    <style>
+  df-messenger {
+   --df-messenger-bot-message: #eee;
+   --df-messenger-button-titlebar-color: #a02323;
+   --df-messenger-chat-background-color: #fafafa;
+   --df-messenger-font-color: black;
+   --df-messenger-send-icon: #a02323;
+   --df-messenger-user-message: white;
+  }
+</style>
+
+
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
