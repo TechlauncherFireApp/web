@@ -12,13 +12,14 @@ div .margin {
 
 // Padding class is for the rest of the volunteer pages.
 div.login-page {
-    max-width: 100vw;
+    //max-width: 1080px;
     font-family: FredokaOne-Regular, serif;
 }
 
 // Padding1 class is the formatting of the login page.
 div.padding1 {
     display: block;
+    min-width: 200px;
     width: 40%;                    //  <form> width on login page.
     height: 100vh;
     float: left;                   // this is important - it enables to have image and text aligned side-by-side.

@@ -61,7 +61,7 @@ function Login() {
           </div>
 
           <div className="form-group-auth">
-            <label htmlFor={'email'}>Email*:</label>
+            <label htmlFor={'email'}>Email or Username*:</label>
             <input
               className={'form-control'}
               type="text"
