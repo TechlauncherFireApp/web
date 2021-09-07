@@ -26,12 +26,12 @@ div.padding1 {
 }
 
 // This is the div containing fire fighter image.
-//div.login-ff-image {
-//    width: 40%;
-//    //height: auto;
-//    object-fit: contain;   // contain allows to fit according to the aspect ratio
-//    opacity: 100%;
-//}
+div.login-ff-image {
+    width: 40%;
+    //height: auto;
+    object-fit: contain;   // contain allows to fit according to the aspect ratio
+    opacity: 100%;
+}
 
 // This is the form fields in the login page.
 div.form-group-auth {
@@ -39,14 +39,25 @@ div.form-group-auth {
 }
 
 // This is the fire fighter image attributes
-img {
-    max-width: 60%;
-    opacity: 100%;
-    //max-width: 40vw;
-    height: 100vh;           // use 100% of the full screen height
-    float: right;
+@media only screen and (min-width: 700px) {
+    img {
+        max-width: 60%;
+        opacity: 100%;
+        //max-width: 40vw;
+        height: 100vh; // use 100% of the full screen height
+        float: right;
+    }
 }
 
+// if screen size is less than 1000px, then image will not be displayed.
+@media only screen and (max-width: 1000px) {
+    img {
+        display: none;
+    }
+    div.padding1 {
+        width: 100%;
+    }
+}
 // change password link on login page
 div.change-pass-option {
     text-align: center;

@@ -5,7 +5,7 @@ import { useLocation } from 'react-router';
 import { NavLink, useHistory } from 'react-router-dom';
 
 import { backendPath } from '../../config';
-import ff_image from './assets-auth/fire-fighters.jpg';
+import ff_image from './assets-auth/fire-fighters-1080.png';
 
 function Login() {
   const [values, setValues] = useState({});
