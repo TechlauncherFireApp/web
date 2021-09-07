@@ -19,7 +19,7 @@ div.login-page {
 // Padding1 class is the formatting of the login page.
 div.padding1 {
     display: block;
-    min-width: 350px;
+    min-width: 400px;
     width: 40%;                    //  <form> width on login page.
     height: 100vh;
     float: left;                   // this is important - it enables to have image and text aligned side-by-side.
@@ -40,7 +40,7 @@ div.form-group-auth {
 
 // This is the fire fighter image attributes
 @media only screen and (min-width: 700px) {
-    img {
+    #firefighters-img {
         max-width: 60%;
         opacity: 100%;
         //max-width: 40vw;
@@ -52,8 +52,9 @@ div.form-group-auth {
 }
 
 // if screen size is less than 1000px, then image will not be displayed.
+// use # to refer to individual image ids.
 @media only screen and (max-width: 1000px) {
-    img {
+    #firefighters-img {
         display: none;
     }
     div.padding1 {
@@ -70,22 +71,47 @@ div.submit-btn {
     margin-bottom: 2%;
 }
 
-div.Fireapp-logo {
-    background-color: #E6E6E6;
-    //width: 40%
-    text-align: center;
-    padding: 1%;
-}
-
 div.mt5{
     text-align: center;
 }
 
+// "---New to fireapp?--- sentence"
 div.new-to-fireapp {
     margin-top: 20%;
     text-align: center;
 }
 
+// Create an account button at the bottom.
 div.register-btn {
     margin-bottom: 200px;
+}
+
+//Fireapp logo div at the top.
+div.Fireapp-logo {
+    background-color: #E6E6E6;
+    //width: 40%
+    text-align: center;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-right: 30%;
+}
+
+// This is the fireapp logo image.
+#fireapp-logo-img {
+    float: left;
+    width: 40px;
+    height: 40px;
+    opacity: 100%;
+    margin-left: 32%;
+    padding-top: 1%;
+}
+
+@media only screen and (max-width: 1000px) {
+    div.Fireapp-logo {
+        text-align: center;
+        #fireapp-logo-img {
+            display: none;
+        }
+        padding-right: 0;
+    }
 }

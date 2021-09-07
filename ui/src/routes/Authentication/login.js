@@ -6,6 +6,7 @@ import { NavLink, useHistory } from 'react-router-dom';
 
 import { backendPath } from '../../config';
 import ff_image from './assets-auth/fire-fighters-1080.png';
+import fa_logo from './assets-auth/fireapp-logo.png';
 
 function Login() {
   const [values, setValues] = useState({});
@@ -57,7 +58,8 @@ function Login() {
           {/*className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>*/}
           {/*top-margin bottom-margin left-margin right-margin border-style border-radius border-color padding*/}
           <div className="Fireapp-logo br3">
-            <h2 align="center">FIREAPP</h2>
+            <img src={fa_logo} id="fireapp-logo-img" alt="FireApp Logo"/>
+            <h2>FIREAPP</h2>
           </div>
 
           <div className="form-group-auth">
@@ -104,7 +106,7 @@ function Login() {
         </form>
       </div>
       <div id="login-ff-image" className="img-fluid" align="top">
-        <img src={ff_image} alt="Fire fighters" align={"right"}/>
+        <img src={ff_image} id="firefighters-img" alt="Fire fighters" align={"right"}/>
       </div>
    </div>
   );
