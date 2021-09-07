@@ -56,7 +56,7 @@ function Login() {
           className={'mt1 mb1 ml1 mr1 bn br2 pa3'}>   {/*FIXME -- change1 - jasmeen*/}
           {/*className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>*/}
           {/*top-margin bottom-margin left-margin right-margin border-style border-radius border-color padding*/}
-          <div className="Fireapp-logo">
+          <div className="Fireapp-logo br3">
             <h2 align="center">FIREAPP</h2>
           </div>
 
@@ -92,8 +92,9 @@ function Login() {
           <div className={'change-pass-option'}>
             <NavLink to={'changepass'}>Change Password?</NavLink>
           </div>
-          <div id="register-btn" className={'mt5'}>
-            <NavLink to={'/register'}>Register</NavLink>
+          <div className="new-to-fireapp silver">----------New to FireApp?----------</div>
+          <div id="register-btn" className={'submit-btn mt2 mb4'}>
+            <a href="/register" className="btn w-80 bg-light-silver dim" role="button">Create an account</a>
           </div>
           {error && (
             <div className="alert alert-danger" role="alert">
@@ -102,7 +103,7 @@ function Login() {
           )}
         </form>
       </div>
-      <div id="login-ff-image" align="top">
+      <div id="login-ff-image" className="img-fluid" align="top">
         <img src={ff_image} alt="Fire fighters" align={"right"}/>
       </div>
    </div>

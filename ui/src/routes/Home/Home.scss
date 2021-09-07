@@ -19,19 +19,19 @@ div.login-page {
 // Padding1 class is the formatting of the login page.
 div.padding1 {
     display: block;
-    min-width: 200px;
+    min-width: 350px;
     width: 40%;                    //  <form> width on login page.
     height: 100vh;
     float: left;                   // this is important - it enables to have image and text aligned side-by-side.
 }
 
 // This is the div containing fire fighter image.
-div.login-ff-image {
-    width: 40%;
-    //height: auto;
-    object-fit: contain;   // contain allows to fit according to the aspect ratio
-    opacity: 100%;
-}
+//div.login-ff-image {
+//    width: 40%;
+//    //height: auto;
+//    object-fit: contain;   // contain allows to fit according to the aspect ratio
+//    opacity: 100%;
+//}
 
 // This is the form fields in the login page.
 div.form-group-auth {
@@ -66,4 +66,13 @@ div.Fireapp-logo {
 
 div.mt5{
     text-align: center;
+}
+
+div.new-to-fireapp {
+    margin-top: 20%;
+    text-align: center;
+}
+
+div.register-btn {
+    margin-bottom: 200px;
 }
