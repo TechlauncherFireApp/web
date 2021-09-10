@@ -21,7 +21,7 @@ div.padding1 {
     display: block;
     min-width: 400px;
     width: 40%;                    //  <form> width on login page.
-    height: 100vh;
+    height: 100vh;         // cover the whole height of the screen.
     float: left;                   // this is important - it enables to have image and text aligned side-by-side.
 }
 
@@ -48,6 +48,7 @@ div.form-group-auth {
         float: right;
         border-left: 1px solid black;
         border-right: 1px solid black;
+        object-fit: cover;
     }
 }
 
