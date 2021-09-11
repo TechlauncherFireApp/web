@@ -2,8 +2,9 @@ import axios from 'axios';
 import queryString from 'query-string';
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
-import { NavLink, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
+// import { NavLink, useHistory } from 'react-router-dom';       //uncomment this line when  using any NavLink property.
 import { backendPath } from '../../config';
 import ff_image from './assets-auth/fire-fighters-1080.png';
 import fa_logo from './assets-auth/fireapp-logo.png';
@@ -91,9 +92,9 @@ function Login() {
               className={'btn w-80 bg-red pv2 ph3 br2 b black dim'}      // IMP!! width should be w-80. button color padd-top-bott padd-left-right border-radius font-weight text-color dim-upon-hover
             />
           </div>
-          <div className={'change-pass-option'}>
-            <NavLink to={'changepass'}>Change Password?</NavLink>
-          </div>
+          {/*<div className={'change-pass-option'}>*/}
+          {/*  <NavLink to={'changepass'}>Change Password?</NavLink>*/}
+          {/*</div>*/}
           <div className="new-to-fireapp silver">----------New to FireApp?----------</div>
           <div id="register-btn" className={'submit-btn mt2 mb4'}>
             <a href="/register" className="btn w-80 bg-light-silver dim" role="button">Create an account</a>
