@@ -2,9 +2,12 @@ import axios from 'axios';
 import queryString from 'query-string';
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
-import { NavLink, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
+// import { NavLink, useHistory } from 'react-router-dom';       //uncomment this line when  using any NavLink property.
 import { backendPath } from '../../config';
+import ff_image from './assets-auth/fire-fighters-1080.png';
+import fa_logo from './assets-auth/fireapp-logo.png';
 
 function Login() {
   const [values, setValues] = useState({});
@@ -43,53 +46,70 @@ function Login() {
   }
 
   return (
-    <div className="padding">
-      {showRegistrationSuccess && error === undefined && (
-        <div className="w-50 ml-auto mr-auto alert alert-success" role="alert">
-          Registration successful, you may now login.
-        </div>
-      )}
-      <form
-        onSubmit={submit}
-        className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
-        <h2>Login</h2>
-        <div className="form-group">
-          <label htmlFor={'email'}>Email*:</label>
-          <input
-            className={'form-control'}
-            type="text"
-            name="email"
-            onChange={(e) => {
-              handleChange('email', e.target.value);
-            }}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor={'password'}>Password*:</label>
-          <input
-            className={'form-control'}
-            type="password"
-            name="password"
-            onChange={(e) => {
-              handleChange('password', e.target.value);
-            }}
-          />
-        </div>
-        <input
-          type="submit"
-          value="Submit"
-          className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
-        />
-        <div className={'mt2'}>
-          <NavLink to={'/register'}>Register</NavLink>
-        </div>
-        {error && (
-          <div className="alert alert-danger" role="alert">
-            {error}
+    <div className="login-page">
+      <div className="padding1">
+        {showRegistrationSuccess && error === undefined && (
+          <div className="w-50 ml-auto mr-auto alert alert-success" role="alert">
+            Registration successful, you may now login.
           </div>
         )}
-      </form>
-    </div>
+        <form
+          onSubmit={submit}
+          className={'mt1 mb1 ml1 mr1 bn br2 pa3'}>   {/*FIXME -- change1 - jasmeen*/}
+          {/*className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>*/}
+          {/*top-margin bottom-margin left-margin right-margin border-style border-radius border-color padding*/}
+          <div className="Fireapp-logo br3">
+            <img src={fa_logo} id="fireapp-logo-img" alt="FireApp Logo"/>
+            <h2>FIREAPP</h2>
+          </div>
+
+          <div className="form-group-auth">
+            <label htmlFor={'email'}>Email or Username*:</label>
+            <input
+              className={'form-control'}
+              type="text"
+              name="email"
+              onChange={(e) => {
+                handleChange('email', e.target.value);
+              }}
+            />
+          </div>
+          <div className="form-group-auth">
+            <label htmlFor={'password'}>Password*:</label>
+            <input
+              className={'form-control'}
+              type="password"
+              name="password"
+              onChange={(e) => {
+                handleChange('password', e.target.value);
+              }}
+            />
+          </div>
+          <div className="submit-btn">
+            <input
+              type="submit"
+              value="Sign In"
+              className={'btn w-80 bg-red pv2 ph3 br2 b black dim'}      // IMP!! width should be w-80. button color padd-top-bott padd-left-right border-radius font-weight text-color dim-upon-hover
+            />
+          </div>
+          {/*<div className={'change-pass-option'}>*/}
+          {/*  <NavLink to={'changepass'}>Change Password?</NavLink>*/}
+          {/*</div>*/}
+          <div className="new-to-fireapp silver">----------New to FireApp?----------</div>
+          <div id="register-btn" className={'submit-btn mt2 mb4'}>
+            <a href="/register" className="btn w-80 bg-light-silver dim" role="button">Create an account</a>
+          </div>
+          {error && (
+            <div className="alert alert-danger" role="alert">
+              {error}
+            </div>
+          )}
+        </form>
+      </div>
+      <div id="login-ff-image" className="img-fluid" align="top">
+        <img src={ff_image} id="firefighters-img" alt="Fire fighters" align={"right"}/>
+      </div>
+   </div>
   );
 }
 

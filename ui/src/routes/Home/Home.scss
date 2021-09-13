@@ -1,10 +1,121 @@
 @import "../../styles/functions.scss";
 
+// This is the font face for Login page (as discussed on miro).
+@font-face {
+    font-family: FredokaOne-Regular;
+    src: url("../../routes/Authentication/assets-auth/FredokaOne-Regular.ttf");
+}
+
 div .margin {
     margin: 5px;
 }
 
-div.padding {
+// Padding class is for the rest of the volunteer pages.
+div.login-page {
+    //max-width: 1080px;
+    font-family: FredokaOne-Regular, serif;
+}
+
+// Padding1 class is the formatting of the login page.
+div.padding1 {
     display: block;
-    padding: 15px 15px 0 15px;
-  }
+    min-width: 400px;
+    max-height: 700px;
+    width: 40%;                    //  <form> width on login page.
+    height: 100vh;         // cover the whole height of the screen.
+    float: left;                   // this is important - it enables to have image and text aligned side-by-side.
+}
+
+// This is the div containing fire fighter image.
+div.login-ff-image {
+    width: 40%;
+    //height: auto;
+    object-fit: contain;   // contain allows to fit according to the aspect ratio
+    opacity: 100%;
+}
+
+// This is the form fields in the login page.
+div.form-group-auth {
+    margin: 10%;
+}
+
+// This is the fire fighter image attributes
+@media only screen and (min-width: 700px) {
+    #firefighters-img {
+        max-width: 60%;
+        opacity: 100%;
+        //max-width: 40vw;
+        //height: 100vh; // use 100% of the full screen height
+        height: 700px;
+        float: right;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        //object-fit: cover;
+        //object-position: 5px 10%;          // This is to crop the image based on width and height, without losing the resolution.
+    }
+}
+
+// if screen size is less than 1000px, then image will not be displayed.
+// use # to refer to individual image ids.
+@media only screen and (max-width: 1000px) {
+    #firefighters-img {
+        display: none;
+    }
+    div.padding1 {
+        width: 100%;
+    }
+}
+// change password link on login page
+div.change-pass-option {
+    text-align: center;
+}
+
+div.submit-btn {
+    text-align: center;
+    margin-bottom: 2%;
+}
+
+div.mt5{
+    text-align: center;
+}
+
+// "---New to fireapp?--- sentence"
+div.new-to-fireapp {
+    margin-top: 20%;
+    text-align: center;
+}
+
+// Create an account button at the bottom.
+div.register-btn {
+    margin-bottom: 200px;
+}
+
+//Fireapp logo div at the top.
+div.Fireapp-logo {
+    background-color: #E6E6E6;
+    //width: 40%
+    text-align: center;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-right: 30%;
+}
+
+// This is the fireapp logo image.
+#fireapp-logo-img {
+    float: left;
+    width: 40px;
+    height: 40px;
+    opacity: 100%;
+    margin-left: 32%;
+    padding-top: 1%;
+}
+
+@media only screen and (max-width: 1000px) {
+    div.Fireapp-logo {
+        text-align: center;
+        #fireapp-logo-img {
+            display: none;
+        }
+        padding-right: 0;
+    }
+}
