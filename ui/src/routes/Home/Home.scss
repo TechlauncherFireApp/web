@@ -45,12 +45,11 @@ div.form-group-auth {
         max-width: 60%;
         opacity: 100%;
         //max-width: 40vw;
-        //height: 100vh; // use 100% of the full screen height
+        //height: 100vh;                     // use 100% of the full screen height
         height: 700px;
         float: right;
         border-left: 1px solid black;
         border-right: 1px solid black;
-        z-index: 10;
         //object-fit: cover;
         //object-position: 5px 10%;          // This is to crop the image based on width and height, without losing the resolution.
     }
@@ -120,4 +119,8 @@ div.Fireapp-logo {
         }
         padding-right: 0;
     }
+}
+
+.submit-btn-2 {
+    background-color: rgb(205, 35, 35);
 }

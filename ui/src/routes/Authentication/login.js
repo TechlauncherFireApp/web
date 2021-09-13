@@ -89,7 +89,7 @@ function Login() {
             <input
               type="submit"
               value="Sign In"
-              className={'btn w-80 bg-blue pv2 ph3 br2 b black dim'}      // IMP!! width should be w-80. button color padd-top-bott padd-left-right border-radius font-weight text-color dim-upon-hover
+              className={'btn submit-btn-2 w-80 pv2 ph3 br2 white-90 b dim'}      // IMP!! width should be w-80. button color padd-top-bott padd-left-right border-radius font-weight text-color dim-upon-hover
             />
           </div>
           {/*<div className={'change-pass-option'}>*/}
