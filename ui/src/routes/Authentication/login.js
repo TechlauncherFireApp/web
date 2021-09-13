@@ -6,8 +6,8 @@ import { useHistory } from 'react-router-dom';
 
 // import { NavLink, useHistory } from 'react-router-dom';       //uncomment this line when  using any NavLink property.
 import { backendPath } from '../../config';
-import ff_image from './assets-auth/fire-fighters-1080.png';
-import fa_logo from './assets-auth/fireapp-logo.png';
+import ff_image from './images/fire-fighters-1080.png';
+import fa_logo from './images/fireapp-logo.png';
 
 function Login() {
   const [values, setValues] = useState({});
