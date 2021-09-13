@@ -3,7 +3,7 @@
 // This is the font face for Login page (as discussed on miro).
 @font-face {
     font-family: FredokaOne-Regular;
-    src: url("../../routes/Authentication/assets-auth/FredokaOne-Regular.ttf");
+    src: url("../Authentication/images/FredokaOne-Regular.ttf");
 }
 
 div .margin {
@@ -50,6 +50,7 @@ div.form-group-auth {
         float: right;
         border-left: 1px solid black;
         border-right: 1px solid black;
+        z-index: 10;
         //object-fit: cover;
         //object-position: 5px 10%;          // This is to crop the image based on width and height, without losing the resolution.
     }
@@ -108,6 +109,7 @@ div.Fireapp-logo {
     opacity: 100%;
     margin-left: 32%;
     padding-top: 1%;
+    z-index: 10;
 }
 
 @media only screen and (max-width: 1000px) {
