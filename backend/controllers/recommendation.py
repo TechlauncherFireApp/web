@@ -22,8 +22,9 @@ class Recommendation(Resource):
             return
 
         with session_scope() as session:
-            o = Optimiser(session, args['requestId'], True)
+            o = Optimiser(session, args['requestId'], False)
             result = o.solve()
+            print(result)
             o.save_result(session, result)
             return {"results": result is not None}
 

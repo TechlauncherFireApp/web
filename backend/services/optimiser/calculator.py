@@ -224,8 +224,6 @@ class Calculator:
         for vehicle in self._asset_request_vehicles_:
             this_vehicle = []
             for role in self._roles_:
-                print(vehicle)
-                print(role)
                 this_vehicle.append(self.get_role_count(vehicle.asset_type.id, role.id))
             rtn.append(this_vehicle)
         return rtn
