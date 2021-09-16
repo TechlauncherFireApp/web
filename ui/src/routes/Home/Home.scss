@@ -13,7 +13,8 @@ div .margin {
 // Padding class is for the rest of the volunteer pages.
 div.login-page {
     //max-width: 1080px;
-    font-family: FredokaOne-Regular, serif;
+    //font-family: FredokaOne-Regular, serif;
+    font-family: serif;
 }
 
 // Padding1 class is the formatting of the login page.
@@ -96,8 +97,8 @@ div.Fireapp-logo {
     //width: 40%
     text-align: center;
     padding-top: 1%;
-    padding-bottom: 1%;
-    padding-right: 30%;
+    //padding-bottom: 1%;
+    //padding-right: 30%;
 }
 
 // This is the fireapp logo image.
@@ -108,10 +109,9 @@ div.Fireapp-logo {
     opacity: 100%;
     margin-left: 32%;
     padding-top: 1%;
-    z-index: 10;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1050px) {
     div.Fireapp-logo {
         text-align: center;
         #fireapp-logo-img {
@@ -124,3 +124,4 @@ div.Fireapp-logo {
 .submit-btn-2 {
     background-color: rgb(205, 35, 35);
 }
+
