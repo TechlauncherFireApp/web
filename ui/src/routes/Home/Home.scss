@@ -18,18 +18,29 @@ div.login-page {
 }
 
 // Padding1 class is the formatting of the login page.
+//@media only screen and (max-height: 1000px) {
+//    div.padding1 {
+//        align
+//    }
+//}
+
 div.padding1 {
     display: block;
-    min-width: 400px;
+    //padding: 15% 0;
+    max-width: 40%;
     max-height: 700px;
-    width: 40%;                    //  <form> width on login page.
-    height: 100vh;         // cover the whole height of the screen.
+    // center the login page vertically ---------------
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translate(-15%, -50%);
+    // --------------------------------------------------
     float: left;                   // this is important - it enables to have image and text aligned side-by-side.
 }
 
 // This is the div containing fire fighter image.
 div.login-ff-image {
-    width: 40%;
+    //width: 40%;
     //height: auto;
     object-fit: contain;   // contain allows to fit according to the aspect ratio
     opacity: 1;
@@ -41,19 +52,19 @@ div.form-group-auth {
 }
 
 // This is the fire fighter image attributes
-@media only screen and (min-width: 700px) {
-    #firefighters-img {
-        max-width: 60%;
-        opacity: 1;
-        //max-width: 40vw;
-        //height: 100vh;                     // use 100% of the full screen height
-        height: 700px;
-        float: right;
-        border-left: 1px solid black;
-        border-right: 1px solid black;
-        //object-fit: cover;
-        //object-position: 5px 10%;          // This is to crop the image based on width and height, without losing the resolution.
-    }
+#firefighters-img {
+    width: 50%;
+    opacity: 1;
+    // max-width: 40vw;
+    position: absolute;
+    //transform: translate(50%, 0%);
+    right: 1px;
+    height: 100vh;          // use 100% of the full screen height
+    float: right;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    object-fit: cover;
+    //object-position: 5px 10%;          // This is to crop the image based on width and height, without losing the resolution.
 }
 
 // if screen size is less than 1000px, then image will not be displayed.

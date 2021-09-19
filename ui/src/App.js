@@ -22,7 +22,6 @@ import VolunteersContainer from './routes/Volunteers/volunteersContainer';
 export default function App() {
   return (
     <BrowserRouter>
-      {/*<NavBar />*/}
       <div className={'main-body'}>
         <Switch>
           <Route exact path="/" component={Home}>
