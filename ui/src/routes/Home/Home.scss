@@ -17,31 +17,47 @@ div.login-page {
     font-family: serif;
 }
 
-// Padding1 class is the formatting of the login page.
-//@media only screen and (max-height: 1000px) {
-//    div.padding1 {
-//        align
-//    }
-//}
-
 div.padding1 {
-    display: block;
-    //padding: 15% 0;
-    max-width: 40%;
-    max-height: 700px;
+    //display: block;
     // center the login page vertically ---------------
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translate(-15%, -50%);
+    //position: relative;
+    //top: 50%;
+    //-ms-transform: translateY(-50%);
+    //transform: translateY(-50%);
     // --------------------------------------------------
+    //padding: 45% 0;
+    display: table-cell;
+    vertical-align: middle;
+    //box-sizing: border-box;
+    width: 550px;
+    left: 1%;
+    max-height: 700px;
+    //transform: translateX(-30%);
+    // margin-left: 10px;
     float: left;                   // this is important - it enables to have image and text aligned side-by-side.
+}
+
+// Padding1 class is the formatting of the login page.
+@media only screen and (min-width: 1500px) {
+    div.padding1 {
+        left: 5%;
+    }
+}
+
+@media only screen and (min-width: 2000px) {
+    div.padding1 {
+        left: 10%;
+    }
+}
+
+@media only screen and (min-width: 2500px) {
+    div.padding1 {
+        left: 15%;
+    }
 }
 
 // This is the div containing fire fighter image.
 div.login-ff-image {
-    //width: 40%;
-    //height: auto;
     object-fit: contain;   // contain allows to fit according to the aspect ratio
     opacity: 1;
 }
@@ -55,10 +71,9 @@ div.form-group-auth {
 #firefighters-img {
     width: 50%;
     opacity: 1;
+    right: 1px;
     // max-width: 40vw;
     position: absolute;
-    //transform: translate(50%, 0%);
-    right: 1px;
     height: 100vh;          // use 100% of the full screen height
     float: right;
     border-left: 1px solid black;
