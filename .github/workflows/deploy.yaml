@@ -75,7 +75,7 @@ jobs:
 
        
       - name: Deploy new ElasticBeanstalk Application Version
-        run: aws elasticbeanstalk update-application-version --application-name develop --version-label "${{ steps.gitversion.outputs.semVer }}"
+        run: aws elasticbeanstalk update-environment --application-name develop --version-label "${{ steps.gitversion.outputs.semVer }}"
           
       # Setup node.js and install the package dependencies
       - name: Use Node.js 14.x
