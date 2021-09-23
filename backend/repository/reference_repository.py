@@ -32,8 +32,8 @@ def delete_role(session, role_id):
 
 
 def get_qualifications(session):
-    return session.query(Qualification.id, Qualification.name, Qualification.insert_date_time, Qualification.update_date_time,
-                         Qualification.deleted) \
+    return session.query(Qualification.id, Qualification.name, Qualification.insert_date_time,
+                         Qualification.update_date_time, Qualification.deleted) \
         .all()
 
 
@@ -63,8 +63,8 @@ def delete_qualification(session, qualification_id):
 
 
 def get_asset_type(session):
-    return session.query(AssetType.id, AssetType.name, AssetType.code, AssetType.insert_date_time, AssetType.update_date_time,
-                         AssetType.deleted) \
+    return session.query(AssetType.id, AssetType.name, AssetType.code, AssetType.insert_date_time,
+                         AssetType.update_date_time, AssetType.deleted) \
         .all()
 
 
