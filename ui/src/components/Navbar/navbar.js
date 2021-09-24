@@ -17,7 +17,7 @@ function NavBar() {
   }, [location]);
 
   return (
-      <Navbar expand="xl" className="expand-sm sticky-top">
+      <Navbar expand="lg" className="sticky-top">
           <Navbar.Brand href="/" className="text-white">FireApp</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" className="bg-light"/>
           <Navbar.Collapse id="basic-navbar-nav">

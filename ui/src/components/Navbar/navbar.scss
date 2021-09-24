@@ -6,9 +6,10 @@ a.nav-link {
 //
 nav.navbar {
  background-color: var(--red-2);
-  //background-color: #e7040f;
+  width: 100vw;
+  background-color: #e7040f;
   div.navbar-collapse {
-    width: 2080px;
+    //width: 2080px;
     margin: 0 auto;
 
     a.navbar-brand, div.navbar-nav a.nav-link{
