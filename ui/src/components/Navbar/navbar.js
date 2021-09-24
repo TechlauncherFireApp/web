@@ -37,12 +37,9 @@ function NavBar() {
               id="basic-nav-dropdown"
               className={'white'}>
               <NavDropdown.Item href="/reference/roles">Roles</NavDropdown.Item>
-              <NavDropdown.Item href="/reference/qualifications">
-                Qualifications
-              </NavDropdown.Item>
-              <NavDropdown.Item href="/reference/asset_types">
-                Asset Types
-              </NavDropdown.Item>
+              <NavDropdown.Item href="/reference/qualifications">Qualifications</NavDropdown.Item>
+              <NavDropdown.Item href="/reference/asset_types">Asset Types</NavDropdown.Item>
+              <NavDropdown.Item href="/tenancy-configs">Website Customisation</NavDropdown.Item>
             </NavDropdown>
           </>
         )}
