@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
 from controllers import *
-from controllers import user_type
 
 # Register the application
 
@@ -28,7 +27,8 @@ app.register_blueprint(authentication_bp)
 app.register_blueprint(reference_bp)
 app.register_blueprint(user_role_bp)
 app.register_blueprint(asset_type_role_bp)
-app.register_blueprint(user_type.user_type_bp)
+app.register_blueprint(user_type_bp)
+app.register_blueprint(tenancy_config_bp)
 
 
 @app.route('/')

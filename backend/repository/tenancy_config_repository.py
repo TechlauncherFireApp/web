@@ -35,7 +35,7 @@ def insert_config(session, config_name, config_title, config_font, config_navbar
                            deleted=False)
     session.add(config)
     session.flush()
-    return True
+    return config.id
 
 
 def toggle_config(session, config_id):

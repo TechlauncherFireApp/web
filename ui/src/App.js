@@ -9,6 +9,7 @@ import Login from './routes/Authentication/login';
 import Logout from './routes/Authentication/logout';
 import Register from './routes/Authentication/register';
 import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
+import Configuration from "./routes/Configuration/configuration";
 import Home from './routes/Home/Home';
 import AssetTypes from './routes/Reference/assetTypes';
 import Qualifications from './routes/Reference/qualifications';
@@ -41,6 +42,7 @@ export default function App() {
           <Route exact path="/user-privileges" component={UserPrivileges} />
           <Route exact path="/volunteer/:id" component={Volunteer} />
           <Route exact path="/volunteer/:id/availability" component={Availability} />
+          <Route exact path="/tenancy-configs" component={Configuration} />
         </Switch>
       </div>
     </BrowserRouter>
