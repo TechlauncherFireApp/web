@@ -17,7 +17,7 @@ export default class Volunteer extends React.Component {
       .request({
         url: backendPath + 'volunteer',
         method: 'GET',
-        params: { volunteerID: this.props.match.params.id },
+        params: { volunteerID: localStorage.getItem('id') },
         timeout: 15000,
         // withCredentials: true,
         headers: {
@@ -41,7 +41,7 @@ export default class Volunteer extends React.Component {
       .request({
         url: backendPath + 'volunteer/shifts',
         method: 'GET',
-        params: { volunteerID: this.props.match.params.id },
+        params: { volunteerID: localStorage.getItem('id') },
         timeout: 15000,
         // withCredentials: true,
         headers: {
@@ -70,7 +70,7 @@ export default class Volunteer extends React.Component {
   manageAvailability = () => {
     window.open(
       window.location.origin +
-        `/volunteer/${this.props.match.params.id}/availability`,
+        `/volunteer/${localStorage.getItem('id')}/availability`,
       '_self',
       '',
       false
