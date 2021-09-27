@@ -18,6 +18,7 @@ function NavBar() {
 
   return (
       <Navbar expand="md" className="sticky-top">
+          <div className="container">
           <Navbar.Brand href="/" className="text-white navbar-brand1">FireApp</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" className="bg-light"/>
           <Navbar.Collapse id="basic-navbar-nav">
@@ -56,6 +57,7 @@ function NavBar() {
               )}
               </Nav>
           </Navbar.Collapse>
+              </div>
       </Navbar>
   );
 }
