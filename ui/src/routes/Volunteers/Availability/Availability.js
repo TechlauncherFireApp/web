@@ -354,7 +354,7 @@ export default class Availability extends React.Component {
       .request({
         url: backendPath + '/volunteer/prefhours',
         method: 'GET',
-        params: { volunteerID: this.props.match.params.id },
+        params: { volunteerID: localStorage.getItem('id') },
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
@@ -383,7 +383,7 @@ export default class Availability extends React.Component {
       .request({
         url: backendPath + '/volunteer/availability',
         method: 'GET',
-        params: { volunteerID: this.props.match.params.id },
+        params: { volunteerID: localStorage.getItem('id') },
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         },
@@ -419,7 +419,7 @@ export default class Availability extends React.Component {
         url: backendPath + '/volunteer/prefhours',
         method: 'PATCH',
         params: {
-          volunteerID: this.props.match.params.id,
+          volunteerID: localStorage.getItem('id'),
           prefHours: Number(this.state.prefHours),
         },
         headers: {
@@ -448,7 +448,7 @@ export default class Availability extends React.Component {
       .request({
         url: backendPath + '/volunteer/availability',
         method: 'PATCH',
-        params: { volunteerID: this.props.match.params.id },
+        params: { volunteerID: localStorage.getItem('id') },
         data: { availability: this.state.schedule },
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -470,7 +470,7 @@ export default class Availability extends React.Component {
 
   exit = () => {
     window.open(
-      `${window.location.origin}/volunteer/${this.props.match.params.id}`,
+      `${window.location.origin}/volunteer/${localStorage.getItem('id')}`,
       '_self',
       '',
       false
