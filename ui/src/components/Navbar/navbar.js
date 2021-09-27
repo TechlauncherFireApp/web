@@ -17,12 +17,12 @@ function NavBar() {
   }, [location]);
 
   return (
-      <Navbar expand="lg" className="sticky-top">
-          <Navbar.Brand href="/" className="text-white">FireApp</Navbar.Brand>
+      <Navbar expand="md" className="sticky-top">
+          <Navbar.Brand href="/" className="text-white navbar-brand1">FireApp</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" className="bg-light"/>
           <Navbar.Collapse id="basic-navbar-nav">
               {authenticated && (role === 'ROOT_ADMIN' || role === 'ADMIN') && (
-              <>
+                  <>
                 <Nav.Link href="/captain">Request Administration</Nav.Link>
                  <Nav.Link href="/asset-type-roles">Asset Planning</Nav.Link>
                  <NavDropdown
@@ -45,13 +45,14 @@ function NavBar() {
                      Asset Types
                    </NavDropdown.Item>
                  </NavDropdown>
-               </>
+
+              </>
               )}
               <Nav className="ml-auto navbar-right">
                   {authenticated ? (
                 <Nav.Link href="/logout">Logout</Nav.Link>
               ) : (
-                <Nav.Link href="/login">Login</Nav.Link>
+                <Nav.Link href="/login" className="login-navlink">Login</Nav.Link>
               )}
               </Nav>
           </Navbar.Collapse>
@@ -59,3 +60,4 @@ function NavBar() {
   );
 }
 export default NavBar;
+

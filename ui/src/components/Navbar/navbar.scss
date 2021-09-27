@@ -3,13 +3,12 @@
 a.nav-link {
   color: white;
 }
-//
+
 nav.navbar {
  background-color: var(--red-2);
-  width: 100vw;
-  background-color: #e7040f;
+  //width: 100vw;
+  //background-color: #e7040f;
   div.navbar-collapse {
-    //width: 2080px;
     margin: 0 auto;
 
     a.navbar-brand, div.navbar-nav a.nav-link{
@@ -31,4 +30,8 @@ nav.navbar {
       }
     }
   }
+}
+
+.login-navlink {
+  display: none;
 }

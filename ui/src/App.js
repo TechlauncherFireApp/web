@@ -22,10 +22,10 @@ import VolunteersContainer from './routes/Volunteers/volunteersContainer';
 export default function App() {
   return (
     <BrowserRouter>
+      <NavBar/>
       <div className={'main-body'}>
         <Switch>
           <Route exact path="/" component={Home}>
-            <NavBar/>
             <Home/>
           </Route>
 
@@ -34,7 +34,6 @@ export default function App() {
           </Route>
 
           <Route exact path="/logout" component={Logout}>
-            <NavBar/>
             <Logout/>
           </Route>
 
@@ -44,62 +43,50 @@ export default function App() {
           </Route>
 
           <Route exact path="/reference/roles" component={Roles}>
-            <NavBar/>
             <Roles/>
           </Route>
 
           <Route exact path="/reference/qualifications" component={Qualifications}>
-            <NavBar/>
             <Qualifications/>
           </Route>
 
           <Route exact path="/reference/asset_types" component={AssetTypes}>
-            <NavBar/>
             <AssetTypes/>
           </Route>
 
           <Route exact path="/captain" component={BrigadeCaptainHome}>
-            <NavBar/>
             <BrigadeCaptainHome/>
           </Route>
 
           <Route exact path="/assetRequest/vehicles/:id" component={AssetRequestVehicle}>
-            <NavBar/>
             <AssetRequestVehicle/>
           </Route>
 
           <Route exact path="/assetRequest/volunteers/:id" component={AssetRequestVolunteers}>
-            <NavBar/>
             <AssetRequestVolunteers/>
           </Route>
 
           <Route exact path="/volunteer" component={VolunteersContainer}>
-            <NavBar/>
             <VolunteersContainer/>
           </Route>
 
           <Route exact path="/volunteer-roles" component={VolunteerRoles}>
-            <NavBar/>
             <VolunteerRoles/>
           </Route>
 
           <Route exact path="/asset-type-roles" component={AssetTypeRoles}>
-            <NavBar/>
             <AssetTypeRoles/>
           </Route>
 
           <Route exact path="/user-privileges" component={UserPrivileges}>
-            <NavBar/>
             <UserPrivileges/>
           </Route>
 
           <Route exact path="/volunteer/:id" component={Volunteer}>
-            <NavBar/>
             <Volunteer/>
           </Route>
 
           <Route exact path="/volunteer/:id/availability" component={Availability}>
-            <NavBar/>
             <Availability/>
           </Route>
         </Switch>
