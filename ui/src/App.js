@@ -38,7 +38,6 @@ export default function App() {
           </Route>
 
           <Route exact path="/register" component={Register}>
-            <NavBar/>
             <Register/>
           </Route>
 
