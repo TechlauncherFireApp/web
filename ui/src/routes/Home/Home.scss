@@ -13,23 +13,48 @@ div .margin {
 // Padding class is for the rest of the volunteer pages.
 div.login-page {
     //max-width: 1080px;
-    font-family: FredokaOne-Regular, serif;
+    //font-family: FredokaOne-Regular, serif;
+    font-family: serif;
+}
+
+div.padding1 {
+    //display: block;
+    // center the login page vertically ---------------
+    //position: relative;
+    //top: 50%;
+    //-ms-transform: translateY(-50%);
+    //transform: translateY(-50%);
+    // --------------------------------------------------
+    display: table-cell;
+    vertical-align: middle;
+    width: 550px;
+    left: 1%;
+    max-height: 700px;
+    //transform: translateX(-30%);
+    float: left;                   // this is important - it enables to have image and text aligned side-by-side.
 }
 
 // Padding1 class is the formatting of the login page.
-div.padding1 {
-    display: block;
-    min-width: 400px;
-    max-height: 700px;
-    width: 40%;                    //  <form> width on login page.
-    height: 100vh;         // cover the whole height of the screen.
-    float: left;                   // this is important - it enables to have image and text aligned side-by-side.
+@media only screen and (min-width: 1500px) {
+    div.padding1 {
+        left: 5%;
+    }
+}
+
+@media only screen and (min-width: 2000px) {
+    div.padding1 {
+        left: 10%;
+    }
+}
+
+@media only screen and (min-width: 2500px) {
+    div.padding1 {
+        left: 15%;
+    }
 }
 
 // This is the div containing fire fighter image.
 div.login-ff-image {
-    width: 40%;
-    //height: auto;
     object-fit: contain;   // contain allows to fit according to the aspect ratio
     opacity: 1;
 }
@@ -40,19 +65,18 @@ div.form-group-auth {
 }
 
 // This is the fire fighter image attributes
-@media only screen and (min-width: 700px) {
-    #firefighters-img {
-        max-width: 60%;
-        opacity: 1;
-        //max-width: 40vw;
-        //height: 100vh;                     // use 100% of the full screen height
-        height: 700px;
-        float: right;
-        border-left: 1px solid black;
-        border-right: 1px solid black;
-        //object-fit: cover;
-        //object-position: 5px 10%;          // This is to crop the image based on width and height, without losing the resolution.
-    }
+#firefighters-img {
+    width: 50%;
+    opacity: 1;
+    right: 1px;
+    // max-width: 40vw;
+    position: absolute;
+    height: 100vh;          // use 100% of the full screen height
+    float: right;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    object-fit: cover;
+    //object-position: 5px 10%;          // This is to crop the image based on width and height, without losing the resolution.
 }
 
 // if screen size is less than 1000px, then image will not be displayed.
@@ -96,8 +120,8 @@ div.Fireapp-logo {
     //width: 40%
     text-align: center;
     padding-top: 1%;
-    padding-bottom: 1%;
-    padding-right: 30%;
+    //padding-bottom: 1%;
+    //padding-right: 30%;
 }
 
 // This is the fireapp logo image.
@@ -108,10 +132,9 @@ div.Fireapp-logo {
     opacity: 100%;
     margin-left: 32%;
     padding-top: 1%;
-    z-index: 10;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1050px) {
     div.Fireapp-logo {
         text-align: center;
         #fireapp-logo-img {
@@ -124,3 +147,7 @@ div.Fireapp-logo {
 .submit-btn-2 {
     background-color: rgb(205, 35, 35);
 }
+
+//.navbar-brand1 {
+//    display: none;
+//}

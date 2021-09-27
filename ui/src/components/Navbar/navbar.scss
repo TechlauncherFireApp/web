@@ -5,10 +5,10 @@ a.nav-link {
 }
 
 nav.navbar {
-  background-color: var(--red-2);
+ background-color: var(--red-2);
+  //width: 100vw;
   //background-color: #e7040f;
   div.navbar-collapse {
-    max-width: 1080px;
     margin: 0 auto;
 
     a.navbar-brand, div.navbar-nav a.nav-link{
@@ -23,11 +23,15 @@ nav.navbar {
     } div.navbar-nav a.nav-link {
       color: rgba(255, 255, 255, 0.9);
       font-size: 15px;
-  
+
       &:hover {
         color: rgb(255, 255, 255);
         background-color: var(--red-3);
       }
     }
   }
+}
+
+.login-navlink {
+  display: none;
 }
