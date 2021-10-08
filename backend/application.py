@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, abort, redirect
 from flask_cors import CORS
 from controllers import *
 from controllers import user_type
@@ -30,16 +30,28 @@ app.register_blueprint(user_role_bp)
 app.register_blueprint(asset_type_role_bp)
 app.register_blueprint(user_type.user_type_bp)
 
+# @app.before_request
+# def before_request():
+#     if request.url.startswith('http://'):
+#         url = request.url.replace('http://', 'https://', 1)
+#         return redirect(url, code=301)
 
 @app.route('/')
 def main():
-    return {
-        'status': 'OK',
-    }
+    if request.url.startswith('http://'):
+        return redirect(request.url.replace('http', 'https', 1)
+                        .replace('080', '443', 1))
+    elif request.url.startswith('https://'):
+        return 'Hello HTTPS World!'
+    abort(500)
+    
+    # return {
+    #     'status': 'OK',
+    # }
 
 
 if __name__ == '__main__':
     import logging
 
     logging.basicConfig(filename='error.log', level=logging.DEBUG)
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', ssl_context='adhoc')
