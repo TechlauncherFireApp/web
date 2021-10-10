@@ -99,7 +99,7 @@ function Configuration() {
 
     return (
         <div className={'w-100 mt4 ba br b--black-10 pa3'}>
-            <h2 className={'mb2'}>Tenant Customisation</h2>
+            <h2 className={'mb2'}>Branding Customisation</h2>
             <hr/>
             <h5>New branding configuration</h5>
             <form onSubmit={addNew}>
