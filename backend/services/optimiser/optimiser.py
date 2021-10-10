@@ -91,7 +91,7 @@ class Optimiser:
 
     def solve(self):
         # Instantiate the model
-        gecode = minizinc.Solver.lookup("gecode")
+        gecode = minizinc.Solver.lookup("coin-bc")
         model = minizinc.Model()
         model.add_string(Optimiser.generate_model_string())
         instance = minizinc.Instance(gecode, model)

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import queryString from 'query-string';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useLocation } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
@@ -14,7 +14,21 @@ function Login() {
   const query = queryString.parse(useLocation().search);
   const [error, setError] = useState(undefined);
   const showRegistrationSuccess = query['success'] === 'true';
+  const [config, setConfig] = useState(undefined);
   const history = useHistory();
+
+  useEffect(() => {
+        axios
+            .get(backendPath + 'tenancy_config', {
+                headers: {Authorization: 'Bearer ' + localStorage.getItem('access_token')},
+                params: {getAll: Boolean(false)}
+            })
+            .then((resp) => {
+                console.log(resp.data);
+                setConfig(resp.data.results);
+                console.log(config)
+            });
+    }, [])
 
   function submit(e) {
     e.preventDefault();
