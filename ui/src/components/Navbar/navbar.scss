@@ -13,7 +13,6 @@ nav.navbar {
 
     a.navbar-brand, div.navbar-nav, a.nav-link{
       white-space: nowrap;
-      font-family: Segoe UI;
       font-style: normal;
       font-weight: normal;
       @include transition(0.5s);
