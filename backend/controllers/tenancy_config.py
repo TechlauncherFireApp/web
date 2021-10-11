@@ -7,7 +7,7 @@ from repository.tenancy_config_repository import *
 
 parser = reqparse.RequestParser()
 parser.add_argument('id', action='store', type=str)
-parser.add_argument('getAll', action='store', type=bool)
+parser.add_argument('getAll', action='store', type=str)
 parser.add_argument('name', action='store', type=str)
 parser.add_argument('title', action='store', type=str)
 parser.add_argument('font', action='store', type=str)
@@ -40,7 +40,7 @@ class TenancyConfig(Resource):
     def get(self):
         args = parser.parse_args()
         with session_scope() as session:
-            if args['getAll']:
+            if args['getAll'] == 'true':
                 res = get_all_configs(session)
                 return {'success': True, 'results': res}
             res = get_active_config(session)
@@ -51,7 +51,6 @@ class TenancyConfig(Resource):
         args = parser.parse_args()
         if args['name'] is None or args['name'] == '' or args['title'] is None or args['title'] == '':
             return {'success': False}
-        print(args['navColour'])
         with session_scope() as session:
             config_id = insert_config(session, args['name'], args['title'],
                                       args['font'], args['navColour'], args['backColour'])

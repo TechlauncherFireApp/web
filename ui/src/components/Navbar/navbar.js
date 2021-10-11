@@ -1,8 +1,11 @@
 import './navbar.scss';
 
+import axios from "axios";
 import React, { useEffect, useState } from 'react';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+
+import {backendPath} from "../../config";
 
 function NavBar() {
   let location = useLocation();
@@ -10,16 +13,47 @@ function NavBar() {
     localStorage.getItem('access_token') !== null
   );
   const [role] = useState(localStorage.getItem('role'));
-  const [id] = useState(localStorage.getItem('id'))
+  const [id] = useState(localStorage.getItem('id'));
 
+  const [activeConfig, setActiveConfig] = useState(undefined);
+  let [title] = useState(localStorage.getItem('title'));
+  let [colour] = useState(localStorage.getItem('nav_colour'));
+  let [font] = useState(localStorage.getItem('font'))
+
+  // Apply the latest configuration, or fetch if undefined
   useEffect(() => {
+      console.log(activeConfig)
+    if (activeConfig === undefined || title === undefined) {
+      title = 'FireApp';
+      colour = 'CC0000';
+      font = 'Segoe UI';
+      getConfig()
+      return
+    }
+    localStorage.setItem('title', activeConfig['title']);
+    localStorage.setItem('font', activeConfig['font']);
+    localStorage.setItem('nav_colour', activeConfig['nav_colour']);
+
+  }, [activeConfig, location])
+
+
+  // Get the currently active configuration
+   function getConfig(){
     setAuthenticated(localStorage.getItem('access_token') !== null);
-  }, [location]);
+    axios
+        .get(backendPath + 'tenancy_config', {
+          headers: {Authorization: 'Bearer ' + localStorage.getItem('access_token')},
+          params: {getAll: 'false'}
+        })
+        .then((resp) => {
+          setActiveConfig(resp.data.results[0])
+        });
+  }
 
   return (
-    <Navbar>
+    <Navbar style={{backgroundColor: colour}}>
       <Navbar.Collapse>
-        <Navbar.Brand href="/">FireApp</Navbar.Brand>
+        <Navbar.Brand href="/" style={{fontfamily: font}}>{title}</Navbar.Brand>
         {authenticated && (role === 'ROOT_ADMIN' || role === 'ADMIN') && (
           <>
             <Nav.Link href="/captain">Request Administration</Nav.Link>

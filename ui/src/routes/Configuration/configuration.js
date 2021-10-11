@@ -18,16 +18,16 @@ function Configuration() {
     const [newConfigBackColour, setNewConfigBackColour] = useState('');
 
     useEffect(() => {
+        // Get all of the configurations currently stored
         axios
             .get(backendPath + 'tenancy_config', {
                 headers: {Authorization: 'Bearer ' + localStorage.getItem('access_token')},
-                params: {getAll: Boolean(true)}
+                params: {getAll: 'true'}
             })
             .then((resp) => {
                 setConfigs(resp.data.results);
-                console.log(resp.data.results);
             });
-    }, [refresh, deletions])
+    }, [refresh, deletions]);
 
     function addNew(e) {
         e.preventDefault();
@@ -153,11 +153,11 @@ function Configuration() {
             <table className="table">
                 <thead>
                 <tr>
+                    <th scope="col">Active</th>
                     <th scope="col">Name</th>
                     <th scope="col">Page Title</th>
                     <th scope="col">Title Font</th>
                     <th scope="col">Navbar Colour</th>
-                    <th scope="col">Background Colour</th>
                     <th scope="col">Action</th>
                     <th scope="col">Deletion</th>
                 </tr>
@@ -167,11 +167,11 @@ function Configuration() {
                 configs.map((x) => {
                     return (
                         <tr key={x['id']}>
-                            <th scope="row">{x['name']}</th>
+                            <th scope="row">{x['deleted'] === 'False' ? 'Active' : ''}</th>
+                            <th>{x['name']}</th>
                             <td>{x['title']}</td>
                             <td>{x['font']}</td>
                             <td>{x['nav_colour']}</td>
-                            <td>{x['back_colour']}</td>
                             <td>
                                 <button
                                     className={'btn btn-danger'}

@@ -18,8 +18,7 @@ def get_active_config(session):
                          TenancyConfig.font,
                          TenancyConfig.navbar_colour,
                          TenancyConfig.background_colour) \
-        .filter(TenancyConfig.deleted == False) \
-        .first()
+        .filter(TenancyConfig.deleted == False)
 
 
 def insert_config(session, config_name, config_title, config_font, config_navbar_colour, config_background_colour):
