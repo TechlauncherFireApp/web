@@ -153,7 +153,7 @@ function Configuration() {
             <table className="table">
                 <thead>
                 <tr>
-                    <th scope="col">Active</th>
+                    <th scope="col"></th>
                     <th scope="col">Name</th>
                     <th scope="col">Page Title</th>
                     <th scope="col">Title Font</th>
