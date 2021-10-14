@@ -1,3 +1,4 @@
+import werkzeug
 from flask import Blueprint
 from flask_restful import fields, Resource, marshal_with, Api, reqparse
 
@@ -11,6 +12,7 @@ parser.add_argument('getAll', action='store', type=str)
 parser.add_argument('name', action='store', type=str)
 parser.add_argument('title', action='store', type=str)
 parser.add_argument('font', action='store', type=str)
+parser.add_argument('logo', action='store', type=werkzeug.datastructures.FileStorage)
 parser.add_argument('navColour', action='store', type=str)
 parser.add_argument('backColour', action='store', type=str)
 
@@ -49,11 +51,16 @@ class TenancyConfig(Resource):
     @marshal_with(config_fields)
     def post(self):
         args = parser.parse_args()
-        if args['name'] is None or args['name'] == '' or args['title'] is None or args['title'] == '':
+        if args['name'] is None or args['name'] == '' or args['title'] is None \
+                or args['title'] == '' or args['logo'] is None:
             return {'success': False}
         with session_scope() as session:
-            config_id = insert_config(session, args['name'], args['title'],
-                                      args['font'], args['navColour'], args['backColour'])
+            pic = args['logo']
+            filename = werkzeug.secure_filename(pic.filename)
+            mimetype = pic.mimetype
+
+            config_id = insert_config(session, args['name'], args['title'], pic, filename,
+                                      mimetype, args['font'], args['navColour'], args['backColour'])
             return {'success': True, 'id': config_id}
 
     @marshal_with(config_fields)

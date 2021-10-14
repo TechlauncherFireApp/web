@@ -14,6 +14,7 @@ function Configuration() {
     const [newConfigName, setNewConfigName] = useState('');
     const [newConfigTitle, setNewConfigTitle] = useState('');
     const [newConfigFont, setNewConfigFont] = useState('Anton');
+    const [newLogo, setNewLogo] = useState(undefined);
     const [newConfigNavColour, setNewConfigNavColour] = useState('#fff');
     const [newConfigBackColour, setNewConfigBackColour] = useState('');
 
@@ -36,6 +37,7 @@ function Configuration() {
             setError('Configuration name required.');
             return;
         }
+        console.log(newLogo)
         // Post the new configuration and refresh the table
         axios
             .post(
@@ -44,6 +46,7 @@ function Configuration() {
                     name: newConfigName,
                     title: newConfigTitle,
                     font: newConfigFont,
+                    logo: newLogo,
                     navColour: newConfigNavColour,
                     backColour: newConfigBackColour
                 },
@@ -57,6 +60,7 @@ function Configuration() {
                 setNewConfigName('');
                 setNewConfigTitle('');
                 setNewConfigFont('Anton');
+                setNewLogo(undefined);
                 setNewConfigNavColour('#fff');
                 setNewConfigBackColour('');
                 setRefresh((x) => x + 1);
@@ -135,6 +139,12 @@ function Configuration() {
                     />
                 </div>
                 <div className="form-group">
+                    <label htmlFor={'configLogo'}>Branding Logo:</label><br/>
+                    <input type="file" accept="image/png, image/jpeg" onChange={
+                        (nextLogo) => setNewLogo(nextLogo.target.files[0])
+                    } />
+                </div>
+                <div className="form-group">
                     <label htmlFor={'configNavColour'}>Navbar Colour:</label><br/>
                     <SketchPicker
                         color={newConfigNavColour}
@@ -153,7 +163,7 @@ function Configuration() {
             <table className="table">
                 <thead>
                 <tr>
-                    <th scope="col"></th>
+                    <th scope="col"/>
                     <th scope="col">Name</th>
                     <th scope="col">Page Title</th>
                     <th scope="col">Title Font</th>

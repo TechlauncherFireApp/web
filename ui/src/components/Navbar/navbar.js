@@ -1,53 +1,52 @@
 import './navbar.scss';
 
 import axios from "axios";
-import React, { useEffect, useState } from 'react';
-import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Nav, Navbar, NavDropdown} from 'react-bootstrap';
+import {useLocation} from 'react-router-dom';
 
 import {backendPath} from "../../config";
 
 function NavBar() {
-  let location = useLocation();
-  const [authenticated, setAuthenticated] = useState(
-    localStorage.getItem('access_token') !== null
-  );
-  const [role] = useState(localStorage.getItem('role'));
-  const [id] = useState(localStorage.getItem('id'));
+    let location = useLocation();
+    const [authenticated, setAuthenticated] = useState(
+        localStorage.getItem('access_token') !== null
+    );
+    const [role] = useState(localStorage.getItem('role'));
+    const [id] = useState(localStorage.getItem('id'));
 
-  const [activeConfig, setActiveConfig] = useState(undefined);
-  let [title] = useState(localStorage.getItem('title'));
-  let [colour] = useState(localStorage.getItem('nav_colour'));
-  let [font] = useState(localStorage.getItem('font'));
+    const [activeConfig, setActiveConfig] = useState(undefined);
+    let [title] = useState(localStorage.getItem('title'));
+    let [colour] = useState(localStorage.getItem('nav_colour'));
+    let [font] = useState(localStorage.getItem('font'));
 
-  // Apply the latest configuration, or fetch if undefined
-  useEffect(() => {
-      console.log(activeConfig)
-    if (activeConfig === undefined || title === undefined) {
-      title = 'FireApp';
-      colour = '#CC0000';
-      font = 'Segoe UI';
-      getConfig()
-      return
+    // Apply the latest configuration, or fetch if undefined
+    useEffect(() => {
+        if (activeConfig === undefined || title === undefined) {
+            title = 'FireApp';
+            colour = '#CC0000';
+            font = 'Segoe UI';
+            getConfig()
+            return
+        }
+        localStorage.setItem('title', activeConfig['title']);
+        localStorage.setItem('font', activeConfig['font']);
+        localStorage.setItem('nav_colour', activeConfig['nav_colour']);
+    }, [activeConfig, location])
+
+
+    // Get the currently active configuration
+    function getConfig() {
+        setAuthenticated(localStorage.getItem('access_token') !== null);
+        axios
+            .get(backendPath + 'tenancy_config', {
+                headers: {Authorization: 'Bearer ' + localStorage.getItem('access_token')},
+                params: {getAll: 'false'}
+            })
+            .then((resp) => {
+                setActiveConfig(resp.data.results[0])
+            });
     }
-    localStorage.setItem('title', activeConfig['title']);
-    localStorage.setItem('font', activeConfig['font']);
-    localStorage.setItem('nav_colour', activeConfig['nav_colour']);
-  }, [activeConfig, location])
-
-
-  // Get the currently active configuration
-   function getConfig(){
-    setAuthenticated(localStorage.getItem('access_token') !== null);
-    axios
-        .get(backendPath + 'tenancy_config', {
-          headers: {Authorization: 'Bearer ' + localStorage.getItem('access_token')},
-          params: {getAll: 'false'}
-        })
-        .then((resp) => {
-          setActiveConfig(resp.data.results[0])
-        });
-  }
 
     return (
         <Navbar style={{backgroundColor: colour}}>

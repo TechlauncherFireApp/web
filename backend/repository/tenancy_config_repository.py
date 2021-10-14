@@ -21,7 +21,8 @@ def get_active_config(session):
         .filter(TenancyConfig.deleted == False)
 
 
-def insert_config(session, config_name, config_title, config_font, config_navbar_colour, config_background_colour):
+def insert_config(session, config_name, config_title, config_font, logo, logo_name, logo_mimetype,
+                  config_navbar_colour, config_background_colour):
     session.query(TenancyConfig) \
         .filter(TenancyConfig.deleted == False) \
         .update({TenancyConfig.deleted: True})
@@ -30,6 +31,9 @@ def insert_config(session, config_name, config_title, config_font, config_navbar
                            title=config_title,
                            font=config_font,
                            navbar_colour=config_navbar_colour,
+                           logo=logo,
+                           logo_name=logo_name,
+                           logo_mimetype=logo_mimetype,
                            background_colour=config_background_colour,
                            deleted=False)
     session.add(config)
