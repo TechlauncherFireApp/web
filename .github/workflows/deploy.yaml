@@ -73,9 +73,10 @@ jobs:
           --version-label "${{ steps.gitversion.outputs.semVer }}" \
           --description "commit-sha-${{ github.sha }}"
 
+       
       - name: Deploy new ElasticBeanstalk Application Version
         run: aws elasticbeanstalk update-environment --environment-name Develop-env --version-label "${{ steps.gitversion.outputs.semVer }}"
-
+          
       # Setup node.js and install the package dependencies
       - name: Use Node.js 14.x
         uses: actions/setup-node@v1

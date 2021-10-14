@@ -9,7 +9,6 @@ import Login from './routes/Authentication/login';
 import Logout from './routes/Authentication/logout';
 import Register from './routes/Authentication/register';
 import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
-import Configuration from "./routes/Configuration/configuration";
 import Home from './routes/Home/Home';
 import AssetTypes from './routes/Reference/assetTypes';
 import Qualifications from './routes/Reference/qualifications';
