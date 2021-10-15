@@ -49,9 +49,11 @@ function NavBar() {
     }
 
     return (
-        <Navbar style={{backgroundColor: colour}}>
-            <Navbar.Collapse>
-                <Navbar.Brand href="/" style={{fontFamily: font}}>{title}</Navbar.Brand>
+        <Navbar expand="md" className="sticky_top" style={{backgroundColor: colour}}>
+            <div className="container">
+                <Navbar.Brand href="/" style={{fontFamily: font}} className="text-white navbar-brand1">{title}</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" className="bg-light" />
+                <Navbar.Collapse id="basic-navbar-nav">
                 {authenticated && (role === 'ROOT_ADMIN') && (
                     <>
                         <Nav.Link href="/captain" style={{fontFamily: font}}>Request Administration</Nav.Link>
@@ -125,12 +127,13 @@ function NavBar() {
                 )}
                 <Nav className="ml-auto navbar-right">
                     {authenticated ? (
-                        <Nav.Link href="/logout">Logout</Nav.Link>
+                        <Nav.Link href="/logout" style={{fontFamily: font}}>Logout</Nav.Link>
                     ) : (
-                        <Nav.Link href="/login">Login</Nav.Link>
+                        <Nav.Link href="/login" style={{fontFamily: font}}>Login</Nav.Link>
                     )}
                 </Nav>
             </Navbar.Collapse>
+                </div>
         </Navbar>
     );
 }

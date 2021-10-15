@@ -1,5 +1,5 @@
 import axios from 'axios';
-import FontPicker from 'font-picker-react'
+import FontPicker from 'font-picker-react';
 import React, {useEffect, useState} from 'react';
 import { SketchPicker } from 'react-color';
 
