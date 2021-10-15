@@ -21,6 +21,12 @@ def get_active_config(session):
         .filter(TenancyConfig.deleted == False)
 
 
+def get_img(session):
+    return session.query(TenancyConfig.logo,
+                         TenancyConfig.logo_mimetype) \
+        .filter(TenancyConfig.deleted == False)
+
+
 def insert_config(session, config_name, config_title, config_font, logo, logo_name, logo_mimetype,
                   config_navbar_colour, config_background_colour):
     session.query(TenancyConfig) \

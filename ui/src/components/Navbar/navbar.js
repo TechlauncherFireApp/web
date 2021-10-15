@@ -52,7 +52,7 @@ function NavBar() {
         <Navbar style={{backgroundColor: colour}}>
             <Navbar.Collapse>
                 <Navbar.Brand href="/" style={{fontFamily: font}}>{title}</Navbar.Brand>
-                {authenticated && (role === 'ROOT_ADMIN' || role === 'ADMIN') && (
+                {authenticated && (role === 'ROOT_ADMIN') && (
                     <>
                         <Nav.Link href="/captain" style={{fontFamily: font}}>Request Administration</Nav.Link>
                         <Nav.Link href="/asset-type-roles" style={{fontFamily: font}}>Asset Planning</Nav.Link>
@@ -85,6 +85,40 @@ function NavBar() {
                             </NavDropdown.Item>
                             <NavDropdown.Item href="/tenancy-configs" style={{fontFamily: font}}>
                                 Branding
+                            </NavDropdown.Item>
+                        </NavDropdown>
+                    </>
+                )}
+                {authenticated && (role === 'ADMIN') && (
+                    <>
+                        <Nav.Link href="/captain" style={{fontFamily: font}}>Request Administration</Nav.Link>
+                        <Nav.Link href="/asset-type-roles" style={{fontFamily: font}}>Asset Planning</Nav.Link>
+                        <NavDropdown
+                            title={<span style={{fontFamily: font}}>Volunteer Data</span>}
+                            id="basic-nav-dropdown"
+                            className={'white'}>
+                            <NavDropdown.Item href="/volunteer-roles" style={{fontFamily: font}}>
+                                Volunteer Roles
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="/user-privileges" style={{fontFamily: font}}>
+                                User Privileges
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href={"/volunteer/" + id} style={{fontFamily: font}}>
+                                My Volunteer Page
+                            </NavDropdown.Item>
+                        </NavDropdown>
+                        <NavDropdown
+                            title={<span style={{fontFamily: font}}>Reference Data</span>}
+                            id="basic-nav-dropdown"
+                            className={'white'}>
+                            <NavDropdown.Item href="/reference/roles" style={{fontFamily: font}}>
+                                Roles
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="/reference/qualifications" style={{fontFamily: font}}>
+                                Qualifications
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="/reference/asset_types" style={{fontFamily: font}}>
+                                Asset Types
                             </NavDropdown.Item>
                         </NavDropdown>
                     </>

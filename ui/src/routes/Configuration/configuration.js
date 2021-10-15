@@ -37,26 +37,31 @@ function Configuration() {
             setError('Configuration name required.');
             return;
         }
-        console.log(newLogo)
+        let fd = new FormData();
+        fd.append("name", newConfigName);
+        fd.append("title", newConfigTitle);
+        fd.append("font", newConfigFont);
+        if (newLogo !== undefined) {
+            fd.append('logo', newLogo);
+            console.log(newLogo)
+        }
+        fd.append("navColour", newConfigNavColour);
+        fd.append("backColour", newConfigBackColour);
+
         // Post the new configuration and refresh the table
         axios
             .post(
                 backendPath + 'tenancy_config',
-                {
-                    name: newConfigName,
-                    title: newConfigTitle,
-                    font: newConfigFont,
-                    logo: newLogo,
-                    navColour: newConfigNavColour,
-                    backColour: newConfigBackColour
-                },
+                fd,
                 {
                     headers: {
                         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                        'Content-Type': 'multipart/form-data'
                     },
                 }
             )
-            .then(() => {
+            .then((res) => {
+                console.log(res.data)
                 setNewConfigName('');
                 setNewConfigTitle('');
                 setNewConfigFont('Anton');
@@ -140,7 +145,7 @@ function Configuration() {
                 </div>
                 <div className="form-group">
                     <label htmlFor={'configLogo'}>Branding Logo:</label><br/>
-                    <input type="file" accept="image/png, image/jpeg" onChange={
+                    <input type="file" accept="image/png, image/jpeg" name="logo" onChange={
                         (nextLogo) => setNewLogo(nextLogo.target.files[0])
                     } />
                 </div>
