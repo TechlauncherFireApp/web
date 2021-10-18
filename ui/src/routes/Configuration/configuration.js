@@ -63,6 +63,7 @@ function Configuration() {
             .then((res) => {
                 if (res.data['success'] === false) {
                     alert("Invalid image size or image type.")
+                    window.location.reload();
                 }
                 setNewConfigName('');
                 setNewConfigTitle('');
