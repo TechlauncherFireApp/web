@@ -43,7 +43,6 @@ function Configuration() {
         fd.append("font", newConfigFont);
         if (newLogo !== undefined) {
             fd.append('logo', newLogo);
-            console.log(newLogo)
         }
         fd.append("navColour", newConfigNavColour);
         fd.append("backColour", newConfigBackColour);

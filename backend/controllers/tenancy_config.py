@@ -76,7 +76,6 @@ class TenancyConfig(Resource):
         if request.files:
             pic = request.files['logo']
             blob = pic.read()
-            size = len(blob)
             pic.seek(0)
             filename = werkzeug.utils.secure_filename(pic.filename)
             if not allowed_image(filename) or len(blob) > 64000:
