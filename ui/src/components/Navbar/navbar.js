@@ -8,6 +8,7 @@ import {useLocation} from 'react-router-dom';
 import {backendPath} from "../../config";
 
 function NavBar() {
+    let imagePath = backendPath + "tenancy_img"
     let location = useLocation();
     const [authenticated, setAuthenticated] = useState(
         localStorage.getItem('access_token') !== null
@@ -51,7 +52,9 @@ function NavBar() {
     return (
         <Navbar expand="md" className="sticky_top" style={{backgroundColor: colour}}>
             <div className="container">
-                <Navbar.Brand href="/" style={{fontFamily: font}} className="text-white navbar-brand1">{title}</Navbar.Brand>
+                <Navbar.Brand href="/" style={{fontFamily: font}} className="text-white navbar-brand1">
+                    <img src={imagePath} alt={title} width={140} height={60} x />
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className="bg-light" />
                 <Navbar.Collapse id="basic-navbar-nav">
                 {authenticated && (role === 'ROOT_ADMIN') && (

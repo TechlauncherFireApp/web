@@ -10,7 +10,7 @@ class TenancyConfig(Base):
     name = Column(String(256), nullable=False)
     title = Column(String(256), nullable=False)
     font = Column(String(256), nullable=True)
-    logo = Column(Text, nullable=False)
+    logo = Column(BLOB, nullable=False)
     logo_name = Column(Text, nullable=False)
     logo_mimetype = Column(Text, nullable=False)
     navbar_colour = Column(String(256), nullable=False)
