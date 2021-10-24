@@ -1,3 +1,6 @@
+import os
+from io import BytesIO
+
 import werkzeug.utils
 import werkzeug.datastructures
 from flask import Blueprint, request, Response
@@ -37,6 +40,21 @@ config_fields = {
 }
 
 
+ALLOWED_EXTENSIONS = ["PNG", "JPG", "JPEG"]
+
+
+def allowed_image(filename):
+    if not "." in filename:
+        return False
+
+    ext = filename.rsplit(".", 1)[1]
+
+    if ext.upper() in ALLOWED_EXTENSIONS:
+        return True
+    else:
+        return False
+
+
 class TenancyConfig(Resource):
     @marshal_with(get_config_fields)
     def get(self):
@@ -54,18 +72,23 @@ class TenancyConfig(Resource):
         if args['name'] is None or args['name'] == '' or args['title'] is None \
                 or args['title'] == '':
             return {'success': False}
-        pic = None # Change this to request.files['logo']
-        if pic is None:
+
+        if request.files:
+            pic = request.files['logo']
+            blob = pic.read()
+            pic.seek(0)
+            filename = werkzeug.utils.secure_filename(pic.filename)
+            if not allowed_image(filename) or len(blob) > 64000:
+                return {'success': False}
+            mimetype = pic.mimetype
             with session_scope() as session:
-                config_id = insert_config(session, args['name'], args['title'], args['font'], '', '',
-                                          '', args['navColour'], args['backColour'])
+                config_id = insert_config(session, args['name'], args['title'], args['font'], pic.read(), filename,
+                                          mimetype, args['navColour'], args['backColour'])
                 return {'success': True, 'id': config_id}
-        filename = werkzeug.utils.secure_filename(pic.filename)
-        mimetype = pic.mimetype
 
         with session_scope() as session:
-            config_id = insert_config(session, args['name'], args['title'], args['font'], pic.read(), filename,
-                                      mimetype, args['navColour'], args['backColour'])
+            config_id = insert_config(session, args['name'], args['title'], args['font'], '', '',
+                                      '', args['navColour'], args['backColour'])
             return {'success': True, 'id': config_id}
 
     @marshal_with(config_fields)
@@ -91,7 +114,7 @@ class ImageRequest(Resource):
     def get(self):
         with session_scope() as session:
             img = get_img(session)
-            return Response(img.logo, mimetype=img.logo_mimetype)
+            return Response(BytesIO(img.logo), mimetype=img.logo_mimetype)
 
 
 tenancy_config_bp = Blueprint('tenancy_config', __name__)

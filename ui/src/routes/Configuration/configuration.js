@@ -33,8 +33,8 @@ function Configuration() {
     function addNew(e) {
         e.preventDefault();
         setError(undefined);
-        if (newConfigName === '') {
-            setError('Configuration name required.');
+        if (newConfigName === '' || newConfigTitle === '') {
+            setError('Please enter all fields.');
             return;
         }
         let fd = new FormData();
@@ -43,7 +43,6 @@ function Configuration() {
         fd.append("font", newConfigFont);
         if (newLogo !== undefined) {
             fd.append('logo', newLogo);
-            console.log(newLogo)
         }
         fd.append("navColour", newConfigNavColour);
         fd.append("backColour", newConfigBackColour);
@@ -61,7 +60,10 @@ function Configuration() {
                 }
             )
             .then((res) => {
-                console.log(res.data)
+                if (res.data['success'] === false) {
+                    alert("Invalid image size or image type.")
+                    window.location.reload();
+                }
                 setNewConfigName('');
                 setNewConfigTitle('');
                 setNewConfigFont('Anton');
@@ -144,7 +146,7 @@ function Configuration() {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor={'configLogo'}>Branding Logo:</label><br/>
+                    <label htmlFor={'configLogo'}>Branding Logo (max size: 64KB, PNG and JPEG only):</label><br/>
                     <input type="file" accept="image/png, image/jpeg" name="logo" onChange={
                         (nextLogo) => setNewLogo(nextLogo.target.files[0])
                     } />
