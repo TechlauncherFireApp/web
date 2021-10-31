@@ -53,7 +53,7 @@ function NavBar() {
         <Navbar expand="md" className="sticky_top" style={{backgroundColor: colour}}>
             <div className="container">
                 <Navbar.Brand href="/" style={{fontFamily: font}} className="text-white navbar-brand1">
-                    <img src={imagePath} alt={title} width={140} height={60} />
+                    <img src={imagePath} alt={title} width={140} height={60} className="logo" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className="bg-light" />
                 <Navbar.Collapse id="basic-navbar-nav">
