@@ -4,10 +4,11 @@ import React, {useState} from 'react';
 import { useLocation } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
+// import fa_logo from './images/fireapp-logo.png';
+//import Sidebar from '../../components/Sidebar/sidebar';
 // import { NavLink, useHistory } from 'react-router-dom';       //uncomment this line when  using any NavLink property.
 import { backendPath } from '../../config';
 import ff_image from './images/fireapp-image1.jpg';
-// import fa_logo from './images/fireapp-logo.png';
 
 function Login() {
   const [values, setValues] = useState({});
@@ -55,7 +56,9 @@ function Login() {
         )}
         <form
           onSubmit={submit}
-          className={'mt1 mb1 ml1 mr1 bn br2 pa3'}>
+          className={'mt1 mb1 ml1 mr1 bn br2 pa3'}
+          style={{'marginRight': 'auto'}}
+        >
           {/*className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>*/}
           {/*top-margin bottom-margin left-margin right-margin border-style border-radius border-color padding*/}
           <div className="Fireapp-logo br3">
