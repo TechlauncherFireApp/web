@@ -24,33 +24,33 @@ import VolunteersContainer from './routes/Volunteers/volunteersContainer';
 export default function App() {
   return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
-    <BrowserRouter>
-      <NavBar />
-      <div style={{display: 'flex', flexDirection: 'row'}}>
-      <Sidebar/>
-      <div className={'main-body'}>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/logout" component={Logout} />
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/reference/roles" component={Roles} />
-          <Route exact path="/reference/qualifications" component={Qualifications}/>
-          <Route exact path="/reference/asset_types" component={AssetTypes} />
-          <Route exact path="/captain" component={BrigadeCaptainHome} />
-          <Route exact path="/assetRequest/vehicles/:id" component={AssetRequestVehicle} />
-          <Route exact path="/assetRequest/volunteers/:id" component={AssetRequestVolunteers} />
-          <Route exact path="/volunteer" component={VolunteersContainer} />
-          <Route exact path="/volunteer-roles" component={VolunteerRoles} />
-          <Route exact path="/asset-type-roles" component={AssetTypeRoles} />
-          <Route exact path="/user-privileges" component={UserPrivileges} />
-          <Route exact path="/volunteer/:id" component={Volunteer} />
-          <Route exact path="/volunteer/:id/availability" component={Availability} />
-          <Route exact path="/tenancy-configs" component={Configuration} />
-        </Switch>
-      </div>
-        </div>
-    </BrowserRouter>
+        <BrowserRouter>
+          <NavBar />
+          <div style={{display: 'flex', flexDirection: 'row'}}>
+            <Sidebar/>
+            <div className={'main-body'}>
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/logout" component={Logout} />
+                <Route exact path="/register" component={Register} />
+                <Route exact path="/reference/roles" component={Roles} />
+                <Route exact path="/reference/qualifications" component={Qualifications}/>
+                <Route exact path="/reference/asset_types" component={AssetTypes} />
+                <Route exact path="/captain" component={BrigadeCaptainHome} />
+                <Route exact path="/assetRequest/vehicles/:id" component={AssetRequestVehicle} />
+                <Route exact path="/assetRequest/volunteers/:id" component={AssetRequestVolunteers} />
+                <Route exact path="/volunteer" component={VolunteersContainer} />
+                <Route exact path="/volunteer-roles" component={VolunteerRoles} />
+                <Route exact path="/asset-type-roles" component={AssetTypeRoles} />
+                <Route exact path="/user-privileges" component={UserPrivileges} />
+                <Route exact path="/volunteer/:id" component={Volunteer} />
+                <Route exact path="/volunteer/:id/availability" component={Availability} />
+                <Route exact path="/tenancy-configs" component={Configuration} />
+              </Switch>
+            </div>
+          </div>
+        </BrowserRouter>
       </div>
   );
 }
