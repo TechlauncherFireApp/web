@@ -7,8 +7,9 @@ div.custom-sidebar {
 }
 
 .submenu-heading {
-  margin-top: 2em;
+  margin-top: 0.5em;
   font-size: 1.2em;
+  cursor: default;
 }
 
 .menu-items-positioning {
@@ -16,6 +17,10 @@ div.custom-sidebar {
   font-size: 1.2em;
 }
 
-.sidebar-menu-items {
+.sidebar-list {
   list-style-type: none;
+}
+
+.sidebar-hr {
+  cursor: default;
 }
