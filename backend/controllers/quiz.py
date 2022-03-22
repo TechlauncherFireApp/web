@@ -4,9 +4,6 @@ from flask_restful import reqparse, Resource, fields, marshal_with, Api
 from domain import session_scope
 from repository.question_repository import *
 
-parser = reqparse.RequestParser()
-parser.add_argument('id', action='store', type=str)
-parser.add_argument('num', action='store', type=str)
 
 question_fields = {
     "id": fields.Integer,
@@ -18,23 +15,23 @@ question_fields = {
 class GetQuestionRequest(Resource):
     @marshal_with(question_fields)
     def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int, required=True)
         args = parser.parse_args()
-        if args["id"] is None:
-            return
         with session_scope() as session:
-            question = get_question_by_id(session, args["id"])
-            return question
+            return get_question_by_id(session, args["id"])
 
 
 class GetQuestionListRequest(Resource):
     @marshal_with(question_fields)
     def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('num', type=int)
         num = parser.parse_args()["num"]
         if num is None:
             num = 10
         with session_scope() as session:
-            questions = get_question_list(session, num)
-            return questions
+            return get_question_list(session, num)
 
 
 question_bp = Blueprint('QuizRequest', __name__)
