@@ -8,3 +8,4 @@ from .asset_type import AssetType
 from .user_role import UserRole
 from .asset_type_role import AssetTypeRole
 from .tenancy_config import TenancyConfig
+from .question import Question

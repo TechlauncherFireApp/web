@@ -15,3 +15,4 @@ from .user_role import user_role_bp
 from .asset_type_role import asset_type_role_bp
 from .user_type import user_type_bp
 from .tenancy_config import tenancy_config_bp
+from .quiz import question_bp
