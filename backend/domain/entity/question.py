@@ -18,4 +18,4 @@ class Question(Base):
     answer = Column(String(20), nullable=False)
     status = Column(Boolean, default=True, nullable=False)
     answered_time = Column(Integer, default=0, nullable=False)
-    correct_time = Column(Integer, default=0, nullable=False)
+    correct_time = Column(Integer, name='correct_time', default=0, nullable=False)
