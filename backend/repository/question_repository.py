@@ -7,6 +7,9 @@ from domain import Question, QuestionType
 from datetime import datetime
 
 
+# use when parsing choice failed
+empty_choice = [{'id': '', 'content': '', 'reason': ''}]
+
 def get_question_by_id(session, question_id):
     """
     search question by question id
@@ -16,8 +19,12 @@ def get_question_by_id(session, question_id):
     if question and question.status == 1:
         # We need to use the object after this session closed
         session.expunge(question)
+        # load choice
+        try:
+            choice = json.loads(question.choice)
+        except json.JSONDecodeError:
+            choice = empty_choice
         # delete reason content in choice (not displayed when getting questions)
-        choice = json.loads(question.choice)
         for row in choice:
             row.pop('reason')
         question.choice = choice
@@ -38,7 +45,12 @@ def get_question_list(session, num):
     session.expunge_all()
     # delete reason content in choice (not displayed when getting questions)
     for question in questions:
-        choice = json.loads(question.choice)
+        # load choice
+        try:
+            choice = json.loads(question.choice)
+        except json.JSONDecodeError:
+            choice = empty_choice
+        # delete question that don't have error format choice
         for choice_row in choice:
             choice_row.pop('reason')
         question.choice = choice
@@ -80,7 +92,6 @@ def delete_question(session, question_id):
         # session.flush()
         return True
     return False
-
 
 def update_question(session, question_id, role, description, choice, difficulty, answer):
     """
