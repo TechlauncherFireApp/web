@@ -3,7 +3,6 @@ import './sidebar.scss';
 import {
   CDBSidebar,
   CDBSidebarContent,
-  CDBSidebarFooter,
   CDBSidebarHeader,
   CDBSidebarMenu,
   CDBSidebarMenuItem
@@ -59,14 +58,6 @@ const Sidebar = () => {
                         </Link>
                     </CDBSidebarMenu>
                 </CDBSidebarContent>
-                <CDBSidebarFooter style={{ textAlign: 'center' }}>
-                    <div
-                        className="sidebar-btn-wrapper"
-                        style={{padding: '20px 5px'}}
-                    >
-                        Footer
-                    </div>
-                </CDBSidebarFooter>
             </CDBSidebar>
         </div>
     );
