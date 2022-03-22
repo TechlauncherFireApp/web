@@ -7,7 +7,7 @@ from domain import Question, QuestionType
 from datetime import datetime
 
 # use when parsing choice failed
-empty_choice = [{'id': '', 'content': '', 'reason': ''}]
+empty_choice = [{'id': '', 'content': ''}]
 
 
 def get_question_by_id(session, question_id):
@@ -22,13 +22,13 @@ def get_question_by_id(session, question_id):
         try:
             # load choice in json format
             choice = json.loads(question.choice)
+            # delete reason content in choice (not displayed when getting questions)
+            for row in choice:
+                row.pop('reason')
+            question.choice = choice
         except json.JSONDecodeError:
             # load empty choice
-            choice = empty_choice
-        # delete reason content in choice (not displayed when getting questions)
-        for row in choice:
-            row.pop('reason')
-        question.choice = choice
+            question.choice = empty_choice
         return question
     else:
         return None
@@ -48,13 +48,13 @@ def get_question_list(session, num):
         # load choice in json format
         try:
             choice = json.loads(question.choice)
+            for choice_row in choice:
+                choice_row.pop('reason')
+            question.choice = choice
         except json.JSONDecodeError:
             # load empty choice
-            choice = empty_choice
+            question.choice = empty_choice
         # delete reason content in choice (not displayed when getting questions)
-        for choice_row in choice:
-            choice_row.pop('reason')
-        question.choice = choice
     return questions
 
 
