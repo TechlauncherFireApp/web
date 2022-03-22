@@ -31,7 +31,7 @@ def get_question_list(session, num):
     :param num: number of questions
     :return: question list
     """
-    questions = session.query(Question).order_by(func.random()).limit(num).all()
+    questions = session.query(Question).filter(Question.status == 1).order_by(func.random()).limit(num).all()
     # We need to use objects after this session closed
     session.expunge_all()
     # delete reason content in choice (not displayed when getting questions)
