@@ -4,6 +4,8 @@ from sqlalchemy import func
 
 from domain import Question, QuestionType
 
+from datetime import datetime
+
 
 def get_question_by_id(session, question_id):
     """
@@ -41,3 +43,79 @@ def get_question_list(session, num):
             choice_row.pop('reason')
         question.choice = choice
     return questions
+
+
+def create_question(session, question_type, role, description, choice, difficulty, answer):
+    """
+    create a new question
+    :param session:
+    :param question_type:
+    :param role:
+    :param description:
+    :param choice:
+    :param difficulty:
+    :param answer
+    :return: returns id of the new question
+    """
+    question = Question(question_type=question_type, role=role, description=description, choice=choice,
+                        difficulty=difficulty, answer=answer)
+    session.add(question)
+    session.flush()
+    return question.id
+
+
+def delete_question(session, question_id):
+    """
+    delete a question
+    :param session:
+    :param question_id: id of the question want to delete
+    :return: True: delete successful
+             False: delete successful
+    """
+    existing = session.query(Question).filter(id=question_id).first()
+    if existing is not None:
+        session.delete(existing)
+        session.flush()
+        return True
+    return False
+
+
+def update_question(session, question_id, description, choice, difficulty, answer):
+    """
+    update a question
+    :param session:
+    :param question_id:
+    :param description:
+    :param choice:
+    :param difficulty:
+    :param answer:
+    """
+    question = session.query(Question).filter(id=question_id).first()
+    if description is None:
+        description = question.description
+    if choice is None:
+        choice = question.choice
+    if difficulty is None:
+        difficulty = question.choice
+    if answer is None:
+        answer = question.choice
+    question.description = description
+    question.choice = choice
+    question.difficulty = difficulty
+    question.answer = answer
+    question.update_time = datetime.now()
+
+
+def check_answer(session, question_id, answer):
+    """
+    check the answer
+    :param session:
+    :param question_id:
+    :param answer: one character, e.g: A/B/C/D...
+    :return:
+    """
+    question = session.query(Question).filter(id=question_id).first()
+    if question.answer == answer:
+        return True
+    return False
+
