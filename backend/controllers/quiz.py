@@ -40,6 +40,6 @@ class GetQuestionListRequest(Resource):
 
 
 question_bp = Blueprint('QuizRequest', __name__)
-api = Api(question_bp)
-api.add_resource(GetQuestionRequest, "/quiz/getQuestionById")
-api.add_resource(GetQuestionListRequest, "/quiz/getQuestionList")
+api = Api(question_bp, "/quiz")
+api.add_resource(GetQuestionRequest, "/getQuestionById")
+api.add_resource(GetQuestionListRequest, "/getQuestionList")
