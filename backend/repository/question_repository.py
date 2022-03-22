@@ -19,10 +19,11 @@ def get_question_by_id(session, question_id):
     if question and question.status == 1:
         # We need to use the object after this session closed
         session.expunge(question)
-        # load choice
         try:
+            # load choice in json format
             choice = json.loads(question.choice)
         except json.JSONDecodeError:
+            # load empty choice
             choice = empty_choice
         # delete reason content in choice (not displayed when getting questions)
         for row in choice:
@@ -43,14 +44,14 @@ def get_question_list(session, num):
     questions = session.query(Question).filter(Question.status == 1).order_by(func.random()).limit(num).all()
     # We need to use objects after this session closed
     session.expunge_all()
-    # delete reason content in choice (not displayed when getting questions)
     for question in questions:
-        # load choice
+        # load choice in json format
         try:
             choice = json.loads(question.choice)
         except json.JSONDecodeError:
+            # load empty choice
             choice = empty_choice
-        # delete question that don't have error format choice
+        # delete reason content in choice (not displayed when getting questions)
         for choice_row in choice:
             choice_row.pop('reason')
         question.choice = choice
