@@ -60,6 +60,7 @@ def create_question(session, question_type, role, description, choice, difficult
     question = Question(question_type=question_type, role=role, description=description, choice=choice,
                         difficulty=difficulty, answer=answer)
     session.add(question)
+    # session.expunge(question)
     session.flush()
     return question.id
 
@@ -72,17 +73,19 @@ def delete_question(session, question_id):
     :return: True: delete successful
              False: delete successful
     """
-    existing = session.query(Question).filter(id=question_id).first()
+    existing = session.query(Question).filter(Question.id == question_id).first()
     if existing is not None:
-        session.delete(existing)
-        session.flush()
+        existing.status = False
+        # session.delete(existing)
+        # session.flush()
         return True
     return False
 
 
-def update_question(session, question_id, description, choice, difficulty, answer):
+def update_question(session, question_id, role, description, choice, difficulty, answer):
     """
     update a question
+    :param role:
     :param session:
     :param question_id:
     :param description:
@@ -90,19 +93,18 @@ def update_question(session, question_id, description, choice, difficulty, answe
     :param difficulty:
     :param answer:
     """
-    question = session.query(Question).filter(id=question_id).first()
-    if description is None:
-        description = question.description
-    if choice is None:
-        choice = question.choice
-    if difficulty is None:
-        difficulty = question.choice
-    if answer is None:
-        answer = question.choice
-    question.description = description
-    question.choice = choice
-    question.difficulty = difficulty
-    question.answer = answer
+    question = session.query(Question).filter(Question.id == question_id).first()
+    # session.expunge(question)
+    if role is not None:
+        question.role = role
+    if description is not None:
+        question.description = description
+    if choice is not None:
+        question.choice = choice
+    if difficulty is not None:
+        question.difficulty = difficulty
+    if answer is not None:
+        question.answer = answer
     question.update_time = datetime.now()
 
 
@@ -114,8 +116,5 @@ def check_answer(session, question_id, answer):
     :param answer: one character, e.g: A/B/C/D...
     :return:
     """
-    question = session.query(Question).filter(id=question_id).first()
-    if question.answer == answer:
-        return True
-    return False
-
+    question = session.query(Question).filter(Question.id == question_id).first()
+    return question.answer == answer

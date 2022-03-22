@@ -5,12 +5,16 @@ from domain import session_scope
 from repository.question_repository import *
 from domain.type.question_type import QuestionType
 
-
 question_fields = {
     "id": fields.Integer,
     "description": fields.String,
     "choice": fields.List(fields.Raw)
 }
+
+result_fields = {
+    "result": fields.Boolean
+}
+
 
 
 class GetQuestionRequest(Resource):
@@ -35,7 +39,73 @@ class GetQuestionListRequest(Resource):
             return get_question_list(session, num)
 
 
+class DeleteQuestion(Resource):
+    @marshal_with(result_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int, required=True)
+        question_id = parser.parse_args()["id"]
+        with session_scope() as session:
+            return {'result' : delete_question(session, question_id)}
+
+
+class CreateQuestion(Resource):
+    @marshal_with(question_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('question_type', type=int, required=True)
+        parser.add_argument('role', type=str)
+        parser.add_argument('description', type=str, required=True)
+        parser.add_argument('choice', type=str, required=True)
+        parser.add_argument('difficulty', type=int, required=True)
+        parser.add_argument('answer', type=str, required=True)
+        question_type = QuestionType(parser.parse_args()["question_type"])
+        role = parser.parse_args()["role"]
+        description = parser.parse_args()["description"]
+        choice = parser.parse_args()["choice"]
+        difficulty = parser.parse_args()["difficulty"]
+        answer = parser.parse_args()["answer"]
+        with session_scope() as session:
+            return create_question(session, question_type, role, description, choice, difficulty, answer)
+
+
+class UpdateQuestion(Resource):
+    @marshal_with(question_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int, required=True)
+        parser.add_argument('role', type=str)
+        parser.add_argument('description', type=str)
+        parser.add_argument('choice', type=str)
+        parser.add_argument('difficulty', type=int)
+        parser.add_argument('answer', type=str)
+        question_id = parser.parse_args()["id"]
+        role = parser.parse_args()["role"]
+        description = parser.parse_args()["description"]
+        choice = parser.parse_args()["choice"]
+        difficulty = parser.parse_args()["difficulty"]
+        answer = parser.parse_args()["answer"]
+        with session_scope() as session:
+            return update_question(session, question_id, role, description, choice, difficulty, answer)
+
+
+class CheckAnswer(Resource):
+    @marshal_with(result_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int, required=True)
+        parser.add_argument('answer', type=str)
+        question_id = parser.parse_args()["id"]
+        answer = parser.parse_args()["answer"]
+        with session_scope() as session:
+            return {"result": check_answer(session, question_id, answer)}
+
+
 question_bp = Blueprint('QuizRequest', __name__)
 api = Api(question_bp, "/quiz")
 api.add_resource(GetQuestionRequest, "/getQuestionById")
 api.add_resource(GetQuestionListRequest, "/getQuestionList")
+api.add_resource(DeleteQuestion, "/deleteQuestion")
+api.add_resource(CreateQuestion, "/createQuestion")
+api.add_resource(UpdateQuestion, "/updateQuestion")
+api.add_resource(CheckAnswer, "/checkAnswer")
