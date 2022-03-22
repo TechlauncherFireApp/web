@@ -101,8 +101,8 @@ class CheckAnswer(Resource):
             return {"result": check_answer(session, question_id, answer)}
 
 
-question_bp = Blueprint('QuizRequest', __name__)
-api = Api(question_bp, "/quiz")
+tutorial_quiz_bp = Blueprint('TutorialQuizRequest', __name__)
+api = Api(tutorial_quiz_bp, "/quiz")
 api.add_resource(GetQuestionRequest, "/getQuestionById")
 api.add_resource(GetQuestionListRequest, "/getQuestionList")
 api.add_resource(DeleteQuestion, "/deleteQuestion")
