@@ -14,8 +14,6 @@ question_fields = {
     "choice": fields.List(fields.Raw)
 }
 
-question_list_fields = fields.List(fields.Raw(question_fields))
-
 
 class GetQuestionRequest(Resource):
     @marshal_with(question_fields)
