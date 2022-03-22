@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import NavBar from "./components/Navbar/navbar";
+import Sidebar from "./components/Sidebar/sidebar";
 import AssetRequestVehicle from './routes/AssetRequestVehicle/AssetRequestVehicle';
 import AssetRequestVolunteers from './routes/AssetRequestVolunteers/assetRequestVolunteers';
 import AssetTypeRoles from './routes/AssetTypeRoles';
@@ -22,8 +23,11 @@ import VolunteersContainer from './routes/Volunteers/volunteersContainer';
 
 export default function App() {
   return (
+      <div style={{display: 'flex', flexDirection: 'column'}}>
     <BrowserRouter>
       <NavBar />
+      <div style={{display: 'flex', flexDirection: 'row'}}>
+        <Sidebar/>
       <div className={'main-body'}>
         <Switch>
           <Route exact path="/" component={Home} />
@@ -45,6 +49,8 @@ export default function App() {
           <Route exact path="/tenancy-configs" component={Configuration} />
         </Switch>
       </div>
+      </div>
     </BrowserRouter>
+        </div>
   );
 }
