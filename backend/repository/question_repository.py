@@ -6,9 +6,9 @@ from domain import Question, QuestionType
 
 from datetime import datetime
 
-
 # use when parsing choice failed
 empty_choice = [{'id': '', 'content': '', 'reason': ''}]
+
 
 def get_question_by_id(session, question_id):
     """
@@ -92,6 +92,7 @@ def delete_question(session, question_id):
         # session.flush()
         return True
     return False
+
 
 def update_question(session, question_id, role, description, choice, difficulty, answer):
     """
