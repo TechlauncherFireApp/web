@@ -1,18 +1,21 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Enum, JSON
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Enum, Text
+from sqlalchemy.dialects.mysql import TINYINT
 from domain.base import Base
-from domain.type.question_type import QuestionType
-from domain.type.difficulty_level import Difficulty
+from domain.type import QuestionType
 
 
 class Question(Base):
     __tablename__ = 'question'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    created_time = Column(DateTime, name='created_time', default=datetime.now(), nullable=False)
-    updated_time = Column(DateTime, name='updated_time', default=datetime.now(), nullable=False)
-    question_type = Column(Enum(QuestionType), name='question_type')
-    role = Column(String(100), name='role')
-    choices = Column(JSON, name='choices', default=None)
-    description = Column(String(512), default=None)
-    difficulty = Column(Enum(Difficulty, name='difficulty'))
-    answer = Column(String(5), name='answer', nullable=False)
+    created_time = Column(DateTime, default=datetime.now(), nullable=False)
+    update_time = Column(DateTime, default=datetime.now(), nullable=False)
+    question_type = Column(Enum(QuestionType), nullable=False)
+    role = Column(String(256), nullable=True)
+    description = Column(String(1024), nullable=False)
+    choice = Column(Text, nullable=False)
+    difficulty = Column(TINYINT, default=1, nullable=False)
+    answer = Column(String(20), nullable=False)
+    status = Column(Boolean, default=True, nullable=False)
+    answered_time = Column(Integer, default=0, nullable=False)
+    correct_time = Column(Integer, default=0, nullable=False)

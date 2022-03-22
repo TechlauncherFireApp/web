@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class QuestionType(Enum):
-    SINGLE = 1
-    MULTIPLE = 2
+    SINGLE = 0
+    MULTIPLE = 1
