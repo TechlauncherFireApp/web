@@ -15,6 +15,9 @@ result_fields = {
     "result": fields.Boolean
 }
 
+create_question_fields = {
+    "question_id": fields.Integer
+}
 
 
 class GetQuestionRequest(Resource):
@@ -46,11 +49,11 @@ class DeleteQuestion(Resource):
         parser.add_argument('id', type=int, required=True)
         question_id = parser.parse_args()["id"]
         with session_scope() as session:
-            return {'result' : delete_question(session, question_id)}
+            return {'result': delete_question(session, question_id)}
 
 
 class CreateQuestion(Resource):
-    @marshal_with(question_fields)
+    @marshal_with(create_question_fields)
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('question_type', type=int, required=True)
@@ -66,11 +69,12 @@ class CreateQuestion(Resource):
         difficulty = parser.parse_args()["difficulty"]
         answer = parser.parse_args()["answer"]
         with session_scope() as session:
-            return create_question(session, question_type, role, description, choice, difficulty, answer)
+            return {'question_id': create_question(session, question_type, role, description,
+                                                   choice, difficulty, answer)}
 
 
 class UpdateQuestion(Resource):
-    @marshal_with(question_fields)
+    @marshal_with(result_fields)
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', type=int, required=True)
@@ -86,7 +90,8 @@ class UpdateQuestion(Resource):
         difficulty = parser.parse_args()["difficulty"]
         answer = parser.parse_args()["answer"]
         with session_scope() as session:
-            return update_question(session, question_id, role, description, choice, difficulty, answer)
+            return {'result': update_question(session, question_id, role, description,
+                                              choice, difficulty, answer)}
 
 
 class CheckAnswer(Resource):

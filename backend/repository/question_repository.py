@@ -62,12 +62,12 @@ def create_question(session, question_type, role, description, choice, difficult
     """
     create a new question
     :param session:
-    :param question_type:
-    :param role:
-    :param description:
-    :param choice:
-    :param difficulty:
-    :param answer
+    :param question_type: question_type.QuestionType(Enum)
+    :param role: String,
+    :param description: String, question content
+    :param choice: String, question choices, JSON format
+    :param difficulty: Integer, FROM 0 TO 4
+    :param answer: String, A/B/C/D
     :return: returns id of the new question
     """
     question = Question(question_type=question_type, role=role, description=description, choice=choice,
@@ -98,16 +98,19 @@ def delete_question(session, question_id):
 def update_question(session, question_id, role, description, choice, difficulty, answer):
     """
     update a question
-    :param role:
     :param session:
-    :param question_id:
-    :param description:
-    :param choice:
-    :param difficulty:
-    :param answer:
+    :param question_id: Integer, id
+    :param role: String
+    :param description: String, question content
+    :param choice: String, question choices, JSON format
+    :param difficulty: Integer, FROM 0 TO 4
+    :param answer: String, A/B/C/D
+
     """
     question = session.query(Question).filter(Question.id == question_id).first()
     # session.expunge(question)
+    if not question or question.status == 0:
+        return False
     if role is not None:
         question.role = role
     if description is not None:
@@ -119,6 +122,7 @@ def update_question(session, question_id, role, description, choice, difficulty,
     if answer is not None:
         question.answer = answer
     question.update_time = datetime.now()
+    return True
 
 
 def check_answer(session, question_id, answer):
