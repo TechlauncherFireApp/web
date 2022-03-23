@@ -1,13 +1,9 @@
 import json
+from datetime import datetime
 
 from sqlalchemy import func
 
-from domain import Question, QuestionType
-
-from datetime import datetime
-
-# use when parsing choice failed
-empty_choice = [{'id': '', 'content': ''}]
+from domain import Question
 
 
 def get_question_by_id(session, question_id):
@@ -19,16 +15,7 @@ def get_question_by_id(session, question_id):
     if question and question.status == 1:
         # We need to use the object after this session closed
         session.expunge(question)
-        try:
-            # load choice in json format
-            choice = json.loads(question.choice)
-            # delete reason content in choice (not displayed when getting questions)
-            for row in choice:
-                row.pop('reason')
-            question.choice = choice
-        except json.JSONDecodeError:
-            # load empty choice
-            question.choice = empty_choice
+        _parse_choice(question)
         return question
     else:
         return None
@@ -45,17 +32,28 @@ def get_question_list(session, num):
     # We need to use objects after this session closed
     session.expunge_all()
     for question in questions:
-        try:
-            # load choice in json format
-            choice = json.loads(question.choice)
-            # delete reason content in choice (not displayed when getting questions)
-            for row in choice:
-                row.pop('reason')
-            question.choice = choice
-        except json.JSONDecodeError:
-            # load empty choice
-            question.choice = empty_choice
+        _parse_choice(question)
     return questions
+
+
+def _parse_choice(question):
+    """
+    Parse choice of question and remove reason field in choice (if exists).
+    If decode error, fill choice in empty choice
+    :param question: question object
+    """
+    empty_choice = [{'id': '', 'content': ''}]
+    try:
+        # load choice in json format
+        choice = json.loads(question.choice)
+        # delete reason content in choice (not displayed when getting questions)
+        for row in choice:
+            if row['reason']:
+                row.pop('reason')
+        question.choice = choice
+    except json.JSONDecodeError:
+        # load empty choice
+        question.choice = empty_choice
 
 
 def create_question(session, question_type, role, description, choice, difficulty, answer):
