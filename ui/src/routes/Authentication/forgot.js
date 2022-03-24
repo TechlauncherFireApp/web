@@ -26,6 +26,8 @@ function Forgot() {
     });
   }
 
+  {/*backend -> authentication/emailcode function needs to be written*/}
+
   function handleChange(field, value) {
     const lcl = { ...values };
     lcl[field] = value;
@@ -39,7 +41,7 @@ function Forgot() {
         className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
         <h2>Reset Password</h2>
         <div className="form-group">
-          <label htmlFor={'email'}>Email*:</label>
+          <label htmlFor={'email'}>Email:</label>
           <input
             className={'form-control'}
             type="text"
