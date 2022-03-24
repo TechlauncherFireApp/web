@@ -50,7 +50,7 @@ function NavBar() {
     }
 
     return (
-        <Navbar expand="md" className="sticky_top" style={{backgroundColor: colour}}>
+        <Navbar expand="md" className="sticky_top" style={{backgroundColor: colour, position: 'sticky', zIndex: '100', width: '100vw', top: '0'}}>
             <div className="container">
                 <Navbar.Brand href="/" style={{fontFamily: font}} className="text-white navbar-brand1">
                     <img src={imagePath} alt={title} width={140} height={60} className="logo" />

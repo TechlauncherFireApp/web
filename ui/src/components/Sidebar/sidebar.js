@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 const Sidebar = () => {
     return (
-        <div style={{ height: '100vh', overflow: 'scroll initial', width: '10px' }} className='custom-sidebar'>
+        <div style={{ height: '100vh', overflow: 'scroll initial', width: '10px', position: 'fixed'}} className='custom-sidebar'>
             <CDBSidebar>
                 <CDBSidebarHeader prefix={<i className="fa fa-bars" />}>Menu</CDBSidebarHeader>
                 <CDBSidebarContent>
