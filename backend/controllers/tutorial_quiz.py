@@ -30,16 +30,19 @@ class GetQuestionRequest(Resource):
             return get_question_by_id(session, args["id"])
 
 
-class GetQuestionListRequest(Resource):
+class GetRandomQuestionRequest(Resource):
     @marshal_with(question_fields)
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('num', type=int)
-        num = parser.parse_args()["num"]
+        parser.add_argument('role', type=str, default='volunteer')
+        parser.add_argument('difficulty', type=int, default=1)
+        args = parser.parse_args()
+        num = args['num']
         if num is None:
             num = 10
         with session_scope() as session:
-            return get_question_list(session, num)
+            return get_random_question(session, num, args['role'], args['difficulty'])
 
 
 class DeleteQuestion(Resource):
@@ -109,7 +112,7 @@ class CheckAnswer(Resource):
 tutorial_quiz_bp = Blueprint('TutorialQuizRequest', __name__)
 api = Api(tutorial_quiz_bp, "/quiz")
 api.add_resource(GetQuestionRequest, "/getQuestionById")
-api.add_resource(GetQuestionListRequest, "/getQuestionList")
+api.add_resource(GetRandomQuestionRequest, "/getRandomQuestion")
 api.add_resource(DeleteQuestion, "/deleteQuestion")
 api.add_resource(CreateQuestion, "/createQuestion")
 api.add_resource(UpdateQuestion, "/updateQuestion")
