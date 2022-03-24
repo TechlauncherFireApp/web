@@ -14,10 +14,10 @@ function Verify() {
     axios.post(backendPath + 'authentication/verify', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
-          history.push('/verifyCode?success=true');
+          history.push('/verify?success=true');
           break;
-        case 'EMAIL_NOT_FOUND':
-          setError('Email cannot be found');
+        case 'INCORRECT':
+          setError('Code was not correct');
           break;
         default:
           setError('Unknown error');
@@ -57,6 +57,11 @@ function Verify() {
           value="Submit"
           className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
         />
+        {/* PLACEHOLDER
+          TODO: Below NavLink is a placeholder, can be removed once backend for submit button is done
+        */}
+        <NavLink to="/reset">Submit</NavLink>
+
         <div className={'mt2'}>
           <NavLink to={'/forgot'}>Back</NavLink>
         </div>
