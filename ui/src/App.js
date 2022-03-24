@@ -10,6 +10,7 @@ import Forgot from "./routes/Authentication/forgot";
 import Login from './routes/Authentication/login';
 import Logout from './routes/Authentication/logout';
 import Register from './routes/Authentication/register';
+import Verify from "./routes/Authentication/verify";
 import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
 import Configuration from "./routes/Configuration/configuration";
 import Home from './routes/Home/Home';
@@ -37,6 +38,7 @@ export default function App() {
           <Route exact path="/logout" component={Logout} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/forgot" component={Forgot} />
+          <Route exact path="/verify" component={Verify} />
           <Route exact path="/reference/roles" component={Roles} />
           <Route exact path="/reference/qualifications" component={Qualifications}/>
           <Route exact path="/reference/asset_types" component={AssetTypes} />
