@@ -10,7 +10,6 @@ function Forgot() {
   const history = useHistory();
 
 
-
   function submit(e) {
     /* TODO: Below function is the hook for the incomplete backend */
     e.preventDefault();
@@ -18,6 +17,7 @@ function Forgot() {
       switch (resp.data['result']) {
         case 'SUCCESS':
           history.push('/emailCode?success=true');
+          /* Maybe change this above line, essentially will link to the next page and bring over any necessary account data*/
           break;
         case 'EMAIL_NOT_FOUND':
           setError('Email cannot be found');
@@ -28,8 +28,6 @@ function Forgot() {
       }
     });
   }
-
-
 
   function handleChange(field, value) {
     const lcl = { ...values };
@@ -64,7 +62,7 @@ function Forgot() {
         {/* PLACEHOLDER
           TODO: Below NavLink is a placeholder, can be removed once backend for submit button is done
         */}
-        <NavLink to="/login">Submit</NavLink>
+        <NavLink to="/verify">Submit</NavLink>
 
         <div className={'mt2'}>
           <NavLink to={'/login'}>Back</NavLink>
