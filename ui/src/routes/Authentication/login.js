@@ -85,7 +85,7 @@ function Login() {
               }}
             />
 
-            <a href="/register" className="dim" role="button"><strong>Forgot Password</strong></a>
+            <a href="/forgot" className="dim" role="button"><strong>Forgot Password</strong></a>
             {/* register href is a placeholder */}
 
           </div>
