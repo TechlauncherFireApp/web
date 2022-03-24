@@ -4,7 +4,7 @@ import { NavLink, useHistory } from 'react-router-dom';
 
 import { backendPath } from '../../config';
 
-function forgot() {
+function Forgot() {
   const [values, setValues] = useState({});
   const [error, setError] = useState(undefined);
   const history = useHistory();

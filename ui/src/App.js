@@ -6,6 +6,7 @@ import Sidebar from "./components/Sidebar/sidebar";
 import AssetRequestVehicle from './routes/AssetRequestVehicle/AssetRequestVehicle';
 import AssetRequestVolunteers from './routes/AssetRequestVolunteers/assetRequestVolunteers';
 import AssetTypeRoles from './routes/AssetTypeRoles';
+import Forgot from "./routes/Authentication/forgot";
 import Login from './routes/Authentication/login';
 import Logout from './routes/Authentication/logout';
 import Register from './routes/Authentication/register';
@@ -21,6 +22,7 @@ import Availability from './routes/Volunteers/Availability/Availability';
 import Volunteer from './routes/Volunteers/volunteer';
 import VolunteersContainer from './routes/Volunteers/volunteersContainer';
 
+
 export default function App() {
   return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -34,6 +36,7 @@ export default function App() {
           <Route exact path="/login" component={Login} />
           <Route exact path="/logout" component={Logout} />
           <Route exact path="/register" component={Register} />
+          <Route exact path="/forgot" component={Forgot} />
           <Route exact path="/reference/roles" component={Roles} />
           <Route exact path="/reference/qualifications" component={Qualifications}/>
           <Route exact path="/reference/asset_types" component={AssetTypes} />
