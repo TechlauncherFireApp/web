@@ -9,21 +9,19 @@ function Reset() {
   const [error, setError] = useState(undefined);
   const history = useHistory();
 
+  /*Todo: Look at the changepassword backend process as it will probably be very similar to our needs for the reset password process*/
   function submit(e) {
     e.preventDefault();
-    axios.post(backendPath + 'authentication/register', values).then((resp) => {
+    axios.post(backendPath + 'authentication/reset', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
           history.push('/login?success=true');
           break;
-        case 'USERNAME_ALREADY_REGISTERED':
-          setError('Username is already registered for another account');
+        case 'NO_MATCH':
+          setError('Passwords did not match');
           break;
-        case 'BAD_USERNAME':
-          setError('Username does not meet requirements.');
-          break;
-        case 'BAD_PASSWORD':
-          setError('Password does not meet requirements. ');
+        case 'NO_CRITERIA':
+          setError('Passwords does not meet requirements.');
           break;
         default:
           setError('Unknown error');
@@ -43,20 +41,21 @@ function Reset() {
       <form
         onSubmit={submit}
         className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
-        <h2>Register as a volunteer</h2>
+        <h2>Reset your password</h2>
         <div className="form-group">
-          <label htmlFor={'email'}>Email*:</label>
+          <label htmlFor={'password'}>New Password:</label>
           <input
             className={'form-control'}
-            type="text"
-            name="email"
+            type="password"
+            name="password"
             onChange={(e) => {
-              handleChange('email', e.target.value);
+              handleChange('password', e.target.value);
             }}
           />
         </div>
+
         <div className="form-group">
-          <label htmlFor={'password'}>Password*:</label>
+          <label htmlFor={'password'}>Repeat New Password:</label>
           <input
             className={'form-control'}
             type="password"
@@ -66,48 +65,17 @@ function Reset() {
             }}
           />
           <small>
-            Must be at least 8 characters long and container an uppercase and
+            Must be at least 8 characters long and contain an uppercase and
             lowercase character.
           </small>
         </div>
-        <div className="form-group">
-          <label htmlFor={'givenName'}>Given Name*:</label>
-          <input
-            className={'form-control'}
-            type="text"
-            name="givenName"
-            onChange={(e) => {
-              handleChange('given_name', e.target.value);
-            }}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor={'lastName'}>Last Name*:</label>
-          <input
-            className={'form-control'}
-            type="text"
-            name="lastName"
-            onChange={(e) => {
-              handleChange('last_name', e.target.value);
-            }}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor={'phoneNumber'}>Phone Number*:</label>
-          <input
-            className={'form-control'}
-            type="text"
-            name="phoneNumber"
-            onChange={(e) => {
-              handleChange('phone', e.target.value);
-            }}
-          />
-        </div>
+
         <input
           type="submit"
           value="Submit"
           className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
         />
+
         <div className={'mt2'}>
           <NavLink to={'/login'}>Back</NavLink>
         </div>
