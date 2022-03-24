@@ -15,6 +15,7 @@ import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
 import Configuration from "./routes/Configuration/configuration";
 import Home from './routes/Home/Home';
 import QuizMainPage from "./routes/QuizMainPage/QuizMainPage";
+import QuizQuestions from "./routes/QuizQuestions/QuizQuestions";
 import AssetTypes from './routes/Reference/assetTypes';
 import Qualifications from './routes/Reference/qualifications';
 import Roles from './routes/Reference/roles';
@@ -51,6 +52,7 @@ export default function App() {
           <Route exact path="/volunteer/:id/availability" component={Availability} />
           <Route exact path="/tenancy-configs" component={Configuration} />
           <Route exact path="/quiz" component={QuizMainPage} />
+          <Route path={"/questions"} component={QuizQuestions} />
         </Switch>
       </div>
       </div>

@@ -8,11 +8,13 @@ import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import { useHistory } from 'react-router-dom';
 
 import { backendPath } from '../../config';
 
 const QuizMainPage = () => {
     const [roles, setRoles] = useState([]);
+    const history = useHistory();
 
     useEffect(() => {
         axios.get(backendPath + '/reference/roles')
@@ -23,6 +25,10 @@ const QuizMainPage = () => {
                 console.log(err);
             })
     });
+
+    const handleClick = (role) => {
+        history.push(`/questions/?roleType=${role}`);
+    }
 
     return (
         <div>
@@ -39,7 +45,7 @@ const QuizMainPage = () => {
                                     <Card.Body>
                                         <Card.Title>{elem.name}</Card.Title>
                                         <Card.Text>Role description...</Card.Text>
-                                        <Button variant="danger">Proceed</Button>
+                                        <Button variant="danger" onClick={() => handleClick(elem.name)}>Proceed</Button>
                                     </Card.Body>
                                 </Card>
                             </Col>
