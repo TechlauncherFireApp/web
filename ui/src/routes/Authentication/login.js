@@ -85,7 +85,7 @@ function Login() {
               }}
             />
 
-            <a href="/register" className="btn w-80 bg-light-silver dim" role="button"><strong>Forgot Password</strong></a>
+            <a href="/register" className="dim" role="button"><strong>Forgot Password</strong></a>
             {/* register href is a placeholder */}
 
           </div>
