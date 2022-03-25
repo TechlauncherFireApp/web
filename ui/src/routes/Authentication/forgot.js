@@ -53,11 +53,13 @@ function Forgot() {
           />
         </div>
 
-        <input
-          type="submit"
-          value="Submit"
-          className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
-        />
+        {/* UNCOMMENT THIS WHEN BACKEND HOOKS WORK
+          <input
+              type="submit"
+              value="Submit"
+              className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
+          />
+        */}
 
         {/* PLACEHOLDER
           TODO: Below NavLink is a placeholder, can be removed once backend for submit button is done
