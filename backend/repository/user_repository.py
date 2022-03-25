@@ -51,3 +51,12 @@ def self_demote(session, user_id):
             print('user:', user.id, 'is now', user.role)
             return True
     return False
+
+
+def get_user_password(session, user_email):
+    email = session.query(User).filter(User.email == user_email).first()
+    if email:
+        print("your email exists in current database, and then send code to email.")
+        return True
+    print("your email haven't create an account, please click the sign up button.")
+    return False
