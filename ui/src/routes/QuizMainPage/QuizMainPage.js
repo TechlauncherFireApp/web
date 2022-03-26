@@ -45,7 +45,7 @@ const QuizMainPage = () => {
                                         <Card.Body>
                                             <Card.Title>{elem.name}</Card.Title>
                                             <Card.Text>Role description...</Card.Text>
-                                            <Button variant="danger" onClick={() => handleClick(elem.name)}>Proceed</Button>
+                                            <Button variant='danger' onClick={() => handleClick(elem.name)}>Proceed</Button>
                                         </Card.Body>
                                     </Card>
                                 </Col>
