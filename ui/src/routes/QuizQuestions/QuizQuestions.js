@@ -47,6 +47,10 @@ const QuizQuestions = () => {
                 <Card>
                     <Card.Img variant='top' src='https://www.rbgsyd.nsw.gov.au/getmedia/ce90c9e5-0e81-4904-94c8-5410a143bce7/placeholder_cross_1200x815.png'/>
                     <Card.Body>
+                        <Card.Text>
+                            <strong>{ `Question ${questionNum + 1} out of ${questions.length}: ` }</strong>
+                            { questions[questionNum]?.description }
+                        </Card.Text>
                         <Row xs={1} sm={2}>
                             {
                                 questions[questionNum]?.choice.map((elem) => {
