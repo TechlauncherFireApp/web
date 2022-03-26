@@ -21,14 +21,18 @@ def get_question_by_id(session, question_id):
         return None
 
 
-def get_question_list(session, num):
+def get_random_question(session, num, role, difficulty):
     """
     get random questions
     :param session:
     :param num: number of questions
+    :param role:
+    :param difficulty:
     :return: question list
     """
-    questions = session.query(Question).filter(Question.status == 1).order_by(func.random()).limit(num).all()
+    questions = session.query(Question)\
+        .filter(Question.status == 1, Question.role == role, Question.difficulty == difficulty)\
+        .order_by(func.random()).limit(num).all()
     # We need to use objects after this session closed
     session.expunge_all()
     for question in questions:
