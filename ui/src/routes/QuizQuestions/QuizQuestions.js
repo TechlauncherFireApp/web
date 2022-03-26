@@ -41,7 +41,11 @@ const QuizQuestions = () => {
             })
     }, []);
 
-    const handleClick = () => {
+    const handlePrevious = () => {
+        setQuestionNum(questionNum - 1);
+    }
+
+    const handleNext = () => {
         setQuestionNum(questionNum + 1);
     }
 
@@ -52,11 +56,16 @@ const QuizQuestions = () => {
                     <Card.Img variant='top' src='https://www.rbgsyd.nsw.gov.au/getmedia/ce90c9e5-0e81-4904-94c8-5410a143bce7/placeholder_cross_1200x815.png'/>
                     <Card.Body>
                         <Card.Header>
-                            <Button variant='secondary' onClick={() => handleClick()}>{questionNum + 1 === questions.length ? 'See result' : 'Next question'}</Button>
+                            <h4><strong>{ `Question ${questionNum + 1} of ${questions.length} ` }</strong></h4>
                         </Card.Header>
                         <Card.Text>
-                            <strong>{ `Question ${questionNum + 1} out of ${questions.length}: ` }</strong>
-                            { questions[questionNum]?.description }
+                            <Row sm={1}>
+                                <Col>
+                                    <strong>Question: </strong>
+                                    { questions[questionNum]?.description }
+                                </Col>
+                                <Col>Please choose one of the following answers:</Col>
+                            </Row>
                         </Card.Text>
                         <Row xs={1} sm={2}>
                             {
@@ -74,6 +83,10 @@ const QuizQuestions = () => {
                                 })
                             }
                         </Row>
+                        <Card.Footer>
+                            <Button variant='secondary' onClick={() => handlePrevious()} className={questionNum === 0 ? 'previous-btn' : ''}>Previous question</Button>
+                            <Button variant='secondary' onClick={() => handleNext()}>{questionNum + 1 === questions.length ? 'See result' : 'Next question'}</Button>
+                        </Card.Footer>
                     </Card.Body>
                 </Card>
             </Container>
