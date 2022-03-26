@@ -14,6 +14,7 @@ import { backendPath } from '../../config';
 const QuizQuestions = () => {
     const [questions, setQuestions] = useState([]);
     const [questionNum, setQuestionNum] = useState(0);
+    const [answers, setAnswers] = useState(Array(questions.length));
 
     useEffect(() => {
         const queryString = window.location.search;
@@ -49,6 +50,12 @@ const QuizQuestions = () => {
         setQuestionNum(questionNum + 1);
     }
 
+    const handleUserInput = (id) => {
+        const answersArr = [...answers];
+        answersArr[questionNum] = id;
+        setAnswers(answersArr)
+    }
+
     return (
         <div>
             <Container>
@@ -64,7 +71,7 @@ const QuizQuestions = () => {
                                     <strong>Question: </strong>
                                     { questions[questionNum]?.description }
                                 </Col>
-                                <Col>Please choose one of the following answers:</Col>
+                                <Col>Please choose the best answer from one of the following options:</Col>
                             </Row>
                         </Card.Text>
                         <Row xs={1} sm={2}>
@@ -72,7 +79,7 @@ const QuizQuestions = () => {
                                 questions[questionNum]?.choice.map((elem) => {
                                     return (
                                         <Col key={elem.id}>
-                                            <Button variant='danger' className='quiz-answer-btn'>
+                                            <Button variant='danger' className='quiz-answer-btn' onClick={() => handleUserInput(elem.id)}>
                                                 <Row>
                                                     <Col className='answer' xs={1}>{elem.id}</Col>
                                                     <Col className='answer' xs={11}>{elem.content}</Col>
