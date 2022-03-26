@@ -134,7 +134,7 @@ class CheckMultipleAns(Resource):
             return check_ten_answer(session, args["id"].split(","), args["ans"].split(","))
 
 
-tutorial_quiz_bp = Blueprint('TutorialQuizRequest', __name__)
+tutorial_quiz_bp = Blueprint('tutorial_quiz', __name__)
 api = Api(tutorial_quiz_bp, "/quiz")
 api.add_resource(GetQuestionRequest, "/getQuestionById")
 api.add_resource(GetRandomQuestionRequest, "/getRandomQuestion")
