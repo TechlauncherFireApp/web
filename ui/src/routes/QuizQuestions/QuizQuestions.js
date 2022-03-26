@@ -13,7 +13,7 @@ import { backendPath } from '../../config';
 
 const QuizQuestions = () => {
     const [questions, setQuestions] = useState([]);
-    const [questionNum] = useState(0);
+    const [questionNum, setQuestionNum] = useState(0);
 
     useEffect(() => {
         const queryString = window.location.search;
@@ -41,12 +41,19 @@ const QuizQuestions = () => {
             })
     }, []);
 
+    const handleClick = () => {
+        setQuestionNum(questionNum + 1);
+    }
+
     return (
         <div>
             <Container>
                 <Card>
                     <Card.Img variant='top' src='https://www.rbgsyd.nsw.gov.au/getmedia/ce90c9e5-0e81-4904-94c8-5410a143bce7/placeholder_cross_1200x815.png'/>
                     <Card.Body>
+                        <Card.Header>
+                            <Button variant='secondary' onClick={() => handleClick()}>{questionNum + 1 === questions.length ? 'See result' : 'Next question'}</Button>
+                        </Card.Header>
                         <Card.Text>
                             <strong>{ `Question ${questionNum + 1} out of ${questions.length}: ` }</strong>
                             { questions[questionNum]?.description }
