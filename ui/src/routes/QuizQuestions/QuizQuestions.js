@@ -23,18 +23,22 @@ const QuizQuestions = () => {
             }
         };
 
-        axios.get(backendPath + `quiz/getRandomQuestion?num=10&role=${roleType}&difficulty=1`, config)
+        // After backend engineers update their work, replace the axios url to: backendPath + `quiz/getRandomQuestion?num=10&role=${roleType}&difficulty=1`
+
+        axios.get(backendPath + `quiz/getRandomQuestion?num=10&role=volunteer&difficulty=1`, config)
             .then((res) => {
+                console.log(...res.data);
                 setQuestions([...res.data]);
+                console.log(questions);
             })
             .catch((err) => {
                 console.log(err);
             })
-    });
+    }, []);
 
     return (
         <div>
-            <p>{questions}</p>
+            
         </div>
     );
 }
