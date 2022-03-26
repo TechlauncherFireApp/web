@@ -109,7 +109,7 @@ class CheckAnswer(Resource):
             return {"result": check_answer(session, question_id, answer)}
 
 
-tutorial_quiz_bp = Blueprint('TutorialQuizRequest', __name__)
+tutorial_quiz_bp = Blueprint('tutorial_quiz', __name__)
 api = Api(tutorial_quiz_bp, "/quiz")
 api.add_resource(GetQuestionRequest, "/getQuestionById")
 api.add_resource(GetRandomQuestionRequest, "/getRandomQuestion")
