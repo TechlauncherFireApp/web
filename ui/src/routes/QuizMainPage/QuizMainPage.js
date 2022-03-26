@@ -17,14 +17,14 @@ const QuizMainPage = () => {
     const history = useHistory();
 
     useEffect(() => {
-        axios.get(backendPath + '/reference/roles')
+        axios.get(backendPath + 'reference/roles')
             .then((res) => {
                 setRoles([...res.data]);
             })
             .catch((err) => {
                 console.log(err);
             })
-    });
+    }, []);
 
     const handleClick = (role) => {
         history.push(`/questions/?roleType=${role}`);

@@ -15,8 +15,11 @@ const QuizQuestions = () => {
         console.log('This is role type:' + roleType);
 
         const config = {
-            headers: {
-                Authorization: 'Bearer ' + localStorage.getItem('access_token')
+            'headers': {
+                'withCredentials': true,
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Access-Control-Allow-Origin': '*'
             }
         };
 
