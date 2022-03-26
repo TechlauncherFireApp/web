@@ -15,6 +15,12 @@ result_fields = {
     "result": fields.Boolean
 }
 
+answers_fields = {
+    "id": fields.Integer,
+    "answer": fields.Raw,
+    "choice": fields.Raw
+}
+
 create_question_fields = {
     "question_id": fields.Integer
 }
@@ -106,7 +112,26 @@ class CheckAnswer(Resource):
         question_id = parser.parse_args()["id"]
         answer = parser.parse_args()["answer"]
         with session_scope() as session:
+            # return check_answer(session, question_id, answer)
             return {"result": check_answer(session, question_id, answer)}
+
+
+class CheckSingleAnswer(Resource):
+    @marshal_with(answers_fields)
+    def get(self):
+        with session_scope() as session:
+            return check_single_answer(session, 7, "B")
+
+
+class CheckMultipleAns(Resource):
+    @marshal_with(answers_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("id", type=str,required=True)
+        parser.add_argument("ans", type=str, required=True)
+        args = parser.parse_args()
+        with session_scope() as session:
+            return check_ten_answer(session, args["id"].split(","), args["ans"].split(","))
 
 
 tutorial_quiz_bp = Blueprint('TutorialQuizRequest', __name__)
@@ -117,3 +142,5 @@ api.add_resource(DeleteQuestion, "/deleteQuestion")
 api.add_resource(CreateQuestion, "/createQuestion")
 api.add_resource(UpdateQuestion, "/updateQuestion")
 api.add_resource(CheckAnswer, "/checkAnswer")
+api.add_resource(CheckSingleAnswer, "/checkSingleAns")
+api.add_resource(CheckMultipleAns, "/checkMultipleAns")
