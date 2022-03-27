@@ -31,7 +31,7 @@ const QuizMainPage = () => {
     }
 
     return (
-        <div>
+        <div className='quiz-main-container'>
             <h1>Assessment Centre</h1>
             <h3>Choose your role</h3>
             <Container>

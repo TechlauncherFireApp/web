@@ -60,6 +60,7 @@ const QuizQuestions = () => {
         setQuestionNum(questionNum - 1);
         const increment = 100 / questions.length;
         setProgress(progress - increment);
+        setErrorMessage("");
     }
 
     const handleNext = () => {
@@ -94,7 +95,7 @@ const QuizQuestions = () => {
     }
 
     return (
-        <div>
+        <div className='quiz-question-container'>
             <Container>
                 <Card>
                     <Card.Img variant='top' src='https://www.rbgsyd.nsw.gov.au/getmedia/ce90c9e5-0e81-4904-94c8-5410a143bce7/placeholder_cross_1200x815.png'/>
