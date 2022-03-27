@@ -1,13 +1,12 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { backendPath } from '../../config';
 
 function Verify() {
   const [values, setValues] = useState({});
   const [error, setError] = useState(undefined);
-  const history = useHistory();
 
   function submit(e) {
     e.preventDefault();
@@ -25,7 +24,8 @@ function Verify() {
       }
     });
   }
-  {/*backend -> authentication/verifyCode function needs to be written*/}
+
+  /*backend -> authentication/verifyCode function needs to be written*/
 
   function handleChange(field, value) {
     const lcl = { ...values };

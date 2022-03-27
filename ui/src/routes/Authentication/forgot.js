@@ -9,7 +9,6 @@ function Forgot() {
   const [error, setError] = useState(undefined);
   const history = useHistory();
 
-
   function submit(e) {
     /* TODO: Below function is the hook for the incomplete backend */
     e.preventDefault();
@@ -23,6 +22,7 @@ function Forgot() {
           break;
         default:
           setError('Unknown error');
+          history.push('/forgot?success=true'); /* I dont understand how history works in react but its necessary for the page to load */
           break;
       }
     });

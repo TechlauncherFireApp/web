@@ -1,13 +1,12 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { backendPath } from '../../config';
 
 function Reset() {
   const [values, setValues] = useState({});
   const [error, setError] = useState(undefined);
-  const history = useHistory();
 
   /*Todo: Look at the changepassword backend process as it will probably be very similar to our needs for the reset password process*/
   function submit(e) {
