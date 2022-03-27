@@ -5,11 +5,13 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import { useHistory } from 'react-router-dom';
 
 const QuizResult = () => {
     const [correct, setCorrect] = useState(null);
     const [number, setNumber] = useState(null);
     const [role, setRole] = useState('');
+    const history = useHistory();
 
     useEffect(() => {
         const queryString = window.location.search;
@@ -23,6 +25,14 @@ const QuizResult = () => {
         console.log(role);
     }, []);
 
+    const handleRetakeQuiz = () => {
+        history.push(`/questions/?roleType=${role}`);
+    }
+
+    const handleReturnMain = () => {
+
+    }
+
     return (
         <div>
             <Container>
@@ -31,8 +41,8 @@ const QuizResult = () => {
                     <Row sm={2}>
                         <Col>{`You got ${correct} out of ${number} questions correct.`}</Col>
                         <Col>
-                            <Button variant='danger'>Retake quiz</Button>
-                            <Button variant='danger'>Return to main quiz page</Button>
+                            <Button variant='danger' onClick={() => handleRetakeQuiz()}>Retake quiz</Button>
+                            <Button variant='danger' onClick={() => handleReturnMain()}>Return to main quiz page</Button>
                         </Col>
                     </Row>
                 </div>
