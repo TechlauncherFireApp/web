@@ -112,7 +112,6 @@ class CheckAnswer(Resource):
         question_id = parser.parse_args()["id"]
         answer = parser.parse_args()["answer"]
         with session_scope() as session:
-            # return check_answer(session, question_id, answer)
             return {"result": check_answer(session, question_id, answer)}
 
 
@@ -131,7 +130,7 @@ class CheckMultipleAns(Resource):
         parser.add_argument("ans", type=str, required=True)
         args = parser.parse_args()
         with session_scope() as session:
-            return check_ten_answer(session, args["id"].split(","), args["ans"].split(","))
+            return check_ten_answer(session, args["id"], args["ans"])
 
 
 tutorial_quiz_bp = Blueprint('tutorial_quiz', __name__)
