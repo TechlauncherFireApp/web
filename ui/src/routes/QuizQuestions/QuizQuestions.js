@@ -23,14 +23,7 @@ const QuizQuestions = () => {
     const [role, setRole] = useState('');
     const history = useHistory();
 
-    useEffect(() => {
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const roleType = urlParams.get('roleType').toLowerCase().replace(/%20/g, " ");
-        console.log('This is role type:' + roleType);
-        setRole(roleType);
-
-        const config = {
+    const config = {
             'headers': {
                 'withCredentials': true,
                 'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
@@ -39,8 +32,14 @@ const QuizQuestions = () => {
             }
         };
 
-        // After backend engineers update their work, replace the axios url to: backendPath + `quiz/getRandomQuestion?num=10&role=${roleType}&difficulty=1`
+    useEffect(() => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const roleType = urlParams.get('roleType').toLowerCase().replace(/%20/g, " ");
+        console.log('This is role type:' + roleType);
+        setRole(roleType);
 
+        // After backend engineers update their work, replace the axios url to: backendPath + `quiz/getRandomQuestion?num=10&role=${roleType}&difficulty=1`
         axios.get(backendPath + `quiz/getRandomQuestion?num=10&role=volunteer&difficulty=1`, config)
             .then((res) => {
                 setQuestions([...res.data]);
@@ -76,7 +75,7 @@ const QuizQuestions = () => {
             setErrorMessage("");
             setQuestionNum(questionNum + 1);
             if (progress === 100) {
-                history.push(`/quiz-result/?correct=${solutions.filter(x => x==="Correct").length}&number=${questions.length}&role=${role}`);
+                history.push(`/quiz-result/?correct=${solutions.filter(x => x.answer[0].result===true).length}&number=${questions.length}&role=${role}`);
             } else {
                 const increment = 100 / questions.length;
                 setProgress(progress + increment);
@@ -91,15 +90,16 @@ const QuizQuestions = () => {
     }
 
     const handleCheck = () => {
-        const solutionsArr = [...solutions];
-        if (answers[questionNum] === undefined) {
-            solutionsArr[questionNum] = "Please choose an answer.";
-        } else if (questionNum % 2 === 0) {
-            solutionsArr[questionNum] = "An apple is not an orange, so it is not possible to save so many apples in 2 minutes during a fire.";
-        } else if (questionNum % 2 !== 0) {
-            solutionsArr[questionNum] = "Correct";
-        }
-        setSolutions(solutionsArr);
+        let solutionsArr = [...solutions];
+
+        axios.get(backendPath + `quiz/checkMultipleAns?id=${questions[questionNum].id}&ans=${answers[questionNum].toUpperCase()}`, config)
+            .then((res) => {
+                solutionsArr[questionNum] = res.data[0];
+                setSolutions(solutionsArr);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
     return (
@@ -121,11 +121,14 @@ const QuizQuestions = () => {
                                 <Col><Button variant='success' className='check-btn' onClick={() => handleCheck()}>Check answer</Button></Col>
                                 <Col
                                     className={`
-                                        ${solutions[questionNum] === "Correct" ? 'correct-solution-box' : 'incorrect-solution-box'} 
+                                        ${solutions[questionNum]?.answer[0].result ? 'correct-solution-box' : 'incorrect-solution-box'} 
                                         ${solutions[questionNum] === undefined ? 'solution-box' : ''}
                                     `}
                                 >
-                                    {solutions[questionNum]}
+                                    {solutions[questionNum]?.answer[0].result ? 'Correct! ' : `Incorrect, the correct answer is ${solutions[questionNum]?.answer[0].correct}.`}
+                                    <br/>
+                                    <br/>
+                                    {'Explanation: ' + solutions[questionNum]?.choice[0].reason}
                                 </Col>
                                 <Col>Please choose the best answer from one of the following options:</Col>
                             </Row>

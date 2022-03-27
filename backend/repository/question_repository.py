@@ -30,8 +30,8 @@ def get_random_question(session, num, role, difficulty):
     :param difficulty:
     :return: question list
     """
-    questions = session.query(Question)\
-        .filter(Question.status == 1, Question.role == role, Question.difficulty == difficulty)\
+    questions = session.query(Question) \
+        .filter(Question.status == 1, Question.role == role, Question.difficulty == difficulty) \
         .order_by(func.random()).limit(num).all()
     # We need to use objects after this session closed
     session.expunge_all()
@@ -136,4 +136,78 @@ def check_answer(session, question_id, answer):
     :return:
     """
     question = session.query(Question).filter(Question.id == question_id).first()
+    # session.expunge_all()
     return question.answer == answer
+    # return question
+
+
+def check_ten_answer(session, id_list, answers):
+    """
+    check answers for multiple questions
+    :param session:
+    :param id_list: a list of questions id
+    :param answers: a list of answers entered by user
+    :return answer after checked (please see documentation on confluence)
+    """
+    questions = []
+    question_list = parser_qId(id_list)
+    # answer_list = parser_answer(answer_str)
+    # questions.append(check_single_answer(session, question_list[0], answer_list[0]))
+    if len(question_list) != len(answers):
+        return questions
+    for i in range(0, len(question_list)):
+        question = session.query(Question).filter(Question.id == question_list[i]).first()
+        session.expunge(question)
+        questions.append(answer_explanation(question, answers[i]))
+    return questions
+
+
+def check_single_answer(session, id, answer):
+    """
+    check answers for single questions
+    :param session:
+    :param id: question id
+    :param answer: answer entered by user
+    :return answer after checked (please see documentation on confluence)
+    """
+    question = session.query(Question).filter(Question.id == id).first()
+    session.expunge(question)
+    return answer_explanation(question, answer)
+
+
+def answer_explanation(question, answer):
+    """
+    check answer
+    :param question: a question fetched from database
+    :param answer: answer entered by user
+    :return answer after checked (please see documentation on confluence)
+    """
+    choice = json.loads(question.choice)
+    if answer != " ":
+        question.choice = [choice[ord(answer) - 65]]
+    else:
+        question.choice = None
+
+    correct = [{'result': question.answer == answer, 'correct': question.answer}]
+    question.answer = correct
+    return question
+
+
+def parser_qId(id_list):
+    """
+    parse id from string to int
+    :param id_list: string, a string of questions id
+    :return: integer, a list of id been converted to int type
+    """
+    # question_list = question_str.split(',')
+    for i in range(0, len(id_list)):
+        id_list[i] = int(id_list[i])
+    return id_list
+
+
+# def parser_answer(answer_list):
+#     # answer_list = answer_str.split(',')
+#     for i in range(0, len(answer_list)):
+#         if answer_list[i] == " ":
+#             answer_list[i] = None
+#     return answer_list
