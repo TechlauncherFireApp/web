@@ -29,6 +29,8 @@ function Reset() {
       }
     });
   }
+  /* Function from the 2021 team to connect submit button with backend, will need to be modified when backend is complete */
+
 
   function handleChange(field, value) {
     const lcl = { ...values };
@@ -41,7 +43,11 @@ function Reset() {
       <form
         onSubmit={submit}
         className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
+
+        {/* Heading */}
         <h2>Reset your password</h2>
+
+        {/* New Password Input */}
         <div className="form-group">
           <label htmlFor={'password'}>New Password:</label>
           <input
@@ -54,6 +60,7 @@ function Reset() {
           />
         </div>
 
+        {/* Second Password Input */}
         <div className="form-group">
           <label htmlFor={'password'}>Repeat New Password:</label>
           <input
@@ -64,12 +71,14 @@ function Reset() {
               handleChange('password', e.target.value);
             }}
           />
+          {/* Fine print - password criteria */}
           <small>
             Must be at least 8 characters long and contain an uppercase and
             lowercase character.
           </small>
         </div>
 
+        {/* Submit Button */}
         <input
           type="submit"
           value="Submit"

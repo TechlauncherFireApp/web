@@ -25,7 +25,6 @@ function Verify() {
       }
     });
   }
-
   {/*backend -> authentication/verifyCode function needs to be written*/}
 
   function handleChange(field, value) {
@@ -39,7 +38,11 @@ function Verify() {
       <form
         onSubmit={submit}
         className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
+
+        {/* Heading */}
         <h2>Enter Code</h2>
+
+        {/* Code input form*/}
         <div className="form-group">
           <label htmlFor={'email'}>Verification Code:</label>
           <input
@@ -52,6 +55,7 @@ function Verify() {
           />
         </div>
 
+        {/* Submit Button */}
         {/* UNCOMMENT THIS WHEN BACKEND HOOKS WORK
         <input
           type="submit"

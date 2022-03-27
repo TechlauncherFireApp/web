@@ -28,6 +28,8 @@ function Forgot() {
       }
     });
   }
+  /* Function from the 2021 team to connect submit button with backend, will need to be modified when backend is complete */
+
 
   function handleChange(field, value) {
     const lcl = { ...values };
@@ -40,7 +42,11 @@ function Forgot() {
       <form
         onSubmit={submit}
         className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
+
+        {/* Heading */}
         <h2>Reset Password</h2>
+
+        {/* Email input form */}
         <div className="form-group">
           <label htmlFor={'email'}>Email:</label>
           <input
@@ -53,6 +59,7 @@ function Forgot() {
           />
         </div>
 
+        {/* Submit Button */}
         {/* UNCOMMENT THIS WHEN BACKEND HOOKS WORK
           <input
               type="submit"

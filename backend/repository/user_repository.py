@@ -52,6 +52,7 @@ def self_demote(session, user_id):
             return True
     return False
 
+# Should this function maybe be refactored to 'check_user_email'
 
 def get_user_password(session, user_email):
     while (user_email.find("@") == -1 or user_email.endswith(('com','au'))):
@@ -63,3 +64,4 @@ def get_user_password(session, user_email):
         return True
     print("your email haven't create an account, please click the sign up button.")
     return False
+# Are the print statements for testing?
