@@ -15,8 +15,10 @@ import { backendPath } from '../../config';
 const QuizQuestions = () => {
     const [questions, setQuestions] = useState([]);
     const [questionNum, setQuestionNum] = useState(0);
-    const [answers, setAnswers] = useState(Array(questions.length));
-    const [progress, setProgress] = useState(0);
+    const [answers, setAnswers] = useState(Array(questions.length).fill(null));
+    const [progress, setProgress] = useState(10);
+    const [solutions, setSolutions] = useState(Array(questions.length).fill(null));
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         const queryString = window.location.search;
@@ -43,13 +45,25 @@ const QuizQuestions = () => {
                 console.log(err);
             })
     }, []);
+    
 
     const handlePrevious = () => {
         setQuestionNum(questionNum - 1);
+        const increment = 100 / questions.length;
+        setProgress(progress - increment);
     }
 
     const handleNext = () => {
-        setQuestionNum(questionNum + 1);
+        if (answers[questionNum] === undefined) {
+            setErrorMessage("* You must choose an answer and check it!");
+        } else if (solutions[questionNum] === undefined) {
+            setErrorMessage("* You must check your answer!");
+        } else {
+            setErrorMessage("");
+            setQuestionNum(questionNum + 1);
+            const increment = 100 / questions.length;
+            setProgress(progress + increment);
+        }
     }
 
     const handleUserInput = (id) => {
@@ -59,8 +73,15 @@ const QuizQuestions = () => {
     }
 
     const handleCheck = () => {
-        const increment = 100 / questions.length;
-        setProgress(progress + increment);
+        const solutionsArr = [...solutions];
+        if (answers[questionNum] === undefined) {
+            solutionsArr[questionNum] = "Please choose an answer.";
+        } else if (questionNum % 2 === 0) {
+            solutionsArr[questionNum] = "An apple is not an orange, so it is not possible to save so many apples in 2 minutes during a fire.";
+        } else if (questionNum % 2 !== 0) {
+            solutionsArr[questionNum] = "Correct";
+        }
+        setSolutions(solutionsArr);
     }
 
     return (
@@ -80,6 +101,14 @@ const QuizQuestions = () => {
                                     { questions[questionNum]?.description }
                                 </Col>
                                 <Col><Button variant='success' className='check-btn' onClick={() => handleCheck()}>Check answer</Button></Col>
+                                <Col
+                                    className={`
+                                        ${solutions[questionNum] === "Correct" ? 'correct-solution-box' : 'incorrect-solution-box'} 
+                                        ${solutions[questionNum] === undefined ? 'solution-box' : ''}
+                                    `}
+                                >
+                                    {solutions[questionNum]}
+                                </Col>
                                 <Col>Please choose the best answer from one of the following options:</Col>
                             </Row>
                         </Card.Text>
@@ -100,8 +129,9 @@ const QuizQuestions = () => {
                             }
                         </Row>
                         <Card.Footer>
-                            <Button variant='secondary' onClick={() => handlePrevious()} className={questionNum === 0 ? 'previous-btn' : ''}>Previous question</Button>
+                            <Button variant='secondary' onClick={() => handlePrevious()} className={questionNum === 0 ? 'gone-previous-btn' : 'appear-previous-btn'}>Previous question</Button>
                             <Button variant='secondary' onClick={() => handleNext()} className='next-btn'>{questionNum + 1 === questions.length ? 'See result' : 'Next question'}</Button>
+                            <p className='error-message'>{errorMessage}</p>
                         </Card.Footer>
                     </Card.Body>
                 </Card>
