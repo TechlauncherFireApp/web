@@ -39,10 +39,10 @@ const QuizResult = () => {
                     <Row><h1 className='quiz-result-heading'>RESULT</h1></Row>
                     <Row><hr className='quiz-hr'/></Row>
                     <Row sm={2}>
-                        <Col><h4>{`You got ${correct} out of ${number} questions correct.`}</h4></Col>
+                        <Col><h4 className='quiz-result-txt'>{`You got ${correct} out of ${number} questions correct.`}</h4></Col>
                         <Col className='vertical-line'>
-                            <Button variant='danger' onClick={() => handleRetakeQuiz()}>Retake quiz</Button>
-                            <Button variant='danger' onClick={() => handleReturnMain()}>Return to main quiz page</Button>
+                            <Button className='quiz-result-btn' variant='danger' onClick={() => handleRetakeQuiz()}>Retake quiz</Button>
+                            <Button className='quiz-result-btn' variant='danger' onClick={() => handleReturnMain()}>Return to main quiz page</Button>
                         </Col>
                     </Row>
                 </div>
