@@ -1,0 +1,20 @@
+.quiz-result-container {
+  margin-top: 3em;
+  border-style: outset;
+  padding: 3em;
+}
+
+.quiz-result-heading {
+  margin-left: 35%;
+  margin-bottom: 0.5em;
+}
+
+.quiz-hr {
+  margin-bottom: 3em;
+}
+
+.vertical-line {
+  border-left-style: groove;
+}
+
+//http://localhost:3000/quiz-result/?correct=7&number=10&role=driver
