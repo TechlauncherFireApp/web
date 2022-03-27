@@ -68,7 +68,7 @@ class AuthenticationService():
     '''
     @staticmethod
     def send_code(session: Session, email: str):
-        if !(get_user_password(Session, email)):
+        if not (get_user_password(Session, email)) or email is None:
             return "EMAIL_NOT_FOUND"
         else:
             sendVerificationCodeEmail()
@@ -79,6 +79,8 @@ class AuthenticationService():
     '''
     @staticmethod
     def verify(session: Session, code: str):
+        if code is None
+            return "FAILURE"
         if checkUserCode(Session, code):
             return "SUCCESS"
         else:
