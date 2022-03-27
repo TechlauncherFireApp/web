@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
+import { useHistory } from 'react-router-dom';
 
 import { backendPath } from '../../config';
 
@@ -19,6 +20,7 @@ const QuizQuestions = () => {
     const [progress, setProgress] = useState(10);
     const [solutions, setSolutions] = useState(Array(questions.length).fill(null));
     const [errorMessage, setErrorMessage] = useState("");
+    const history = useHistory();
 
     useEffect(() => {
         const queryString = window.location.search;
@@ -71,8 +73,12 @@ const QuizQuestions = () => {
         } else {
             setErrorMessage("");
             setQuestionNum(questionNum + 1);
-            const increment = 100 / questions.length;
-            setProgress(progress + increment);
+            if (progress === 100) {
+                history.push(`/quiz-result/?correct=${solutions.filter(x => x==="Correct").length}&number=${questions.length}`);
+            } else {
+                const increment = 100 / questions.length;
+                setProgress(progress + increment);
+            }
         }
     }
 
