@@ -45,7 +45,16 @@ const QuizQuestions = () => {
                 console.log(err);
             })
     }, []);
-    
+
+    useEffect(() => {
+        window.onbeforeunload = () => {
+            return true;
+        };
+
+        return () => {
+            window.onbeforeunload = null;
+        };
+    }, []);
 
     const handlePrevious = () => {
         setQuestionNum(questionNum - 1);
