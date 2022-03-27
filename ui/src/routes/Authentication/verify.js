@@ -16,7 +16,7 @@ function Verify() {
         case 'SUCCESS':
           history.push('/verify?success=true');
           break;
-        case 'INCORRECT':
+        case 'FAILURE':
           setError('Code was not correct');
           break;
         default:

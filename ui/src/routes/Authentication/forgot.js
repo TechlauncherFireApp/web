@@ -13,11 +13,10 @@ function Forgot() {
   function submit(e) {
     /* TODO: Below function is the hook for the incomplete backend */
     e.preventDefault();
-    axios.post(backendPath + 'authentication/emailCode', values).then((resp) => {
+    axios.post(backendPath + 'authentication/send_code', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
-          history.push('/emailCode?success=true');
-          /* Maybe change this above line, essentially will link to the next page and bring over any necessary account data*/
+          /* Forward to enter code page (verify) needs to bring forward session information somehow */
           break;
         case 'EMAIL_NOT_FOUND':
           setError('Email cannot be found');

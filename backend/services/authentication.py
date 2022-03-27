@@ -63,3 +63,39 @@ class AuthenticationService():
             return LoginResult.FAIL, None, None
 
         return LoginResult.SUCCESS, jwk_service.generate(user.id, user.email), user
+
+    # Groundwork for the sendcode backend function
+    '''
+    @staticmethod
+    def send_code(session: Session, email: str):
+        if !(get_user_password(Session, email)):
+            return "EMAIL_NOT_FOUND"
+        else:
+            sendVerificationCodeEmail()
+            return "SUCCESS"
+    '''
+
+    # Groundwork for verify backend function
+    '''
+    @staticmethod
+    def verify(session: Session, code: str):
+        if checkUserCode(Session, code):
+            return "SUCCESS"
+        else:
+            return "FAILURE"
+    '''
+    # CheckUserCode takes the user session and the code and confirms the code is correct. We should consider looking into how security codes are handled in industry
+
+    # Groundwork for reset password function
+    '''
+    @staticmethod
+    def reset(session: Session, Password: str, Password2: str):
+        if Password != Password2:
+            return "'NO_MATCH'"
+        if #find the function for checking if a password matches the criteria:
+            return "FAILURE"
+        elif: 
+            setNewPassword(session: Session, Password: Str) #check the existing functionality that might exist for this
+            return "SUCCESS"
+    '''
+
