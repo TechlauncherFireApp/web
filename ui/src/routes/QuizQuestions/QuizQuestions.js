@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
 
 import { backendPath } from '../../config';
@@ -15,6 +16,7 @@ const QuizQuestions = () => {
     const [questions, setQuestions] = useState([]);
     const [questionNum, setQuestionNum] = useState(0);
     const [answers, setAnswers] = useState(Array(questions.length));
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         const queryString = window.location.search;
@@ -56,6 +58,11 @@ const QuizQuestions = () => {
         setAnswers(answersArr)
     }
 
+    const handleCheck = () => {
+        const increment = 100 / questions.length;
+        setProgress(progress + increment);
+    }
+
     return (
         <div>
             <Container>
@@ -64,6 +71,7 @@ const QuizQuestions = () => {
                     <Card.Body>
                         <Card.Header>
                             <h4><strong>{ `Question ${questionNum + 1} of ${questions.length} ` }</strong></h4>
+                            <ProgressBar animated now={progress} variant='dark'/>
                         </Card.Header>
                         <Card.Text>
                             <Row sm={1}>
@@ -71,7 +79,7 @@ const QuizQuestions = () => {
                                     <strong>Question: </strong>
                                     { questions[questionNum]?.description }
                                 </Col>
-                                <Col><Button variant='success' className='check-btn'>Check answer</Button></Col>
+                                <Col><Button variant='success' className='check-btn' onClick={() => handleCheck()}>Check answer</Button></Col>
                                 <Col>Please choose the best answer from one of the following options:</Col>
                             </Row>
                         </Card.Text>
