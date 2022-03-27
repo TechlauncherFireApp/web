@@ -112,7 +112,6 @@ class CheckAnswer(Resource):
         question_id = parser.parse_args()["id"]
         answer = parser.parse_args()["answer"]
         with session_scope() as session:
-            # return check_answer(session, question_id, answer)
             return {"result": check_answer(session, question_id, answer)}
 
 
