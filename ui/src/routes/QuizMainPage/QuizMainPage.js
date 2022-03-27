@@ -40,7 +40,7 @@ const QuizMainPage = () => {
                         roles.map((elem) => {
                             return (
                                 <Col key={elem.id}>
-                                    <Card>
+                                    <Card className='quiz-card'>
                                         <Card.Img variant='top' src='https://www.rbgsyd.nsw.gov.au/getmedia/ce90c9e5-0e81-4904-94c8-5410a143bce7/placeholder_cross_1200x815.png'/>
                                         <Card.Body>
                                             <Card.Title>{elem.name}</Card.Title>
