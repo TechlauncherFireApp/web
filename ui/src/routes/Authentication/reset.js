@@ -15,7 +15,7 @@ function Reset() {
     axios.post(backendPath + 'authentication/reset', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
-          history.push('/login?success=true');
+          /*proceed to next page*/
           break;
         case 'NO_MATCH':
           setError('Passwords did not match');

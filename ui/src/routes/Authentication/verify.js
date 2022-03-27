@@ -14,7 +14,7 @@ function Verify() {
     axios.post(backendPath + 'authentication/verify', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
-          history.push('/verify?success=true');
+            /*Proceed to next page*/
           break;
         case 'FAILURE':
           setError('Code was not correct');
