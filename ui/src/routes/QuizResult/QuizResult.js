@@ -22,7 +22,6 @@ const QuizResult = () => {
         setCorrect(correctAmount);
         setNumber(questionNumber);
         setRole(roleType);
-        console.log(role);
     }, []);
 
     const handleRetakeQuiz = () => {
@@ -30,7 +29,7 @@ const QuizResult = () => {
     }
 
     const handleReturnMain = () => {
-
+        history.push(`/quiz`);
     }
 
     return (
