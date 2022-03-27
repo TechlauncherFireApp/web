@@ -1,3 +1,5 @@
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
@@ -12,6 +14,9 @@ import Register from './routes/Authentication/register';
 import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
 import Configuration from "./routes/Configuration/configuration";
 import Home from './routes/Home/Home';
+import QuizMainPage from "./routes/QuizMainPage/QuizMainPage";
+import QuizQuestions from "./routes/QuizQuestions/QuizQuestions";
+import QuizResult from './routes/QuizResult/QuizResult';
 import AssetTypes from './routes/Reference/assetTypes';
 import Qualifications from './routes/Reference/qualifications';
 import Roles from './routes/Reference/roles';
@@ -47,6 +52,9 @@ export default function App() {
           <Route exact path="/volunteer/:id" component={Volunteer} />
           <Route exact path="/volunteer/:id/availability" component={Availability} />
           <Route exact path="/tenancy-configs" component={Configuration} />
+          <Route exact path="/quiz" component={QuizMainPage} />
+          <Route path={"/questions"} component={QuizQuestions} />
+          <Route path={"/quiz-result"} component={QuizResult} />
         </Switch>
       </div>
       </div>
