@@ -71,6 +71,7 @@ const QuizQuestions = () => {
                                     <strong>Question: </strong>
                                     { questions[questionNum]?.description }
                                 </Col>
+                                <Col><Button variant='success' className='check-btn'>Check answer</Button></Col>
                                 <Col>Please choose the best answer from one of the following options:</Col>
                             </Row>
                         </Card.Text>
@@ -92,7 +93,7 @@ const QuizQuestions = () => {
                         </Row>
                         <Card.Footer>
                             <Button variant='secondary' onClick={() => handlePrevious()} className={questionNum === 0 ? 'previous-btn' : ''}>Previous question</Button>
-                            <Button variant='secondary' onClick={() => handleNext()}>{questionNum + 1 === questions.length ? 'See result' : 'Next question'}</Button>
+                            <Button variant='secondary' onClick={() => handleNext()} className='next-btn'>{questionNum + 1 === questions.length ? 'See result' : 'Next question'}</Button>
                         </Card.Footer>
                     </Card.Body>
                 </Card>
