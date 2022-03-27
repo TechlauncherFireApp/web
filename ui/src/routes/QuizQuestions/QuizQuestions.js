@@ -20,6 +20,7 @@ const QuizQuestions = () => {
     const [progress, setProgress] = useState(10);
     const [solutions, setSolutions] = useState(Array(questions.length).fill(null));
     const [errorMessage, setErrorMessage] = useState("");
+    const [role, setRole] = useState('');
     const history = useHistory();
 
     useEffect(() => {
@@ -27,6 +28,7 @@ const QuizQuestions = () => {
         const urlParams = new URLSearchParams(queryString);
         const roleType = urlParams.get('roleType').toLowerCase().replace(/%20/g, " ");
         console.log('This is role type:' + roleType);
+        setRole(roleType);
 
         const config = {
             'headers': {
@@ -74,7 +76,7 @@ const QuizQuestions = () => {
             setErrorMessage("");
             setQuestionNum(questionNum + 1);
             if (progress === 100) {
-                history.push(`/quiz-result/?correct=${solutions.filter(x => x==="Correct").length}&number=${questions.length}`);
+                history.push(`/quiz-result/?correct=${solutions.filter(x => x==="Correct").length}&number=${questions.length}&role=${role}`);
             } else {
                 const increment = 100 / questions.length;
                 setProgress(progress + increment);
