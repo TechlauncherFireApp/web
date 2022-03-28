@@ -54,7 +54,7 @@ def self_demote(session, user_id):
 
 # Should this function maybe be refactored to 'check_user_email'
 
-def get_user_password(session, user_email):
+def get_user_email(session, user_email):
     while (user_email.find("@") == -1 or user_email.endswith(('com','au'))):
         print("the format of input email is wrong.")
         return False
