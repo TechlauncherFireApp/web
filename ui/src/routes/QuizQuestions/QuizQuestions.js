@@ -39,9 +39,9 @@ const QuizQuestions = () => {
         console.log('This is role type:' + roleType);
         setRole(roleType);
 
-        // After backend engineers update their work, replace the axios url to: backendPath + `quiz/getRandomQuestion?num=10&role=${roleType}&difficulty=1`
-        axios.get(backendPath + `quiz/getRandomQuestion?num=10&role=volunteer&difficulty=1`, config)
+        axios.get(backendPath + `quiz/getRandomQuestion?num=10&role=${roleType}&difficulty=1`, config)
             .then((res) => {
+                console.log(res.data);
                 setQuestions([...res.data]);
             })
             .catch((err) => {
@@ -92,7 +92,7 @@ const QuizQuestions = () => {
     const handleCheck = () => {
         let solutionsArr = [...solutions];
 
-        axios.get(backendPath + `quiz/checkMultipleAns?id=${questions[questionNum].id}&ans=${answers[questionNum].toUpperCase()}`, config)
+        axios.get(backendPath + `quiz/checkMultipleAns?id=${questions[questionNum].id}&ans=${answers[questionNum]}`, config)
             .then((res) => {
                 solutionsArr[questionNum] = res.data[0];
                 setSolutions(solutionsArr);

@@ -151,14 +151,14 @@ def check_ten_answer(session, id_list, answers):
     """
     questions = []
     question_list = parser_qId(id_list)
-    # answer_list = parser_answer(answer_str)
+    answer_list = parser_answer(answers)
     # questions.append(check_single_answer(session, question_list[0], answer_list[0]))
-    if len(question_list) != len(answers):
+    if len(question_list) != len(answer_list):
         return questions
     for i in range(0, len(question_list)):
         question = session.query(Question).filter(Question.id == question_list[i]).first()
         session.expunge(question)
-        questions.append(answer_explanation(question, answers[i]))
+        questions.append(answer_explanation(question, answer_list[i]))
     return questions
 
 
@@ -193,21 +193,28 @@ def answer_explanation(question, answer):
     return question
 
 
-def parser_qId(id_list):
+def parser_qId(id_str):
     """
     parse id from string to int
     :param id_list: string, a string of questions id
     :return: integer, a list of id been converted to int type
     """
-    # question_list = question_str.split(',')
+    if ',' in id_str:
+        id_list = id_str.split(',')
+    else:
+        id_list = [id_str]
     for i in range(0, len(id_list)):
         id_list[i] = int(id_list[i])
     return id_list
 
 
-# def parser_answer(answer_list):
-#     # answer_list = answer_str.split(',')
-#     for i in range(0, len(answer_list)):
-#         if answer_list[i] == " ":
-#             answer_list[i] = None
-#     return answer_list
+def parser_answer(answer_str):
+    if ',' not in answer_str:
+        return [answer_str]
+    else:
+        return answer_str.split(',')
+    # answer_list = answer_str.split(',')
+    # for i in range(0, len(answer_list)):
+    #     if answer_list[i] == " ":
+    #         answer_list[i] = None
+
