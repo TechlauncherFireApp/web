@@ -55,6 +55,21 @@ class MailSender:
         except Exception as e:
             print(e)
 
+    def email1(self, to_email, subject, html_context):
+        message = Mail(
+            from_email='bujue.why@gmail.com',
+            to_emails=to_email,
+            subject=subject,
+            html_content=html_context)
+        try:
+            sg = SendGridAPIClient('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')
+            response = sg.send(message)
+            print(response.status_code)
+            print(response.body)
+            print(response.headers)
+        except Exception as e:
+            print(e.message)
+
 
 #sender = MailSender()
 #sender.email(['u6797866@anu.edu.au'], 'roster', {

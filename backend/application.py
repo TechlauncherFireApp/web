@@ -29,6 +29,8 @@ app.register_blueprint(user_role_bp)
 app.register_blueprint(asset_type_role_bp)
 app.register_blueprint(user_type_bp)
 app.register_blueprint(tenancy_config_bp)
+app.register_blueprint(tutorial_quiz_bp)
+app.register_blueprint(email_bp)
 
 
 @app.route('/')
