@@ -92,7 +92,7 @@ const QuizQuestions = () => {
     const handleCheck = () => {
         let solutionsArr = [...solutions];
 
-        axios.get(backendPath + `quiz/checkMultipleAns?id=${questions[questionNum].id}&ans=${answers[questionNum].toUpperCase()}`, config)
+        axios.get(backendPath + `quiz/checkMultipleAns?id=${questions[questionNum].id}&ans=${answers[questionNum]}`, config)
             .then((res) => {
                 solutionsArr[questionNum] = res.data[0];
                 setSolutions(solutionsArr);
