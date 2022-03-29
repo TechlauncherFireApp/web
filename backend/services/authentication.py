@@ -84,8 +84,8 @@ class AuthenticationService():
         """
         input email address, verify user account, and send code through email
         :param session:
-        :param email:
-        :return:
+        :param email: input email address
+        :return: error code
         """
         # TODO: need to be able to resend the email and show the count down, if it is possible to implement.
         user = session.query(User).filter(User.email == email).first()
@@ -119,6 +119,7 @@ class AuthenticationService():
         session.flush()
         return ForgotPassword.SUCCESS
 
+
     # Groundwork for verify backend function
     '''
     @staticmethod
@@ -144,3 +145,4 @@ class AuthenticationService():
             setNewPassword(session: Session, Password: Str) #check the existing functionality that might exist for this
             return "SUCCESS"
     '''
+
