@@ -167,6 +167,18 @@ class AuthenticationService():
         user.password = password_hash
         session.commit()
         session.flush()
+        subject = '[FireApp3.0] Your Password Reset Code'
+        content = """
+                    Dear <strong>%s</strong>,</br>
+                    Your password was recently changed successfully!
+                    </br></br>
+                    If you didn't make this change, please contact us.
+                    </br></br>
+                    Best Wishes,
+                    </br>
+                    FireApp3.0 Team'
+                """ % (user.last_name)
+        MailSender().email(email, subject, content)
         # test = session.query(User).filter(User.email == email).first()
         # print("test", passwordService.compare(old_password, test.password))
         return ResetPassword.SUCCESS
