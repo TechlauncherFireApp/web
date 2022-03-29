@@ -1,8 +1,9 @@
 from datetime import datetime
 from domain.base import Base
 from sqlalchemy import Column, String, DateTime, Integer
-class PasswordVerification(Base):
-    __tablename__ = 'password_verify'
+
+class PasswordRetrieval(Base):
+    __tablename__ = 'password_vertify'
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(256), name='email', unique=True)
     code = Column(String(256), name='code', nullable=False)

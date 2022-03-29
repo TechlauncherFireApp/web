@@ -51,16 +51,17 @@ class Login(Resource):
 class Send_Code(Resource):
     def post(self):
         request.get_json(force=True)
-        args = password_parser()
+        args = password_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
             result = auth.send_code(session, args['email'])
+        print("result:",result)
         return jsonify({"result": result.name})
 
 class Verify_code(Resource):
     def post(self):
         request.get_json(force=True)
-        args = verify_password_parser()
+        args = verify_password_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
             result = auth.send_code(session, args['code'])
@@ -69,7 +70,7 @@ class Verify_code(Resource):
 class Reset_Password(Resource):
     def post(self):
         request.get_json(force=True)
-        args = verify_password_parser()
+        args = verify_password_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
             result = auth.send_code(session, args['new_password'], args['repeat_password'])
