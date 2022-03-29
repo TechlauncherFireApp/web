@@ -8,7 +8,7 @@ from sendgrid.helpers.mail import Mail
 from services.attachment import AttachmentService
 from services.secrets import SecretService
 
-secret = SecretService(f"email/{os.environ.get('env', 'dev')}/api/test")
+secret = SecretService(f"email/{os.environ.get('env', 'dev')}/api")
 attachment = AttachmentService()
 
 
@@ -54,21 +54,6 @@ class MailSender:
             print(response.headers)
         except Exception as e:
             print(e)
-
-    def email1(self, to_email, subject, html_context):
-        message = Mail(
-            from_email=self.from_email,
-            to_emails=to_email,
-            subject=subject,
-            html_content=html_context)
-        try:
-            sg = SendGridAPIClient(self.api_key)
-            response = sg.send(message)
-            print(response.status_code)
-            print(response.body)
-            print(response.headers)
-        except Exception as e:
-            print(e.message)
 
 
 #sender = MailSender()
