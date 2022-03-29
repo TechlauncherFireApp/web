@@ -98,7 +98,7 @@ class AuthenticationService():
             index = random.randint(0, len(_ALL_CHARACTERS)-1)
             generate_code += _ALL_CHARACTERS[index]
         # send verification code email with subject, content, and the code
-        subject = 'Your password reset code.'
+        subject = '[FireApp3.0] Your Password Reset Code'
         content = """
             Hi,</br>
             You recently requested to rest the password for your %s account. Use the code below to proceed.
@@ -110,7 +110,7 @@ class AuthenticationService():
             </br></br>
             Thanks,
             </br>
-            FireApp 3.0 Team'
+            FireApp3.0 Team'
         """ % (email, generate_code)
         MailSender().email(email, subject, content)
         code_expired_time = datetime.now()+timedelta(days=1)
