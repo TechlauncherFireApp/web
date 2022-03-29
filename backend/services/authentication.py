@@ -3,7 +3,7 @@ from typing import Tuple, Any
 from sqlalchemy.orm import Session
 
 from domain import User, PasswordRetrieval
-from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword, VerifyCode
+from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword, VerifyCode, ResetPassword
 from services.jwk import JWKService
 from services.password import PasswordService
 from services.mail_sms import MailSender
@@ -68,7 +68,6 @@ class AuthenticationService():
 
         return LoginResult.SUCCESS, jwk_service.generate(user.id, user.email), user
 
-    # Groundwork for the sendcode backend function
     @staticmethod
     def generate_code(code_len: int):
         all_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -97,7 +96,6 @@ class AuthenticationService():
         for _ in range(6):
             index = random.randint(0, len(_ALL_CHARACTERS)-1)
             generate_code += _ALL_CHARACTERS[index]
-        # send verification code email with subject, content, and the code
         subject = '[FireApp3.0] Your Password Reset Code'
         content = """
             Hi,</br>
@@ -129,7 +127,8 @@ class AuthenticationService():
         :param code: input code from email
         :return: error code
         """
-        # TODO: check how can the email account save and use in this page without input the email address.
+        # TODO:
+        #  FOR FRONTEND : check how can the email account save and use in this page without input the email address.
         query = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
         if query is None:
             return VerifyCode.EMAIL_NOT_FOUND
@@ -142,18 +141,34 @@ class AuthenticationService():
             return VerifyCode.CODE_CONSISTENCE
         else:
             return VerifyCode.CODE_INCONSISTENCY
-    # CheckUserCode takes the user session and the code and confirms the code is correct. We should consider looking into how security codes are handled in industry
 
-    # Groundwork for reset password function
-    '''
+    #  CheckUserCode takes the user session and the code and confirms the code is correct.We should consider looking into how security codes are handled in industry.
+    #  We can add captcha to make it safer
+
     @staticmethod
-    def reset(session: Session, Password: str, Password2: str):
-        if Password != Password2:
-            return "'NO_MATCH'"
-        if #find the function for checking if a password matches the criteria:
-            return "FAILURE"
-        elif: 
-            setNewPassword(session: Session, Password: Str) #check the existing functionality that might exist for this
-            return "SUCCESS"
-    '''
+    def reset_password(session: Session, email: str, new_password: str, repeat_password: str):
+        """
+        Reset password, check whether two input passwords are same.
+        :param session:
+        :param email: user's email, inherit from the last page
+        :param new_password: new password
+        :param repeat_password: same as the new password
+        :return:
+        """
+        user = session.query(User).filter(User.email == email).first()
+        if user is None or new_password is None:
+            return ResetPassword.FAIL
+        if new_password != repeat_password:
+            return ResetPassword.RECHECK_TWO_INPUTS
+        if not passwordService.validate(new_password):
+            return ResetPassword.BAD_PASSWORD
+        # old_password = user.password
+        password_hash = passwordService.hash(new_password)
+        user.password = password_hash
+        session.commit()
+        session.flush()
+        # test = session.query(User).filter(User.email == email).first()
+        # print("test", passwordService.compare(old_password, test.password))
+        return ResetPassword.SUCCESS
+
 

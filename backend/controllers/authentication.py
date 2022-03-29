@@ -23,8 +23,9 @@ verify_password_parser.add_argument('email', type=str)
 verify_password_parser.add_argument('code', type=str)
 
 reset_password_parser = reqparse.RequestParser()
+reset_password_parser.add_argument('email', type=str)
 reset_password_parser.add_argument('new_password', type=str)
-reset_password_parser.add_argument('repeat_password',type=str)
+reset_password_parser.add_argument('repeat_password', type=str)
 
 class Register(Resource):
 
@@ -71,10 +72,10 @@ class Verify_code(Resource):
 class Reset_Password(Resource):
     def post(self):
         request.get_json(force=True)
-        args = verify_password_parser.parse_args()
+        args = reset_password_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
-            result = auth.send_code(session, args['new_password'], args['repeat_password'])
+            result = auth.reset_password(session, args['email'], args['new_password'], args['repeat_password'])
         return jsonify({"result": result.name})
 
 authentication_bp = Blueprint('authentication', __name__)
