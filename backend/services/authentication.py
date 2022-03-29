@@ -119,29 +119,29 @@ class AuthenticationService():
         session.flush()
         return ForgotPassword.SUCCESS
 
-        # Groundwork for verify code backend function
-        @staticmethod
-        def verify_code(session: Session, email: str, code: str):
-            """
-            Verify the input code with the code in the database, and check whether it is overdue.
-            :param session:
-            :param email: user's email, inherit from the last page
-            :param code: input code from email
-            :return: error code
-            """
-            # TODO: check how can the email account save and use in this page without input the email address.
-            query = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
-            if query is None:
-                return VerifyCode.EMAIL_NOT_FOUND
-            if query.code is None:
-                return VerifyCode.CODE_INEXISTENCE
-            now_time = datetime.now()
-            if now_time > query.expired_time:
-                return VerifyCode.CODE_OVERDUE
-            if query.code == code:
-                return VerifyCode.CODE_CONSISTENCE
-            else:
-                return VerifyCode.CODE_INCONSISTENCY
+    # Groundwork for verify code backend function
+    @staticmethod
+    def verify_code(session: Session, email: str, code: str):
+        """
+        Verify the input code with the code in the database, and check whether it is overdue.
+        :param session:
+        :param email: user's email, inherit from the last page
+        :param code: input code from email
+        :return: error code
+        """
+        # TODO: check how can the email account save and use in this page without input the email address.
+        query = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
+        if query is None:
+            return VerifyCode.EMAIL_NOT_FOUND
+        if query.code is None:
+            return VerifyCode.CODE_INEXISTENCE
+        now_time = datetime.now()
+        if now_time > query.expired_time:
+            return VerifyCode.CODE_OVERDUE
+        if query.code == code:
+            return VerifyCode.CODE_CONSISTENCE
+        else:
+            return VerifyCode.CODE_INCONSISTENCY
     # CheckUserCode takes the user session and the code and confirms the code is correct. We should consider looking into how security codes are handled in industry
 
     # Groundwork for reset password function
