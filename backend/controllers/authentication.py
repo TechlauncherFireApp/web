@@ -19,6 +19,7 @@ password_parser = reqparse.RequestParser()
 password_parser.add_argument('email',type=str)
 
 verify_password_parser = reqparse.RequestParser()
+verify_password_parser.add_argument('email', type=str)
 verify_password_parser.add_argument('code', type=str)
 
 reset_password_parser = reqparse.RequestParser()
@@ -64,7 +65,7 @@ class Verify_code(Resource):
         args = verify_password_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
-            result = auth.verify_code(session, args['code'])
+            result = auth.verify_code(session, args['email'], args['code'])
         return jsonify({"result": result.name})
 
 class Reset_Password(Resource):
