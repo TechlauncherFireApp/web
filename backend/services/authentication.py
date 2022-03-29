@@ -6,6 +6,7 @@ from domain import User, PasswordRetrieval
 from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword
 from services.jwk import JWKService
 from services.password import PasswordService
+from services.mail_sms import MailSender
 
 import random
 from datetime import datetime,timedelta
@@ -92,24 +93,31 @@ class AuthenticationService():
             return ForgotPassword.EMAIL_NOT_FOUND
         # generate a six-figure character and number mixed string.
         _ALL_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        email_subject = 'Your password reset code.'
-        email_content_1 = 'Hi' + user.last_name + ',\n' + 'You recently requested to rest the password for your'\
-                        + user.email + 'account. Use the code below to proceed.'
-        email_content_2 = 'If you did not request a password reset, please ignore this email.'\
-                        + 'This password reset code is only valid for the next 30 minutes.'\
-                        + 'Thanks, the fireapp 3.0 team.'
         generate_code = ''
         for _ in range(6):
             index = random.randint(0, len(_ALL_CHARACTERS)-1)
             generate_code += _ALL_CHARACTERS[index]
-        # TODO: sendVerificationCodeEmail() with email subject, content, and the code
-        # sendVerificationCodeEmail(email_suject, email_content_1+code+email_content_2)
+        # send verification code email with subject, content, and the code
+        subject = 'Your password reset code.'
+        content = """
+            Hi,</br>
+            You recently requested to rest the password for your %s account. Use the code below to proceed.
+            </br></br>
+            code: <strong>%s</strong>
+            </br></br>
+            If you did not request a password reset, please ignore this email. 
+            This password reset code is only valid for the next 30 minutes.
+            </br></br>
+            Thanks,
+            </br>
+            FireApp 3.0 Team'
+        """ % (email, generate_code)
+        MailSender().email(email, subject, content)
         code_expired_time = datetime.now()+timedelta(days=1)
         code_query = PasswordRetrieval(email=email, code=generate_code, created_time=datetime.now(), expired_time=code_expired_time)
         session.add(code_query)
         session.flush()
         return ForgotPassword.SUCCESS
-
 
     # Groundwork for verify backend function
     '''
@@ -136,4 +144,3 @@ class AuthenticationService():
             setNewPassword(session: Session, Password: Str) #check the existing functionality that might exist for this
             return "SUCCESS"
     '''
-

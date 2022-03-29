@@ -25,7 +25,7 @@ class MailSender:
         # sms mail service
         if not sender:
             sender = self.from_email
-        message = MIMEText(content, 'plain', 'utf-8')
+        message = MIMEText(content, 'HTML', 'utf-8')
         message['Subject'] = Header(subject, 'utf-8')
 
         server = smtplib.SMTP(self.smtp_endpoint, 587)
