@@ -3,7 +3,7 @@ from typing import Tuple, Any
 from sqlalchemy.orm import Session
 
 from domain import User, PasswordRetrieval
-from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword
+from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword, VerifyCode
 from services.jwk import JWKService
 from services.password import PasswordService
 
@@ -87,6 +87,7 @@ class AuthenticationService():
         :return:
         """
         # TODO: need to be able to resend the email and show the count down, if it is possible to implement.
+        # TODO: Think about other possible return
         user = session.query(User).filter(User.email == email).first()
         if user is None:
             return ForgotPassword.EMAIL_NOT_FOUND
@@ -102,7 +103,7 @@ class AuthenticationService():
         for _ in range(6):
             index = random.randint(0, len(_ALL_CHARACTERS)-1)
             generate_code += _ALL_CHARACTERS[index]
-        # TODO: sendVerificationCodeEmail() with email subject, content, and the code
+        # TODO: sendVerificationCodeEmail() with email subject, content, and the code , and return those information.
         # sendVerificationCodeEmail(email_suject, email_content_1+code+email_content_2)
         code_expired_time = datetime.now()+timedelta(days=1)
         code_query = PasswordRetrieval(email=email, code=generate_code, created_time=datetime.now(), expired_time=code_expired_time)
@@ -111,17 +112,30 @@ class AuthenticationService():
         return ForgotPassword.SUCCESS
 
 
-    # Groundwork for verify backend function
-    '''
+    # Groundwork for verify code backend function
     @staticmethod
-    def verify(session: Session, code: str):
-        if code is None
-            return "FAILURE"
-        if checkUserCode(Session, code):
-            return "SUCCESS"
+    def verify_code(session: Session, email:str, code: str):
+        """
+
+        :param session:
+        :param email:
+        :param code:
+        :return:
+        """
+        # TODO: check how can the email account save and use in this page without input the email address.
+        query = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
+        if query is None:
+            return VerifyCode.EMAIL_NOT_FOUND
+        if query.code is None:
+            return VerifyCode.CODE_INEXISTENCE
+        now_time = datetime.now()
+        if now_time > query.expired_time:
+            return VerifyCode.CODE_OVERDUE
+        if query.code == code:
+            return VerifyCode.CODE_CONSISTENCE
         else:
-            return "FAILURE"
-    '''
+            return VerifyCode.CODE_INCONSISTENCY
+
     # CheckUserCode takes the user session and the code and confirms the code is correct. We should consider looking into how security codes are handled in industry
 
     # Groundwork for reset password function

@@ -64,7 +64,7 @@ class Verify_code(Resource):
         args = verify_password_parser.parse_args()
         auth = AuthenticationService()
         with session_scope() as session:
-            result = auth.send_code(session, args['code'])
+            result = auth.verify_code(session, args['code'])
         return jsonify({"result": result.name})
 
 class Reset_Password(Resource):
