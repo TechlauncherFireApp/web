@@ -83,8 +83,8 @@ class AuthenticationService():
         """
         input email address, verify user account, and send code through email
         :param session:
-        :param email:
-        :return:
+        :param email: input email address
+        :return: error code
         """
         # TODO: need to be able to resend the email and show the count down, if it is possible to implement.
         # TODO: Think about other possible return
@@ -116,11 +116,11 @@ class AuthenticationService():
     @staticmethod
     def verify_code(session: Session, email:str, code: str):
         """
-
+        Verify the input code with the code in the database, and check whether it is overdue.
         :param session:
-        :param email:
-        :param code:
-        :return:
+        :param email: user's email, inherit from the last page
+        :param code: input code from email
+        :return: error code
         """
         # TODO: check how can the email account save and use in this page without input the email address.
         query = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
