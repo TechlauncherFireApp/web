@@ -3,7 +3,7 @@ from typing import Tuple, Any
 from sqlalchemy.orm import Session
 
 from domain import User, PasswordRetrieval
-from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword, VerifyCode, ResetPassword, ResendEmail
+from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword, VerifyCode, ResetPassword
 from services.jwk import JWKService
 from services.password import PasswordService
 from services.mail_sms import MailSender
@@ -111,7 +111,7 @@ class AuthenticationService():
         """ % (email, generate_code)
         MailSender().email(email, subject, content)
         resend_user = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
-        if resend_user.email is None:
+        if resend_user is None:
             code_query = PasswordRetrieval(email=email, code=generate_code, created_time=datetime.now(), expired_time=datetime.now()+timedelta(days=1))
             session.add(code_query)
         else:
