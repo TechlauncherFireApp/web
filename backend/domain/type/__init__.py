@@ -5,3 +5,4 @@ from .question_type import QuestionType
 from .forgot_password_result import ForgotPassword
 from .Verify_code import VerifyCode
 from .reset_password import ResetPassword
+from .Resend_code import ResendEmail
