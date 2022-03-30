@@ -16,10 +16,7 @@ login_parser.add_argument('email', type=str)
 login_parser.add_argument('password', type=str)
 
 password_parser = reqparse.RequestParser()
-password_parser.add_argument('email',type=str)
-
-resend_code_parser = reqparse.RequestParser()
-resend_code_parser.add_argument('email',type=str)
+password_parser.add_argument('email', type=str)
 
 verify_password_parser = reqparse.RequestParser()
 verify_password_parser.add_argument('email', type=str)
@@ -62,15 +59,6 @@ class Send_Code(Resource):
             result = auth.send_code(session, args['email'])
         return jsonify({"result": result.name})
 
-class ReSend_Code(Resource):
-    def post(self):
-        request.get_json(force=True)
-        args = resend_code_parser.parse_args()
-        auth = AuthenticationService()
-        with session_scope() as session:
-            result = auth.resend_code(session, args['email'])
-        return jsonify({"result": result.name})
-
 class Verify_code(Resource):
     def post(self):
         request.get_json(force=True)
@@ -95,5 +83,4 @@ api.add_resource(Register, '/authentication/register')
 api.add_resource(Login, '/authentication/login')
 api.add_resource(Send_Code, '/authentication/send_email_code')
 api.add_resource(Verify_code,'/authentication/verify_code')
-api.add_resource(Reset_Password, '/authentication/reset_password')
-api.add_resource(ReSend_Code, '/authentication/resend_email')
+api.add_resource(Verify_code,'/authentication/reset_password')

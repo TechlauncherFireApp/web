@@ -110,48 +110,15 @@ class AuthenticationService():
             FireApp3.0 Team'
         """ % (email, generate_code)
         MailSender().email(email, subject, content)
-        code_query = PasswordRetrieval(email=email, code=generate_code, created_time=datetime.now(), expired_time=datetime.now()+timedelta(days=1))
-        session.add(code_query)
-        session.flush()
-        return ForgotPassword.SUCCESS
-
-    @staticmethod
-    def resend_code(session: Session, email: str):
-        """
-        input email address, verify user account, and send code through email
-        :param session:
-        :param email: input email address
-        :return: error code
-        """
-        user = session.query(User).filter(User.email == email).first()
         resend_user = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
-        if user is None or resend_user is None:
-            return ResendEmail.FAIL
-        # generate a six-figure character and number mixed string.
-        _ALL_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        generate_code = ''
-        for _ in range(6):
-            index = random.randint(0, len(_ALL_CHARACTERS) - 1)
-            generate_code += _ALL_CHARACTERS[index]
-        subject = '[FireApp3.0] Your Password Reset Code'
-        content = """
-                Hi,</br>
-                You recently requested to rest the password for your %s account. Use the code below to proceed.
-                </br></br>
-                code: <strong>%s</strong>
-                </br></br>
-                If you did not request a password reset, please ignore this email. 
-                This password reset code is only valid for the next 30 minutes.
-                </br></br>
-                Thanks,
-                </br>
-                FireApp3.0 Team'
-            """ % (email, generate_code)
-        MailSender().email(email, subject, content)
-        resend_user.code = generate_code
-        resend_user.created_datetime = datetime.now()
-        resend_user.expired_datetime = resend_user.created_datetime + timedelta(days=1)
-        session.commit()
+        if resend_user.email is None:
+            code_query = PasswordRetrieval(email=email, code=generate_code, created_time=datetime.now(), expired_time=datetime.now()+timedelta(days=1))
+            session.add(code_query)
+        else:
+            resend_user.code = generate_code
+            resend_user.created_datetime = datetime.now()
+            resend_user.expired_datetime = resend_user.created_datetime + timedelta(days=1)
+            session.commit()
         session.flush()
         return ForgotPassword.SUCCESS
 
