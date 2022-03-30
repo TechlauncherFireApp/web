@@ -130,10 +130,8 @@ class AuthenticationService():
         # TODO:
         #  FOR FRONTEND : check how can the email account save and use in this page without input the email address.
         query = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
-        if query is None:
-            return VerifyCode.EMAIL_NOT_FOUND
-        if query.code is None:
-            return VerifyCode.CODE_INEXISTENCE
+        if query is None or query.code is None:
+            return VerifyCode.FAIL
         now_time = datetime.now()
         if now_time > query.expired_time:
             return VerifyCode.CODE_OVERDUE

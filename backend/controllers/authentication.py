@@ -57,7 +57,6 @@ class Send_Code(Resource):
         auth = AuthenticationService()
         with session_scope() as session:
             result = auth.send_code(session, args['email'])
-        print("result:",result)
         return jsonify({"result": result.name})
 
 class Verify_code(Resource):
@@ -82,6 +81,6 @@ authentication_bp = Blueprint('authentication', __name__)
 api = Api(authentication_bp)
 api.add_resource(Register, '/authentication/register')
 api.add_resource(Login, '/authentication/login')
-api.add_resource(Send_Code, '/authentication/sendemailcode')
-api.add_resource(Verify_code,'/authentication/verifycode')
-api.add_resource(Reset_Password, '/authentication/resetpassword')
+api.add_resource(Send_Code, '/authentication/send_email_code')
+api.add_resource(Verify_code,'/authentication/verify_code')
+api.add_resource(Reset_Password, '/authentication/reset_password')
