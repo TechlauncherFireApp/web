@@ -17,10 +17,11 @@ const QuizQuestions = () => {
     const [questions, setQuestions] = useState([]);
     const [questionNum, setQuestionNum] = useState(0);
     const [answers, setAnswers] = useState(Array(questions.length).fill(null));
-    const [progress, setProgress] = useState(10);
+    const [progress, setProgress] = useState(0);
     const [solutions, setSolutions] = useState(Array(questions.length).fill(null));
     const [errorMessage, setErrorMessage] = useState("");
     const [role, setRole] = useState('');
+    const [completed, setCompleted] = useState(0);
     const history = useHistory();
 
     const config = {
@@ -50,6 +51,11 @@ const QuizQuestions = () => {
     }, []);
 
     useEffect(() => {
+        const increment = 100 / questions.length;
+        setProgress(increment);
+    }, [questions]);
+
+    useEffect(() => {
         window.onbeforeunload = () => {
             return true;
         };
@@ -74,7 +80,7 @@ const QuizQuestions = () => {
         } else {
             setErrorMessage("");
             setQuestionNum(questionNum + 1);
-            if (progress === 100) {
+            if (completed === questions.length + 1) {
                 history.push(`/quiz-result/?correct=${solutions.filter(x => x.answer[0].result===true).length}&number=${questions.length}&role=${role}`);
             } else {
                 const increment = 100 / questions.length;
@@ -101,6 +107,10 @@ const QuizQuestions = () => {
                 console.log(err);
             });
     }
+
+    useEffect(() => {
+        setCompleted(prevState => prevState + 1);
+    }, [solutions]);
 
     return (
         <div className='quiz-question-container'>
