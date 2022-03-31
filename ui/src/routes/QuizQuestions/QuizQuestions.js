@@ -135,10 +135,10 @@ const QuizQuestions = () => {
                                         ${solutions[questionNum] === undefined ? 'solution-box' : ''}
                                     `}
                                 >
-                                    {solutions[questionNum]?.answer[0].result ? 'Correct! ' : `Incorrect, the correct answer is ${solutions[questionNum]?.answer[0].correct}.`}
+                                    {solutions[questionNum]?.answer[0].result ? 'Correct! ' : 'Incorrect'}
                                     <br/>
                                     <br/>
-                                    {'Explanation: ' + solutions[questionNum]?.choice[0].reason}
+                                    {`${solutions[questionNum]?.answer[0].result ? 'Explanation: ' + solutions[questionNum]?.choice[0].reason : ''}`}
                                 </Col>
                                 <Col>Please choose the best answer from one of the following options:</Col>
                             </Row>
