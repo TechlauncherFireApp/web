@@ -21,7 +21,7 @@ const QuizQuestions = () => {
     const [solutions, setSolutions] = useState(Array(questions.length).fill(null));
     const [errorMessage, setErrorMessage] = useState("");
     const [role, setRole] = useState('');
-    const [completed, setCompleted] = useState(0);
+    const [completed, setCompleted] = useState(-1);
     const history = useHistory();
 
     const config = {
@@ -73,20 +73,26 @@ const QuizQuestions = () => {
     }
 
     const handleNext = () => {
-        if (answers[questionNum] === undefined) {
-            setErrorMessage("* You must choose an answer and check it!");
-        } else if (solutions[questionNum] === undefined) {
-            setErrorMessage("* You must check your answer!");
-        } else {
+        // if (answers[questionNum] === undefined) {
+        //     setErrorMessage("* You must choose an answer and check it!");
+        // } else if (solutions[questionNum] === undefined) {
+        //     setErrorMessage("* You must check your answer!");
+        // } else {
             setErrorMessage("");
-            setQuestionNum(questionNum + 1);
-            if (completed === questions.length + 1) {
+            // setQuestionNum(questionNum + 1);
+        console.log("questionNum:" + questionNum);
+            console.log(completed);
+            if (completed === questions.length && questionNum === questions.length - 1) {
                 history.push(`/quiz-result/?correct=${solutions.filter(x => x.answer[0].result===true).length}&number=${questions.length}&role=${role}`);
+            } else if (questionNum === questions.length - 1) {
+                setErrorMessage("* You must select and check the answer for all questions to proceed to your results.");
             } else {
+                setErrorMessage("");
                 const increment = 100 / questions.length;
+                setQuestionNum(questionNum + 1);
                 setProgress(progress + increment);
             }
-        }
+        // }
     }
 
     const handleUserInput = (id) => {
@@ -109,7 +115,9 @@ const QuizQuestions = () => {
     }
 
     useEffect(() => {
-        setCompleted(prevState => prevState + 1);
+        if (completed !== questions.length) {
+            setCompleted(prevState => prevState + 1);
+        }
     }, [solutions]);
 
     return (
