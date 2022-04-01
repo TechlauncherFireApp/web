@@ -15,11 +15,19 @@ function Forgot() {
     axios.post(backendPath + 'authentication/send_code', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
-          /* Forward to enter code page (verify) needs to bring forward session information somehow */
-          history.push('/forgot?success=true'); /* I dont understand how history works in react but its necessary for the page to load */
+          /* Saves the email; for the next page */
+          localStorage.setItem("email", values['email']);
+
+          /* Send to code verification page */
+          history.push('/verify/');
           break;
         case 'EMAIL_NOT_FOUND':
-          setError('Email cannot be found');
+          setError('Email cannot be found ' );
+
+          /*NEED TO DELETE THIS IT IS FOR TESTING PURPOSES */
+          localStorage.setItem("email", values['email']);
+          history.push('/verify/');
+          /*ABOVE IS FOR TESTING ONLY*/
           break;
         default:
           setError('Unknown error');
@@ -64,7 +72,6 @@ function Forgot() {
               value="Submit"
               className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
           />
-
 
         {error && (
           <div className="alert alert-danger" role="alert">

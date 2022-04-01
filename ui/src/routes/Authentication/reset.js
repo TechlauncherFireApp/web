@@ -1,20 +1,27 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import {NavLink, useHistory} from 'react-router-dom';
 
 import { backendPath } from '../../config';
 
 function Reset() {
-  const [values, setValues] = useState({});
+  const [values, setValues] = useState(() => {
+    /*Add email pulled from previous page to the values dict*/
+    const email = localStorage.getItem("email");
+    const firstValue = {
+      'email': email
+    }
+    return firstValue || {};
+  });
   const [error, setError] = useState(undefined);
+  const history = useHistory();
 
-  /*Todo: Look at the changepassword backend process as it will probably be very similar to our needs for the reset password process*/
   function submit(e) {
     e.preventDefault();
     axios.post(backendPath + 'authentication/reset', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
-          /*proceed to next page*/
+          history.push('/login/');
           break;
         case 'NO_MATCH':
           setError('Passwords did not match');
@@ -28,8 +35,6 @@ function Reset() {
       }
     });
   }
-  /* Function from the 2021 team to connect submit button with backend, will need to be modified when backend is complete */
-
 
   function handleChange(field, value) {
     const lcl = { ...values };
@@ -84,9 +89,12 @@ function Reset() {
           className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
         />
 
+        {/*Back Button*/}
         <div className={'mt2'}>
           <NavLink to={'/login'}>Back</NavLink>
         </div>
+
+        {/*Error Code*/}
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}

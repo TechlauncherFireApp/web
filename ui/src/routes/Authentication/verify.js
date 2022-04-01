@@ -1,36 +1,50 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 
 import { backendPath } from '../../config';
 
 function Verify() {
-  const [values, setValues] = useState({});
+  const [values, setValues] = useState(() => {
+    /*Add email pulled from previous page to the values dict*/
+    const email = localStorage.getItem("email");
+    const firstValue = {
+      'email': email
+    }
+    return firstValue || {};
+  });
   const [error, setError] = useState(undefined);
+  const history = useHistory();
+
+  /*updates values based on input into the field*/
+  function handleChange(field, value) {
+    const lcl = { ...values };
+    lcl[field] = value;
+    setValues(lcl);
+  }
 
   function submit(e) {
     e.preventDefault();
+    console.log(values);
     axios.post(backendPath + 'authentication/verify', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
-            /*Proceed to next page*/
+          /* Email passed to next page */
+          localStorage.setItem("email", values['email']);
+
+          /*Proceed to next page*/
+          history.push('/reset/');
+
+          /* NOTE: May be a security issue with how the email is passed, if application progresses past PoC will need to be looked into and potentially fixed" */
           break;
         case 'FAILURE':
           setError('Code was not correct');
           break;
         default:
-          setError('Unknown error');
+          setError('Unknown Error');
           break;
       }
     });
-  }
-
-  /*backend -> authentication/verifyCode function needs to be written*/
-
-  function handleChange(field, value) {
-    const lcl = { ...values };
-    lcl[field] = value;
-    setValues(lcl);
   }
 
   return (
@@ -56,21 +70,18 @@ function Verify() {
         </div>
 
         {/* Submit Button */}
-        {/* UNCOMMENT THIS WHEN BACKEND HOOKS WORK
         <input
           type="submit"
           value="Submit"
           className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
         />
 
-        {/* PLACEHOLDER
-          TODO: Below NavLink is a placeholder, can be removed once backend for submit button is done
-        */}
-        <NavLink to="/reset">Submit</NavLink>
-
+        {/* Back Button */}
         <div className={'mt2'}>
           <NavLink to={'/forgot'}>Back</NavLink>
         </div>
+
+        {/* Error Code */}
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}
@@ -78,17 +89,14 @@ function Verify() {
         )}
       </form>
 
+      {/* Resend Code Button */}
       <div id="register-btn" className={'submit-btn mt2 mb4'}>
-            <a href="/register" className="btn w-80 bg-light-silver dim" role="button"><strong>Resend Code</strong></a>
+            <a href="/forgot" className="btn w-80 bg-light-silver dim" role="button"><strong>Resend Code</strong></a>
       </div>
 
-      {/*
-      TODO: Need to add procedure here that has this button resend the verification code to the correct email
-      Currently using link to register as placeholder
-      */}
+      {/* TODO - Currently "resend code" redirects back to the forgot password page where you enter your email when the function could just be called again*/}
 
     </div>
-
 
   );
 }

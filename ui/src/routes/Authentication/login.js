@@ -38,7 +38,6 @@ function Login() {
       }
     });
   }
-  {/* NOTE Might need to replace axios when we change to HTTPS -  */}
 
   function handleChange(field, value) {
     const lcl = { ...values };
