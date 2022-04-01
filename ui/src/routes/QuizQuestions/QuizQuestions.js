@@ -9,9 +9,10 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
-import { useHistory } from 'react-router-dom';
 
+// import { useHistory } from 'react-router-dom';
 import { backendPath } from '../../config';
+import QuizResult from "../QuizResult/QuizResult";
 
 const QuizQuestions = () => {
     const [questions, setQuestions] = useState([]);
@@ -22,7 +23,8 @@ const QuizQuestions = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [role, setRole] = useState('');
     const [completed, setCompleted] = useState(-1);
-    const history = useHistory();
+    const [flag, setFlag] = useState("questions");
+    // const history = useHistory();
 
     const config = {
             'headers': {
@@ -79,11 +81,11 @@ const QuizQuestions = () => {
         //     setErrorMessage("* You must check your answer!");
         // } else {
             setErrorMessage("");
-            // setQuestionNum(questionNum + 1);
         console.log("questionNum:" + questionNum);
             console.log(completed);
             if (completed === questions.length && questionNum === questions.length - 1) {
-                history.push(`/quiz-result/?correct=${solutions.filter(x => x.answer[0].result===true).length}&number=${questions.length}&role=${role}`);
+                // history.push(`/quiz-result/?correct=${solutions.filter(x => x.answer[0].result===true).length}&number=${questions.length}&role=${role}`);
+                setFlag("results");
             } else if (questionNum === questions.length - 1) {
                 setErrorMessage("* You must select and check the answer for all questions to proceed to your results.");
             } else {
@@ -122,7 +124,9 @@ const QuizQuestions = () => {
 
     return (
         <div className='quiz-question-container'>
-            <Container>
+            {
+                flag === "questions" ?
+                <Container>
                 <Card>
                     <Card.Img variant='top' src='https://www.rbgsyd.nsw.gov.au/getmedia/ce90c9e5-0e81-4904-94c8-5410a143bce7/placeholder_cross_1200x815.png'/>
                     <Card.Body>
@@ -175,6 +179,9 @@ const QuizQuestions = () => {
                     </Card.Body>
                 </Card>
             </Container>
+                    :
+                    <QuizResult roleType={role} questions={questions} solutions={solutions} answers={answers}/>
+            }
         </div>
     );
 }
