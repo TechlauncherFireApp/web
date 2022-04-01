@@ -35,7 +35,7 @@ function Verify() {
           /*Proceed to next page*/
           history.push('/reset/');
 
-          /* NOTE: May be a security issue with how the email is passed, if application progresses past PoC will need to be looked into and potentially fixed" */
+          /* NOTE: May be a security issue with how the email is passed, if application progresses past PoC will need to be investigated and potentially method of sharing account to be reset changed" */
           break;
         case 'CODE_INCORRECT':
           setError('Code was not correct');
@@ -100,7 +100,7 @@ function Verify() {
             <a href="/forgot" className="btn w-80 bg-light-silver dim" role="button"><strong>Resend Code</strong></a>
       </div>
 
-      {/* TODO - Currently "resend code" redirects back to the forgot password page where you enter your email when the function could just be called again*/}
+      {/* TODO - Currently "resend code" redirects back to the forgot password page where you enter your email when the function could just be called again. Look to use OnClick Function*/}
 
     </div>
 

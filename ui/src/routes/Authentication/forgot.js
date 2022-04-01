@@ -10,7 +10,6 @@ function Forgot() {
   const history = useHistory();
 
   function submit(e) {
-    /* TODO: Below function is the hook for the incomplete backend */
     e.preventDefault();
     axios.post(backendPath + 'authentication/send_code', values).then((resp) => {
       switch (resp.data['result']) {
@@ -30,8 +29,6 @@ function Forgot() {
       }
     });
   }
-  /* Function from the 2021 team to connect submit button with backend, will need to be modified when backend is complete */
-
 
   function handleChange(field, value) {
     const lcl = { ...values };
@@ -68,6 +65,7 @@ function Forgot() {
               className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
           />
 
+        {/*Error Code*/}
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}
