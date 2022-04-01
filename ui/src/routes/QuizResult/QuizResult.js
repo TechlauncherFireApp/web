@@ -71,13 +71,13 @@ const QuizResult = (props) => {
                                     return (
                                         <div key={questions[elem].id}>
                                             <Row sm={3}>
-                                            <Col sm={8}>
+                                            <Col sm={8} className={userAnswers[elem] === correctAns[elem]?.answer[0].correct ? 'correct-ans' : 'incorrect-ans'}>
                                                 {questions[elem].description}
                                             </Col>
-                                            <Col sm={2}>
+                                            <Col sm={2} className={userAnswers[elem] === correctAns[elem]?.answer[0].correct ? 'correct-ans' : 'incorrect-ans'}>
                                                 {userAnswers[elem]}
                                             </Col>
-                                            <Col sm={2}>
+                                            <Col sm={2} className={userAnswers[elem] === correctAns[elem]?.answer[0].correct ? 'correct-ans' : 'incorrect-ans'}>
                                                 {correctAns[elem]?.answer[0].correct}
                                             </Col>
                                             </Row>
