@@ -23,11 +23,6 @@ function Forgot() {
           break;
         case 'EMAIL_NOT_FOUND':
           setError('Email cannot be found ' );
-
-          /*NEED TO DELETE THIS IT IS FOR TESTING PURPOSES */
-          localStorage.setItem("email", values['email']);
-          history.push('/verify/');
-          /*ABOVE IS FOR TESTING ONLY*/
           break;
         default:
           setError('Unknown error');

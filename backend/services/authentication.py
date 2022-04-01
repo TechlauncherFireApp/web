@@ -139,9 +139,9 @@ class AuthenticationService():
         if now_time > query.expired_time:
             return VerifyCode.CODE_OVERDUE
         if query.code == code:
-            return VerifyCode.CODE_CONSISTENCE
+            return VerifyCode.CODE_CORRECT
         else:
-            return VerifyCode.CODE_INCONSISTENCY
+            return VerifyCode.CODE_INCORRECT
 
     #  CheckUserCode takes the user session and the code and confirms the code is correct.We should consider looking into how security codes are handled in industry.
     #  We can add captcha to make it safer

@@ -37,8 +37,14 @@ function Verify() {
 
           /* NOTE: May be a security issue with how the email is passed, if application progresses past PoC will need to be looked into and potentially fixed" */
           break;
-        case 'FAILURE':
+        case 'CODE_INCORRECT':
           setError('Code was not correct');
+          break;
+        case 'CODE_OVERDUE':
+          setError('Code has expired');
+          break;
+        case 'FAIL':
+          setError('Error: No code found in system');
           break;
         default:
           setError('Unknown Error');

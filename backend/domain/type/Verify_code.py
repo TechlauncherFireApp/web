@@ -1,7 +1,7 @@
 from enum import Enum
 
 class VerifyCode(Enum):
-    CODE_CONSISTENCE = 0
+    CODE_CORRECT = 0
     FAIL = 1
     CODE_OVERDUE = 2
-    CODE_INCONSISTENCY = 3
+    CODE_INCORRECT = 3
