@@ -16,13 +16,13 @@ function Forgot() {
       switch (resp.data['result']) {
         case 'SUCCESS':
           /* Forward to enter code page (verify) needs to bring forward session information somehow */
+          history.push('/forgot?success=true'); /* I dont understand how history works in react but its necessary for the page to load */
           break;
         case 'EMAIL_NOT_FOUND':
           setError('Email cannot be found');
           break;
         default:
           setError('Unknown error');
-          history.push('/forgot?success=true'); /* I dont understand how history works in react but its necessary for the page to load */
           break;
       }
     });
@@ -59,27 +59,24 @@ function Forgot() {
         </div>
 
         {/* Submit Button */}
-        {/* UNCOMMENT THIS WHEN BACKEND HOOKS WORK
           <input
               type="submit"
               value="Submit"
               className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
           />
-        */}
 
-        {/* PLACEHOLDER
-          TODO: Below NavLink is a placeholder, can be removed once backend for submit button is done
-        */}
-        <NavLink to="/verify">Submit</NavLink>
 
-        <div className={'mt2'}>
-          <NavLink to={'/login'}>Back</NavLink>
-        </div>
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}
           </div>
         )}
+
+        {/* BACK BUTTON */}
+        <div className={'mt2'}>
+          <NavLink to={'/login'}>Back</NavLink>
+        </div>
+
       </form>
     </div>
   );

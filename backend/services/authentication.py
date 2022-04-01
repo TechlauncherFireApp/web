@@ -79,7 +79,7 @@ class AuthenticationService():
         return code
 
     @staticmethod
-    def send_code(session: Session, email: str):
+    def send_code(session: Session, email: str) -> ForgotPassword:
         """
         input email address, verify user account, and send code through email
         :param session:

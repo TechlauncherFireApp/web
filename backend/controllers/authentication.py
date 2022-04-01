@@ -50,7 +50,7 @@ class Login(Resource):
                 return jsonify({"result": result.name})
             return jsonify({"result": result.name, "access_token": token, "role": user.role.name, 'id': user.id})
 
-class Send_Code(Resource):
+class send_code(Resource):
     def post(self):
         request.get_json(force=True)
         args = password_parser.parse_args()
@@ -59,7 +59,7 @@ class Send_Code(Resource):
             result = auth.send_code(session, args['email'])
         return jsonify({"result": result.name})
 
-class Verify_code(Resource):
+class verify_code(Resource):
     def post(self):
         request.get_json(force=True)
         args = verify_password_parser.parse_args()
@@ -68,7 +68,7 @@ class Verify_code(Resource):
             result = auth.verify_code(session, args['email'], args['code'])
         return jsonify({"result": result.name})
 
-class Reset_Password(Resource):
+class reset_password(Resource):
     def post(self):
         request.get_json(force=True)
         args = reset_password_parser.parse_args()
@@ -81,6 +81,6 @@ authentication_bp = Blueprint('authentication', __name__)
 api = Api(authentication_bp)
 api.add_resource(Register, '/authentication/register')
 api.add_resource(Login, '/authentication/login')
-api.add_resource(Send_Code, '/authentication/send_email_code')
-api.add_resource(Verify_code,'/authentication/verify_code')
-api.add_resource(Reset_Password,'/authentication/reset_password')
+api.add_resource(send_code, '/authentication/send_code')
+api.add_resource(verify_code, '/authentication/verify_code')
+api.add_resource(reset_password, '/authentication/reset_password')
