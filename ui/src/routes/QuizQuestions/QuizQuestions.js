@@ -9,19 +9,22 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
-import { useHistory } from 'react-router-dom';
 
+// import { useHistory } from 'react-router-dom';
 import { backendPath } from '../../config';
+import QuizResult from "../QuizResult/QuizResult";
 
 const QuizQuestions = () => {
     const [questions, setQuestions] = useState([]);
     const [questionNum, setQuestionNum] = useState(0);
     const [answers, setAnswers] = useState(Array(questions.length).fill(null));
-    const [progress, setProgress] = useState(10);
+    const [progress, setProgress] = useState(0);
     const [solutions, setSolutions] = useState(Array(questions.length).fill(null));
     const [errorMessage, setErrorMessage] = useState("");
     const [role, setRole] = useState('');
-    const history = useHistory();
+    const [completed, setCompleted] = useState(-1);
+    const [flag, setFlag] = useState("questions");
+    // const history = useHistory();
 
     const config = {
             'headers': {
@@ -50,6 +53,11 @@ const QuizQuestions = () => {
     }, []);
 
     useEffect(() => {
+        const increment = 100 / questions.length;
+        setProgress(increment);
+    }, [questions]);
+
+    useEffect(() => {
         window.onbeforeunload = () => {
             return true;
         };
@@ -67,20 +75,26 @@ const QuizQuestions = () => {
     }
 
     const handleNext = () => {
-        if (answers[questionNum] === undefined) {
-            setErrorMessage("* You must choose an answer and check it!");
-        } else if (solutions[questionNum] === undefined) {
-            setErrorMessage("* You must check your answer!");
-        } else {
+        // if (answers[questionNum] === undefined) {
+        //     setErrorMessage("* You must choose an answer and check it!");
+        // } else if (solutions[questionNum] === undefined) {
+        //     setErrorMessage("* You must check your answer!");
+        // } else {
             setErrorMessage("");
-            setQuestionNum(questionNum + 1);
-            if (progress === 100) {
-                history.push(`/quiz-result/?correct=${solutions.filter(x => x.answer[0].result===true).length}&number=${questions.length}&role=${role}`);
+        console.log("questionNum:" + questionNum);
+            console.log(completed);
+            if (completed === questions.length && questionNum === questions.length - 1) {
+                // history.push(`/quiz-result/?correct=${solutions.filter(x => x.answer[0].result===true).length}&number=${questions.length}&role=${role}`);
+                setFlag("results");
+            } else if (questionNum === questions.length - 1) {
+                setErrorMessage("* You must select and check the answer for all questions to proceed to your results.");
             } else {
+                setErrorMessage("");
                 const increment = 100 / questions.length;
+                setQuestionNum(questionNum + 1);
                 setProgress(progress + increment);
             }
-        }
+        // }
     }
 
     const handleUserInput = (id) => {
@@ -102,9 +116,17 @@ const QuizQuestions = () => {
             });
     }
 
+    useEffect(() => {
+        if (completed !== questions.length) {
+            setCompleted(prevState => prevState + 1);
+        }
+    }, [solutions]);
+
     return (
         <div className='quiz-question-container'>
-            <Container>
+            {
+                flag === "questions" ?
+                <Container>
                 <Card>
                     <Card.Img variant='top' src='https://www.rbgsyd.nsw.gov.au/getmedia/ce90c9e5-0e81-4904-94c8-5410a143bce7/placeholder_cross_1200x815.png'/>
                     <Card.Body>
@@ -125,10 +147,10 @@ const QuizQuestions = () => {
                                         ${solutions[questionNum] === undefined ? 'solution-box' : ''}
                                     `}
                                 >
-                                    {solutions[questionNum]?.answer[0].result ? 'Correct! ' : `Incorrect, the correct answer is ${solutions[questionNum]?.answer[0].correct}.`}
+                                    {solutions[questionNum]?.answer[0].result ? 'Correct! ' : 'Incorrect'}
                                     <br/>
                                     <br/>
-                                    {'Explanation: ' + solutions[questionNum]?.choice[0].reason}
+                                    {`${solutions[questionNum]?.answer[0].result ? 'Explanation: ' + solutions[questionNum]?.choice[0].reason : ''}`}
                                 </Col>
                                 <Col>Please choose the best answer from one of the following options:</Col>
                             </Row>
@@ -157,6 +179,9 @@ const QuizQuestions = () => {
                     </Card.Body>
                 </Card>
             </Container>
+                    :
+                    <QuizResult roleType={role} questions={questions} solutions={solutions} answers={answers}/>
+            }
         </div>
     );
 }
