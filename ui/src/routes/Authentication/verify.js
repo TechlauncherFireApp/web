@@ -21,6 +21,7 @@ function Verify() {
     const lcl = { ...values };
     lcl[field] = value;
     setValues(lcl);
+    console.log(values);
   }
 
   function submit(e) {
@@ -28,7 +29,7 @@ function Verify() {
     console.log(values);
     axios.post(backendPath + 'authentication/verify', values).then((resp) => {
       switch (resp.data['result']) {
-        case 'SUCCESS':
+        case 'CODE_CORRECT':
           /* Email passed to next page */
           localStorage.setItem("email", values['email']);
 

@@ -34,6 +34,7 @@ function Forgot() {
     const lcl = { ...values };
     lcl[field] = value;
     setValues(lcl);
+    console.log(values);
   }
 
   return (
