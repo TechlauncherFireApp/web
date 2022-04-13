@@ -136,7 +136,7 @@ class AuthenticationService():
         if query is None or query.code is None:
             return VerifyCode.FAIL
         now_time = datetime.now()
-        if now_time > query.expired_time:
+        if now_time > query.expired_datetime:
             return VerifyCode.CODE_OVERDUE
         if query.code == code:
             return VerifyCode.CODE_CORRECT
