@@ -23,10 +23,10 @@ function Reset() {
         case 'SUCCESS':
           history.push('/login/');
           break;
-        case 'RECHECK_TWO_INPUTS':
+        case 'NO_MATCH':
           setError('Passwords did not match');
           break;
-        case 'BAD_PASSWORD':
+        case 'NO_CRITERIA':
           setError('Passwords does not meet requirements.');
           break;
         default:
@@ -40,6 +40,7 @@ function Reset() {
     const lcl = { ...values };
     lcl[field] = value;
     setValues(lcl);
+    console.log(values);
   }
 
   return (
@@ -57,9 +58,9 @@ function Reset() {
           <input
             className={'form-control'}
             type="password"
-            name="password"
+            name="new_password"
             onChange={(e) => {
-              handleChange('password', e.target.value);
+              handleChange('new_password', e.target.value);
             }}
           />
         </div>
@@ -70,9 +71,9 @@ function Reset() {
           <input
             className={'form-control'}
             type="password"
-            name="password"
+            name="repeat_password"
             onChange={(e) => {
-              handleChange('password', e.target.value);
+              handleChange('repeat_password', e.target.value);
             }}
           />
           {/* Fine print - password criteria */}
