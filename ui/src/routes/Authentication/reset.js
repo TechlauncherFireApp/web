@@ -40,6 +40,7 @@ function Reset() {
     const lcl = { ...values };
     lcl[field] = value;
     setValues(lcl);
+    console.log(values);
   }
 
   return (
@@ -57,9 +58,9 @@ function Reset() {
           <input
             className={'form-control'}
             type="password"
-            name="password"
+            name="new_password"
             onChange={(e) => {
-              handleChange('password', e.target.value);
+              handleChange('new_password', e.target.value);
             }}
           />
         </div>
@@ -70,9 +71,9 @@ function Reset() {
           <input
             className={'form-control'}
             type="password"
-            name="password"
+            name="repeat_password"
             onChange={(e) => {
-              handleChange('password', e.target.value);
+              handleChange('repeat_password', e.target.value);
             }}
           />
           {/* Fine print - password criteria */}
