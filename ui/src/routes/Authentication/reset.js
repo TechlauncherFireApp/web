@@ -23,10 +23,10 @@ function Reset() {
         case 'SUCCESS':
           history.push('/login/');
           break;
-        case 'RECHECK_TWO_INPUTS':
+        case 'NO_MATCH':
           setError('Passwords did not match');
           break;
-        case 'BAD_PASSWORD':
+        case 'NO_CRITERIA':
           setError('Passwords does not meet requirements.');
           break;
         default:
