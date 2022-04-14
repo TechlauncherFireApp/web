@@ -112,12 +112,12 @@ class AuthenticationService():
         MailSender().email(email, subject, content)
         resend_user = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
         if resend_user is None:
-            code_query = PasswordRetrieval(email=email, code=generate_code, created_time=datetime.now(), expired_time=datetime.now()+timedelta(days=1))
+            code_query = PasswordRetrieval(email=email, code=generate_code, created_datetime=datetime.now(), expired_datetime=datetime.now()+timedelta(days=1))
             session.add(code_query)
         else:
             resend_user.code = generate_code
-            resend_user.created_time = datetime.now()
-            resend_user.expired_time = resend_user.created_datetime + timedelta(days=1)
+            resend_user.created_datetime = datetime.now()
+            resend_user.expired_datetime = resend_user.created_datetime + timedelta(days=1)
             session.commit()
         session.flush()
         return ForgotPassword.SUCCESS
