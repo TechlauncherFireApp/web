@@ -25,4 +25,12 @@
   margin: 1.5em;
 }
 
+.correct-ans {
+  background-color: #B6FFCE;
+}
+
+.incorrect-ans {
+  background-color: #FFA8A8;
+}
+
 //http://localhost:3000/quiz-result/?correct=7&number=10&role=driver
