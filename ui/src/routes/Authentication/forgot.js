@@ -10,25 +10,25 @@ function Forgot() {
   const history = useHistory();
 
   function submit(e) {
-    /* TODO: Below function is the hook for the incomplete backend */
     e.preventDefault();
     axios.post(backendPath + 'authentication/send_code', values).then((resp) => {
       switch (resp.data['result']) {
         case 'SUCCESS':
-          /* Forward to enter code page (verify) needs to bring forward session information somehow */
+          /* Saves the email; for the next page */
+          localStorage.setItem("email", values['email']);
+
+          /* Send to code verification page */
+          history.push('/verify/');
           break;
         case 'EMAIL_NOT_FOUND':
-          setError('Email cannot be found');
+          setError('Email cannot be found ' );
           break;
         default:
           setError('Unknown error');
-          history.push('/forgot?success=true'); /* I dont understand how history works in react but its necessary for the page to load */
           break;
       }
     });
   }
-  /* Function from the 2021 team to connect submit button with backend, will need to be modified when backend is complete */
-
 
   function handleChange(field, value) {
     const lcl = { ...values };
@@ -59,27 +59,24 @@ function Forgot() {
         </div>
 
         {/* Submit Button */}
-        {/* UNCOMMENT THIS WHEN BACKEND HOOKS WORK
           <input
               type="submit"
               value="Submit"
               className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
           />
-        */}
 
-        {/* PLACEHOLDER
-          TODO: Below NavLink is a placeholder, can be removed once backend for submit button is done
-        */}
-        <NavLink to="/verify">Submit</NavLink>
-
-        <div className={'mt2'}>
-          <NavLink to={'/login'}>Back</NavLink>
-        </div>
+        {/*Error Code*/}
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}
           </div>
         )}
+
+        {/* BACK BUTTON */}
+        <div className={'mt2'}>
+          <NavLink to={'/login'}>Back</NavLink>
+        </div>
+
       </form>
     </div>
   );

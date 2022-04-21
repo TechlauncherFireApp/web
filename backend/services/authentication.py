@@ -79,7 +79,7 @@ class AuthenticationService():
         return code
 
     @staticmethod
-    def send_code(session: Session, email: str):
+    def send_code(session: Session, email: str) -> ForgotPassword:
         """
         input email address, verify user account, and send code through email
         :param session:
@@ -112,7 +112,7 @@ class AuthenticationService():
         MailSender().email(email, subject, content)
         resend_user = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
         if resend_user is None:
-            code_query = PasswordRetrieval(email=email, code=generate_code, created_time=datetime.now(), expired_time=datetime.now()+timedelta(days=1))
+            code_query = PasswordRetrieval(email=email, code=generate_code, created_datetime=datetime.now(), expired_datetime=datetime.now()+timedelta(days=1))
             session.add(code_query)
         else:
             resend_user.code = generate_code
@@ -136,12 +136,12 @@ class AuthenticationService():
         if query is None or query.code is None:
             return VerifyCode.FAIL
         now_time = datetime.now()
-        if now_time > query.expired_time:
+        if now_time > query.expired_datetime:
             return VerifyCode.CODE_OVERDUE
         if query.code == code:
-            return VerifyCode.CODE_CONSISTENCE
+            return VerifyCode.CODE_CORRECT
         else:
-            return VerifyCode.CODE_INCONSISTENCY
+            return VerifyCode.CODE_INCORRECT
 
     #  CheckUserCode takes the user session and the code and confirms the code is correct.We should consider looking into how security codes are handled in industry.
     #  We can add captcha to make it safer
