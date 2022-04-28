@@ -15,6 +15,7 @@ import Register from './routes/Authentication/register';
 import Reset from './routes/Authentication/reset';
 import Verify from "./routes/Authentication/verify";
 import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
+import Calendar from './routes/Calendar/Calendar';
 import Configuration from "./routes/Configuration/configuration";
 import Home from './routes/Home/Home';
 import QuizMainPage from "./routes/QuizMainPage/QuizMainPage";
@@ -59,6 +60,7 @@ export default function App() {
           <Route exact path="/volunteer/:id" component={Volunteer} />
           <Route exact path="/volunteer/:id/availability" component={Availability} />
           <Route exact path="/tenancy-configs" component={Configuration} />
+          <Route exact path='/calendar' component={Calendar} />
           <Route exact path="/quiz" component={QuizMainPage} />
           <Route path={"/questions"} component={QuizQuestions} />
           <Route path={"/quiz-result"} component={QuizResult} />
