@@ -3,14 +3,14 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 import moment from "moment";
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 
 const DDCalendar = withDragAndDrop(Calendar);
 const localizer = momentLocalizer(moment);
 
-const events = [
+const eventsDB = [
     {
         title: 'Take exam',
         start: new Date(2022, 3, 29, 1),
@@ -29,6 +29,18 @@ const events = [
 ];
 
 const VolunteerCalendar = () => {
+    const [blocks, setBlocks] = useState(eventsDB);
+
+    const handleEventDrop = ({event, start, end}) => {
+        const idx = blocks.indexOf(event);
+        const updatedBlock = { ...event, start, end };
+
+        const blocksToChange = [...blocks];
+        blocksToChange.splice(idx, 1, updatedBlock);
+
+        setBlocks(blocksToChange);
+    }
+
     return (
         <div className='calendar-body'>
             <DDCalendar
@@ -36,8 +48,9 @@ const VolunteerCalendar = () => {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: '80vh' }}
-                events={events}
+                events={blocks}
                 selectable={true}
+                onEventDrop={handleEventDrop}
             />
         </div>
     );
