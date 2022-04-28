@@ -31,7 +31,7 @@ const eventsDB = [
 const VolunteerCalendar = () => {
     const [blocks, setBlocks] = useState(eventsDB);
 
-    const handleEventDrop = ({event, start, end}) => {
+    const handleEventChange = ({event, start, end}) => {
         const idx = blocks.indexOf(event);
         const updatedBlock = { ...event, start, end };
 
@@ -50,7 +50,8 @@ const VolunteerCalendar = () => {
                 style={{ height: '80vh' }}
                 events={blocks}
                 selectable={true}
-                onEventDrop={handleEventDrop}
+                onEventDrop={handleEventChange}
+                onEventResize={handleEventChange}
             />
         </div>
     );
