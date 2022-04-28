@@ -15,7 +15,6 @@ import Register from './routes/Authentication/register';
 import Reset from './routes/Authentication/reset';
 import Verify from "./routes/Authentication/verify";
 import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
-import Calendar from './routes/Calendar/Calendar';
 import Configuration from "./routes/Configuration/configuration";
 import Home from './routes/Home/Home';
 import QuizMainPage from "./routes/QuizMainPage/QuizMainPage";
@@ -25,6 +24,7 @@ import AssetTypes from './routes/Reference/assetTypes';
 import Qualifications from './routes/Reference/qualifications';
 import Roles from './routes/Reference/roles';
 import UserPrivileges from './routes/UserPrivileges';
+import VolunteerCalendar from './routes/VolunteerCalendar/VolunteerCalendar';
 import VolunteerRoles from './routes/VolunteerRoles';
 import Availability from './routes/Volunteers/Availability/Availability';
 import Volunteer from './routes/Volunteers/volunteer';
@@ -60,7 +60,7 @@ export default function App() {
           <Route exact path="/volunteer/:id" component={Volunteer} />
           <Route exact path="/volunteer/:id/availability" component={Availability} />
           <Route exact path="/tenancy-configs" component={Configuration} />
-          <Route exact path='/calendar' component={Calendar} />
+          <Route exact path='/calendar' component={VolunteerCalendar} />
           <Route exact path="/quiz" component={QuizMainPage} />
           <Route path={"/questions"} component={QuizQuestions} />
           <Route path={"/quiz-result"} component={QuizResult} />
