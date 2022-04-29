@@ -84,6 +84,10 @@ function Login() {
                 handleChange('password', e.target.value);
               }}
             />
+
+            <a href="/forgot" className="dim" role="button"><strong>Forgot Password</strong></a>
+            {/* register href is a placeholder */}
+
           </div>
           <div className="submit-btn">
             <input
