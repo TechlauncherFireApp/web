@@ -86,7 +86,7 @@ def delete_question(session, question_id):
     :param session:
     :param question_id: id of the question want to delete
     :return: True: delete successful
-             False: delete successful
+             False: delete failed
     """
     existing = session.query(Question).filter(Question.id == question_id).first()
     if existing is not None:
