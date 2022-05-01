@@ -17,3 +17,4 @@ from .user_type import user_type_bp
 from .tenancy_config import tenancy_config_bp
 from .tutorial_quiz import tutorial_quiz_bp
 from .email import email_bp
+from .user import user_bp
