@@ -2,7 +2,6 @@ from operator import or_
 from domain import User, UnavailabilityTime
 
 
-
 def create_event(session, userId, title, startTime, endTime, periodicity):
     event = UnavailabilityTime(userId=userId, event_title=title, start_time=startTime, endTime=endTime,
                                periodicity=periodicity)
