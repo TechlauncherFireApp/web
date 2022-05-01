@@ -4,12 +4,13 @@ import logging
 from flask import Blueprint
 from flask_restful import reqparse, Resource, fields, marshal_with, Api
 
-unavailable_fields = {
-
+get_resource_fields = {
+    'schedule': fields.List,
+    'success': fields.Boolean,
 }
 
 class VolunteerUnavailability(Resource):
-    @marshal_with(unavailable_fields)
+    @marshal_with(get_resource_fields)
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument()
