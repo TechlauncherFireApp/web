@@ -60,3 +60,16 @@ def update_event(session, userId, eventId, startTime, endTime, title, periodicit
     event.title = title
     event.periodicity = periodicity
     return True
+
+
+def fetch_event(session, userId):
+    """
+    Find all unavailable events for specified user
+    :param session: session
+    :param userId: user id
+    """
+    events = session.query(UnavailabilityTime) \
+        .filter(UnavailabilityTime.status == 1, UnavailabilityTime.userId == userId)
+    # We need to use objects after this session closed
+    session.expunge_all()
+    return events
