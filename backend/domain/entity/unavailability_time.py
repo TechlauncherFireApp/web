@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, UniqueConstraint
-
+from datetime import datetime
 from domain import Base
 
 
@@ -9,7 +9,7 @@ class UnavailabilityTime(Base):
     userId = Column(Integer, ForeignKey('user.id'), primary_key=True, nullable=False)
     event_title = Column(String(256), nullable=True, default=None)
     periodicity = Column(Integer, nullable=False, default=1)
-    start_time = Column(DateTime, nullable=False, default=DateTime.now)
-    end_time = Column(DateTime, nullable=False, default=DateTime.now)
+    start_time = Column(DateTime, nullable=False, default=datetime.now())
+    end_time = Column(DateTime, nullable=False, default=datetime.now())
     status = Column(Boolean, nullable=False, default=1)
     UniqueConstraint(eventId, userId, name='event')
