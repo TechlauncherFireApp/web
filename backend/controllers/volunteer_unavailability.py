@@ -16,16 +16,24 @@ create_parser.add_argument('end_time',type=inputs.datetime_from_iso8601, require
 remove_parser = reqparse.RequestParser()
 remove_parser.add_argument('userId', type=int, required=True)
 
+userEvent_fields = {
+    "userId": fields.Integer,
+    "event_title": fields.String,
+    "start_time": fields.DateTime(dt_format='iso8601'),
+    "endTime": fields.DateTime(dt_format='iso8601'),
+    "periodicity": fields.Integer
+}
+
 class ShowUnavailabilityEvent(Resource):
+    @marshal_with(userEvent_fields)
     def get(self):
         args = select_parser.parse_args()
         with session_scope() as session:
             user_events = fetch_event(session, args['userId'])
             if user_events is None:
                 return jsonify({"userId": args['userId'], "schedule": [], "success": False})
-            return jsonify({})
+            return user_events
         # TODO: check the data format as the json format.
-
 
 class CreateNewUnavailabilityEvent(Resource):
     def post(self):
