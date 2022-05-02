@@ -29,6 +29,7 @@ class ShowUnavailabilityEvent(Resource):
 
 class CreateNewUnavailabilityEvent(Resource):
     def post(self):
+        request.get_json(force=True)
         args = create_parser.parse_args()
         with session_scope() as session:
             eventId = create_event(session, args['userId'], args['event_title'],
@@ -40,14 +41,10 @@ class CreateNewUnavailabilityEvent(Resource):
                             "success": True})
 
 class RemoveUnavailabilityEvent(Resource):
-    def post(self):
+    def get(self):
         args = remove_parser.parse_args()
         with session_scope() as session:
-            result = remove_event(session, args['eventId'])
-            if result:
-                return jsonify({"success": True})
-            return jsonify({"success": False})
-
+            return {"success": remove_event(session, args['eventId'])}
 
 volunteer_unavailability_bp = Blueprint('volunteer_unavailability', __name__)
 api = Api(volunteer_unavailability_bp)
