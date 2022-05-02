@@ -1,21 +1,56 @@
-import json
-import logging
+from flask import Blueprint, request, jsonify
+from flask_restful import reqparse, Resource, fields, marshal_with, Api, inputs
+from domain import session_scope
+from repository.unavailability_repository import *
 
-from flask import Blueprint
-from flask_restful import reqparse, Resource, fields, marshal_with, Api
+select_parser = reqparse.RequestParser()
+select_parser.add_argument('userId', type=int, required=True)
 
-get_resource_fields = {
-    'schedule': fields.List,
-    'success': fields.Boolean,
-}
+create_parser = reqparse.RequestParser()
+create_parser.add_argument('userId', type=int, required=True)
+create_parser.add_argument('event_title', type=str, required=True)
+create_parser.add_argument('periodicity', type=int, required=True)
+create_parser.add_argument('start_time',type=inputs.datetime_from_iso8601, required=True)
+create_parser.add_argument('end_time',type=inputs.datetime_from_iso8601, required=True)
 
-class VolunteerUnavailability(Resource):
-    @marshal_with(get_resource_fields)
+remove_parser = reqparse.RequestParser()
+remove_parser.add_argument('userId', type=int, required=True)
+
+class ShowUnavailabilityEvent(Resource):
     def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument()
+        args = select_parser.parse_args()
+        with session_scope() as session:
+            user_events = fetch_event(session, args['userId'])
+            if user_events is None:
+                return jsonify({"userId": args['userId'], "schedule": [], "success": False})
+            return jsonify({})
+        # TODO: check the data format as the json format.
+
+
+class CreateNewUnavailabilityEvent(Resource):
+    def post(self):
+        args = create_parser.parse_args()
+        with session_scope() as session:
+            eventId = create_event(session, args['userId'], args['event_title'],
+                                args['start_time'], args['end_time'], args['periodicity'])
+            if eventId is None:
+                return jsonify({"eventId": -1,
+                        "success": False})
+            return jsonify({"eventId": eventId,
+                            "success": True})
+
+class RemoveUnavailabilityEvent(Resource):
+    def post(self):
+        args = remove_parser.parse_args()
+        with session_scope() as session:
+            result = remove_event(session, args['eventId'])
+            if result:
+                return jsonify({"success": True})
+            return jsonify({"success": False})
 
 
 volunteer_unavailability_bp = Blueprint('volunteer_unavailability', __name__)
 api = Api(volunteer_unavailability_bp)
-api.add_resource(VolunteerUnavailability, '/volunteer/unavailability')
+api.add_resource(ShowUnavailabilityEvent, '/unavailability/showUnavailableEvent')
+api.add_resource(CreateNewUnavailabilityEvent, '/unavailability/createUnavailableEvent')
+api.add_resource(RemoveUnavailabilityEvent, '/unavailability/removeUnavailableEvent')

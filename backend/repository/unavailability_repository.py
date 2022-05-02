@@ -1,5 +1,4 @@
-from operator import or_
-from domain import User, UnavailabilityTime
+from domain import UnavailabilityTime
 
 
 def create_event(session, userId, title, startTime, endTime, periodicity):
