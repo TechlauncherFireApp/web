@@ -55,7 +55,7 @@ class RemoveUnavailabilityEvent(Resource):
             return {"success": remove_event(session, args['eventId'])}
 
 volunteer_unavailability_bp = Blueprint('volunteer_unavailability', __name__)
-api = Api(volunteer_unavailability_bp)
-api.add_resource(ShowUnavailabilityEvent, '/unavailability/showUnavailableEvent')
-api.add_resource(CreateNewUnavailabilityEvent, '/unavailability/createUnavailableEvent')
-api.add_resource(RemoveUnavailabilityEvent, '/unavailability/removeUnavailableEvent')
+api = Api(volunteer_unavailability_bp, '/unavailability')
+api.add_resource(ShowUnavailabilityEvent, '/showUnavailableEvent')
+api.add_resource(CreateNewUnavailabilityEvent, '/createUnavailableEvent')
+api.add_resource(RemoveUnavailabilityEvent, '/removeUnavailableEvent')
