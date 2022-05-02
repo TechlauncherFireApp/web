@@ -11,7 +11,7 @@ def create_event(session, userId, title, startTime, endTime, periodicity):
     :param endTime: DateTime, to what time is unavailable
     :param periodicity: Integer, Daily = 1, Weekly = 2, One-Off = 3
     """
-    event = UnavailabilityTime(userId=userId, event_title=title, start_time=startTime, endTime=endTime,
+    event = UnavailabilityTime(userId=userId, event_title=title, start_time=startTime, end_time=endTime,
                                periodicity=periodicity)
     session.add(event)
     # session.expunge(question)
@@ -28,7 +28,7 @@ def remove_event(session, userId, eventId):
     :return: True: remove successful
              False: remove failed
     """
-    existing = session.query(UnavailabilityTime).filter(UnavailabilityTime.id == userId,
+    existing = session.query(UnavailabilityTime).filter(UnavailabilityTime.userId == userId,
                                                         UnavailabilityTime.eventId == eventId).first()
     if existing is not None:
         existing.status = False
@@ -49,7 +49,7 @@ def update_event(session, userId, eventId, startTime, endTime, title, periodicit
     :return: True: update successful
              False: update failed
     """
-    event = session.query(UnavailabilityTime).filter(UnavailabilityTime.id == userId,
+    event = session.query(UnavailabilityTime).filter(UnavailabilityTime.userId == userId,
                                                      UnavailabilityTime.eventId == eventId).first()
 
     if not event.status:
@@ -68,7 +68,7 @@ def fetch_event(session, userId):
     :param userId: user id
     """
     events = session.query(UnavailabilityTime) \
-        .filter(UnavailabilityTime.status == 1, UnavailabilityTime.userId == userId)
+        .filter(UnavailabilityTime.status == 1, UnavailabilityTime.userId == userId).all()
     # We need to use objects after this session closed
     session.expunge_all()
     return events

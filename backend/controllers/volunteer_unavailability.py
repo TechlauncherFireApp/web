@@ -15,12 +15,13 @@ create_parser.add_argument('end_time',type=inputs.datetime_from_iso8601, require
 
 remove_parser = reqparse.RequestParser()
 remove_parser.add_argument('userId', type=int, required=True)
+remove_parser.add_argument('eventId', type=int, required=True)
 
 userEvent_fields = {
     "userId": fields.Integer,
     "event_title": fields.String,
     "start_time": fields.DateTime(dt_format='iso8601'),
-    "endTime": fields.DateTime(dt_format='iso8601'),
+    "end_time": fields.DateTime(dt_format='iso8601'),
     "periodicity": fields.Integer
 }
 
@@ -31,7 +32,7 @@ class ShowUnavailabilityEvent(Resource):
         with session_scope() as session:
             user_events = fetch_event(session, args['userId'])
             if user_events is None:
-                return jsonify({"userId": args['userId'], "schedule": [], "success": False})
+                return jsonify({"userId": args['userId'], "success": False})
             return user_events
         # TODO: check the data format as the json format.
 
@@ -52,7 +53,7 @@ class RemoveUnavailabilityEvent(Resource):
     def get(self):
         args = remove_parser.parse_args()
         with session_scope() as session:
-            return {"success": remove_event(session, args['eventId'])}
+            return {"success": remove_event(session, args['userId'], args['eventId'])}
 
 volunteer_unavailability_bp = Blueprint('volunteer_unavailability', __name__)
 api = Api(volunteer_unavailability_bp, '/unavailability')
