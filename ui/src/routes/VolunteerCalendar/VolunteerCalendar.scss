@@ -1,3 +1,21 @@
 .calendar-body {
   margin-top: 5em;
+
+  grid-area: main;
 }
+
+.calForm {grid-area: menu;}
+
+.calHeader {grid-area: header;}
+
+.grid-container {
+  display: grid;
+  gap: 5px;
+  grid-template-areas:
+    'header header'
+    'menu main';
+  padding: 5px;
+}
+
+
+

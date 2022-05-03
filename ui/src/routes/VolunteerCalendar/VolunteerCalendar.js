@@ -43,7 +43,12 @@ const VolunteerCalendar = () => {
     }
 
     return (
-        <div className='X'>
+        <div className='grid-container'>
+
+            {/* Header */}
+            <div className='calHeader'>
+                <h1>Header</h1>
+            </div>
 
             {/* Calendar */}
             <div className='calendar-body'>
@@ -60,7 +65,7 @@ const VolunteerCalendar = () => {
             </div>
 
             {/* SideBar / Form */}
-            <aside>
+            <div className='calForm'>
                 <form
                     className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
 
@@ -125,7 +130,12 @@ const VolunteerCalendar = () => {
                     </div>
 
                     {/* Date */}
-
+                    <div className="form-group">
+                      <label htmlFor="startTime">Choose a Start Time:</label>
+                      <select id="startTime" name="startTime">
+                        <option value="19th">19th</option>
+                      </select>
+                    </div>
 
 
                     {/* Submit Button */}
@@ -135,7 +145,7 @@ const VolunteerCalendar = () => {
                       className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
                     />
                 </form>
-            </aside>
+            </div>
         </div>
     );
 };
