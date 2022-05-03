@@ -76,7 +76,7 @@ const VolunteerCalendar = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor={'givenName'}>Reoccuring:</label>
+                        <label htmlFor={'givenName'}>Recurring:</label>
                         <input
                             type="checkbox"
                             name="reoccur"
