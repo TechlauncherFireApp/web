@@ -90,8 +90,8 @@ const VolunteerCalendar = () => {
             {/* SideBar / Form */}
             <div className='calForm'>
                 <form
-                    className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
-
+                    className={'mt6 w-75 ml-auto mr-auto ba br2 b--black-10 pa2'}>
+git
                     {/* Heading of form */}
                     <h2>Enter your unavailability</h2>
 
