@@ -45,7 +45,7 @@ const VolunteerCalendar = () => {
     /* Init the variables for the form (stateful) */
     const [state, setState] = useState({
         title: "",
-        startTime: "",
+        startTime: 0,
         endTime: "",
         reoccur: false,
         date: "",
@@ -60,7 +60,6 @@ const VolunteerCalendar = () => {
             ...state,
             [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value, /* Check boxes require a different value than other values, this allows for that. Otherwise would just use "[e.target.name]: e.target.value" */
         });
-
 
     };
 
@@ -120,17 +119,15 @@ git
 
                     {/* Start Time*/}
                     <div className="form-group">
-                      <label htmlFor="startTime">Choose a Start Time:</label>
-                      <select id="startTime" name="startTime"
-                        value={state.startTime}
-                        onChange={handleChange}>
-                        <option value="1:00">1:00</option>
-                        <option value="1:30">1:30</option>
-                        <option value="2:00">2:00</option>
-                        <option value="2:30">2:30</option>
-                        <option value="3:00">3:00</option>
-                        <option value="3:30">3:30</option>
-                      </select>
+                      <label htmlFor="startTime">Start Time:</label>
+                      <input
+                          type="time"
+                          name="startTime"
+                          step="600"
+                          value={state.startTime}
+                          onChange={handleChange}
+
+                      />
                     </div>
 
                     {/* End Time*/}
@@ -145,18 +142,23 @@ git
                         <option value="2:30">2:30</option>
                         <option value="3:00">3:00</option>
                         <option value="3:30">3:30</option>
+                        <option value="4:00">4:00</option>
+                        <option value="4:30">4:30</option>
+                        <option value="5:00">5:00</option>
+                        <option value="5:30">5:30</option>
+                        <option value="6:00">6:00</option>
+                        <option value="6:30">6:30</option>
                       </select>
                     </div>
 
                     {/* Date */}
                     <div className="form-group">
                       <label htmlFor="startTime">Choose a Date:</label>
-                      <select id="date" name="date"
+                      <input type="date" id="date" name="date"
                         value={state.date}
-                        onChange={handleChange}>
-                        <option value="19th">19th</option>
-                        <option value="20th">20th</option>
-                      </select>
+                        onChange={handleChange}
+                      />
+
                     </div>
 
                     {/* Submit Button */}
