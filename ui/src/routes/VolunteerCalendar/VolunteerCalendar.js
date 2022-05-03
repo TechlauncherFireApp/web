@@ -45,7 +45,7 @@ const VolunteerCalendar = () => {
     /* Init the variables for the form (stateful) */
     const [state, setState] = useState({
         title: "",
-        startTime: 0,
+        startTime: "",
         endTime: "",
         reoccur: false,
         date: "",
@@ -89,8 +89,8 @@ const VolunteerCalendar = () => {
             {/* SideBar / Form */}
             <div className='calForm'>
                 <form
-                    className={'mt6 w-75 ml-auto mr-auto ba br2 b--black-10 pa2'}>
-git
+                    className={'mt6 w-75 ml-auto mr-auto ba br2 b--black-10 pa2'}> {/* Border and styling of the form */}
+
                     {/* Heading of form */}
                     <h2>Enter your unavailability</h2>
 
@@ -120,14 +120,35 @@ git
                     {/* Start Time*/}
                     <div className="form-group">
                       <label htmlFor="startTime">Start Time:</label>
-                      <input
-                          type="time"
-                          name="startTime"
-                          step="600"
-                          value={state.startTime}
-                          onChange={handleChange}
-
-                      />
+                      <select id="startTime" name="startTime"
+                        value={state.startTime}
+                        onChange={handleChange}>
+                        <option value="0">12:00 AM</option>
+                        <option value="1">1:00 AM</option>
+                        <option value="2">2:00 AM</option>
+                        <option value="3">3:00 AM</option>
+                        <option value="4">4:00 AM</option>
+                        <option value="5">5:00 AM</option>
+                        <option value="6">6:00 AM</option>
+                        <option value="7">7:00 AM</option>
+                        <option value="8">8:00 AM</option>
+                        <option value="9">9:00 AM</option>
+                        <option value="10">10:00 AM</option>
+                        <option value="11">11:00 AM</option>
+                        <option value="12">12:00 AM</option>
+                        <option value="13">1:00 PM</option>
+                        <option value="14">2:00 PM</option>
+                        <option value="15">3:00 PM</option>
+                        <option value="16">4:00 PM</option>
+                        <option value="17">5:00 PM</option>
+                        <option value="18">6:00 PM</option>
+                        <option value="19">7:00 PM</option>
+                        <option value="20">8:00 PM</option>
+                        <option value="21">9:00 PM</option>
+                        <option value="22">10:00 PM</option>
+                        <option value="23">11:00 PM</option>
+                        <option value="24">12:00 PM</option>
+                      </select>
                     </div>
 
                     {/* End Time*/}
@@ -136,20 +157,34 @@ git
                       <select id="endTime" name="endTime"
                         value={state.endTime}
                         onChange={handleChange}>
-                        <option value="1:00">1:00</option>
-                        <option value="1:30">1:30</option>
-                        <option value="2:00">2:00</option>
-                        <option value="2:30">2:30</option>
-                        <option value="3:00">3:00</option>
-                        <option value="3:30">3:30</option>
-                        <option value="4:00">4:00</option>
-                        <option value="4:30">4:30</option>
-                        <option value="5:00">5:00</option>
-                        <option value="5:30">5:30</option>
-                        <option value="6:00">6:00</option>
-                        <option value="6:30">6:30</option>
+                        <option value="0">12:00 AM</option>
+                        <option value="1">1:00 AM</option>
+                        <option value="2">2:00 AM</option>
+                        <option value="3">3:00 AM</option>
+                        <option value="4">4:00 AM</option>
+                        <option value="5">5:00 AM</option>
+                        <option value="6">6:00 AM</option>
+                        <option value="7">7:00 AM</option>
+                        <option value="8">8:00 AM</option>
+                        <option value="9">9:00 AM</option>
+                        <option value="10">10:00 AM</option>
+                        <option value="11">11:00 AM</option>
+                        <option value="12">12:00 AM</option>
+                        <option value="13">1:00 PM</option>
+                        <option value="14">2:00 PM</option>
+                        <option value="15">3:00 PM</option>
+                        <option value="16">4:00 PM</option>
+                        <option value="17">5:00 PM</option>
+                        <option value="18">6:00 PM</option>
+                        <option value="19">7:00 PM</option>
+                        <option value="20">8:00 PM</option>
+                        <option value="21">9:00 PM</option>
+                        <option value="22">10:00 PM</option>
+                        <option value="23">11:00 PM</option>
+                        <option value="24">12:00 PM</option>
                       </select>
                     </div>
+                    {/* HTML's time picker component has terrible browser compatibility and even worse react compatibility so we are using a select box but we could import a custom react component} */}
 
                     {/* Date */}
                     <div className="form-group">
@@ -157,7 +192,7 @@ git
                       <input type="date" id="date" name="date"
                         value={state.date}
                         onChange={handleChange}
-                      />
+                    />
 
                     </div>
 
