@@ -10,11 +10,9 @@
 
 .grid-container {
   display: grid;
-  gap: 5px;
   grid-template-areas:
     'header header'
     'menu main';
-  padding: 5px;
 }
 
 

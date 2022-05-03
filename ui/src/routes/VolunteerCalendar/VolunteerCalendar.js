@@ -42,6 +42,25 @@ const VolunteerCalendar = () => {
         setBlocks(blocksToChange);
     }
 
+    /* Init the variables for the form (stateful) */
+    const [state, setState] = useState({
+        title: "",
+        startTime: "",
+        endTime: "",
+        reoccur: false,
+        date: "",
+    });
+
+    /* Function handles changes to the state of the form */
+    const handleChange = e => {
+        console.log(state);
+        setState({
+            ...state,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    /* HTML OF PAGE */
     return (
         <div className='grid-container'>
 
@@ -74,11 +93,13 @@ const VolunteerCalendar = () => {
 
                     {/* Textbox for timeslot/block name/title */}
                     <div className="form-group">
-                        <label htmlFor={'Name'}>Title:</label>
+                        <label htmlFor={'Name'}>Title: </label>
                         <input
                             className={'form-control'}
                             type="text"
-                            name="name"
+                            name="title"
+                            value={state.title}
+                            onChange={handleChange}
                         />
                     </div>
 
