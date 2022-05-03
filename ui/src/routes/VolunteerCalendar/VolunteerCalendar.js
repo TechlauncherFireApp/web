@@ -29,6 +29,7 @@ const eventsDB = [
     }
 ];
 
+
 const VolunteerCalendar = () => {
     const [blocks, setBlocks] = useState(eventsDB);
 
@@ -63,6 +64,19 @@ const VolunteerCalendar = () => {
 
     };
 
+    function submit(e) {
+    e.preventDefault();
+
+  }
+
+  /*
+  1. Function to create event on calendar based on backend information
+  2. For now "submit" calls that function
+  3. But in future submit needs to send to backend and refresh
+  4. When page loads or it refreshes it fills calendar from backend using the create event function
+  5. We need to determine how we will edit unavailability
+  */
+
     /* HTML OF PAGE */
     return (
         <div className='grid-container'>
@@ -88,8 +102,13 @@ const VolunteerCalendar = () => {
 
             {/* SideBar / Form */}
             <div className='calForm'>
+
+                {/* Border and styling of the form */}
                 <form
-                    className={'mt6 w-75 ml-auto mr-auto ba br2 b--black-10 pa2'}> {/* Border and styling of the form */}
+                    className={'mt6 w-75 ml-auto mr-auto ba br2 b--black-10 pa2'}
+                    onSubmit={submit}>
+                    {/* Calls submit function when submit button at bottom of form is pressed */}
+
 
                     {/* Heading of form */}
                     <h2>Enter your unavailability</h2>
@@ -184,7 +203,7 @@ const VolunteerCalendar = () => {
                         <option value="24">12:00 PM</option>
                       </select>
                     </div>
-                    {/* HTML's time picker component has terrible browser compatibility and even worse react compatibility so we are using a select box but we could import a custom react component} */}
+                    {/* HTML's time picker component has terrible browser compatibility and even worse react compatibility so we are using a select box but we could import a custom react component */}
 
                     {/* Date */}
                     <div className="form-group">
@@ -193,7 +212,6 @@ const VolunteerCalendar = () => {
                         value={state.date}
                         onChange={handleChange}
                     />
-
                     </div>
 
                     {/* Submit Button */}
