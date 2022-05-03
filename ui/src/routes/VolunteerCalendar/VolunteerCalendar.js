@@ -54,10 +54,14 @@ const VolunteerCalendar = () => {
     /* Function handles changes to the state of the form */
     const handleChange = e => {
         console.log(state);
+
+        /* Sets the state based onn changes */
         setState({
             ...state,
-            [e.target.name]: e.target.value,
+            [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value, /* Check boxes require a different value than other values, this allows for that. Otherwise would just use "[e.target.name]: e.target.value" */
         });
+
+
     };
 
     /* HTML OF PAGE */
@@ -109,55 +113,51 @@ const VolunteerCalendar = () => {
                         <input
                             type="checkbox"
                             name="reoccur"
+                            checked={state.reoccur}
+                            onChange={(handleChange)}
                         />
                    </div>
 
                     {/* Start Time*/}
                     <div className="form-group">
                       <label htmlFor="startTime">Choose a Start Time:</label>
-                      <select id="startTime" name="startTime">
-                        <option value="test">1am</option>
-                        <option value="test">2am</option>
-                        <option value="testtest">3am</option>
-                        <option value="test">4am</option>
-                        <option value="test">5am</option>
-                        <option value="testv">6am</option>
-                        <option value="test">7am</option>
-                        <option value="testtest">8am</option>
-                        <option value="test">9am</option>
-                        <option value="test">10am</option>
-                        <option value="test">11am</option>
-                        <option value="testv">12am</option>
+                      <select id="startTime" name="startTime"
+                        value={state.startTime}
+                        onChange={handleChange}>
+                        <option value="1:00">1:00</option>
+                        <option value="1:30">1:30</option>
+                        <option value="2:00">2:00</option>
+                        <option value="2:30">2:30</option>
+                        <option value="3:00">3:00</option>
+                        <option value="3:30">3:30</option>
                       </select>
                     </div>
 
                     {/* End Time*/}
                     <div className="form-group">
                       <label htmlFor="endTime">Choose a End Time:</label>
-                      <select id="endTime" name="endTime">
-                        <option value="test">1am</option>
-                        <option value="test">2am</option>
-                        <option value="testtest">3am</option>
-                        <option value="test">4am</option>
-                        <option value="test">5am</option>
-                        <option value="testv">6am</option>
-                        <option value="test">7am</option>
-                        <option value="testtest">8am</option>
-                        <option value="test">9am</option>
-                        <option value="test">10am</option>
-                        <option value="test">11am</option>
-                        <option value="testv">12am</option>
+                      <select id="endTime" name="endTime"
+                        value={state.endTime}
+                        onChange={handleChange}>
+                        <option value="1:00">1:00</option>
+                        <option value="1:30">1:30</option>
+                        <option value="2:00">2:00</option>
+                        <option value="2:30">2:30</option>
+                        <option value="3:00">3:00</option>
+                        <option value="3:30">3:30</option>
                       </select>
                     </div>
 
                     {/* Date */}
                     <div className="form-group">
-                      <label htmlFor="startTime">Choose a Start Time:</label>
-                      <select id="startTime" name="startTime">
+                      <label htmlFor="startTime">Choose a Date:</label>
+                      <select id="date" name="date"
+                        value={state.date}
+                        onChange={handleChange}>
                         <option value="19th">19th</option>
+                        <option value="20th">20th</option>
                       </select>
                     </div>
-
 
                     {/* Submit Button */}
                     <input
