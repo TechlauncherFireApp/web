@@ -64,8 +64,10 @@ const VolunteerCalendar = () => {
                 <form
                     className={'mt6 w-50 ml-auto mr-auto ba br2 b--black-10 pa3'}>
 
+                    {/* Heading of form */}
                     <h2>Enter your unavailability</h2>
 
+                    {/* Textbox for timeslot/block name/title */}
                     <div className="form-group">
                         <label htmlFor={'Name'}>Title:</label>
                         <input
@@ -75,6 +77,7 @@ const VolunteerCalendar = () => {
                         />
                     </div>
 
+                    {/* Checkbox for recurring events */}
                     <div className="form-group">
                         <label htmlFor={'givenName'}>Recurring:</label>
                         <input
@@ -83,6 +86,7 @@ const VolunteerCalendar = () => {
                         />
                    </div>
 
+                    {/* Start Time*/}
                     <div className="form-group">
                       <label htmlFor="startTime">Choose a Start Time:</label>
                       <select id="startTime" name="startTime">
@@ -101,6 +105,7 @@ const VolunteerCalendar = () => {
                       </select>
                     </div>
 
+                    {/* End Time*/}
                     <div className="form-group">
                       <label htmlFor="endTime">Choose a End Time:</label>
                       <select id="endTime" name="endTime">
@@ -119,6 +124,11 @@ const VolunteerCalendar = () => {
                       </select>
                     </div>
 
+                    {/* Date */}
+
+
+
+                    {/* Submit Button */}
                     <input
                       type="submit"
                       value="Submit"
