@@ -29,6 +29,24 @@ const eventsDB = [
     }
 ];
 
+function addEvent(eventTitle, eventDate, eventStartTime, eventEndTime) {
+
+    /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
+    const splitDate = eventDate.split('-') ;
+    const year = parseInt(splitDate[0]);
+    const month = parseInt(splitDate[1]);
+    const day = parseInt(splitDate[2]);
+
+    /* Update calendar events */
+    eventsDB.push(
+        {
+            title: eventTitle,
+            start: new Date(year, month, day, parseInt(eventStartTime)),
+            end:  new Date(year, month, day, parseInt(eventEndTime))
+        }
+    )
+    console.log(eventsDB[3]);
+}
 
 const VolunteerCalendar = () => {
     const [blocks, setBlocks] = useState(eventsDB);
@@ -66,7 +84,8 @@ const VolunteerCalendar = () => {
 
     function submit(e) {
     e.preventDefault();
-
+    console.log("sumit pressed");
+    addEvent(state.title, state.date, state.startTime, state.endTime);
   }
 
   /*
