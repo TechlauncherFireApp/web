@@ -30,39 +30,14 @@ const eventsDB = [
 ];
 
 /*
-@desc - Create a calendar event, and TODO adds it to the backend DB
-@param - title/name of event, date as a HTML date picker output, start time as a int, end time as an int
-@return - new event object, & TODO side effect creates backend DB entry
- */
-function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime) {
-
-    /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
-    const splitDate = eventDate.split('-') ;
-    const year = parseInt(splitDate[0]);
-    const month = parseInt(splitDate[1]) - 1; /* JS Date constructor is indexed from zero (months 0-11) but HTML starts at 1 (months 1-12) so subtract 1 to account for this */
-    const day = parseInt(splitDate[2]);
-
-    /* creation of the new event object */
-    let newEvent =  {
-        title: eventTitle,
-        start: new Date(year, month, day, Number(eventStartTime)),
-        end:  new Date(year, month, day, Number(eventEndTime))
-    }
-
-    /* This updated the eventsDB array however, that is only used for initial state not updating the calendar. When we integrate with backend we may have to rethink implementation
-    if(dateValid(newEvent.start) && newEvent.start< newEvent.end){
-        eventsDB.push(newEvent)
-    } Option : Rather than a side effect this could be its own function that gets called separately
-    */
-
-    return newEvent;
-}
-
-/*
 @desc - TODO: When page loads or it refreshes it fills calendar from backend using the create event function - Integration!
 function pullCalendar() {
    1. Request all events from backend DB
-   2. eventsDB.push() each item...
+   Axios - GET showUnavailableEvent
+   Returns Array of objects
+   update eventsDB to be that array of objects - assuming the changes I have suggested to the DB can be made!
+
+   FUTURE: Also show assigned fire events?
 }
 */
 
@@ -76,6 +51,47 @@ function dateValid(date) {
         return true;
     }
     return false;
+}
+
+/*
+@desc - Create a calendar event, and TODO adds it to the backend DB
+@param - title/name of event, date as a HTML date picker output, start time as a int, end time as an int
+@return - new event object, & TODO side effect creates backend DB entry
+ */
+function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
+
+    /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
+    const splitDate = eventDate.split('-') ;
+    const year = parseInt(splitDate[0]);
+    const month = parseInt(splitDate[1]) - 1; /* JS Date constructor is indexed from zero (months 0-11) but HTML starts at 1 (months 1-12) so subtract 1 to account for this */
+    const day = parseInt(splitDate[2]);
+
+    /* creation of the new event object */
+    let newEvent = {};
+    if (allDayStatus){
+        newEvent = {
+        title: eventTitle,
+        start: new Date(year, month, day),
+        end: new Date(year, month, day),
+        periodicity: eventRepeatStatus
+        }
+    }
+    else {
+        newEvent = {
+            title: eventTitle,
+            start: new Date(year, month, day, Number(eventStartTime)),
+            end: new Date(year, month, day, Number(eventEndTime)),
+            periodicity: eventRepeatStatus
+        }
+    }
+
+    /* This updated the eventsDB array however, that is only used for initial state not updating the calendar. When we integrate with backend we may have to rethink implementation
+    if(dateValid(newEvent.start) && newEvent.start< newEvent.end){
+        eventsDB.push(newEvent)
+    } Option : Rather than a side effect this could be its own function that gets called separately
+    */
+
+    return newEvent;
 }
 
 /*
@@ -101,9 +117,9 @@ const VolunteerCalendar = () => {
         title: "",
         startTime: "",
         endTime: "",
-        repeat: "none",
+        repeat: "0",
+        allDay: false,
         date: "",
-        /* reoccur: false, - was for checkbox*/
     });
 
     /* Function handles changes to the state of the form */
@@ -124,10 +140,12 @@ const VolunteerCalendar = () => {
         e.preventDefault();
 
         /* create new event */
-        let newBlock = createEvent(state.title, state.date, state.startTime, state.endTime);
+        let newBlock = createEvent(state.title, state.date, state.startTime, state.endTime, state.repeat, state.allDay);
 
-        if (dateValid(newBlock.start) && (newBlock.start < newBlock.end)) { /* If date value is valid and start time is before end time*/
-            setBlocks([...blocks, newBlock]); /* add new event to calendar */
+        if (dateValid(newBlock.start)) { /* If date value is valid and start time is before end time*/
+            if (state.allDay || (newBlock.start < newBlock.end)) {
+                setBlocks([...blocks, newBlock]); /* add new event to calendar */
+            }
         }
     }
 
@@ -194,18 +212,16 @@ const VolunteerCalendar = () => {
                         />
                     </div>
 
-                    {/* Checkbox for recurring events
+                    {/* Checkbox for all day events */}
                     <div className="form-group">
-                        <label htmlFor={'givenName'}>Recurring:</label>
+                        <label htmlFor={'allday'}>Toggle All Day:</label>
                         <input
                             type="checkbox"
-                            name="reoccur"
-                            checked={state.reoccur}
+                            name="allDay"
+                            checked={state.allDay}
                             onChange={(handleChange)}
                         />
                    </div>
-                   Replacing with select with multiple options
-                   */}
 
                     {/* Repeating Options */}
                     <div className="form-group">
