@@ -109,24 +109,16 @@ const VolunteerCalendar = () => {
     setBlocks([...blocks, newBlock]);
 
     /* TODO: Push newBlock to backend database */
-    /* TODO: Check for overlap? Before allowing new block to be created? */
     }
 
-  /* TODO: We need to determine how we will edit unavailability */
-
-    /* POPUP */
-    const [modalState, setModalState] = useState(false);
+    /* This is the event handler for clicking on a timeblock */
     const handleSelectedEvent = (event) => {
-        setBlocks(event);
-        setModalState(true);
-    }
-
-    const Modal = () => {
-        return (
-            <div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
-             Testing
-          </div>
-        )
+        let i = blocks.indexOf(event); /* Find index of event that has been clicked on in the array */
+        if (confirm("Delete " + event.title)) { /* JS Confirmation window prompt, returns true if yes is clicked */
+            let blocksToChange = [...blocks];
+            blocksToChange.splice(i, 1); /* remove event from array */
+            setBlocks(blocksToChange);
+        }
     }
 
     /* HTML OF PAGE */
@@ -139,7 +131,6 @@ const VolunteerCalendar = () => {
             </div>
 
             {/* Calendar */}
-            {setBlocks && <Modal />}
             <div className='calendar-body'>
                 <DDCalendar
                     localizer={localizer}
@@ -150,7 +141,7 @@ const VolunteerCalendar = () => {
                     selectable={true}
                     onEventDrop={handleEventChange}
                     onEventResize={handleEventChange}
-                    onSelectEvent={handleSelectedEvent}
+                    onSelectEvent={handleSelectedEvent} /* Event for when timeblock is clicked on */
                 />
             </div>
 
