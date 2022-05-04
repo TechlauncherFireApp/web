@@ -29,6 +29,11 @@ const eventsDB = [
     }
 ];
 
+/*
+@desc - Create a calendar event, and TODO adds it to the backend DB
+@param - title/name of event, date as a HTML date picker output, start time as a int, end time as an int
+@return - new event object, & TODO side effect creates backend DB entry
+ */
 function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime) {
 
     /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
@@ -37,33 +42,45 @@ function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime) {
     const month = parseInt(splitDate[1]) - 1; /* JS Date constructor is indexed from zero (months 0-11) but HTML starts at 1 (months 1-12) so subtract 1 to account for this */
     const day = parseInt(splitDate[2]);
 
-    /* This updated the eventsDB array however, that is only used for initial state not updating the calendar. When we integrate with backend we may have to rethink implementation
-    eventsDB.push(
-        {
-            title: eventTitle,
-            start: new Date(year, month, day, parseInt(eventStartTime)),
-            end:  new Date(year, month, day, parseInt(eventEndTime))
-        }
-    )
-    */
-
+    /* creation of the new event object */
     let newEvent =  {
         title: eventTitle,
-        start: new Date(year, month, day, parseInt(eventStartTime)),
-        end:  new Date(year, month, day, parseInt(eventEndTime))
+        start: new Date(year, month, day, Number(eventStartTime)),
+        end:  new Date(year, month, day, Number(eventEndTime))
     }
+
+    /* This updated the eventsDB array however, that is only used for initial state not updating the calendar. When we integrate with backend we may have to rethink implementation
+    if(dateValid(newEvent.start) && newEvent.start< newEvent.end){
+        eventsDB.push(newEvent)
+    } Option : Rather than a side effect this could be its own function that gets called separately
+    */
+
     return newEvent;
 }
 
 /*
-TODO: When page loads or it refreshes it fills calendar from backend using the create event function - Integration!
-
+@desc - TODO: When page loads or it refreshes it fills calendar from backend using the create event function - Integration!
 function pullCalendar() {
    1. Request all events from backend DB
    2. eventsDB.push() each item...
 }
 */
 
+/*
+@desc - Check if JS Date object is a valid date
+@param - date, a js date object
+@return - boolean
+ */
+function dateValid(date) {
+    if (date instanceof Date && !isNaN(date.valueOf())) {
+        return true;
+    }
+    return false;
+}
+
+/*
+MAIN FUNCTION
+ */
 const VolunteerCalendar = () => {
     /* Init state for calendar */
     const [blocks, setBlocks] = useState(eventsDB);
@@ -98,17 +115,19 @@ const VolunteerCalendar = () => {
             [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value, /* Check boxes require a different value than other values, this allows for that. Otherwise would just use "[e.target.name]: e.target.value" */
         });
 
+        /* TODO: Update backend */
     };
 
     /* Form submission functionality */
     function submit(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    /* Update the calendar (front-end) */
-    let newBlock = createEvent(state.title, state.date, state.startTime, state.endTime);
-    setBlocks([...blocks, newBlock]);
+        /* create new event */
+        let newBlock = createEvent(state.title, state.date, state.startTime, state.endTime);
 
-    /* TODO: Push newBlock to backend database */
+        if (dateValid(newBlock.start) && (newBlock.start < newBlock.end)) { /* If date value is valid and start time is before end time*/
+            setBlocks([...blocks, newBlock]); /* add new event to calendar */
+        }
     }
 
     /* This is the event handler for clicking on a timeblock */
@@ -119,7 +138,11 @@ const VolunteerCalendar = () => {
             blocksToChange.splice(i, 1); /* remove event from array */
             setBlocks(blocksToChange);
         }
+        /* TODO: Delete from backend */
     }
+    /* NOTE: Alternative to the JS confirmation window we could also do a React popup/modal, this is significantly more complicated but would allow for the implementation of editing name/recurring.
+    For now we shall leave like this, but it is a possible future improvement for sure...
+     */
 
     /* HTML OF PAGE */
     return (
@@ -188,6 +211,7 @@ const VolunteerCalendar = () => {
                         value={state.startTime}
                         onChange={handleChange}>
                         <option value="0">12:00 AM</option>
+                        <option value="0.5">12:30 AM</option>
                         <option value="1">1:00 AM</option>
                         <option value="2">2:00 AM</option>
                         <option value="3">3:00 AM</option>
