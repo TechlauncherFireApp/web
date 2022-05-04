@@ -29,15 +29,15 @@ const eventsDB = [
     }
 ];
 
-function addEvent(eventTitle, eventDate, eventStartTime, eventEndTime) {
+function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime) {
 
     /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
     const splitDate = eventDate.split('-') ;
     const year = parseInt(splitDate[0]);
-    const month = parseInt(splitDate[1]);
+    const month = parseInt(splitDate[1]) - 1; /* JS Date constructor is indexed from zero (months 0-11) but HTML starts at 1 (months 1-12) so subtract 1 to account for this */
     const day = parseInt(splitDate[2]);
 
-    /* Update calendar events */
+    /* This updated the eventsDB array however, that is only used for initial state not updating the calendar. When we integrate with backend we may have to rethink implementation
     eventsDB.push(
         {
             title: eventTitle,
@@ -45,8 +45,26 @@ function addEvent(eventTitle, eventDate, eventStartTime, eventEndTime) {
             end:  new Date(year, month, day, parseInt(eventEndTime))
         }
     )
-    console.log(eventsDB[3]);
+    */
+
+    let newEvent =  {
+        title: eventTitle,
+        start: new Date(year, month, day, parseInt(eventStartTime)),
+        end:  new Date(year, month, day, parseInt(eventEndTime))
+    }
+    return newEvent;
 }
+
+/*
+TODO: When page loads or it refreshes it fills calendar from backend using the create event function
+
+function pullCalendar() {
+   1. Request all events from backend DB
+   2. eventsDB.push() each item...
+}
+
+*/
+
 
 const VolunteerCalendar = () => {
     const [blocks, setBlocks] = useState(eventsDB);
@@ -84,17 +102,16 @@ const VolunteerCalendar = () => {
 
     function submit(e) {
     e.preventDefault();
-    console.log("sumit pressed");
-    addEvent(state.title, state.date, state.startTime, state.endTime);
-  }
 
-  /*
-  1. Function to create event on calendar based on backend information
-  2. For now "submit" calls that function
-  3. But in future submit needs to send to backend and refresh
-  4. When page loads or it refreshes it fills calendar from backend using the create event function
-  5. We need to determine how we will edit unavailability
-  */
+    /* Update the calendar (front-end) */
+    let newBlock = createEvent(state.title, state.date, state.startTime, state.endTime);
+    setBlocks([...blocks, newBlock]);
+
+    /* TODO: Push newBlock to backend database */
+    /* TODO: Check for overlap? Before allowing new block to be created? */
+    }
+
+  /* TODO: We need to determine how we will edit unavailability */
 
     /* HTML OF PAGE */
     return (
