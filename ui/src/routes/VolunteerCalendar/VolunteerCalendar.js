@@ -101,8 +101,9 @@ const VolunteerCalendar = () => {
         title: "",
         startTime: "",
         endTime: "",
-        reoccur: false,
+        repeat: "none",
         date: "",
+        /* reoccur: false, - was for checkbox*/
     });
 
     /* Function handles changes to the state of the form */
@@ -193,7 +194,7 @@ const VolunteerCalendar = () => {
                         />
                     </div>
 
-                    {/* Checkbox for recurring events */}
+                    {/* Checkbox for recurring events
                     <div className="form-group">
                         <label htmlFor={'givenName'}>Recurring:</label>
                         <input
@@ -203,6 +204,21 @@ const VolunteerCalendar = () => {
                             onChange={(handleChange)}
                         />
                    </div>
+                   Replacing with select with multiple options
+                   */}
+
+                    {/* Repeating Options */}
+                    <div className="form-group">
+                      <label htmlFor="repeat">Repeats:</label>
+                      <select id="repeats" name="repeat"
+                        value={state.repeat}
+                        onChange={handleChange}>
+                        <option value="0">None</option>
+                        <option value="1">Daily</option>
+                        <option value="2">Weekly</option>
+                        <option value="3">Monthly</option>v
+                      </select>
+                    </div>
 
                     {/* Start Time*/}
                     <div className="form-group">
