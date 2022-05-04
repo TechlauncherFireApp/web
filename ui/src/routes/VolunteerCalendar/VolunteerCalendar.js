@@ -179,7 +179,8 @@ const VolunteerCalendar = () => {
 
             {/* Header */}
             <div className='calHeader'>
-                <h1>Header</h1>
+                <h1>Calendar</h1>
+                {/* FUTURE: I  want to change this to "User X's Calendar" */}
             </div>
 
             {/* Calendar */}
@@ -249,7 +250,7 @@ const VolunteerCalendar = () => {
                     <div className={hidden}> {/* For hiding this when all day is pressed */}
                         {/* Start Time*/}
                         <div className="form-group">
-                          <label htmlFor="startTime">Start Time:</label>
+                          <label htmlFor="startTime">Choose a Start Time:</label>
                           <select id="startTime" name="startTime"
                             value={state.startTime}
                             onChange={handleChange}>
