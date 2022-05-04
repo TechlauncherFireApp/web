@@ -4,6 +4,7 @@
   grid-area: main;
 }
 
+/* Arrange page elements */
 .calForm {grid-area: menu;}
 
 .calHeader {grid-area: header;}
@@ -13,4 +14,9 @@
   grid-template-areas:
     'header header'
     'menu main';
+}
+
+/* For hiding elements */
+.hidden {
+  display: none;
 }

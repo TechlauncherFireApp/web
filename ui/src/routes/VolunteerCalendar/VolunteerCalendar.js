@@ -30,16 +30,18 @@ const eventsDB = [
 ];
 
 /*
-@desc - TODO: When page loads or it refreshes it fills calendar from backend using the create event function - Integration!
-function pullCalendar() {
-   1. Request all events from backend DB
-   Axios - GET showUnavailableEvent
-   Returns Array of objects
-   update eventsDB to be that array of objects - assuming the changes I have suggested to the DB can be made!
-
-   FUTURE: Also show assigned fire events?
-}
-*/
+* @desc - When the page loads or it refreshes it fills calendar from backend using the create event function
+* */
+/* TODO
+*   function pullCalendar(){
+*       Axios GET showUnavailableEvent
+*       eventsDB = ^^^^^ (Above request should return an array of objects, assuming the changes I have suggested to the DB can be made)
+*   }
+* */
+/*
+1. Might be easier if this just replaces eventsDB rather than calling it elsewhere (will depend on repeat implementation)
+2. FUTURE: Also show assigned fire events?
+ */
 
 /*
 @desc - Check if JS Date object is a valid date
@@ -54,9 +56,9 @@ function dateValid(date) {
 }
 
 /*
-@desc - Create a calendar event, and TODO adds it to the backend DB
-@param - title/name of event, date as a HTML date picker output, start time as a int, end time as an int
-@return - new event object, & TODO side effect creates backend DB entry
+@desc - Create a calendar event, and adds it to the backend DB
+@param - title/name of event, date as HTML date picker output, start time as a int, end time as an int
+@return - new event object, & side effect creates backend DB entry
  */
 function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
 
@@ -85,11 +87,11 @@ function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventR
         }
     }
 
-    /* This updated the eventsDB array however, that is only used for initial state not updating the calendar. When we integrate with backend we may have to rethink implementation
-    if(dateValid(newEvent.start) && newEvent.start< newEvent.end){
-        eventsDB.push(newEvent)
-    } Option : Rather than a side effect this could be its own function that gets called separately
-    */
+    /* TODO Backend Integration
+    *   if(dateValid(newEvent.start) && (allDayStatus || newEvent.start< newEvent.end)){
+    *     POST newEvent
+    *   }
+    *  */
 
     return newEvent;
 }
@@ -110,6 +112,13 @@ const VolunteerCalendar = () => {
         blocksToChange.splice(idx, 1, updatedBlock);
 
         setBlocks(blocksToChange);
+
+        /* TODO: Delete from backend
+        *   GET removeUnavailableEvent
+        *   parse eventID
+        *   GET createUnavailableEvent
+        *   add updatedBlock to DB
+        */
     }
 
     /* Init the variables for the form (stateful) */
@@ -131,9 +140,9 @@ const VolunteerCalendar = () => {
             ...state,
             [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value, /* Check boxes require a different value than other values, this allows for that. Otherwise would just use "[e.target.name]: e.target.value" */
         });
-
-        /* TODO: Update backend */
     };
+
+    const hidden = state.allDay ? 'hidden' : ''; /* for hiding the time inputs */
 
     /* Form submission functionality */
     function submit(e) {
@@ -149,7 +158,7 @@ const VolunteerCalendar = () => {
         }
     }
 
-    /* This is the event handler for clicking on a timeblock */
+    /* This is the event handler for clicking on a time block */
     const handleSelectedEvent = (event) => {
         let i = blocks.indexOf(event); /* Find index of event that has been clicked on in the array */
         if (confirm("Delete " + event.title)) { /* JS Confirmation window prompt, returns true if yes is clicked */
@@ -157,11 +166,12 @@ const VolunteerCalendar = () => {
             blocksToChange.splice(i, 1); /* remove event from array */
             setBlocks(blocksToChange);
         }
-        /* TODO: Delete from backend */
+        /* TODO: Delete from backend
+        *   GET removeUnavailableEvent
+        *   parse eventID
+        * */
     }
-    /* NOTE: Alternative to the JS confirmation window we could also do a React popup/modal, this is significantly more complicated but would allow for the implementation of editing name/recurring.
-    For now we shall leave like this, but it is a possible future improvement for sure...
-     */
+    /* NOTE: Alternative to the JS confirmation window we could also do a React popup/modal, this is significantly more complicated but would allow for the implementation of editing name/recurring. For now we shall leave like this, but it is a possible future improvement for sure... */
 
     /* HTML OF PAGE */
     return (
@@ -236,73 +246,76 @@ const VolunteerCalendar = () => {
                       </select>
                     </div>
 
-                    {/* Start Time*/}
-                    <div className="form-group">
-                      <label htmlFor="startTime">Start Time:</label>
-                      <select id="startTime" name="startTime"
-                        value={state.startTime}
-                        onChange={handleChange}>
-                        <option value="0">12:00 AM</option>
-                        <option value="0.5">12:30 AM</option>
-                        <option value="1">1:00 AM</option>
-                        <option value="2">2:00 AM</option>
-                        <option value="3">3:00 AM</option>
-                        <option value="4">4:00 AM</option>
-                        <option value="5">5:00 AM</option>
-                        <option value="6">6:00 AM</option>
-                        <option value="7">7:00 AM</option>
-                        <option value="8">8:00 AM</option>
-                        <option value="9">9:00 AM</option>
-                        <option value="10">10:00 AM</option>
-                        <option value="11">11:00 AM</option>
-                        <option value="12">12:00 AM</option>
-                        <option value="13">1:00 PM</option>
-                        <option value="14">2:00 PM</option>
-                        <option value="15">3:00 PM</option>
-                        <option value="16">4:00 PM</option>
-                        <option value="17">5:00 PM</option>
-                        <option value="18">6:00 PM</option>
-                        <option value="19">7:00 PM</option>
-                        <option value="20">8:00 PM</option>
-                        <option value="21">9:00 PM</option>
-                        <option value="22">10:00 PM</option>
-                        <option value="23">11:00 PM</option>
-                        <option value="24">12:00 PM</option>
-                      </select>
-                    </div>
+                    <div className={hidden}> {/* For hiding this when all day is pressed */}
+                        {/* Start Time*/}
+                        <div className="form-group">
+                          <label htmlFor="startTime">Start Time:</label>
+                          <select id="startTime" name="startTime"
+                            value={state.startTime}
+                            onChange={handleChange}>
+                            <option value="0">12:00 AM</option>
+                            <option value="1">1:00 AM</option>
+                            <option value="2">2:00 AM</option>
+                            <option value="3">3:00 AM</option>
+                            <option value="4">4:00 AM</option>
+                            <option value="5">5:00 AM</option>
+                            <option value="6">6:00 AM</option>
+                            <option value="7">7:00 AM</option>
+                            <option value="8">8:00 AM</option>
+                            <option value="9">9:00 AM</option>
+                            <option value="10">10:00 AM</option>
+                            <option value="11">11:00 AM</option>
+                            <option value="12">12:00 AM</option>
+                            <option value="13">1:00 PM</option>
+                            <option value="14">2:00 PM</option>
+                            <option value="15">3:00 PM</option>
+                            <option value="16">4:00 PM</option>
+                            <option value="17">5:00 PM</option>
+                            <option value="18">6:00 PM</option>
+                            <option value="19">7:00 PM</option>
+                            <option value="20">8:00 PM</option>
+                            <option value="21">9:00 PM</option>
+                            <option value="22">10:00 PM</option>
+                            <option value="23">11:00 PM</option>
+                            <option value="24">12:00 PM</option>
+                          </select>
+                        </div>
 
-                    {/* End Time*/}
-                    <div className="form-group">
-                      <label htmlFor="endTime">Choose a End Time:</label>
-                      <select id="endTime" name="endTime"
-                        value={state.endTime}
-                        onChange={handleChange}>
-                        <option value="0">12:00 AM</option>
-                        <option value="1">1:00 AM</option>
-                        <option value="2">2:00 AM</option>
-                        <option value="3">3:00 AM</option>
-                        <option value="4">4:00 AM</option>
-                        <option value="5">5:00 AM</option>
-                        <option value="6">6:00 AM</option>
-                        <option value="7">7:00 AM</option>
-                        <option value="8">8:00 AM</option>
-                        <option value="9">9:00 AM</option>
-                        <option value="10">10:00 AM</option>
-                        <option value="11">11:00 AM</option>
-                        <option value="12">12:00 AM</option>
-                        <option value="13">1:00 PM</option>
-                        <option value="14">2:00 PM</option>
-                        <option value="15">3:00 PM</option>
-                        <option value="16">4:00 PM</option>
-                        <option value="17">5:00 PM</option>
-                        <option value="18">6:00 PM</option>
-                        <option value="19">7:00 PM</option>
-                        <option value="20">8:00 PM</option>
-                        <option value="21">9:00 PM</option>
-                        <option value="22">10:00 PM</option>
-                        <option value="23">11:00 PM</option>
-                        <option value="24">12:00 PM</option>
-                      </select>
+                        {/* ISSUE: Could not get half hour options to work. */}
+
+                        {/* End Time*/}
+                        <div className="form-group">
+                          <label htmlFor="endTime">Choose a End Time:</label>
+                          <select id="endTime" name="endTime"
+                            value={state.endTime}
+                            onChange={handleChange}>
+                            <option value="0">12:00 AM</option>
+                            <option value="1">1:00 AM</option>
+                            <option value="2">2:00 AM</option>
+                            <option value="3">3:00 AM</option>
+                            <option value="4">4:00 AM</option>
+                            <option value="5">5:00 AM</option>
+                            <option value="6">6:00 AM</option>
+                            <option value="7">7:00 AM</option>
+                            <option value="8">8:00 AM</option>
+                            <option value="9">9:00 AM</option>
+                            <option value="10">10:00 AM</option>
+                            <option value="11">11:00 AM</option>
+                            <option value="12">12:00 AM</option>
+                            <option value="13">1:00 PM</option>
+                            <option value="14">2:00 PM</option>
+                            <option value="15">3:00 PM</option>
+                            <option value="16">4:00 PM</option>
+                            <option value="17">5:00 PM</option>
+                            <option value="18">6:00 PM</option>
+                            <option value="19">7:00 PM</option>
+                            <option value="20">8:00 PM</option>
+                            <option value="21">9:00 PM</option>
+                            <option value="22">10:00 PM</option>
+                            <option value="23">11:00 PM</option>
+                            <option value="24">12:00 PM</option>
+                          </select>
+                        </div>
                     </div>
                     {/* HTML's time picker component has terrible browser compatibility and even worse react compatibility so we are using a select box but we could instead import a custom react component */}
 
