@@ -44,6 +44,48 @@ const eventsDB = [
  */
 
 /*
+* @desc - creates all the events that are repeating items
+* @param - List of events... ie EventsDB
+* @return - An array of events
+* @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
+* */
+/* TODO
+*   function repeatEvents(listOfEvents) {
+*       Loop thru all events in eventsDB (checking for periodicity)
+*       switch (periodicity) {
+*           case 1:
+*               Loop (everyday for 3 months from current date)
+*                   createEvent
+*           case 2:
+*               Loop (every week for 3 months from current date)
+*                   createEvent
+*           case 3:
+*               Loop (every month for 3 months from current date)
+*                   createEvent
+*           default:
+*               Do Nothing
+*       }
+*   return array of all new events
+*   }
+* */
+
+/*
+* @desc - Allows for the deletion or editing of repeating events
+* @param - an eventID
+* @return - An array of events
+* @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
+* */
+/* TODO
+*   function changesToRepeatingEvents(eventID) {
+*       GET removeUnavailableEvent parse eventID
+*       GET createUnavailableEvent
+*       Delete in front-end calendar (eventsDB) all events with eventID
+*       Call repeatEvents but use a list with only this changed events
+*       return new result of that repeatEvents call
+*   }
+* */
+
+/*
 @desc - Check if JS Date object is a valid date
 @param - date, a js date object
 @return - boolean
@@ -90,6 +132,7 @@ function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventR
     /* TODO Backend Integration
     *   if(dateValid(newEvent.start) && (allDayStatus || newEvent.start< newEvent.end)){
     *     POST newEvent
+    *     this returns the eventsID which we must then attach to newEvent
     *   }
     *  */
 
