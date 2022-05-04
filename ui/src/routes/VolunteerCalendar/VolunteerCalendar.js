@@ -56,19 +56,19 @@ function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime) {
 }
 
 /*
-TODO: When page loads or it refreshes it fills calendar from backend using the create event function
+TODO: When page loads or it refreshes it fills calendar from backend using the create event function - Integration!
 
 function pullCalendar() {
    1. Request all events from backend DB
    2. eventsDB.push() each item...
 }
-
 */
 
-
 const VolunteerCalendar = () => {
+    /* Init state for calendar */
     const [blocks, setBlocks] = useState(eventsDB);
 
+    /* Drag and Drop functionality */
     const handleEventChange = ({event, start, end}) => {
         const idx = blocks.indexOf(event);
         const updatedBlock = { ...event, start, end };
@@ -92,7 +92,7 @@ const VolunteerCalendar = () => {
     const handleChange = e => {
         console.log(state);
 
-        /* Sets the state based onn changes */
+        /* Sets the state based on changes */
         setState({
             ...state,
             [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value, /* Check boxes require a different value than other values, this allows for that. Otherwise would just use "[e.target.name]: e.target.value" */
@@ -100,6 +100,7 @@ const VolunteerCalendar = () => {
 
     };
 
+    /* Form submission functionality */
     function submit(e) {
     e.preventDefault();
 
@@ -113,6 +114,21 @@ const VolunteerCalendar = () => {
 
   /* TODO: We need to determine how we will edit unavailability */
 
+    /* POPUP */
+    const [modalState, setModalState] = useState(false);
+    const handleSelectedEvent = (event) => {
+        setBlocks(event);
+        setModalState(true);
+    }
+
+    const Modal = () => {
+        return (
+            <div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
+             Testing
+          </div>
+        )
+    }
+
     /* HTML OF PAGE */
     return (
         <div className='grid-container'>
@@ -123,6 +139,7 @@ const VolunteerCalendar = () => {
             </div>
 
             {/* Calendar */}
+            {setBlocks && <Modal />}
             <div className='calendar-body'>
                 <DDCalendar
                     localizer={localizer}
@@ -133,6 +150,7 @@ const VolunteerCalendar = () => {
                     selectable={true}
                     onEventDrop={handleEventChange}
                     onEventResize={handleEventChange}
+                    onSelectEvent={handleSelectedEvent}
                 />
             </div>
 
@@ -239,7 +257,7 @@ const VolunteerCalendar = () => {
                         <option value="24">12:00 PM</option>
                       </select>
                     </div>
-                    {/* HTML's time picker component has terrible browser compatibility and even worse react compatibility so we are using a select box but we could import a custom react component */}
+                    {/* HTML's time picker component has terrible browser compatibility and even worse react compatibility so we are using a select box but we could instead import a custom react component */}
 
                     {/* Date */}
                     <div className="form-group">
