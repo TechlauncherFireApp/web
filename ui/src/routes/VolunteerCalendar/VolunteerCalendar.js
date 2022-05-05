@@ -17,11 +17,6 @@ const localizer = momentLocalizer(moment);
 const user = 49;
 
 /*
-1. Might be easier if this just replaces eventsDB rather than calling it elsewhere (will depend on repeat implementation)
-2. FUTURE: Also show assigned fire events?
- */
-
-/*
 * @desc - creates all the events that are repeating items
 * @param - List of events... ie EventsDB
 * @return - An array of events
@@ -75,55 +70,72 @@ function dateValid(date) {
     return false;
 }
 
-
-/*
-@desc - Create a calendar event, and adds it to the backend DB
-@param - title/name of event, date as HTML date picker output, start time as a int, end time as an int
-@return - new event object, & side effect creates backend DB entry
- */
-function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
-
-    /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
-    const splitDate = eventDate.split('-') ;
-    const year = parseInt(splitDate[0]);
-    const month = parseInt(splitDate[1]) - 1; /* JS Date constructor is indexed from zero (months 0-11) but HTML starts at 1 (months 1-12) so subtract 1 to account for this */
-    const day = parseInt(splitDate[2]);
-
-    /* creation of the new event object */
-    let newEvent = {};
-    if (allDayStatus){
-        newEvent = {
-        userId: user,
-        title: eventTitle,
-        start: new Date(year, month, day),
-        end: new Date(year, month, day),
-        periodicity: eventRepeatStatus
-        }
-    }
-    else {
-        newEvent = {
-            userId: user,
-            title: eventTitle,
-            start: new Date(year, month, day, Number(eventStartTime)),
-            end: new Date(year, month, day, Number(eventEndTime)),
-            periodicity: eventRepeatStatus
-        }
-    }
-
-    /* TODO Backend Integration
-    *   if(dateValid(newEvent.start) && (allDayStatus || newEvent.start< newEvent.end)){
-    *     POST newEvent
-    *     this returns the eventsID which we must then attach to newEvent
-    *   }
-    *  */
-
-    return newEvent;
-}
-
 /*
 -------------- MAIN FUNCTION ----------------------
  */
 const VolunteerCalendar = () => {
+
+    /*
+    @desc - Create a calendar event, and adds it to the backend DB
+    @param - title/name of event, date as HTML date picker output, start time as a int, end time as an int
+    @return - new event object, & side effect creates backend DB entry
+     */
+    function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
+
+        /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
+        const splitDate = eventDate.split('-') ;
+        const year = parseInt(splitDate[0]);
+        const month = parseInt(splitDate[1]) - 1; /* JS Date constructor is indexed from zero (months 0-11) but HTML starts at 1 (months 1-12) so subtract 1 to account for this */
+        const day = parseInt(splitDate[2]);
+
+        /* creation of the new event object */
+        let newEvent = {};
+        if (allDayStatus){
+            newEvent = {
+            userId: user,
+            title: eventTitle,
+            start: new Date(year, month, day),
+            end: new Date(year, month, day),
+            periodicity: eventRepeatStatus
+            }
+        }
+        else {
+            newEvent = {
+                userId: user,
+                title: eventTitle,
+                start: new Date(year, month, day, Number(eventStartTime)),
+                end: new Date(year, month, day, Number(eventEndTime)),
+                periodicity: eventRepeatStatus
+            }
+        }
+        let eventID = 0;
+        axios.post(backendPath + 'unavailability/createUnavailableEvent', newEvent).then((response) => {
+            eventID = response.data['eventId'];
+        });
+        if (eventID > 0){
+            console.log(eventID);
+        }
+
+        /* TODO Backend Integration
+        *   if(dateValid(newEvent.start) && (allDayStatus || newEvent.start< newEvent.end)){
+        *     POST newEvent
+        *     this returns the eventsID which we must then attach to newEvent
+        *   }
+        *  */
+
+        return newEvent;
+    }
+
+    /* Load Events from database on page initial render */
+    const [events, setEvents] = useState('');
+
+    React.useEffect(() => {
+        axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
+            setEvents(response.data);
+        });
+    }, []);
+
+    const eventsDB = [...events];
 
     // function enterEventDB() {
     // let eventID = '';
@@ -139,34 +151,6 @@ const VolunteerCalendar = () => {
     // });
     // return eventID
     // }
-
-
-
-    /*
-    * @desc - When the page loads or it refreshes it fills calendar from backend using the create event function
-    * */
-    // const eventsDB = () => {
-    //     axios.get(backendPath + 'unavailability/showUnavailableEvent?userId=49').then((response) => {
-    //          const allEvents = response.data;
-    //          setEvents(allEvents);
-    //     })
-    //         .catch(error => console.error(`Error: ${error}`));
-    //     return(events)
-    // }
-    //
-    // useEffect(() => {
-    //     eventsDB();
-    // }, []);
-
-    const [events, setEvents] = useState('');
-
-    React.useEffect(() => {
-        axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
-            setEvents(response.data);
-        });
-    }, []);
-
-    const eventsDB = [...events];
 
     /* Init state for calendar */
     const [blocks, setBlocks] = useState(eventsDB);
@@ -226,6 +210,7 @@ const VolunteerCalendar = () => {
         }
 
         console.log(eventsDB);
+        console.log(blocks);
     }
 
     /* This is the event handler for clicking on a time block */
