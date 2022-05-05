@@ -20,6 +20,7 @@ remove_parser.add_argument('eventId', type=int, required=True)
 
 userEvent_fields = {
     "userId": fields.Integer,
+    "eventId": fields.Integer,
     "title": fields.String,
     "start": fields.DateTime(dt_format='iso8601'),
     "end": fields.DateTime(dt_format='iso8601'),
