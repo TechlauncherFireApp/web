@@ -161,7 +161,7 @@ const VolunteerCalendar = () => {
         });
 
         /* replace with new event in backend DB */
-        axios.post(backendPath + 'unavailability/createUnavailableEvent', newEvent).then((response) => {
+        axios.post(backendPath + 'unavailability/createUnavailableEvent', updatedBlock).then((response) => {
             setEventID(response.data['eventId']);
         });
         updatedBlock.eventId = eventID;
