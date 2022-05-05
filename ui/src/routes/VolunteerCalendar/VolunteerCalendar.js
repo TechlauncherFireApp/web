@@ -17,48 +17,6 @@ const localizer = momentLocalizer(moment);
 const user = 49;
 
 /*
-* @desc - creates all the events that are repeating items
-* @param - List of events... ie EventsDB
-* @return - An array of events
-* @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
-* */
-/* TODO
-*   function repeatEvents(listOfEvents) {
-*       Loop thru all events in eventsDB (checking for periodicity)
-*       switch (periodicity) {
-*           case 1:
-*               Loop (everyday for 3 months from current date)
-*                   createEvent
-*           case 2:
-*               Loop (every week for 3 months from current date)
-*                   createEvent
-*           case 3:
-*               Loop (every month for 3 months from current date)
-*                   createEvent
-*           default:
-*               Do Nothing
-*       }
-*   return array of all new events
-*   }
-* */
-
-/*
-* @desc - Allows for the deletion or editing of repeating events
-* @param - an eventID
-* @return - An array of events
-* @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
-* */
-/* TODO
-*   function changesToRepeatingEvents(eventID) {
-*       GET removeUnavailableEvent parse eventID
-*       GET createUnavailableEvent
-*       Delete in front-end calendar (eventsDB) all events with eventID
-*       Call repeatEvents but use a list with only this changed events
-*       return new result of that repeatEvents call
-*   }
-* */
-
-/*
 @desc - Check if JS Date object is a valid date
 @param - date, a js date object
 @return - boolean
@@ -74,7 +32,6 @@ function dateValid(date) {
 -------------- MAIN FUNCTION ----------------------
  */
 const VolunteerCalendar = () => {
-
 
     /*
     @desc - Create a calendar event, and adds it to the backend DB
@@ -121,6 +78,78 @@ const VolunteerCalendar = () => {
         return newEvent;
     }
 
+    /*
+    * @desc - creates all the events that are repeating items
+    * @param - List of events... ie EventsDB
+    * @return - An array of events
+    * @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
+    * */
+    function repeatEvents(listOfEvents) {
+         let newEvents = [];
+         listOfEvents.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
+                switch (element.periodicity) {
+                    case 1:
+                        for (let i = 0; i < 90; i++) {
+                            let tempEvent = {
+                                title: element.title,
+                                userId: element.userId,
+                                eventId: element.eventId,
+                                periodicity: element.periodicity,
+                                start: element.start.setDate(element.start.getDate() + i),
+                                end: element.end.setDate(element.end.getDate() + i)
+                            }
+                            newEvents.push(tempEvent);
+                        }
+                        break;
+                    case 2:
+                        for (let i = 0; i < 90; i+7) {
+                            let tempEvent = {
+                                title: element.title,
+                                userId: element.userId,
+                                eventId: element.eventId,
+                                periodicity: element.periodicity,
+                                start: element.start.setDate(element.start.getDate() + i),
+                                end: element.end.setDate(element.end.getDate() + i)
+                            }
+                            newEvents.push(tempEvent);
+                        }
+                        break;
+                    case 3:
+                        for (let i = 0; i < 3; i++) {
+                            let tempEvent = {
+                                title: element.title,
+                                userId: element.userId,
+                                eventId: element.eventId,
+                                periodicity: element.periodicity,
+                                start: element.start.setMonth(element.start.getMonth() + i),
+                                end: element.end.setMonth(element.end.getMonth() + i),
+                            }
+                            newEvents.push(tempEvent);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+         });
+         return newEvents;
+    }
+
+    /*
+    * @desc - Allows for the deletion or editing of repeating events
+    * @param - an eventID
+    * @return - An array of events
+    * @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
+    * */
+    /* TODO
+    *   function changesToRepeatingEvents(eventID) {
+    *       GET removeUnavailableEvent parse eventID
+    *       GET createUnavailableEvent
+    *       Delete in front-end calendar (eventsDB) all events with eventID
+    *       Call repeatEvents but use a list with only this changed events
+    *       return new result of that repeatEvents call
+    *   }
+    * */
+
     /* --- INITIALISE --- */
     /* Load Events from database on page initial render */
 
@@ -134,7 +163,10 @@ const VolunteerCalendar = () => {
                 element.end = moment(element.end).toDate();
             });
 
-            setBlocks(temp);
+            // Could break everything lmao
+            let repeatingEvents = repeatEvents(temp);
+            let initialEvents = temp.concat(repeatingEvents);
+            setBlocks(initialEvents);
         });
     }, []);
 
