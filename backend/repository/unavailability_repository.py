@@ -11,7 +11,7 @@ def create_event(session, userId, title, startTime, endTime, periodicity):
     :param endTime: DateTime, to what time is unavailable
     :param periodicity: Integer, Daily = 1, Weekly = 2, One-Off = 3
     """
-    event = UnavailabilityTime(userId=userId, event_title=title, start_time=startTime, end_time=endTime,
+    event = UnavailabilityTime(userId=userId, title=title, start=startTime, end=endTime,
                                periodicity=periodicity)
     session.add(event)
     # session.expunge(question)
