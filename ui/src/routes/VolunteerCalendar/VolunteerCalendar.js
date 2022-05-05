@@ -124,7 +124,6 @@ const VolunteerCalendar = () => {
     /* --- INITIALISE --- */
     /* Load Events from database on page initial render */
 
-    //const [eventsDB, setEvents] = useState('');
     const [blocks, setBlocks] = useState('');
 
     React.useEffect(() => {
@@ -137,8 +136,6 @@ const VolunteerCalendar = () => {
         });
     }, []);
 
-    /* Init state for calendar */
-
     /* --- HANDLERS --- */
 
     /* Drag and Drop functionality */
@@ -147,8 +144,8 @@ const VolunteerCalendar = () => {
         const updatedBlock = { ...event, start, end };
 
         /* Delete from backend DB */
-        axios.get(backendPath + 'unavailability/removeUnavailableEvent', event.eventId).then((response) => {
-           console.log(response.data[0]);
+        axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
+                console.log(response.data[0]);
         });
 
         /* replace with new event in backend DB */
@@ -200,7 +197,6 @@ const VolunteerCalendar = () => {
             }
         }
 
-        //console.log(eventsDB);
         console.log(blocks);
     }
 
