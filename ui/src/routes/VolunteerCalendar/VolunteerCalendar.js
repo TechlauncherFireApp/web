@@ -129,9 +129,11 @@ const VolunteerCalendar = () => {
     React.useEffect(() => {
         axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
             let temp = response.data;
-            temp.forEach(element =>
-                element.date = new Date(element.date)
-            );
+            temp.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
+                element.start = moment(element.start).toDate();
+                element.end = moment(element.end).toDate();
+            });
+
             setBlocks(temp);
         });
     }, []);
