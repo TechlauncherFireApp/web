@@ -99,15 +99,21 @@ const VolunteerCalendar = () => {
                 switch (element.periodicity) {
                     case 1:
                         for (let i = 1; i < 90; i++) {
-                            let tempStart = new Date(element.start.valueOf());
-                            let tempEnd = new Date(element.end.valueOf());
+
+                            let tempStart = new Date(element.start.getTime());
+                            tempStart = tempStart.setDate(tempStart.getDate() + i);
+                            tempStart = moment(tempStart).toDate();
+                            let tempEnd = new Date(element.end.getTime());
+                            tempEnd = tempEnd.setDate(tempEnd.getDate() + i);
+                            tempEnd = moment(tempEnd).toDate();
+
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
-                                eventId: element.eventId,
+                                start: tempStart,
+                                end: tempEnd,
                                 periodicity: element.periodicity,
-                                start: tempStart.setDate(tempStart.getDate() + i),
-                                end: tempEnd.setDate(tempEnd.getDate() + i)
+                                eventId: element.eventId,
                             }
 
                             console.log(1);
@@ -116,15 +122,20 @@ const VolunteerCalendar = () => {
                         break;
                     case 2:
                         for (let i = 7; i < 90; i+=7) {
-                            let tempStart = new Date(element.start.valueOf());
-                            let tempEnd = new Date(element.end.valueOf());
+                            let tempStart = new Date(element.start.getTime());
+                            tempStart.setDate(tempStart.getDate() + i);
+                            tempStart = moment(tempStart).toDate();
+                            let tempEnd = new Date(element.end.getTime());
+                            tempEnd.setDate(tempEnd.getDate() + i);
+                            tempEnd = moment(tempEnd).toDate();
+
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
-                                eventId: element.eventId,
+                                start: tempStart,
+                                end: tempEnd,
                                 periodicity: element.periodicity,
-                                start: tempStart.setDate(tempStart.getDate() + i),
-                                end: tempEnd.setDate(tempEnd.getDate() + i)
+                                eventId: element.eventId,
                             }
                             newEvents.push(tempEvent);
                             console.log(tempStart);
@@ -132,15 +143,20 @@ const VolunteerCalendar = () => {
                         break;
                     case 3:
                         for (let i = 1; i < 4; i++) {
-                            let tempStart = new Date(element.start.valueOf());
-                            let tempEnd = new Date(element.end.valueOf());
+                            let tempStart = new Date(element.start.getTime());
+                            tempStart.setDate(tempStart.getDate() + i);
+                            tempStart = moment(tempStart).toDate();
+                            let tempEnd = new Date(element.end.getTime());
+                            tempEnd.setDate(tempEnd.getDate() + i);
+                            tempEnd = moment(tempEnd).toDate();
+
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
-                                eventId: element.eventId,
+                                start: tempStart,
+                                end: tempEnd,
                                 periodicity: element.periodicity,
-                                start: tempStart.setMonth(tempStart.getMonth() + i),
-                                end: tempEnd.setMonth(tempEnd.getMonth() + i),
+                                eventId: element.eventId,
                             }
                             newEvents.push(tempEvent);
                             console.log(3);
@@ -188,7 +204,9 @@ const VolunteerCalendar = () => {
             // Could break everything lmao
             let repeatingEvents = repeatEvents(temp);
             let initialEvents = temp.concat(repeatingEvents);
+            console.log(initialEvents);
             setBlocks(initialEvents);
+            console.log(blocks);
             //setBlocks(temp);
         });
     }, []);
