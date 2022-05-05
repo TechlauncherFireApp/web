@@ -75,12 +75,13 @@ function dateValid(date) {
  */
 const VolunteerCalendar = () => {
 
-    const [eventID, setEventID] = useState('');
+
     /*
     @desc - Create a calendar event, and adds it to the backend DB
     @param - title/name of event, date as HTML date picker output, start time as an int, end time as an int
     @return - new event object, & side effect creates backend DB entry
      */
+    const [eventID, setEventID] = useState('');
     function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
 
         /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
@@ -122,7 +123,7 @@ const VolunteerCalendar = () => {
 
     /* --- INITIALISE --- */
     /* Load Events from database on page initial render */
-    const [events, setEvents] = useState('');
+    const [eventsDB, setEvents] = useState('');
 
     React.useEffect(() => {
         axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
@@ -130,25 +131,12 @@ const VolunteerCalendar = () => {
         });
     }, []);
 
-    const eventsDB = [...events];
-
-    // function enterEventDB() {
-    // let eventID = '';
-    // let testEvent = {
-    //     userId: 49,
-    //     title: 'Take exam',
-    //     periodicity: 1,
-    //     start: new Date(2022, 3, 29, 1),
-    //     end: new Date(2022, 3, 29, 12)
-    // };
-    // axios.post(backendPath + 'unavailability/createUnavailableEvent', testEvent).then((response) => {
-    //      eventID = response.data['eventId'];
-    // });
-    // return eventID
-    // }
+    // const eventsDB = [...events];
 
     /* Init state for calendar */
     const [blocks, setBlocks] = useState(eventsDB);
+
+    /* --- HANDLERS --- */
 
     /* Drag and Drop functionality */
     const handleEventChange = ({event, start, end}) => {
@@ -207,7 +195,6 @@ const VolunteerCalendar = () => {
             if (state.allDay || (newBlock.start < newBlock.end)) {
                 setBlocks([...blocks, newBlock]); /* add new event to calendar (frontend)*/
             }
-
         }
 
         console.log(eventsDB);
@@ -218,14 +205,16 @@ const VolunteerCalendar = () => {
     const handleSelectedEvent = (event) => {
         let i = blocks.indexOf(event); /* Find index of event that has been clicked on in the array */
         if (confirm("Delete " + event.title)) { /* JS Confirmation window prompt, returns true if yes is clicked */
+
+            /* Delete from backend DB */
+            axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
+                console.log(response.data[0]);
+            });
+
+            /* Update frontend calendar */
             let blocksToChange = [...blocks];
             blocksToChange.splice(i, 1); /* remove event from array */
             setBlocks(blocksToChange);
-
-            /* Delete from backend DB */
-            axios.get(backendPath + 'unavailability/removeUnavailableEvent', event.eventId).then((response) => {
-                console.log(response.data[0]);
-            });
         }
     }
     /* NOTE: Alternative to the JS confirmation window we could also do a React popup/modal, this is significantly more complicated but would allow for the implementation of editing name/recurring. For now we shall leave like this, but it is a possible future improvement for sure... */
@@ -374,7 +363,6 @@ const VolunteerCalendar = () => {
                           </select>
                         </div>
                     </div>
-                    {/* HTML's time picker component has terrible browser compatibility and even worse react compatibility so we are using a select box but we could instead import a custom react component */}
 
                     {/* Date */}
                     <div className="form-group">
