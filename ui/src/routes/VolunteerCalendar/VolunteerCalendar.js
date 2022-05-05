@@ -75,13 +75,12 @@ function dateValid(date) {
  */
 const VolunteerCalendar = () => {
 
+    const [eventID, setEventID] = useState('');
     /*
     @desc - Create a calendar event, and adds it to the backend DB
-    @param - title/name of event, date as HTML date picker output, start time as a int, end time as an int
+    @param - title/name of event, date as HTML date picker output, start time as an int, end time as an int
     @return - new event object, & side effect creates backend DB entry
      */
-    const [eventID, setEventID] = useState('');
-
     function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
 
         /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
@@ -121,6 +120,7 @@ const VolunteerCalendar = () => {
         return newEvent;
     }
 
+    /* --- INITIALISE --- */
     /* Load Events from database on page initial render */
     const [events, setEvents] = useState('');
 
@@ -155,17 +155,22 @@ const VolunteerCalendar = () => {
         const idx = blocks.indexOf(event);
         const updatedBlock = { ...event, start, end };
 
+        /* Delete from backend DB */
+        axios.get(backendPath + 'unavailability/removeUnavailableEvent', event.eventId).then((response) => {
+           console.log(response.data[0]);
+        });
+
+        /* replace with new event in backend DB */
+        axios.post(backendPath + 'unavailability/createUnavailableEvent', newEvent).then((response) => {
+            setEventID(response.data['eventId']);
+        });
+        updatedBlock.eventId = eventID;
+
+        /* Update Frontend Calendar */
         const blocksToChange = [...blocks];
         blocksToChange.splice(idx, 1, updatedBlock);
 
         setBlocks(blocksToChange);
-
-        /* TODO: Delete from backend
-        *   GET removeUnavailableEvent
-        *   parse eventID
-        *   GET createUnavailableEvent
-        *   add updatedBlock to DB
-        */
     }
 
     /* Init the variables for the form (stateful) */
@@ -216,11 +221,12 @@ const VolunteerCalendar = () => {
             let blocksToChange = [...blocks];
             blocksToChange.splice(i, 1); /* remove event from array */
             setBlocks(blocksToChange);
+
+            /* Delete from backend DB */
+            axios.get(backendPath + 'unavailability/removeUnavailableEvent', event.eventId).then((response) => {
+                console.log(response.data[0]);
+            });
         }
-        /* TODO: Delete from backend
-        *   GET removeUnavailableEvent
-        *   parse eventID
-        * */
     }
     /* NOTE: Alternative to the JS confirmation window we could also do a React popup/modal, this is significantly more complicated but would allow for the implementation of editing name/recurring. For now we shall leave like this, but it is a possible future improvement for sure... */
 
