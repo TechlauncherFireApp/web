@@ -17,48 +17,6 @@ const localizer = momentLocalizer(moment);
 const user = 49;
 
 /*
-* @desc - creates all the events that are repeating items
-* @param - List of events... ie EventsDB
-* @return - An array of events
-* @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
-* */
-/* TODO
-*   function repeatEvents(listOfEvents) {
-*       Loop thru all events in eventsDB (checking for periodicity)
-*       switch (periodicity) {
-*           case 1:
-*               Loop (everyday for 3 months from current date)
-*                   createEvent
-*           case 2:
-*               Loop (every week for 3 months from current date)
-*                   createEvent
-*           case 3:
-*               Loop (every month for 3 months from current date)
-*                   createEvent
-*           default:
-*               Do Nothing
-*       }
-*   return array of all new events
-*   }
-* */
-
-/*
-* @desc - Allows for the deletion or editing of repeating events
-* @param - an eventID
-* @return - An array of events
-* @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
-* */
-/* TODO
-*   function changesToRepeatingEvents(eventID) {
-*       GET removeUnavailableEvent parse eventID
-*       GET createUnavailableEvent
-*       Delete in front-end calendar (eventsDB) all events with eventID
-*       Call repeatEvents but use a list with only this changed events
-*       return new result of that repeatEvents call
-*   }
-* */
-
-/*
 @desc - Check if JS Date object is a valid date
 @param - date, a js date object
 @return - boolean
@@ -70,11 +28,19 @@ function dateValid(date) {
     return false;
 }
 
+/* TODO: CSS Updates
+/* TODO: Update Repeat Function
+/* TODO: FIX ISSUES
+BUG: WEEKLY VIEW CAUSES CRASH,
+Had similar issue in past
+was because of using Python date's instead of JS date objects...
+Repeat events cause crashes not og events
+ */
+
 /*
 -------------- MAIN FUNCTION ----------------------
  */
 const VolunteerCalendar = () => {
-
 
     /*
     @desc - Create a calendar event, and adds it to the backend DB
@@ -85,7 +51,7 @@ const VolunteerCalendar = () => {
     function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
 
         /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
-        const splitDate = eventDate.split('-') ;
+        const splitDate = eventDate.split('-');
         const year = parseInt(splitDate[0]);
         const month = parseInt(splitDate[1]) - 1; /* JS Date constructor is indexed from zero (months 0-11) but HTML starts at 1 (months 1-12) so subtract 1 to account for this */
         const day = parseInt(splitDate[2]);
@@ -121,6 +87,105 @@ const VolunteerCalendar = () => {
         return newEvent;
     }
 
+    /*
+    * @desc - creates all the events that are repeating items
+    * @param - List of events... ie EventsDB
+    * @return - An array of events
+    * @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
+    * */
+    function repeatEvents(listOfEvents) {
+         let newEvents = [];
+         listOfEvents.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
+                switch (element.periodicity) {
+                    case 1:
+                        for (let i = 1; i < 90; i++) {
+
+                            let tempStart = new Date(element.start.getTime());
+                            tempStart = tempStart.setDate(tempStart.getDate() + i);
+                            tempStart = moment(tempStart).toDate();
+                            let tempEnd = new Date(element.end.getTime());
+                            tempEnd = tempEnd.setDate(tempEnd.getDate() + i);
+                            tempEnd = moment(tempEnd).toDate();
+
+                            let tempEvent = {
+                                title: element.title,
+                                userId: element.userId,
+                                start: tempStart,
+                                end: tempEnd,
+                                periodicity: element.periodicity,
+                                eventId: element.eventId,
+                            }
+
+                            console.log(1);
+                            newEvents.push(tempEvent);
+                        }
+                        break;
+                    case 2:
+                        for (let i = 7; i < 90; i+=7) {
+                            let tempStart = new Date(element.start.getTime());
+                            tempStart.setDate(tempStart.getDate() + i);
+                            tempStart = moment(tempStart).toDate();
+                            let tempEnd = new Date(element.end.getTime());
+                            tempEnd.setDate(tempEnd.getDate() + i);
+                            tempEnd = moment(tempEnd).toDate();
+
+                            let tempEvent = {
+                                title: element.title,
+                                userId: element.userId,
+                                start: tempStart,
+                                end: tempEnd,
+                                periodicity: element.periodicity,
+                                eventId: element.eventId,
+                            }
+                            newEvents.push(tempEvent);
+                            console.log(tempStart);
+                        }
+                        break;
+                    case 3:
+                        for (let i = 1; i < 4; i++) {
+                            let tempStart = new Date(element.start.getTime());
+                            tempStart.setDate(tempStart.getDate() + i);
+                            tempStart = moment(tempStart).toDate();
+                            let tempEnd = new Date(element.end.getTime());
+                            tempEnd.setDate(tempEnd.getDate() + i);
+                            tempEnd = moment(tempEnd).toDate();
+
+                            let tempEvent = {
+                                title: element.title,
+                                userId: element.userId,
+                                start: tempStart,
+                                end: tempEnd,
+                                periodicity: element.periodicity,
+                                eventId: element.eventId,
+                            }
+                            newEvents.push(tempEvent);
+                            console.log(3);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+         });
+         console.log('done');
+         return newEvents;
+    }
+
+    /*
+    * @desc - Allows for the deletion or editing of repeating events
+    * @param - an eventID
+    * @return - An array of events
+    * @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
+    * */
+    /* TODO
+    *   function changesToRepeatingEvents(eventID) {
+    *       GET removeUnavailableEvent parse eventID
+    *       GET createUnavailableEvent
+    *       Delete in front-end calendar (eventsDB) all events with eventID
+    *       Call repeatEvents but use a list with only this changed events
+    *       return new result of that repeatEvents call
+    *   }
+    * */
+
     /* --- INITIALISE --- */
     /* Load Events from database on page initial render */
 
@@ -129,10 +194,20 @@ const VolunteerCalendar = () => {
     React.useEffect(() => {
         axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
             let temp = response.data;
-            temp.forEach(element =>
-                element.date = new Date(element.date)
-            );
-            setBlocks(temp);
+            temp.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
+                // element.start = moment(element.start).toDate();
+                // element.end = moment(element.end).toDate();
+                element.start = new Date(element.start);
+                element.end = new Date(element.end);
+            });
+
+            // Could break everything lmao
+            let repeatingEvents = repeatEvents(temp);
+            let initialEvents = temp.concat(repeatingEvents);
+            console.log(initialEvents);
+            setBlocks(initialEvents);
+            console.log(blocks);
+            //setBlocks(temp);
         });
     }, []);
 
@@ -146,6 +221,8 @@ const VolunteerCalendar = () => {
         /* Delete from backend DB */
         axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
                 console.log(response.data[0]);
+        }).catch(function (error) {
+            console.log(error);
         });
 
         /* replace with new event in backend DB */
@@ -322,7 +399,6 @@ const VolunteerCalendar = () => {
                             <option value="21">9:00 PM</option>
                             <option value="22">10:00 PM</option>
                             <option value="23">11:00 PM</option>
-                            <option value="24">12:00 PM</option>
                           </select>
                         </div>
 
@@ -334,7 +410,6 @@ const VolunteerCalendar = () => {
                           <select id="endTime" name="endTime"
                             value={state.endTime}
                             onChange={handleChange}>
-                            <option value="0">12:00 AM</option>
                             <option value="1">1:00 AM</option>
                             <option value="2">2:00 AM</option>
                             <option value="3">3:00 AM</option>
