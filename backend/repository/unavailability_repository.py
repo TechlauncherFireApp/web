@@ -30,7 +30,7 @@ def remove_event(session, userId, eventId):
     """
     existing = session.query(UnavailabilityTime).filter(UnavailabilityTime.userId == userId,
                                                         UnavailabilityTime.eventId == eventId).first()
-    if existing is not None:
+    if existing is not None and existing.status is True:
         existing.status = False
         return True
     return False
