@@ -28,6 +28,13 @@ function dateValid(date) {
     return false;
 }
 
+
+/* TODO: FIX ISSUES
+BUG: WEEKLY VIEW CAUSES CRASH,
+Had similar issue in past
+was because of using Python date's instead of JS date objects...
+ */
+
 /*
 -------------- MAIN FUNCTION ----------------------
  */
@@ -89,48 +96,59 @@ const VolunteerCalendar = () => {
          listOfEvents.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
                 switch (element.periodicity) {
                     case 1:
-                        for (let i = 0; i < 90; i++) {
+                        for (let i = 1; i < 90; i++) {
+                            let tempStart = new Date(element.start);
+                            let tempEnd = new Date(element.end);
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
                                 eventId: element.eventId,
                                 periodicity: element.periodicity,
-                                start: element.start.setDate(element.start.getDate() + i),
-                                end: element.end.setDate(element.end.getDate() + i)
+                                start: tempStart.setDate(tempStart.getDate() + i),
+                                end: tempEnd.setDate(tempEnd.getDate() + i)
                             }
+
+                            console.log(1);
                             newEvents.push(tempEvent);
                         }
                         break;
                     case 2:
-                        for (let i = 0; i < 90; i+7) {
+                        for (let i = 7; i < 90; i+=7) {
+                            let tempStart = new Date(element.start);
+                            let tempEnd = new Date(element.end);
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
                                 eventId: element.eventId,
                                 periodicity: element.periodicity,
-                                start: element.start.setDate(element.start.getDate() + i),
-                                end: element.end.setDate(element.end.getDate() + i)
+                                start: tempStart.setDate(tempStart.getDate() + i),
+                                end: tempEnd.setDate(tempEnd.getDate() + i)
                             }
                             newEvents.push(tempEvent);
+                            console.log(2);
                         }
                         break;
                     case 3:
-                        for (let i = 0; i < 3; i++) {
+                        for (let i = 1; i < 4; i++) {
+                            let tempStart = new Date(element.start);
+                            let tempEnd = new Date(element.end);
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
                                 eventId: element.eventId,
                                 periodicity: element.periodicity,
-                                start: element.start.setMonth(element.start.getMonth() + i),
-                                end: element.end.setMonth(element.end.getMonth() + i),
+                                start: tempStart.setMonth(tempStart.getMonth() + i),
+                                end: tempEnd.setMonth(tempEnd.getMonth() + i),
                             }
                             newEvents.push(tempEvent);
+                            console.log(3);
                         }
                         break;
                     default:
                         break;
                 }
          });
+         console.log('done');
          return newEvents;
     }
 
@@ -167,6 +185,7 @@ const VolunteerCalendar = () => {
             let repeatingEvents = repeatEvents(temp);
             let initialEvents = temp.concat(repeatingEvents);
             setBlocks(initialEvents);
+            //setBlocks(temp);
         });
     }, []);
 
