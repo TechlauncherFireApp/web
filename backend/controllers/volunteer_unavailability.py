@@ -6,6 +6,7 @@ from repository.unavailability_repository import *
 select_parser = reqparse.RequestParser()
 select_parser.add_argument('userId', type=int, required=True)
 
+# change variable names
 create_parser = reqparse.RequestParser()
 create_parser.add_argument('userId', type=int, required=True)
 create_parser.add_argument('title', type=str, required=True)
