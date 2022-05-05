@@ -8,10 +8,10 @@ select_parser.add_argument('userId', type=int, required=True)
 
 create_parser = reqparse.RequestParser()
 create_parser.add_argument('userId', type=int, required=True)
-create_parser.add_argument('event_title', type=str, required=True)
+create_parser.add_argument('title', type=str, required=True)
 create_parser.add_argument('periodicity', type=int, required=True)
-create_parser.add_argument('start_time',type=inputs.datetime_from_iso8601, required=True)
-create_parser.add_argument('end_time',type=inputs.datetime_from_iso8601, required=True)
+create_parser.add_argument('start',type=inputs.datetime_from_iso8601, required=True)
+create_parser.add_argument('end',type=inputs.datetime_from_iso8601, required=True)
 
 remove_parser = reqparse.RequestParser()
 remove_parser.add_argument('userId', type=int, required=True)
@@ -19,9 +19,9 @@ remove_parser.add_argument('eventId', type=int, required=True)
 
 userEvent_fields = {
     "userId": fields.Integer,
-    "event_title": fields.String,
-    "start_time": fields.DateTime(dt_format='iso8601'),
-    "end_time": fields.DateTime(dt_format='iso8601'),
+    "title": fields.String,
+    "start": fields.DateTime(dt_format='iso8601'),
+    "end": fields.DateTime(dt_format='iso8601'),
     "periodicity": fields.Integer
 }
 
@@ -34,15 +34,14 @@ class ShowUnavailabilityEvent(Resource):
             if user_events is None:
                 return jsonify({"userId": args['userId'], "success": False})
             return user_events
-        # TODO: check the data format as the json format.
 
 class CreateNewUnavailabilityEvent(Resource):
     def post(self):
         request.get_json(force=True)
         args = create_parser.parse_args()
         with session_scope() as session:
-            eventId = create_event(session, args['userId'], args['event_title'],
-                                args['start_time'], args['end_time'], args['periodicity'])
+            eventId = create_event(session, args['userId'], args['title'],
+                                args['start'], args['end'], args['periodicity'])
             if eventId is None:
                 return jsonify({"eventId": -1,
                         "success": False})
