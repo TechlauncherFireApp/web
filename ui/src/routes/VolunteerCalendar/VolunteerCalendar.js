@@ -80,6 +80,8 @@ const VolunteerCalendar = () => {
     @param - title/name of event, date as HTML date picker output, start time as a int, end time as an int
     @return - new event object, & side effect creates backend DB entry
      */
+    const [eventID, setEventID] = useState('');
+
     function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
 
         /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
@@ -108,20 +110,13 @@ const VolunteerCalendar = () => {
                 periodicity: eventRepeatStatus
             }
         }
-        let eventID = 0;
-        axios.post(backendPath + 'unavailability/createUnavailableEvent', newEvent).then((response) => {
-            eventID = response.data['eventId'];
-        });
-        if (eventID > 0){
-            console.log(eventID);
-        }
 
-        /* TODO Backend Integration
-        *   if(dateValid(newEvent.start) && (allDayStatus || newEvent.start< newEvent.end)){
-        *     POST newEvent
-        *     this returns the eventsID which we must then attach to newEvent
-        *   }
-        *  */
+        if(dateValid(newEvent.start) && (allDayStatus || newEvent.start < newEvent.end)){ /* checks if time block is valid before adding it to DB */
+            axios.post(backendPath + 'unavailability/createUnavailableEvent', newEvent).then((response) => {
+                setEventID(response.data['eventId']);
+            });
+            newEvent.eventId = eventID; /* Adds eventId to event object */
+        }
 
         return newEvent;
     }
@@ -205,8 +200,9 @@ const VolunteerCalendar = () => {
 
         if (dateValid(newBlock.start)) { /* If date value is valid and start time is before end time*/
             if (state.allDay || (newBlock.start < newBlock.end)) {
-                setBlocks([...blocks, newBlock]); /* add new event to calendar */
+                setBlocks([...blocks, newBlock]); /* add new event to calendar (frontend)*/
             }
+
         }
 
         console.log(eventsDB);
