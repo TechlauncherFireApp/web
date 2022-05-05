@@ -28,11 +28,13 @@ function dateValid(date) {
     return false;
 }
 
-
+/* TODO: CSS Updates
+/* TODO: Update Repeat Function
 /* TODO: FIX ISSUES
 BUG: WEEKLY VIEW CAUSES CRASH,
 Had similar issue in past
 was because of using Python date's instead of JS date objects...
+Repeat events cause crashes not og events
  */
 
 /*
@@ -49,7 +51,7 @@ const VolunteerCalendar = () => {
     function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventRepeatStatus, allDayStatus) {
 
         /* Split the date input yyyy-mm-dd into year, month, day so it can easily be used by the calendar */
-        const splitDate = eventDate.split('-') ;
+        const splitDate = eventDate.split('-');
         const year = parseInt(splitDate[0]);
         const month = parseInt(splitDate[1]) - 1; /* JS Date constructor is indexed from zero (months 0-11) but HTML starts at 1 (months 1-12) so subtract 1 to account for this */
         const day = parseInt(splitDate[2]);
@@ -97,8 +99,8 @@ const VolunteerCalendar = () => {
                 switch (element.periodicity) {
                     case 1:
                         for (let i = 1; i < 90; i++) {
-                            let tempStart = new Date(element.start);
-                            let tempEnd = new Date(element.end);
+                            let tempStart = new Date(element.start.valueOf());
+                            let tempEnd = new Date(element.end.valueOf());
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
@@ -114,8 +116,8 @@ const VolunteerCalendar = () => {
                         break;
                     case 2:
                         for (let i = 7; i < 90; i+=7) {
-                            let tempStart = new Date(element.start);
-                            let tempEnd = new Date(element.end);
+                            let tempStart = new Date(element.start.valueOf());
+                            let tempEnd = new Date(element.end.valueOf());
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
@@ -125,13 +127,13 @@ const VolunteerCalendar = () => {
                                 end: tempEnd.setDate(tempEnd.getDate() + i)
                             }
                             newEvents.push(tempEvent);
-                            console.log(2);
+                            console.log(tempStart);
                         }
                         break;
                     case 3:
                         for (let i = 1; i < 4; i++) {
-                            let tempStart = new Date(element.start);
-                            let tempEnd = new Date(element.end);
+                            let tempStart = new Date(element.start.valueOf());
+                            let tempEnd = new Date(element.end.valueOf());
                             let tempEvent = {
                                 title: element.title,
                                 userId: element.userId,
@@ -177,8 +179,10 @@ const VolunteerCalendar = () => {
         axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
             let temp = response.data;
             temp.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
-                element.start = moment(element.start).toDate();
-                element.end = moment(element.end).toDate();
+                // element.start = moment(element.start).toDate();
+                // element.end = moment(element.end).toDate();
+                element.start = new Date(element.start);
+                element.end = new Date(element.end);
             });
 
             // Could break everything lmao
@@ -199,6 +203,8 @@ const VolunteerCalendar = () => {
         /* Delete from backend DB */
         axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
                 console.log(response.data[0]);
+        }).catch(function (error) {
+            console.log(error);
         });
 
         /* replace with new event in backend DB */
@@ -375,7 +381,6 @@ const VolunteerCalendar = () => {
                             <option value="21">9:00 PM</option>
                             <option value="22">10:00 PM</option>
                             <option value="23">11:00 PM</option>
-                            <option value="24">12:00 PM</option>
                           </select>
                         </div>
 
@@ -387,7 +392,6 @@ const VolunteerCalendar = () => {
                           <select id="endTime" name="endTime"
                             value={state.endTime}
                             onChange={handleChange}>
-                            <option value="0">12:00 AM</option>
                             <option value="1">1:00 AM</option>
                             <option value="2">2:00 AM</option>
                             <option value="3">3:00 AM</option>
