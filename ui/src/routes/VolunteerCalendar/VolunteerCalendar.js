@@ -123,18 +123,21 @@ const VolunteerCalendar = () => {
 
     /* --- INITIALISE --- */
     /* Load Events from database on page initial render */
-    const [eventsDB, setEvents] = useState('');
+
+    //const [eventsDB, setEvents] = useState('');
+    const [blocks, setBlocks] = useState('');
 
     React.useEffect(() => {
         axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
-            setEvents(response.data);
+            let temp = response.data;
+            temp.forEach(element =>
+                element.date = new Date(element.date)
+            );
+            setBlocks(temp);
         });
     }, []);
 
-    // const eventsDB = [...events];
-
     /* Init state for calendar */
-    const [blocks, setBlocks] = useState(eventsDB);
 
     /* --- HANDLERS --- */
 
@@ -197,7 +200,7 @@ const VolunteerCalendar = () => {
             }
         }
 
-        console.log(eventsDB);
+        //console.log(eventsDB);
         console.log(blocks);
     }
 
