@@ -3,41 +3,19 @@ import 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
+import axios from 'axios';
 import moment from "moment";
 import React, { useState } from 'react';
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 
+import { backendPath } from '../../config';
+
 const DDCalendar = withDragAndDrop(Calendar);
 const localizer = momentLocalizer(moment);
 
-const eventsDB = [
-    {
-        title: 'Take exam',
-        start: new Date(2022, 3, 29, 1),
-        end: new Date(2022, 3, 29, 12)
-    },
-    {
-        title: 'Do audit 3',
-        start: new Date(2022, 3, 29),
-        end: new Date(2022, 3, 29)
-    },
-    {
-        title: 'Study',
-        start: new Date(2022, 3, 29, 13),
-        end: new Date(2022, 3, 30, 12)
-    }
-];
+const user = 49;
 
-/*
-* @desc - When the page loads or it refreshes it fills calendar from backend using the create event function
-* */
-/* TODO
-*   function pullCalendar(){
-*       Axios GET showUnavailableEvent
-*       eventsDB = ^^^^^ (Above request should return an array of objects, assuming the changes I have suggested to the DB can be made)
-*   }
-* */
 /*
 1. Might be easier if this just replaces eventsDB rather than calling it elsewhere (will depend on repeat implementation)
 2. FUTURE: Also show assigned fire events?
@@ -97,6 +75,7 @@ function dateValid(date) {
     return false;
 }
 
+
 /*
 @desc - Create a calendar event, and adds it to the backend DB
 @param - title/name of event, date as HTML date picker output, start time as a int, end time as an int
@@ -114,6 +93,7 @@ function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventR
     let newEvent = {};
     if (allDayStatus){
         newEvent = {
+        userId: user,
         title: eventTitle,
         start: new Date(year, month, day),
         end: new Date(year, month, day),
@@ -122,6 +102,7 @@ function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventR
     }
     else {
         newEvent = {
+            userId: user,
             title: eventTitle,
             start: new Date(year, month, day, Number(eventStartTime)),
             end: new Date(year, month, day, Number(eventEndTime)),
@@ -140,9 +121,53 @@ function createEvent(eventTitle, eventDate, eventStartTime, eventEndTime, eventR
 }
 
 /*
-MAIN FUNCTION
+-------------- MAIN FUNCTION ----------------------
  */
 const VolunteerCalendar = () => {
+
+    // function enterEventDB() {
+    // let eventID = '';
+    // let testEvent = {
+    //     userId: 49,
+    //     title: 'Take exam',
+    //     periodicity: 1,
+    //     start: new Date(2022, 3, 29, 1),
+    //     end: new Date(2022, 3, 29, 12)
+    // };
+    // axios.post(backendPath + 'unavailability/createUnavailableEvent', testEvent).then((response) => {
+    //      eventID = response.data['eventId'];
+    // });
+    // return eventID
+    // }
+
+
+
+    /*
+    * @desc - When the page loads or it refreshes it fills calendar from backend using the create event function
+    * */
+    // const eventsDB = () => {
+    //     axios.get(backendPath + 'unavailability/showUnavailableEvent?userId=49').then((response) => {
+    //          const allEvents = response.data;
+    //          setEvents(allEvents);
+    //     })
+    //         .catch(error => console.error(`Error: ${error}`));
+    //     return(events)
+    // }
+    //
+    // useEffect(() => {
+    //     eventsDB();
+    // }, []);
+
+    const [events, setEvents] = useState('');
+
+    React.useEffect(() => {
+        axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
+            setEvents(response.data);
+        });
+    }, []);
+
+    const eventsDB = [...events];
+
     /* Init state for calendar */
     const [blocks, setBlocks] = useState(eventsDB);
 
@@ -199,6 +224,8 @@ const VolunteerCalendar = () => {
                 setBlocks([...blocks, newBlock]); /* add new event to calendar */
             }
         }
+
+        console.log(eventsDB);
     }
 
     /* This is the event handler for clicking on a time block */
@@ -249,7 +276,6 @@ const VolunteerCalendar = () => {
                     className={'mt6 w-75 ml-auto mr-auto ba br2 b--black-10 pa2'}
                     onSubmit={submit}>
                     {/* Calls submit function when submit button at bottom of form is pressed */}
-
 
                     {/* Heading of form */}
                     <h2>Enter your unavailability</h2>
