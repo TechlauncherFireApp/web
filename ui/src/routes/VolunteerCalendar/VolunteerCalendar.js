@@ -113,7 +113,7 @@ const VolunteerCalendar = () => {
     */
     function repeatEvent(event) {
         let newEvents = [];
-        switch (event.periodicity) {
+        switch (event.periodicity) { // Loading from local and loading from DB give different values 2 or '2' ... yes I realise in hindsight I could have just toNumbered event.periodicity or something...
             case 1:
             case '1':
                 for (let i = 1; i < 90; i++) {
@@ -133,7 +133,7 @@ const VolunteerCalendar = () => {
                     newEvents.push(tempEvent);
                 }
                 break;
-            case '2': // Loading from local and loading from DB give different values 2 or '2'
+            case '2':
             case 2:
                 for (let i = 7; i < 90; i+=7) {
                     let tempStart = moment(event.start.getTime());
@@ -192,9 +192,18 @@ const VolunteerCalendar = () => {
 
         /* Front end deletion */
         let blocksToChange = [...blocks];
-        let idx = blocks.indexOf(event);
-        blocksToChange.splice(idx, 1); /* remove event from array */
-        setBlocks(blocksToChange);
+        if (event.periodicity > 0){ // Remove all duplicate (repeating) events
+            blocksToChange = blocksToChange.filter(function( element ) {
+                return element.eventId !== event.eventId;
+            }  );
+            setBlocks(blocksToChange);
+        }
+        else {
+            let idx = blocks.indexOf(event);
+            blocksToChange.splice(idx, 1); /* remove event from array */
+            setBlocks(blocksToChange);
+        }
+
     }
 
     // TODO: Function to bring repeating events up to date - may not need if backend implements this functionality
