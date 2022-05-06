@@ -305,6 +305,12 @@ const VolunteerCalendar = () => {
                     setBlocks([...blocks, newBlock]); /* add new event to calendar (frontend)*/
                 }
             }
+            else {
+                setError('End date must be after start date');
+            }
+        }
+        else {
+            setError('Invalid Date');
         }
     }
 
@@ -317,6 +323,8 @@ const VolunteerCalendar = () => {
         }
     }
     /* NOTE: Alternative to the JS confirmation window we could also do a React popup/modal, this is significantly more complicated but would allow for the implementation of editing name/recurring. For now we shall leave like this, but it is a possible future improvement for sure... */
+
+    const [error, setError] = useState(undefined); // Error state
 
     /* HTML OF PAGE */
     return (
@@ -476,6 +484,13 @@ const VolunteerCalendar = () => {
                       value="Submit"
                       className={'btn bg-light-red pv2 ph3 br2 b near-white dim'}
                     />
+
+                    {/* Error Code */}
+                    {error && (
+                        <div className="alert alert-danger" role="alert">
+                            {error}
+                        </div>
+                    )}
                 </form>
             </div>
         </div>
