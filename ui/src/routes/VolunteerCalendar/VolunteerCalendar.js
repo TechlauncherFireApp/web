@@ -29,10 +29,14 @@ function dateValid(date) {
 }
 
 /* TODO: CSS Updates
-/* TODO: Update Repeat Function */
+/* TODO: update repeating events original date and time
 /* TODO: BUGS....
 *   BUG: Sometimes events double up over two days for no clear reason
+*   BUG: Times when loaded out of the backend are different from the when they were saved in the backend
+*   BUG: Events duplicate on handleEvent, idk why?
+*   BUG: On first delete of duplicate event it will double the number of events instead of deleting
 */
+
 
 /*
 -------------- MAIN FUNCTION ----------------------
@@ -75,6 +79,7 @@ const VolunteerCalendar = () => {
         }
 
         if(dateValid(newEvent.start) && (allDayStatus || newEvent.start < newEvent.end)){ /* checks if time block is valid before adding it to DB */
+            // newEvent.date = moment.format(newEvent.date);
             axios.post(backendPath + 'unavailability/createUnavailableEvent', newEvent).then((response) => {
                 setEventID(response.data['eventId']);
             });
@@ -89,7 +94,7 @@ const VolunteerCalendar = () => {
     * @param - List of events... ie EventsDB
     * @return - An array of events
     * @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
-    * */
+    */
     function repeatEvents(listOfEvents) {
          let newEvents = [];
          listOfEvents.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
@@ -139,10 +144,10 @@ const VolunteerCalendar = () => {
                     case 3:
                         for (let i = 1; i < 4; i++) {
                             let tempStart = new Date(element.start.getTime());
-                            tempStart.setDate(tempStart.getDate() + i);
+                            tempStart.setMonth(tempStart.getMonth() + i);
                             tempStart = moment(tempStart).toDate();
                             let tempEnd = new Date(element.end.getTime());
-                            tempEnd.setDate(tempEnd.getDate() + i);
+                            tempEnd.setMonth(tempEnd.getMonth() + i);
                             tempEnd = moment(tempEnd).toDate();
 
                             let tempEvent = {
@@ -160,46 +165,50 @@ const VolunteerCalendar = () => {
                         break;
                 }
          });
-         return newEvents;
+         return listOfEvents.concat(newEvents);
     }
 
-    /* TODO
-    *  function deleteEventDB {
-        // /* Delete from backend DB */
-        // axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
-        //         console.log(response.data[0]);
-        // }).catch(function (error) {
-        //     console.log(error);
-        // });
-        // TODO if (periodicity > 1) see changesToRepeatingEvents(eventID)
-        //   else {
-        //    let blocksToChange = [...blocks];
-        //         blocksToChange.splice(i, 1); /* remove event from array */
-        //         setBlocks(blocksToChange);
-        //   }
+    /*
+    * @desc - removes an event from the calendar (backend + frontend)
+    * @param - An event
+    * @return - Nothing
+    */
+    function deleteEventDB(event) {
+        /* Delete from backend DB */
+        axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
+                console.log(response.data[0]);
+        }).catch(function (error) {
+            console.log(error);
+        });
+
+        /* Front end deletion */
+        let blocksToChange = [...blocks];
+        let idx = blocks.indexOf(event);
+        blocksToChange.splice(idx, 1); /* remove event from array */
+        setBlocks(blocksToChange);
+    }
+
+    // TODO: Function to bring repeating events up to date
+    // function updateRepeatEventInDB() {
+    //     let currentMonth = new Date().getMonth();
+    //     blocks.forEach(function(element) {
+    //         if (element.periodicity > 0){
+    //             if(element.start.getMonth() < (currentMonth - 2) || (element.start.getMonth() >= 11 && CurrentMonth < 3)){
+    //                  element.setMonth(currentMonth - 1);
+    //                  Delete element from DB
+    //                  Add element to DB
+    //                  Essentially do same thing DragDrop handler does
+    //             }
+    //         }
+    //     });
+    // }
 
     /*
-    * @desc - Allows for the deletion or editing of repeating events
-    * @param - an eventID
-    * @return - An array of events
-    * @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
-    * */
-    /* TODO
-    *   function changesToRepeatingEvents() {
-    *       GET showAll
-    *       repeatEvents
-    *       setBlocks(^)
-    *   }
-    /* TODO - Reset calendar essentially ^^^^^^
-
-
-    /* --- INITIALISE --- */
-    /* Load Events from database on page initial render */
-
-    const [blocks, setBlocks] = useState('');
-
-    React.useEffect(() => {
-        axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
+    * @desc - Reloads the events in the frontend calendar from the backend and causes the repeating events to be duplicated on the frontend
+    * @return - Nothing
+    */
+    function loadEvents() {
+         axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user).then((response) => {
             let temp = response.data;
             temp.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
                 // element.start = moment(element.start).toDate();
@@ -208,21 +217,23 @@ const VolunteerCalendar = () => {
                 element.end = new Date(element.end);
             });
 
-            // Could break everything lmao
-            let repeatingEvents = repeatEvents(temp);
-            let initialEvents = temp.concat(repeatingEvents);
-            console.log(initialEvents);
-            setBlocks(initialEvents);
-            console.log(blocks);
-            //setBlocks(temp);
+            setBlocks(repeatEvents(temp));
         });
+    }
+
+    /* --- INITIALISE --- */
+    /* Load Events from database on page initial render */
+    const [blocks, setBlocks] = useState('');
+
+    /* Init the calendar */
+    React.useEffect(() => {
+        loadEvents();
     }, []);
 
     /* --- HANDLERS --- */
 
     /* Drag and Drop functionality */
     const handleEventChange = ({event, start, end}) => {
-        const idx = blocks.indexOf(event);
         const updatedBlock = { ...event, start, end };
 
         /* Delete from backend DB */
@@ -238,11 +249,18 @@ const VolunteerCalendar = () => {
         });
         updatedBlock.eventId = eventID;
 
-        /* Update Frontend Calendar */
-        const blocksToChange = [...blocks];
-        blocksToChange.splice(idx, 1, updatedBlock); // maybe delete count 0 and add deleting to the deleteEventFunc
+        /* Front end deletion */
+        let blocksToChange = [...blocks];
+        let idx = blocks.indexOf(event);
+        blocksToChange.splice(idx, 1, updatedBlock); /* remove event from array */
 
-        setBlocks(blocksToChange);
+        /* Update Frontend Calendar */
+        if (event.periodicity != 0) {
+            loadEvents(); // Reload page to capture repeating events
+        }
+        else {
+            setBlocks(blocksToChange);
+        }
     }
 
     /* Init the variables for the form (stateful) */
@@ -266,7 +284,8 @@ const VolunteerCalendar = () => {
         });
     };
 
-    const hidden = state.allDay ? 'hidden' : ''; /* for hiding the time inputs */
+    /* for hiding the time inputs */
+    const hidden = state.allDay ? 'hidden' : '';
 
     /* Form submission functionality */
     function submit(e) {
@@ -277,7 +296,12 @@ const VolunteerCalendar = () => {
 
         if (dateValid(newBlock.start)) { /* If date value is valid and start time is before end time*/
             if (state.allDay || (newBlock.start < newBlock.end)) {
-                setBlocks([...blocks, newBlock]); /* add new event to calendar (frontend)*/
+                if (newBlock.periodicity > 0) {
+                    loadEvents();
+                }
+                else {
+                    setBlocks([...blocks, newBlock]); /* add new event to calendar (frontend)*/
+                }
             }
         }
 
@@ -286,19 +310,16 @@ const VolunteerCalendar = () => {
 
     /* This is the event handler for clicking on a time block */
     const handleSelectedEvent = (event) => {
-        let i = blocks.indexOf(event); /* Find index of event that has been clicked on in the array */
         if (confirm("Delete " + event.title)) { /* JS Confirmation window prompt, returns true if yes is clicked */
 
+            let repeat = event.periodicity;
             /* Delete from backend DB */
-            axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
-                console.log(response.data[0]);
-            });
-            // deleteEventDB
+            deleteEventDB(event);
 
-            /* Update frontend calendar */
-            let blocksToChange = [...blocks];
-            blocksToChange.splice(i, 1); /* remove event from array */
-            setBlocks(blocksToChange);
+            if (repeat > 0){
+                loadEvents();
+            }
+
         }
     }
     /* NOTE: Alternative to the JS confirmation window we could also do a React popup/modal, this is significantly more complicated but would allow for the implementation of editing name/recurring. For now we shall leave like this, but it is a possible future improvement for sure... */
