@@ -88,9 +88,23 @@ const VolunteerCalendar = () => {
             });
             newEvent.eventId = eventID; /* Adds eventId to event object */
         }
-
+        //newEvent.eventId = databaseAdd(newEvent);
         return newEvent;
     }
+
+    // async function databaseAdd(event){
+    //     const id = axios.post(backendPath + 'unavailability/createUnavailableEvent', event)
+    //     return id['eventId']
+    // }
+
+    // async function loadEvents() {
+    //     const response = await axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user)
+    //     let temp = response.data
+    //     temp.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
+    //         element.start = moment(element.start).toDate();
+    //         element.end = moment(element.end).toDate();
+    //     });
+    // }
 
     /*
     * @desc - creates all the events that are repeating items
@@ -101,6 +115,7 @@ const VolunteerCalendar = () => {
         let newEvents = [];
         switch (event.periodicity) {
             case 1:
+            case '1':
                 for (let i = 1; i < 90; i++) {
                     let tempStart = moment(event.start.getTime());
                     tempStart.add(i, 'days');
@@ -118,6 +133,7 @@ const VolunteerCalendar = () => {
                     newEvents.push(tempEvent);
                 }
                 break;
+            case '2': // Loading from local and loading from DB give different values 2 or '2'
             case 2:
                 for (let i = 7; i < 90; i+=7) {
                     let tempStart = moment(event.start.getTime());
@@ -136,6 +152,7 @@ const VolunteerCalendar = () => {
                 }
                 break;
             case 3:
+            case '3':
                 for (let i = 1; i < 4; i++) {
                     let tempStart = moment(event.start.getTime());
                     tempStart.add(i, 'months');
@@ -154,6 +171,7 @@ const VolunteerCalendar = () => {
                 }
                 break;
             default:
+                console.log('bad')
                 break;
         }
         return newEvents;
@@ -226,8 +244,6 @@ const VolunteerCalendar = () => {
                     tempRepeats = tempRepeats.concat(repeatEvent(element));
                 }
             });
-            console.log(tempRepeats);
-            console.log(temp.concat(tempRepeats));
             setBlocks(temp.concat(tempRepeats));
         });
     }, []);
@@ -278,7 +294,6 @@ const VolunteerCalendar = () => {
 
     /* Function handles changes to the state of the form */
     const handleChange = e => {
-        console.log(state);
 
         /* Sets the state based on changes */
         setState({
@@ -296,11 +311,14 @@ const VolunteerCalendar = () => {
 
         /* create new event */
         let newBlock = createEvent(state.title, state.date, state.startTime, state.endTime, state.repeat, state.allDay);
+        console.log(newBlock.eventId);
 
         if (dateValid(newBlock.start)) { /* If date value is valid and start time is before end time*/
             if (state.allDay || (newBlock.start < newBlock.end)) {
                 if (newBlock.periodicity > 0) {
-                    setBlocks([...blocks, newBlock]);
+                    let t1 = repeatEvent(newBlock)
+                    t1.push(newBlock);
+                    setBlocks([...blocks, ...t1]);
                 }
                 else {
                     setBlocks([...blocks, newBlock]); /* add new event to calendar (frontend)*/
