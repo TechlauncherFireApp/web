@@ -29,13 +29,10 @@ function dateValid(date) {
 }
 
 /* TODO: CSS Updates
-/* TODO: Update Repeat Function
-/* TODO: FIX ISSUES
-BUG: WEEKLY VIEW CAUSES CRASH,
-Had similar issue in past
-was because of using Python date's instead of JS date objects...
-Repeat events cause crashes not og events
- */
+/* TODO: Update Repeat Function */
+/* TODO: BUGS....
+*   BUG: Sometimes events double up over two days for no clear reason
+*/
 
 /*
 -------------- MAIN FUNCTION ----------------------
@@ -116,7 +113,6 @@ const VolunteerCalendar = () => {
                                 eventId: element.eventId,
                             }
 
-                            console.log(1);
                             newEvents.push(tempEvent);
                         }
                         break;
@@ -138,7 +134,6 @@ const VolunteerCalendar = () => {
                                 eventId: element.eventId,
                             }
                             newEvents.push(tempEvent);
-                            console.log(tempStart);
                         }
                         break;
                     case 3:
@@ -159,16 +154,29 @@ const VolunteerCalendar = () => {
                                 eventId: element.eventId,
                             }
                             newEvents.push(tempEvent);
-                            console.log(3);
                         }
                         break;
                     default:
                         break;
                 }
          });
-         console.log('done');
          return newEvents;
     }
+
+    /* TODO
+    *  function deleteEventDB {
+        // /* Delete from backend DB */
+        // axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
+        //         console.log(response.data[0]);
+        // }).catch(function (error) {
+        //     console.log(error);
+        // });
+        // TODO if (periodicity > 1) see changesToRepeatingEvents(eventID)
+        //   else {
+        //    let blocksToChange = [...blocks];
+        //         blocksToChange.splice(i, 1); /* remove event from array */
+        //         setBlocks(blocksToChange);
+        //   }
 
     /*
     * @desc - Allows for the deletion or editing of repeating events
@@ -177,14 +185,13 @@ const VolunteerCalendar = () => {
     * @Notes - Implementation within main function must be followed by being parsed into setBlocks. ie setBlocks[...blocks, repeatEventsOutput]
     * */
     /* TODO
-    *   function changesToRepeatingEvents(eventID) {
-    *       GET removeUnavailableEvent parse eventID
-    *       GET createUnavailableEvent
-    *       Delete in front-end calendar (eventsDB) all events with eventID
-    *       Call repeatEvents but use a list with only this changed events
-    *       return new result of that repeatEvents call
+    *   function changesToRepeatingEvents() {
+    *       GET showAll
+    *       repeatEvents
+    *       setBlocks(^)
     *   }
-    * */
+    /* TODO - Reset calendar essentially ^^^^^^
+
 
     /* --- INITIALISE --- */
     /* Load Events from database on page initial render */
@@ -233,7 +240,7 @@ const VolunteerCalendar = () => {
 
         /* Update Frontend Calendar */
         const blocksToChange = [...blocks];
-        blocksToChange.splice(idx, 1, updatedBlock);
+        blocksToChange.splice(idx, 1, updatedBlock); // maybe delete count 0 and add deleting to the deleteEventFunc
 
         setBlocks(blocksToChange);
     }
@@ -286,6 +293,7 @@ const VolunteerCalendar = () => {
             axios.get(backendPath + 'unavailability/removeUnavailableEvent?eventId=' + event.eventId + '&userId=' + event.userId).then((response) => {
                 console.log(response.data[0]);
             });
+            // deleteEventDB
 
             /* Update frontend calendar */
             let blocksToChange = [...blocks];
