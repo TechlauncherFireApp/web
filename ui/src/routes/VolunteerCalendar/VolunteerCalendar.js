@@ -28,7 +28,7 @@ function dateValid(date) {
     return false;
 }
 
-/* TODO: CSS&HTML Updates; 1. Add note below form that gives users clear instructions on how unavailability works, 2. Error messages for users when they enter an incorrect input, 3. Make it look nicer
+/* TODO: CSS&HTML Updates; 1. Header should show users name 2. Make it look nicer 3. Fix instructions
 /* TODO: Make it user agnostic... ie user value above is hard-coded need to make calendar use the data from the user who is logged on like the previous system does
 /* TODO: Needs to be limit tested - I think you may be able to enter so not great options for timeblocks
 *  IMPLEMENTATION IMPROVEMENTS: repeating Calendar Events when edited will remove all repeating/duplicate events until reload - this is going to be very tricky to work around and is pretty minor priority
@@ -304,6 +304,7 @@ const VolunteerCalendar = () => {
                 else {
                     setBlocks([...blocks, newBlock]); /* add new event to calendar (frontend)*/
                 }
+                setError(undefined);
             }
             else {
                 setError('End date must be after start date');
@@ -491,7 +492,17 @@ const VolunteerCalendar = () => {
                             {error}
                         </div>
                     )}
+
+                    {/* INSTRUCTIONS */}
+                    {/*
+                    <p>The FireApp works off a Unavailabilility system. What this means is that you list the times to you are unavailable to work rather than the times you are available to work.</p>
+                    <p>Title is an optional field that allows you to name the unavailability time blocks that you create. The other fields are all mandatory and must be filled out to add events.</p>
+                    */}
+
                 </form>
+
+
+
             </div>
         </div>
     );
