@@ -28,18 +28,11 @@ function dateValid(date) {
     return false;
 }
 
-/* TODO: CSS Updates
-/* TODO: BUGS....
-*      ------ DATE/TIME ISSUES ------
-*       BUG: Sometimes events double up over two days for no clear reason - I think related to issue below
-*       BUG: Times when loaded out of the backend are different from the when they were saved in the backend - python JS date issues
-*       ----- AWAIT / AYSNC ISSUES -----
-*       BUG: On first delete of duplicate event it will double the number of events instead of deleting
-*       BUG: Sometimes you have to click submit twice to add repeating events (and sometimes it appears twice when submitting)
-*       ---- UNKNOWN CAUSE ----
-*       BUG: sometimes you delete a repeating event but it duplicates instead
+/* TODO: CSS&HTML Updates; 1. Add note below form that gives users clear instructions on how unavailability works, 2. Error messages for users when they enter an incorrect input, 3. Make it look nicer
+/* TODO: Make it user agnostic... ie user value above is hard-coded need to make calendar use the data from the user who is logged on like the previous system does
+/* TODO: Needs to be limit tested - I think you may be able to enter so not great options for timeblocks
+*  IMPLEMENTATION IMPROVEMENTS: repeating Calendar Events when edited will remove all repeating/duplicate events until reload - this is going to be very tricky to work around and is pretty minor priority
  */
-
 
 /*
 -------------- MAIN FUNCTION ----------------------
@@ -82,29 +75,23 @@ const VolunteerCalendar = () => {
         }
 
         if(dateValid(newEvent.start) && (allDayStatus || newEvent.start < newEvent.end)){ /* checks if time block is valid before adding it to DB */
-            //newEvent.date = moment.format(newEvent.date);
-            axios.post(backendPath + 'unavailability/createUnavailableEvent', newEvent).then((response) => {
+
+            // Converting JS date to ISO 8061 DateTime Format (format used by backend)
+            let startISO = moment(newEvent.start);
+            let endISO = moment(newEvent.end.toISOString());
+            let exportEvent = {...newEvent};
+            exportEvent.start = startISO.format();
+            exportEvent.end = endISO.format();
+            console.log(exportEvent.start);
+
+            // SEND OUT TO DB
+            axios.post(backendPath + 'unavailability/createUnavailableEvent', exportEvent).then((response) => {
                 setEventID(response.data['eventId']);
             });
             newEvent.eventId = eventID; /* Adds eventId to event object */
         }
-        //newEvent.eventId = databaseAdd(newEvent);
         return newEvent;
     }
-
-    // async function databaseAdd(event){
-    //     const id = axios.post(backendPath + 'unavailability/createUnavailableEvent', event)
-    //     return id['eventId']
-    // }
-
-    // async function loadEvents() {
-    //     const response = await axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user)
-    //     let temp = response.data
-    //     temp.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
-    //         element.start = moment(element.start).toDate();
-    //         element.end = moment(element.end).toDate();
-    //     });
-    // }
 
     /*
     * @desc - creates all the events that are repeating items
@@ -171,7 +158,6 @@ const VolunteerCalendar = () => {
                 }
                 break;
             default:
-                console.log('bad')
                 break;
         }
         return newEvents;
@@ -219,20 +205,6 @@ const VolunteerCalendar = () => {
     //         }
     //     });
     // }
-
-    /*
-    * @desc - Reloads the events in the frontend calendar from the backend and causes the repeating events to be duplicated on the frontend
-    * @return - Nothing
-    */
-    // async function loadEvents() {
-    //     const response = await axios.get(backendPath + 'unavailability/showUnavailableEvent?userId='+user)
-    //     let temp = response.data
-    //     temp.forEach(function(element) { /* Converting date format to JS Date objects which React-Big-Calendar requires */
-    //         element.start = moment(element.start).toDate();
-    //         element.end = moment(element.end).toDate();
-    //     });
-    // }
-
 
     /* --- INITIALISE --- */
 
@@ -321,7 +293,6 @@ const VolunteerCalendar = () => {
 
         /* create new event */
         let newBlock = createEvent(state.title, state.date, state.startTime, state.endTime, state.repeat, state.allDay);
-        console.log(newBlock.eventId);
 
         if (dateValid(newBlock.start)) { /* If date value is valid and start time is before end time*/
             if (state.allDay || (newBlock.start < newBlock.end)) {
@@ -439,7 +410,7 @@ const VolunteerCalendar = () => {
                             <option value="9">9:00 AM</option>
                             <option value="10">10:00 AM</option>
                             <option value="11">11:00 AM</option>
-                            <option value="12">12:00 AM</option>
+                            <option value="12">12:00 PM</option>
                             <option value="13">1:00 PM</option>
                             <option value="14">2:00 PM</option>
                             <option value="15">3:00 PM</option>
@@ -473,7 +444,7 @@ const VolunteerCalendar = () => {
                             <option value="9">9:00 AM</option>
                             <option value="10">10:00 AM</option>
                             <option value="11">11:00 AM</option>
-                            <option value="12">12:00 AM</option>
+                            <option value="12">12:00 PM</option>
                             <option value="13">1:00 PM</option>
                             <option value="14">2:00 PM</option>
                             <option value="15">3:00 PM</option>
@@ -485,7 +456,7 @@ const VolunteerCalendar = () => {
                             <option value="21">9:00 PM</option>
                             <option value="22">10:00 PM</option>
                             <option value="23">11:00 PM</option>
-                            <option value="24">12:00 PM</option>
+                            <option value="24">12:00 AM</option>
                           </select>
                         </div>
                     </div>
