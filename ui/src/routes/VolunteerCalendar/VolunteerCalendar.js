@@ -203,7 +203,6 @@ const VolunteerCalendar = () => {
             blocksToChange.splice(idx, 1); /* remove event from array */
             setBlocks(blocksToChange);
         }
-
     }
 
     // TODO: Function to bring repeating events up to date - may not need if backend implements this functionality
@@ -278,17 +277,19 @@ const VolunteerCalendar = () => {
 
         /* Front end deletion */
         let blocksToChange = [...blocks];
-        let idx = blocks.indexOf(event);
-        blocksToChange.splice(idx, 1, updatedBlock); /* remove event from array */
 
         /* Update Frontend Calendar */
         if (event.periodicity != 0) {
-            // loadEvents(); // Reload page to capture repeating events
-            setBlocks(blocksToChange);
+            blocksToChange = blocksToChange.filter(function (element) {
+                return element.eventId !== event.eventId;
+            });
+            blocksToChange.push(updatedBlock);
         }
         else {
-            setBlocks(blocksToChange);
+            let idx = blocks.indexOf(event);
+            blocksToChange.splice(idx, 1, updatedBlock); /* remove event from array, add updatedBlock*/
         }
+        setBlocks(blocksToChange);
     }
 
     /* Init the variables for the form (stateful) */
@@ -340,14 +341,8 @@ const VolunteerCalendar = () => {
     const handleSelectedEvent = (event) => {
         if (confirm("Delete " + event.title)) { /* JS Confirmation window prompt, returns true if yes is clicked */
 
-            //let repeat = event.periodicity;
             /* Delete from backend DB */
             deleteEventDB(event);
-
-            // if (repeat > 0){
-            //     loadEvents();
-            // }
-
         }
     }
     /* NOTE: Alternative to the JS confirmation window we could also do a React popup/modal, this is significantly more complicated but would allow for the implementation of editing name/recurring. For now we shall leave like this, but it is a possible future improvement for sure... */
