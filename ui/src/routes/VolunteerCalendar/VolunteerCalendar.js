@@ -30,7 +30,7 @@ function dateValid(date) {
 
 /* TODO: CSS&HTML Updates; 1. Header should show users name 2. Make it look nicer 3. Fix instructions
 /* TODO: Make it user agnostic... ie user value above is hard-coded need to make calendar use the data from the user who is logged on like the previous system does
-/* TODO: Needs to be limit tested - I think you may be able to enter so not great options for timeblocks
+/* TODO: Needs to be limit tested
 *  IMPLEMENTATION IMPROVEMENTS: repeating Calendar Events when edited will remove all repeating/duplicate events until reload - this is going to be very tricky to work around and is pretty minor priority
  */
 
@@ -103,7 +103,7 @@ const VolunteerCalendar = () => {
         switch (event.periodicity) { // Loading from local and loading from DB give different values 2 or '2' ... yes I realise in hindsight I could have just toNumbered event.periodicity or something...
             case 1:
             case '1':
-                for (let i = 1; i < 90; i++) {
+                for (let i = 1; i < 210; i++) { // repeats for about 7 months
                     let tempStart = moment(event.start.getTime());
                     tempStart.add(i, 'days');
                     let tempEnd = moment(event.end.getTime());
@@ -122,7 +122,7 @@ const VolunteerCalendar = () => {
                 break;
             case '2':
             case 2:
-                for (let i = 7; i < 90; i+=7) {
+                for (let i = 7; i < 210; i+=7) {
                     let tempStart = moment(event.start.getTime());
                     tempStart.add(i, 'days');
                     let tempEnd = moment(event.end.getTime());
@@ -140,7 +140,7 @@ const VolunteerCalendar = () => {
                 break;
             case 3:
             case '3':
-                for (let i = 1; i < 4; i++) {
+                for (let i = 1; i < 7; i++) { // 7 months
                     let tempStart = moment(event.start.getTime());
                     tempStart.add(i, 'months');
                     let tempEnd = moment(event.end.getTime());
@@ -498,11 +498,7 @@ const VolunteerCalendar = () => {
                     <p>The FireApp works off a Unavailabilility system. What this means is that you list the times to you are unavailable to work rather than the times you are available to work.</p>
                     <p>Title is an optional field that allows you to name the unavailability time blocks that you create. The other fields are all mandatory and must be filled out to add events.</p>
                     */}
-
                 </form>
-
-
-
             </div>
         </div>
     );
