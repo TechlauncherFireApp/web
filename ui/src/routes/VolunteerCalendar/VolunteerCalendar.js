@@ -30,8 +30,6 @@ function dateValid(date) {
 
 /* TODO: CSS&HTML Updates; 1. Header should show users name 2. Make it look nicer 3. Fix instructions
 /* TODO: Make it user agnostic... ie user value above is hard-coded need to make calendar use the data from the user who is logged on like the previous system does
-/* TODO: Needs to be limit tested
-*  IMPLEMENTATION IMPROVEMENTS: repeating Calendar Events when edited will remove all repeating/duplicate events until reload - this is going to be very tricky to work around and is pretty minor priority
  */
 
 /*
@@ -190,21 +188,6 @@ const VolunteerCalendar = () => {
             setBlocks(blocksToChange);
         }
     }
-
-    // TODO: Function to bring repeating events up to date - may not need if backend implements this functionality
-    // function updateRepeatEventInDB() {
-    //     let currentMonth = new Date().getMonth();
-    //     blocks.forEach(function(element) {
-    //         if (element.periodicity > 0){
-    //             if(element.start.getMonth() < (currentMonth - 2) || (element.start.getMonth() >= 11 && CurrentMonth < 3)){
-    //                  element.setMonth(currentMonth - 1);
-    //                  Delete element from DB
-    //                  Add element to DB
-    //                  Essentially do same thing DragDrop handler does
-    //             }
-    //         }
-    //     });
-    // }
 
     /* --- INITIALISE --- */
 
