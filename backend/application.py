@@ -32,6 +32,7 @@ app.register_blueprint(tenancy_config_bp)
 app.register_blueprint(tutorial_quiz_bp)
 app.register_blueprint(email_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(chatbot_bp)
 
 
 @app.route('/')

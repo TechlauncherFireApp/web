@@ -10,3 +10,4 @@ from .asset_type_role import AssetTypeRole
 from .tenancy_config import TenancyConfig
 from .question import Question
 from .password_retrieval import PasswordRetrieval
+from .chatbot_input import ChatbotInput
