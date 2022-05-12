@@ -24,11 +24,12 @@ import AssetTypes from './routes/Reference/assetTypes';
 import Qualifications from './routes/Reference/qualifications';
 import Roles from './routes/Reference/roles';
 import UserPrivileges from './routes/UserPrivileges';
+import AvailabilityForm from './routes/VolunteerCalendar/Availability';
+import VolunteerCalendar from './routes/VolunteerCalendar/VolunteerCalendar';
 import VolunteerRoles from './routes/VolunteerRoles';
 import Availability from './routes/Volunteers/Availability/Availability';
 import Volunteer from './routes/Volunteers/volunteer';
 import VolunteersContainer from './routes/Volunteers/volunteersContainer';
-
 
 export default function App() {
   return (
@@ -59,6 +60,8 @@ export default function App() {
           <Route exact path="/volunteer/:id" component={Volunteer} />
           <Route exact path="/volunteer/:id/availability" component={Availability} />
           <Route exact path="/tenancy-configs" component={Configuration} />
+          <Route exact path='/calendar' component={VolunteerCalendar} />
+          <Route exact path='/form' component={AvailabilityForm} />
           <Route exact path="/quiz" component={QuizMainPage} />
           <Route path={"/questions"} component={QuizQuestions} />
           <Route path={"/quiz-result"} component={QuizResult} />
