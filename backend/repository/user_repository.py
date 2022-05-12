@@ -51,3 +51,9 @@ def self_demote(session, user_id):
             return True
     return False
 
+
+def get_user_by_email(session, email):
+    user = session.query(User). \
+        filter(User.email == email).first()
+    if user:
+        return user
