@@ -30,8 +30,6 @@ function dateValid(date) {
 
 /* TODO: CSS&HTML Updates; 1. Header should show users name 2. Make it look nicer 3. Fix instructions
 /* TODO: Make it user agnostic... ie user value above is hard-coded need to make calendar use the data from the user who is logged on like the previous system does
- */
-
 /*
 -------------- MAIN FUNCTION ----------------------
  */
@@ -76,11 +74,10 @@ const VolunteerCalendar = () => {
 
             // Converting JS date to ISO 8061 DateTime Format (format used by backend)
             let startISO = moment(newEvent.start);
-            let endISO = moment(newEvent.end.toISOString());
+            let endISO = moment(newEvent.end);
             let exportEvent = {...newEvent};
             exportEvent.start = startISO.format();
             exportEvent.end = endISO.format();
-            console.log(exportEvent.start);
 
             // SEND OUT TO DB
             axios.post(backendPath + 'unavailability/createUnavailableEvent', exportEvent).then((response) => {
@@ -147,7 +144,7 @@ const VolunteerCalendar = () => {
                     let tempEvent = {
                         userId: event.userId,
                         title: event.title,
-                        start: event.toDate(),
+                        start: tempStart.toDate(),
                         end: tempEnd.toDate(),
                         periodicity: event.periodicity,
                         eventId: event.eventId,
@@ -224,8 +221,15 @@ const VolunteerCalendar = () => {
             console.log(error);
         });
 
+
+        // Converting JS date to ISO 8061 DateTime Format (format used by backend)
+        let startISO = moment(start);
+        let endISO = moment(end);
+        let exportEvent = {...event};
+        exportEvent.start = startISO.format();
+        exportEvent.end = endISO.format();
         /* replace with new event in backend DB */
-        axios.post(backendPath + 'unavailability/createUnavailableEvent', updatedBlock).then((response) => {
+        axios.post(backendPath + 'unavailability/createUnavailableEvent', exportEvent).then((response) => {
             setEventID(response.data['eventId']);
         });
         updatedBlock.eventId = eventID;
