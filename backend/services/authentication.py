@@ -4,12 +4,14 @@ from sqlalchemy.orm import Session
 
 from domain import User, PasswordRetrieval
 from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword, VerifyCode, ResetPassword
+from domain.type.Gender import Gender
+from domain.type.diet import Diet
 from services.jwk import JWKService
 from services.password import PasswordService
 from services.mail_sms import MailSender
 
 import random
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 
 passwordService = PasswordService()
 jwk_service = JWKService()
@@ -19,9 +21,10 @@ class AuthenticationService():
 
     @staticmethod
     def register(session: Session, email: str, password: str, given_name: str, last_name: str,
-                 phone: str) -> RegisterResult:
+                 phone: str, gender: str, diet: str) -> RegisterResult:
         """
         Register a new user in the application.
+        :param gender: The users gender to register with.
         :param given_name: The users given name to register with.
         :param last_name: The users last name to register with.
         :param phone: The users mobile phone number.
@@ -43,13 +46,21 @@ class AuthenticationService():
         if existing_user is not None:
             return RegisterResult.USERNAME_ALREADY_REGISTERED
 
+        if gender == "":
+            gender = Gender.Male
+
+        if diet == "":
+            diet = Diet.meals
         # Everything seems fine, so we go ahead and create the user & the linked account.
         password_hash = passwordService.hash(password)
         new_user = User(role=UserType.VOLUNTEER, password=password_hash, first_name=given_name, last_name=last_name,
-                        mobile_number=phone, email=email, preferred_hours={}, experience_years=0, possibleRoles=["Basic"],
+                        mobile_number=phone, email=email, preferred_hours={}, experience_years=0,
+                        possibleRoles=["Basic"],
                         qualifications=[],
                         availabilities={"Friday": [], "Monday": [], "Sunday": [], "Tuesday": [], "Saturday": [],
-                                        "Thursday": [], "Wednesday": []})
+                                        "Thursday": [], "Wednesday": []},
+                        gender=gender,
+                        diet=diet)
         session.add(new_user)
         session.flush()
         return RegisterResult.SUCCESS
@@ -93,7 +104,7 @@ class AuthenticationService():
         _ALL_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         generate_code = ''
         for _ in range(6):
-            index = random.randint(0, len(_ALL_CHARACTERS)-1)
+            index = random.randint(0, len(_ALL_CHARACTERS) - 1)
             generate_code += _ALL_CHARACTERS[index]
         subject = '[FireApp3.0] Your Password Reset Code'
         content = """
@@ -112,7 +123,8 @@ class AuthenticationService():
         MailSender().email(email, subject, content)
         resend_user = session.query(PasswordRetrieval).filter(PasswordRetrieval.email == email).first()
         if resend_user is None:
-            code_query = PasswordRetrieval(email=email, code=generate_code, created_datetime=datetime.now(), expired_datetime=datetime.now()+timedelta(days=1))
+            code_query = PasswordRetrieval(email=email, code=generate_code, created_datetime=datetime.now(),
+                                           expired_datetime=datetime.now() + timedelta(days=1))
             session.add(code_query)
         else:
             resend_user.code = generate_code
@@ -183,5 +195,3 @@ class AuthenticationService():
         # test = session.query(User).filter(User.email == email).first()
         # print("test", passwordService.compare(old_password, test.password))
         return ResetPassword.SUCCESS
-
-
