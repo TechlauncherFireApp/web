@@ -81,6 +81,37 @@ class ExistingRequests(Resource):
             return {"success": result}
 
 
+class SrExistingRequests(Resource):
+    @marshal_with(get_resource_list)
+    def get(self):
+        with session_scope() as session:
+            res = get_existing_requests(session)
+            return {"success": True, "results": res}
+
+
+
+s_request_fields = {
+    "id": fields.Integer,
+    "title": fields.String,
+    "status": fields.String,
+    "update_date_time": fields.String
+}
+
+
+class SrGetRequest(Resource):
+    @marshal_with(s_request_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int, required=True)
+        args = parser.parse_args()
+        with session_scope() as session:
+            return get_request_by_id(session, args["id"])
+
+
 existing_requests_bp = Blueprint('existing_requests', __name__)
 api = Api(existing_requests_bp)
 api.add_resource(ExistingRequests, '/existing_requests')
+
+api_supervisor = Api(existing_requests_bp, '/supervisor')
+api_supervisor.add_resource(SrExistingRequests, '/requestList')
+api_supervisor.add_resource(SrGetRequest, '/getRequest')

@@ -4,6 +4,7 @@ from flask_restful import reqparse, Resource, fields, marshal_with, Api
 from .utility import *
 from domain import session_scope
 from repository.asset_request_vehicle_repository import *
+from repository.supervisor_vehicle_volunteers import *
 
 # Validate a shift input
 def input_vehicles(value, name):
@@ -69,6 +70,66 @@ class VehicleRequest(Resource):
             return {"success": result}
 
 
+class SrAddVehicle(Resource):
+    @marshal_with(resource_fields)
+    def post(self):
+        args = parser.parse_args()
+        with session_scope() as session:
+            new_id = insert_vehicle(session, args["requestId"], args["assetType"], args["startDate"], args["endDate"])
+            return {"success": True, 'id': new_id}
+
+
+class SrDeleteVehicle(Resource):
+    @marshal_with(resource_fields)
+    def delete(self):
+        args = delete_parser.parse_args()
+        with session_scope() as session:
+            result = delete_vehicle(session, args["requestId"], args["vehicleId"])
+            return {"success": result}
+
+
+
+sr_delete_fields = {
+    "success": fields.Boolean
+}
+
+class SrDeleteVehicleRole(Resource):
+    @marshal_with(sr_delete_fields)
+    def delete(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('vehicleId', type=int, required=True)
+        parser.add_argument('positionId', type=int, required=True)
+        vehicle_id = parser.parse_args()["vehicleId"]
+        position_id = parser.parse_args()["positionId"]
+        with session_scope() as session:
+            result = remove_vehicle_volunteer(session,vehicle_id,position_id)
+            return {"success": result}
+
+insert_vehicle_volunteer_fields = {
+    "newVehicleRoleId": fields.Integer
+}
+class SrInsertVehicleRole(Resource):
+    @marshal_with(insert_vehicle_volunteer_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('vehicleId', type=int, required=True)
+        parser.add_argument('roleId',type=int, required=True)
+        vehicle_id = parser.parse_args()["vehicleId"]
+        role_id = parser.parse_args()["roleId"]
+        with session_scope() as session:
+            result = insert_vehicle_volunteer(session,vehicle_id,role_id)
+            return {"newVehicleRoleId": result}
+
+
+
+
 vehicle_request_bp = Blueprint('vehicle_request', __name__)
 api = Api(vehicle_request_bp)
 api.add_resource(VehicleRequest, '/vehicle/request')
+
+sr_api = Api(vehicle_request_bp, '/supervisor')
+sr_api.add_resource(SrAddVehicle, '/addVehicle')
+sr_api.add_resource(SrDeleteVehicle, '/deleteVehicle')
+sr_api.add_resource(SrDeleteVehicleRole,'/deleteVehicleRole')
+sr_api.add_resource(SrInsertVehicleRole, '/insertVehicleRole')
+

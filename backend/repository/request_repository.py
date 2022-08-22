@@ -68,3 +68,16 @@ def update_request_status(session, request_id, status):
         record.status = status
         return True
     return False
+
+
+
+def get_request_by_id(session, request_id):
+    """
+    search request by question id
+    :return: request object
+    """
+    request = session.query(AssetRequest).filter(AssetRequest.id == request_id).first()
+    if request is not None:
+        session.expunge(request)
+        return request
+    return None
