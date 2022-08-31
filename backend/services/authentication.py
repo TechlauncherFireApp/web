@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 
 from domain import User
 from domain.type import UserType, RegisterResult, LoginResult
-from domain.type.Gender import Gender
-from domain.type.diet import Diet
+from domain.type import Gender
+from domain.type import Diet
 from services.jwk import JWKService
 from services.password import PasswordService
 

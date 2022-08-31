@@ -4,8 +4,8 @@ from sqlalchemy import Column, String, DateTime, Integer, Enum, JSON
 
 from domain.base import Base
 from domain.type import UserType
-from domain.type.diet import Diet
-from domain.type.Gender import Gender
+from domain.type import Diet
+from domain.type import Gender
 
 
 class User(Base):
