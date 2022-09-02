@@ -32,6 +32,7 @@ import Volunteer from './routes/Volunteers/volunteer';
 import VolunteersContainer from './routes/Volunteers/volunteersContainer';
 
 export default function App() {
+  /* Just a comment  */
   return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
     <BrowserRouter>
