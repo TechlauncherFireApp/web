@@ -10,7 +10,6 @@ import Container from 'react-bootstrap/Container';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
 
-// import { useHistory } from 'react-router-dom';
 import { backendPath } from '../../config';
 import QuizResult from "../QuizResult/QuizResult";
 
@@ -24,7 +23,6 @@ const QuizQuestions = () => {
     const [role, setRole] = useState('');
     const [completed, setCompleted] = useState(-1);
     const [flag, setFlag] = useState("questions");
-    // const history = useHistory();
 
     const config = {
             'headers': {
@@ -75,26 +73,19 @@ const QuizQuestions = () => {
     }
 
     const handleNext = () => {
-        // if (answers[questionNum] === undefined) {
-        //     setErrorMessage("* You must choose an answer and check it!");
-        // } else if (solutions[questionNum] === undefined) {
-        //     setErrorMessage("* You must check your answer!");
-        // } else {
-            setErrorMessage("");
+        setErrorMessage("");
         console.log("questionNum:" + questionNum);
-            console.log(completed);
-            if (completed === questions.length && questionNum === questions.length - 1) {
-                // history.push(`/quiz-result/?correct=${solutions.filter(x => x.answer[0].result===true).length}&number=${questions.length}&role=${role}`);
-                setFlag("results");
-            } else if (questionNum === questions.length - 1) {
-                setErrorMessage("* You must select and check the answer for all questions to proceed to your results.");
-            } else {
-                setErrorMessage("");
-                const increment = 100 / questions.length;
-                setQuestionNum(questionNum + 1);
-                setProgress(progress + increment);
-            }
-        // }
+        console.log(completed);
+        if (completed === questions.length && questionNum === questions.length - 1) {
+            setFlag("results");
+        } else if (questionNum === questions.length - 1) {
+            setErrorMessage("* You must select and check the answer for all questions to proceed to your results.");
+        } else {
+            setErrorMessage("");
+            const increment = 100 / questions.length;
+            setQuestionNum(questionNum + 1);
+            setProgress(progress + increment);
+        }
     }
 
     const handleUserInput = (id) => {
