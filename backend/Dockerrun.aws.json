@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "FROM python:3.7"
+    "Name": "FROM python:3.8"
   },
   "Ports": [
     {
