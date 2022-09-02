@@ -1,5 +1,0 @@
-REACT_APP_VERSION=$npm_package_version
-REACT_APP_NAME=$npm_package_name
-GENERATE_SOURCEMAP=false
-REACT_APP_ENVIRONMENT=prd
-REACT_APP_BACKEND_URL=https://api.fireapp-au.com/
