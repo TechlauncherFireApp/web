@@ -28,64 +28,7 @@ class Optimiser:
         """
         model_str = """
         
-        int: A; set of int: ASSETSHIFT = 1..A;
         
-        int: S; set of int: ROLE = 1..S;      
-        
-        int: R; set of int: VOLUNTEER = 1..R;
-        
-        int: C; set of int: CLASH = 1..C;
-        
-        array[ASSETSHIFT,ASSETSHIFT] of bool: clashing; % Nx2 array storing pairs of clashing shifts
-        array[ASSETSHIFT, ROLE] of int: sreq; % NxM array storing asset shifts (rows) and roles(columns), [n,m] is how many of those roles are required. 
-        array[ASSETSHIFT,VOLUNTEER] of bool: compatible; % NxM array storing if the volunteer is available for that asset shift. 
-        array[VOLUNTEER, ROLE] of bool: mastery; %NxM array storing the volunteer can perform that action 
-        
-        %~~~~~~~~~~~~~~~~~~~
-        % Decision variables
-        array[ASSETSHIFT,VOLUNTEER,ROLE] of var bool: contrib; % ROLE contribution assignment
-        %contrib = 1 iff volunteer r contributes with ROLE s to assetshift a.
-        
-        %~~~~~~~~~~~~~~~~~~~
-        % Constraints
-        % ROLE constraint: ROLE requirements are satisfied
-        constraint forall(a in ASSETSHIFT, s in ROLE where sreq[a,s]>0)(
-          sum(r in VOLUNTEER)(contrib[a,r,s]) <= sreq[a,s]
-        );
-        
-        % ROLE constraint: VOLUNTEERs aren't assigned to a ROLE thats not required
-        constraint forall(a in ASSETSHIFT, s in ROLE where sreq[a,s] == 0)(
-          sum(r in VOLUNTEER)(contrib[a,r,s]) == 0
-        );
-        
-        % Non-Multi-Tasking constraint: Maximum of one contribution to each activity
-        constraint forall(a in ASSETSHIFT, r in VOLUNTEER)(
-          sum(s in ROLE where mastery[r,s]==true /\ sreq[a,s]>0)
-             (contrib[a,r,s]) <= 1
-        );
-        
-        % ROLE constraint: VOLUNTEERs only use ROLEs they have mastered
-        constraint forall(a in ASSETSHIFT, r in VOLUNTEER, s in ROLE)(
-          contrib[a,r,s] <= bool2int(mastery[r,s])
-        );
-        
-        % Compatibility constraint: VOLUNTEERs are only assigned shifts they are compatible with
-        constraint forall(a in ASSETSHIFT, r in VOLUNTEER)(
-          sum(s in ROLE)(contrib[a,r,s]) <= bool2int(compatible[a,r])
-        );
-        
-        % Clashing constraint: VOLUNTEERs cannot be assigned to 2 shifts that clash
-        constraint forall(c in CLASH)(
-          forall(d in CLASH)(
-            forall(r in VOLUNTEER)(
-                not(clashing[c,d] == true /\ sum(s in ROLE)(contrib[c,r,s] + contrib[d,r,s]) > 1)
-            )
-          )          
-        );
-        
-        %~~~~~~~~~~~~~~~~~~~
-        % Objective
-        solve maximize sum(a in ASSETSHIFT, r in VOLUNTEER, s in ROLE)(contrib[a,r,s]);
         """
         return model_str
 
