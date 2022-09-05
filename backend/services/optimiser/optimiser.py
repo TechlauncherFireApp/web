@@ -28,7 +28,103 @@ class Optimiser:
         """
         model_str = """
         
-        
+        % Simple Parameters
+int: A; 
+set of int: ASSETSHIFT = 1..A;
+
+int: R;
+set of int: ROLE = 1..R;
+
+int: P;
+set of int: POSITION = 1..P;
+
+int: V;
+set of int: VOLUNTEER = 1..V;
+
+int: Q;
+set of int: QUALIFICATION = 1..Q;
+
+
+
+% Supervisor Customisation
+array[ASSETSHIFT, POSITION, QUALIFICATION] of bool: qualrequirements;
+array[ASSETSHIFT, POSITION, ROLE] of bool: rolerequirements;
+array[POSITION, ASSETSHIFT] of bool: posrequirements;
+
+% Volunteer Abilities
+array[VOLUNTEER, QUALIFICATION] of bool: qualability;
+array[VOLUNTEER, ROLE] of bool: roleability;
+
+% Volunteer Availabilities
+array[VOLUNTEER, ASSETSHIFT] of bool: availability;
+array[ASSETSHIFT, ASSETSHIFT] of bool: clashes;
+
+% Decision Variable
+array[ASSETSHIFT, VOLUNTEER, POSITION] of var bool: assignment;
+
+
+
+% Constraints
+% The number of positions assigned should not exceed the number of positions needed for a shift.
+constraint forall(a in ASSETSHIFT)(
+  sum(p in POSITION)(posrequirements[p, a]) >= sum(p in POSITION, v in VOLUNTEER)(bool2int(assignment[a, v, p]))
+);
+
+% A volunteer should be assigned to at most one position per shift.
+constraint forall(a in ASSETSHIFT, v in VOLUNTEER)(
+  sum(p in POSITION)(bool2int(assignment[a, v, p])) <= 1
+);
+
+% A position should only be assigned to at most once for all shifts.
+constraint forall(p in POSITION)(
+  sum(a in ASSETSHIFT, v in VOLUNTEER)(assignment[a, v, p]) <= 1
+);
+
+% If a volunteer either does not have the qualification or role for a position, then they should not be assigned to a shift.
+constraint forall(a in ASSETSHIFT, p in POSITION, v in VOLUNTEER, r in ROLE, q in QUALIFICATION where ((qualrequirements[a, p, q] == true /\ qualability[v, q] == false) \/ (rolerequirements[a, p, r] == true /\ roleability[v, r] == false)))(
+  bool2int(assignment[a, v, p]) == 0
+);
+
+
+% If a volutneer is not available for a shift, they should not be assigned in the shift.
+constraint forall(v in VOLUNTEER, a in ASSETSHIFT where availability[v, a] == 0)(
+  sum(p in POSITION)(assignment[a, v, p]) == 0 
+);
+
+% If a shift clashes with another shift, then the volunteer should not be assigned to both shifts.
+constraint forall(aone in ASSETSHIFT, v in VOLUNTEER)(
+  forall(atwo in ASSETSHIFT where clashes[aone, atwo] == true)(
+    not(sum(p in POSITION)(assignment[aone, v, p]) == true /\ sum(p in POSITION)(assignment[atwo, v, p]) == true)
+  )
+);
+
+
+% Volunteers should only be assigned to a position that is needed for the shift. i.e. there should not be any positions assigned for a shift if it hasn't been 
+% intended by the supervisor through customisation.
+constraint forall(a in ASSETSHIFT, v in VOLUNTEER, p in POSITION)(
+  not(assignment[a, v, p] == true /\ posrequirements[p, a] == false)
+);
+
+
+
+
+
+
+% Objective
+solve maximize sum(a in ASSETSHIFT, v in VOLUNTEER, p in POSITION)(assignment[a,v,p]);
+
+
+
+%~~~~~~~~~~~~~~~~~~~
+% OUTPUT
+output [ "Assignment: \n"] ++
+       ["Asset Shift = " ++ show(a) ++ "\n"
+         ++
+      concat([ if show(assignment[a,v,p]) == "true"
+         then "\tVolunteer = " ++ show(v) ++ ", \tPosition = " ++ show(p) ++ "\n"
+         endif
+        | v in VOLUNTEER, p in POSITION])
+       | a in ASSETSHIFT]
         """
         return model_str
 
