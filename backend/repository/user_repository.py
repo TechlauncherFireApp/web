@@ -1,5 +1,4 @@
 from domain import User, UserType
-from operator import or_
 
 
 def get_user_role(session, user_id):
@@ -51,3 +50,10 @@ def self_demote(session, user_id):
             print('user:', user.id, 'is now', user.role)
             return True
     return False
+
+
+def get_user_by_email(session, email):
+    user = session.query(User). \
+        filter(User.email == email).first()
+    if user:
+        return user

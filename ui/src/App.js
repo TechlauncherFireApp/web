@@ -8,9 +8,12 @@ import Sidebar from "./components/Sidebar/sidebar";
 import AssetRequestVehicle from './routes/AssetRequestVehicle/AssetRequestVehicle';
 import AssetRequestVolunteers from './routes/AssetRequestVolunteers/assetRequestVolunteers';
 import AssetTypeRoles from './routes/AssetTypeRoles';
+import Forgot from "./routes/Authentication/forgot";
 import Login from './routes/Authentication/login';
 import Logout from './routes/Authentication/logout';
 import Register from './routes/Authentication/register';
+import Reset from './routes/Authentication/reset';
+import Verify from "./routes/Authentication/verify";
 import BrigadeCaptainHome from './routes/BrigadeCaptainHome/brigadeCaptainHome';
 import Configuration from "./routes/Configuration/configuration";
 import Home from './routes/Home/Home';
@@ -21,6 +24,8 @@ import AssetTypes from './routes/Reference/assetTypes';
 import Qualifications from './routes/Reference/qualifications';
 import Roles from './routes/Reference/roles';
 import UserPrivileges from './routes/UserPrivileges';
+import AvailabilityForm from './routes/VolunteerCalendar/Availability';
+import VolunteerCalendar from './routes/VolunteerCalendar/VolunteerCalendar';
 import VolunteerRoles from './routes/VolunteerRoles';
 import Availability from './routes/Volunteers/Availability/Availability';
 import Volunteer from './routes/Volunteers/volunteer';
@@ -39,6 +44,9 @@ export default function App() {
           <Route exact path="/login" component={Login} />
           <Route exact path="/logout" component={Logout} />
           <Route exact path="/register" component={Register} />
+          <Route exact path="/forgot" component={Forgot} />
+          <Route exact path="/verify" component={Verify} />
+          <Route exact path="/reset" component={Reset} />
           <Route exact path="/reference/roles" component={Roles} />
           <Route exact path="/reference/qualifications" component={Qualifications}/>
           <Route exact path="/reference/asset_types" component={AssetTypes} />
@@ -52,6 +60,8 @@ export default function App() {
           <Route exact path="/volunteer/:id" component={Volunteer} />
           <Route exact path="/volunteer/:id/availability" component={Availability} />
           <Route exact path="/tenancy-configs" component={Configuration} />
+          <Route exact path='/calendar' component={VolunteerCalendar} />
+          <Route exact path='/form' component={AvailabilityForm} />
           <Route exact path="/quiz" component={QuizMainPage} />
           <Route path={"/questions"} component={QuizQuestions} />
           <Route path={"/quiz-result"} component={QuizResult} />
