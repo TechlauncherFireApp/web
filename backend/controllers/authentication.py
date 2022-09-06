@@ -10,6 +10,8 @@ registration_parser.add_argument('password', type=str)
 registration_parser.add_argument('given_name', type=str)
 registration_parser.add_argument('last_name', type=str)
 registration_parser.add_argument('phone', type=str)
+registration_parser.add_argument('gender', type=str)
+registration_parser.add_argument('diet', type=str)
 
 login_parser = reqparse.RequestParser()
 login_parser.add_argument('email', type=str)
@@ -35,7 +37,7 @@ class Register(Resource):
         auth = AuthenticationService()
         with session_scope() as session:
             result = auth.register(session, args['email'], args['password'], args['given_name'], args['last_name'],
-                                   args['phone'])
+                                   args['phone'], args['gender'], args['diet'])
         return jsonify({"result": result.name})
 
 
