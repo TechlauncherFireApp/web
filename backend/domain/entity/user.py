@@ -4,6 +4,8 @@ from sqlalchemy import Column, String, DateTime, Integer, Enum, JSON
 
 from domain.base import Base
 from domain.type import UserType
+from domain.type import Diet
+from domain.type import Gender
 
 
 class User(Base):
@@ -24,4 +26,5 @@ class User(Base):
     availabilities = Column(JSON, name='availabilities')
     update_date_time = Column(DateTime, name='last_update_datetime', default=datetime.now(), nullable=False)
     insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
-
+    gender = Column(Enum(Gender), name='gender', default=Gender.Male)
+    diet = Column(Enum(Diet), name='diet', default=Diet.meals)

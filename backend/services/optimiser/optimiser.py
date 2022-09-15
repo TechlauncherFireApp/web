@@ -28,64 +28,91 @@ class Optimiser:
         """
         model_str = """
         
-        int: A; set of int: ASSETSHIFT = 1..A;
-        
-        int: S; set of int: ROLE = 1..S;      
-        
-        int: R; set of int: VOLUNTEER = 1..R;
-        
-        int: C; set of int: CLASH = 1..C;
-        
-        array[ASSETSHIFT,ASSETSHIFT] of bool: clashing; % Nx2 array storing pairs of clashing shifts
-        array[ASSETSHIFT, ROLE] of int: sreq; % NxM array storing asset shifts (rows) and roles(columns), [n,m] is how many of those roles are required. 
-        array[ASSETSHIFT,VOLUNTEER] of bool: compatible; % NxM array storing if the volunteer is available for that asset shift. 
-        array[VOLUNTEER, ROLE] of bool: mastery; %NxM array storing the volunteer can perform that action 
-        
-        %~~~~~~~~~~~~~~~~~~~
-        % Decision variables
-        array[ASSETSHIFT,VOLUNTEER,ROLE] of var bool: contrib; % ROLE contribution assignment
-        %contrib = 1 iff volunteer r contributes with ROLE s to assetshift a.
-        
-        %~~~~~~~~~~~~~~~~~~~
+        % Simple Parameters
+        int: A; 
+        set of int: ASSETSHIFT = 1..A;
+
+        int: R;
+        set of int: ROLE = 1..R;
+
+        int: P;
+        set of int: POSITION = 1..P;
+
+        int: V;
+        set of int: VOLUNTEER = 1..V;
+
+        int: Q;
+        set of int: QUALIFICATION = 1..Q;
+
+        % Supervisor Customisation
+        array[ASSETSHIFT, POSITION, QUALIFICATION] of bool: qualrequirements;
+        array[ASSETSHIFT, POSITION, ROLE] of bool: rolerequirements;
+        array[POSITION, ASSETSHIFT] of bool: posrequirements;
+
+        % Volunteer Abilities
+        array[VOLUNTEER, QUALIFICATION] of bool: qualability;
+        array[VOLUNTEER, ROLE] of bool: roleability;
+
+        % Volunteer Availabilities
+        array[VOLUNTEER, ASSETSHIFT] of bool: availability;
+        array[ASSETSHIFT, ASSETSHIFT] of bool: clashes;
+
+        % Decision Variable
+        array[ASSETSHIFT, VOLUNTEER, POSITION] of var bool: assignment;
+
+
         % Constraints
-        % ROLE constraint: ROLE requirements are satisfied
-        constraint forall(a in ASSETSHIFT, s in ROLE where sreq[a,s]>0)(
-          sum(r in VOLUNTEER)(contrib[a,r,s]) <= sreq[a,s]
+        % The number of positions assigned should not exceed the number of positions needed for a shift.
+        constraint forall(a in ASSETSHIFT)(
+            sum(p in POSITION)(posrequirements[p, a]) >= sum(p in POSITION, v in VOLUNTEER)(bool2int(assignment[a, v, p]))
         );
-        
-        % ROLE constraint: VOLUNTEERs aren't assigned to a ROLE thats not required
-        constraint forall(a in ASSETSHIFT, s in ROLE where sreq[a,s] == 0)(
-          sum(r in VOLUNTEER)(contrib[a,r,s]) == 0
+
+        % A volunteer should be assigned to at most one position per shift.
+        constraint forall(a in ASSETSHIFT, v in VOLUNTEER)(
+            sum(p in POSITION)(bool2int(assignment[a, v, p])) <= 1
         );
-        
-        % Non-Multi-Tasking constraint: Maximum of one contribution to each activity
-        constraint forall(a in ASSETSHIFT, r in VOLUNTEER)(
-          sum(s in ROLE where mastery[r,s]==true /\ sreq[a,s]>0)
-             (contrib[a,r,s]) <= 1
+
+        % A position should only be assigned to at most once for all shifts.
+        constraint forall(p in POSITION)(
+            sum(a in ASSETSHIFT, v in VOLUNTEER)(assignment[a, v, p]) <= 1
         );
-        
-        % ROLE constraint: VOLUNTEERs only use ROLEs they have mastered
-        constraint forall(a in ASSETSHIFT, r in VOLUNTEER, s in ROLE)(
-          contrib[a,r,s] <= bool2int(mastery[r,s])
+
+        % If a volunteer either does not have the qualification or role for a position, then they should not be assigned to a shift.
+        constraint forall(a in ASSETSHIFT, p in POSITION, v in VOLUNTEER, r in ROLE, q in QUALIFICATION where ((qualrequirements[a, p, q] == true /\ qualability[v, q] == false) \/ (rolerequirements[a, p, r] == true /\ roleability[v, r] == false)))(
+            bool2int(assignment[a, v, p]) == 0
         );
-        
-        % Compatibility constraint: VOLUNTEERs are only assigned shifts they are compatible with
-        constraint forall(a in ASSETSHIFT, r in VOLUNTEER)(
-          sum(s in ROLE)(contrib[a,r,s]) <= bool2int(compatible[a,r])
+
+        % If a volutneer is not available for a shift, they should not be assigned in the shift.
+        constraint forall(v in VOLUNTEER, a in ASSETSHIFT where availability[v, a] == 0)(
+            sum(p in POSITION)(assignment[a, v, p]) == 0 
         );
-        
-        % Clashing constraint: VOLUNTEERs cannot be assigned to 2 shifts that clash
-        constraint forall(c in CLASH)(
-          forall(d in CLASH)(
-            forall(r in VOLUNTEER)(
-                not(clashing[c,d] == true /\ sum(s in ROLE)(contrib[c,r,s] + contrib[d,r,s]) > 1)
+
+        % If a shift clashes with another shift, then the volunteer should not be assigned to both shifts.
+        constraint forall(aone in ASSETSHIFT, v in VOLUNTEER)(
+            forall(atwo in ASSETSHIFT where clashes[aone, atwo] == true)(
+                not(sum(p in POSITION)(assignment[aone, v, p]) == true /\ sum(p in POSITION)(assignment[atwo, v, p]) == true)
             )
-          )          
         );
-        
-        %~~~~~~~~~~~~~~~~~~~
+
+        % Volunteers should only be assigned to a position that is needed for the shift. i.e. there should not be any positions assigned for a shift if it hasn't been 
+        % intended by the supervisor through customisation.
+        constraint forall(a in ASSETSHIFT, v in VOLUNTEER, p in POSITION)(
+            not(assignment[a, v, p] == true /\ posrequirements[p, a] == false)
+        );
+
         % Objective
-        solve maximize sum(a in ASSETSHIFT, r in VOLUNTEER, s in ROLE)(contrib[a,r,s]);
+        solve maximize sum(a in ASSETSHIFT, v in VOLUNTEER, p in POSITION)(assignment[a,v,p]);
+
+        %~~~~~~~~~~~~~~~~~~~
+        % OUTPUT
+        output [ "Assignment: \n"] ++
+                ["Asset Shift = " ++ show(a) ++ "\n"
+                ++
+                concat([ if show(assignment[a,v,p]) == "true"
+                then "\tVolunteer = " ++ show(v) ++ ", \tPosition = " ++ show(p) ++ "\n"
+                 endif
+                | v in VOLUNTEER, p in POSITION])
+                | a in ASSETSHIFT]
         """
         return model_str
 
