@@ -1,6 +1,7 @@
-from domain import AssetRequestVehicle, Role, AssetRequestVolunteer, User, Qualification
+from domain import AssetRequestVehicle, Role, AssetRequestVolunteer, User, Qualification,UnavailabilityTime
 from sqlalchemy import orm, func, alias
 import numpy as np
+import datetime
 
 
 def get_input_A(session, request_id):
@@ -148,15 +149,111 @@ def get_input_roleability(session):
     return roleability_matrix
 
 
+def get_input_availability(session,request_id):
+    A = get_input_A(session,request_id)
+    V = get_input_V(session)
+    availability_matrix = np.full((V, A), True, dtype=bool)
+
+    vehicle_list = get_vehicle_list(session,request_id)
+    vehicle_time_list = []
+    for v in vehicle_list:
+        vehicle_time = get_vehicle_time(session,v)
+        vehicle_time_list.append(vehicle_time)
+
+    v_role_list = session.query(User.id).filter(User.role == "VOLUNTEER").all()
+
+    for r in range(0, len(v_role_list)):
+        temp_matrix = np.full(A, True, dtype=bool)
+        user_id = v_role_list[r][0]
+        unavailability_list = time_unavailability_list(session,user_id)
+        for a in range (0,A):
+            a_time = vehicle_time_list[a]
+            for u_l in unavailability_list:
+                user_unavailability = []
+                user_unavailability.append(u_l[0])
+                user_unavailability.append(u_l[1])
+                periodicity = u_l[2]
+                result = if_time_availability(user_unavailability,a_time,periodicity)
+                if not result:
+                    temp_matrix[a] = False
+                    break
+                else:
+                    continue
+
+        availability_matrix[r] = temp_matrix
+    return availability_matrix
+
+
+def time_unavailability_list(session,user_id):
+    unavailability_list = session.query(UnavailabilityTime.start,UnavailabilityTime.end,UnavailabilityTime.periodicity).filter(UnavailabilityTime.userId == user_id and UnavailabilityTime.status == 1).all()
+    #a list, each one is a tuple[(start,end),(start,end),peroid]
+    return unavailability_list
+
+
+def if_time_availability(user_unavailability,vehicle_time,periodicity):
+    user_unavailability_start = user_unavailability[0]
+    user_unavailability_end = user_unavailability[1]
+    vehicle_time_start = vehicle_time[0]
+    vehicle_time_end = vehicle_time[1]
+
+    if vehicle_time_end < user_unavailability_start:
+        return True
+
+    if periodicity == 3:
+        if user_unavailability_start <= vehicle_time_start <= user_unavailability_end:
+            return False
+        elif user_unavailability_start <= vehicle_time_end <= user_unavailability_end:
+            return False
+        elif vehicle_time_start <= user_unavailability_start and vehicle_time_end >= user_unavailability_end:
+            return False
+        elif vehicle_time_start >= user_unavailability_start and vehicle_time_end <= user_unavailability_end:
+            return False
+        else:
+            return True
+
+    elif periodicity == 2:
+        while vehicle_time_start > user_unavailability_end:
+            user_unavailability_start = user_unavailability_start + datetime.timedelta(weeks=1)
+            user_unavailability_end = user_unavailability_end + datetime.timedelta(weeks=1)
+        if user_unavailability_start <= vehicle_time_start <= user_unavailability_end:
+            return False
+        elif user_unavailability_start <= vehicle_time_end <= user_unavailability_end:
+            return False
+        elif vehicle_time_start <= user_unavailability_start and vehicle_time_end >= user_unavailability_end:
+            return False
+        elif vehicle_time_start >= user_unavailability_start and vehicle_time_end <= user_unavailability_end:
+            return False
+        else:
+            return True
+
+    elif periodicity == 1:
+        while vehicle_time_start > user_unavailability_end:
+            vehicle_time_start = vehicle_time_start + datetime.timedelta(days=1)
+            vehicle_time_end = vehicle_time_end + datetime.timedelta(days=1)
+            if user_unavailability_start <= vehicle_time_start <= user_unavailability_end:
+                return False
+            elif user_unavailability_start <= vehicle_time_end <= user_unavailability_end:
+                return False
+            elif vehicle_time_start <= user_unavailability_start and vehicle_time_end >= user_unavailability_end:
+                return False
+            elif vehicle_time_start >= user_unavailability_start and vehicle_time_end <= user_unavailability_end:
+                return False
+            else:
+                return True
+    else:
+        return True
 
 
 
+def get_vehicle_time(session,vehicle_id):
 
-
-
-
-
-
+    v_time = session.query(AssetRequestVehicle.from_date_time,AssetRequestVehicle.to_date_time).filter(AssetRequestVehicle.id == vehicle_id).first()
+    start_time = v_time[0]
+    end_time = v_time[1]
+    vehicle_time = []
+    vehicle_time.append(start_time)
+    vehicle_time.append(end_time)
+    return vehicle_time
 
 
 def get_vehicle_list(session, request_id):
@@ -180,7 +277,6 @@ def get_position_list_all(session,request_id):
         l = get_position_list(session,v)
         for n in l:
             request_position.append(n)
-            print(request_position)
     request_position.sort()
     return request_position
 
@@ -220,7 +316,12 @@ def test_vehicle_list(session, request_id):
     #print(get_qualification_list(session))
     #print(get_input_qualability(session))
     #get_role_list(session)
-    print(get_input_roleability(session))
+    #print(get_input_roleability(session))
+    #print(get_vehicle_time(session,369))
+    #print(get_input_availability(session,360))
+    #print(time_unavailability_list(session,31))
+    #print(get_input_availability(session,360))
+
     return 1
 
 
