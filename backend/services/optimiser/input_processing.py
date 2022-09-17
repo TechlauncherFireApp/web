@@ -16,12 +16,10 @@ def get_input_R(session):
 
 def get_input_P(session, request_id):
     asset_list = session.query(AssetRequestVehicle.id).filter(AssetRequestVehicle.request_id == request_id).all()
-    print(asset_list)
     position_count = 0
     for v_id in asset_list:
         asset_position_count = session.query(AssetRequestVolunteer).filter(
             AssetRequestVolunteer.vehicle_id == v_id[0]).count()
-        print(asset_position_count)
         position_count += asset_position_count
     return position_count
 
@@ -135,7 +133,6 @@ def get_role_list(session):
     role_type = []
     for i in role_table:
         role_type.append(i[0])
-    print(role_type)
     return role_type
 
 
