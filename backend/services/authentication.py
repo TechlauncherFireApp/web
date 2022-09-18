@@ -23,9 +23,10 @@ class AuthenticationService():
 
     @staticmethod
     def register(session: Session, email: str, password: str, given_name: str, last_name: str,
-                 phone: str, gender: str, diet: str) -> RegisterResult:
+                 phone: str, gender: str, diet: str, allergy: str) -> RegisterResult:
         """
         Register a new user in the application.
+        :param allergy: The users' allergy
         :param gender: The users gender to register with.
         :param diet: The users dietary to register with.
         :param given_name: The users given name to register with.
@@ -63,7 +64,8 @@ class AuthenticationService():
                         availabilities={"Friday": [], "Monday": [], "Sunday": [], "Tuesday": [], "Saturday": [],
                                         "Thursday": [], "Wednesday": []},
                         gender=gender,
-                        diet=diet)
+                        diet=diet,
+                        allergy=allergy)
         session.add(new_user)
         session.flush()
         return RegisterResult.SUCCESS
