@@ -339,9 +339,9 @@ def get_position_role(session, position_id):
 
 
 def get_position_qualification(session, position_id):
-    role = session.query(AssetRequestVolunteer.qualification_id).filter(AssetRequestVolunteer.id == position_id).first()
-    role_id = role[0]
-    return role_id
+    qualification = session.query(AssetRequestVolunteer.qualification_id).filter(AssetRequestVolunteer.id == position_id).first()
+    qualification_id = qualification[0]
+    return qualification_id
 
 
 # This can be called by api from postman, to test easily
