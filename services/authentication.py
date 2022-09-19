@@ -2,6 +2,10 @@ from typing import Tuple, Any
 
 from sqlalchemy.orm import Session
 
+from domain import User
+from domain.type import UserType, RegisterResult, LoginResult
+from domain.type import Gender
+from domain.type import Diet
 from domain import User, PasswordRetrieval
 from domain.type import UserType, RegisterResult, LoginResult, ForgotPassword, VerifyCode, ResetPassword
 from services.jwk import JWKService
@@ -19,9 +23,11 @@ class AuthenticationService():
 
     @staticmethod
     def register(session: Session, email: str, password: str, given_name: str, last_name: str,
-                 phone: str) -> RegisterResult:
+                 phone: str, gender: str, diet: str) -> RegisterResult:
         """
         Register a new user in the application.
+        :param gender: The users gender to register with.
+        :param diet: The users dietary to register with.
         :param given_name: The users given name to register with.
         :param last_name: The users last name to register with.
         :param phone: The users mobile phone number.
@@ -43,13 +49,21 @@ class AuthenticationService():
         if existing_user is not None:
             return RegisterResult.USERNAME_ALREADY_REGISTERED
 
+        if gender is None or gender == "":
+            gender = Gender.Male
+
+        if diet is None or diet == "":
+            diet = Diet.meals
+
         # Everything seems fine, so we go ahead and create the user & the linked account.
         password_hash = passwordService.hash(password)
         new_user = User(role=UserType.VOLUNTEER, password=password_hash, first_name=given_name, last_name=last_name,
                         mobile_number=phone, email=email, preferred_hours={}, experience_years=0, possibleRoles=["Basic"],
                         qualifications=[],
                         availabilities={"Friday": [], "Monday": [], "Sunday": [], "Tuesday": [], "Saturday": [],
-                                        "Thursday": [], "Wednesday": []})
+                                        "Thursday": [], "Wednesday": []},
+                        gender=gender,
+                        diet=diet)
         session.add(new_user)
         session.flush()
         return RegisterResult.SUCCESS
