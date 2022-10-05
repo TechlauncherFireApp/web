@@ -19,3 +19,11 @@ def modify_profile(session, id, phone, gender, dietary, allergy) -> bool:
         user.allergy = allergy
     user.update_date_time = datetime.now()
     return True
+
+
+def get_profile(session, id):
+    user = session.query(User).filter(User.id == id).first()
+    if user:
+        return user
+    else:
+        return None
