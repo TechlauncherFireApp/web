@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_restful import Api, Resource, marshal_with, reqparse
+from flask_restful import Api, Resource, reqparse
 
 from domain import session_scope
 from services.authentication import AuthenticationService
@@ -30,6 +30,7 @@ reset_password_parser.add_argument('email', type=str)
 reset_password_parser.add_argument('new_password', type=str)
 reset_password_parser.add_argument('repeat_password', type=str)
 
+
 class Register(Resource):
 
     def post(self):
@@ -53,6 +54,7 @@ class Login(Resource):
                 return jsonify({"result": result.name})
             return jsonify({"result": result.name, "access_token": token, "role": user.role.name, 'id': user.id})
 
+
 class send_code(Resource):
     def post(self):
         request.get_json(force=True)
@@ -61,6 +63,7 @@ class send_code(Resource):
         with session_scope() as session:
             result = auth.send_code(session, args['email'])
         return jsonify({"result": result.name})
+
 
 class verify_code(Resource):
     def post(self):
@@ -71,6 +74,7 @@ class verify_code(Resource):
             result = auth.verify_code(session, args['email'], args['code'])
         return jsonify({"result": result.name})
 
+
 class reset_password(Resource):
     def post(self):
         request.get_json(force=True)
@@ -79,6 +83,10 @@ class reset_password(Resource):
         with session_scope() as session:
             result = auth.reset_password(session, args['email'], args['new_password'], args['repeat_password'])
         return jsonify({"result": result.name})
+
+
+
+
 
 authentication_bp = Blueprint('authentication', __name__)
 api = Api(authentication_bp)
