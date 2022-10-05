@@ -1,9 +1,7 @@
 from flask import Blueprint, request, jsonify
-from flask_restful import Api, Resource, marshal_with, reqparse
+from flask_restful import Api, Resource, reqparse
 
-from controllers.profile import result_fields
 from domain import session_scope
-from repository.profile import modify_profile
 from services.authentication import AuthenticationService
 
 registration_parser = reqparse.RequestParser()
@@ -87,21 +85,7 @@ class reset_password(Resource):
         return jsonify({"result": result.name})
 
 
-profile = reqparse.RequestParser()
-profile.add_argument('id', type=str)
-profile.add_argument('phone', type=str)
-profile.add_argument('gender', type=str)
-profile.add_argument('dietary', type=str)
-profile.add_argument('allergy', type=str)
 
-
-class EditProfile(Resource):
-    @marshal_with(result_fields)
-    def post(self):
-        request.get_json(force=True)
-        args = profile.parse_args()
-        with session_scope() as session:
-            return {'result': modify_profile(session, args['id'], args['phone'], args['gender'], args['dietary'], args['allergy'])}
 
 
 authentication_bp = Blueprint('authentication', __name__)
@@ -111,4 +95,3 @@ api.add_resource(Login, '/authentication/login')
 api.add_resource(send_code, '/authentication/send_code')
 api.add_resource(verify_code, '/authentication/verify')
 api.add_resource(reset_password, '/authentication/reset')
-api.add_resource(EditProfile, '/authentication/editProfile')
