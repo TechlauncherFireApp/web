@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource, marshal_with, reqparse
 
+from controllers.profile import result_fields
 from domain import session_scope
+from repository.profile import modify_profile
 from services.authentication import AuthenticationService
 
 registration_parser = reqparse.RequestParser()
@@ -30,6 +32,7 @@ reset_password_parser.add_argument('email', type=str)
 reset_password_parser.add_argument('new_password', type=str)
 reset_password_parser.add_argument('repeat_password', type=str)
 
+
 class Register(Resource):
 
     def post(self):
@@ -53,6 +56,7 @@ class Login(Resource):
                 return jsonify({"result": result.name})
             return jsonify({"result": result.name, "access_token": token, "role": user.role.name, 'id': user.id})
 
+
 class send_code(Resource):
     def post(self):
         request.get_json(force=True)
@@ -61,6 +65,7 @@ class send_code(Resource):
         with session_scope() as session:
             result = auth.send_code(session, args['email'])
         return jsonify({"result": result.name})
+
 
 class verify_code(Resource):
     def post(self):
@@ -71,6 +76,7 @@ class verify_code(Resource):
             result = auth.verify_code(session, args['email'], args['code'])
         return jsonify({"result": result.name})
 
+
 class reset_password(Resource):
     def post(self):
         request.get_json(force=True)
@@ -80,6 +86,24 @@ class reset_password(Resource):
             result = auth.reset_password(session, args['email'], args['new_password'], args['repeat_password'])
         return jsonify({"result": result.name})
 
+
+profile = reqparse.RequestParser()
+profile.add_argument('id', type=str)
+profile.add_argument('phone', type=str)
+profile.add_argument('gender', type=str)
+profile.add_argument('dietary', type=str)
+profile.add_argument('allergy', type=str)
+
+
+class EditProfile(Resource):
+    @marshal_with(result_fields)
+    def post(self):
+        request.get_json(force=True)
+        args = profile.parse_args()
+        with session_scope() as session:
+            return {'result': modify_profile(session, args['id'], args['phone'], args['gender'], args['dietary'], args['allergy'])}
+
+
 authentication_bp = Blueprint('authentication', __name__)
 api = Api(authentication_bp)
 api.add_resource(Register, '/authentication/register')
@@ -87,3 +111,4 @@ api.add_resource(Login, '/authentication/login')
 api.add_resource(send_code, '/authentication/send_code')
 api.add_resource(verify_code, '/authentication/verify')
 api.add_resource(reset_password, '/authentication/reset')
+api.add_resource(EditProfile, '/authentication/editProfile')
