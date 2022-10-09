@@ -28,3 +28,4 @@ class User(Base):
     insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
     gender = Column(Enum(Gender), name='gender', default=Gender.Male)
     diet = Column(Enum(Diet), name='diet', default=Diet.meals)
+    allergy = Column(String(256), nullable=True)
