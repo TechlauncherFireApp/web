@@ -16,7 +16,9 @@ class AssetRequestVolunteer(Base):
     status = Column(String(256), name='status')
     update_date_time = Column(DateTime, name='last_update_datetime', default=datetime.now(), nullable=False)
     insert_date_time = Column(DateTime, name='created_datetime', default=datetime.now(), nullable=False)
+    qualification_id = Column(Integer, ForeignKey('qualification.id'), name='qualification_id')
 
     asset_request_vehicle = relationship("AssetRequestVehicle")
     user = relationship("User")
     role = relationship("Role")
+    qualification = relationship("Qualification")

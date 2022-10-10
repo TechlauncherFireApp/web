@@ -27,91 +27,131 @@ class Optimiser:
         @return:
         """
         model_str = """
-        
-        % Simple Parameters
-        int: A; 
-        set of int: ASSETSHIFT = 1..A;
+            % Simple Parameters
+            int: A; 
+            set of int: ASSETSHIFT = 1..A;
 
-        int: R;
-        set of int: ROLE = 1..R;
+            int: R;
+            set of int: ROLE = 1..R;
 
-        int: P;
-        set of int: POSITION = 1..P;
+            int: P;
+            set of int: POSITION = 1..P;
 
-        int: V;
-        set of int: VOLUNTEER = 1..V;
+            int: V;
+            set of int: VOLUNTEER = 1..V;
 
-        int: Q;
-        set of int: QUALIFICATION = 1..Q;
+            int: Q;
+            set of int: QUALIFICATION = 1..Q;
 
-        % Supervisor Customisation
-        array[ASSETSHIFT, POSITION, QUALIFICATION] of bool: qualrequirements;
-        array[ASSETSHIFT, POSITION, ROLE] of bool: rolerequirements;
-        array[POSITION, ASSETSHIFT] of bool: posrequirements;
-
-        % Volunteer Abilities
-        array[VOLUNTEER, QUALIFICATION] of bool: qualability;
-        array[VOLUNTEER, ROLE] of bool: roleability;
-
-        % Volunteer Availabilities
-        array[VOLUNTEER, ASSETSHIFT] of bool: availability;
-        array[ASSETSHIFT, ASSETSHIFT] of bool: clashes;
-
-        % Decision Variable
-        array[ASSETSHIFT, VOLUNTEER, POSITION] of var bool: assignment;
+            int: C;
+            set of int: COEFFICIENTS = 0..C;
 
 
-        % Constraints
-        % The number of positions assigned should not exceed the number of positions needed for a shift.
-        constraint forall(a in ASSETSHIFT)(
+            % Supervisor Customisation
+            array[ASSETSHIFT, POSITION, QUALIFICATION] of bool: qualrequirements;
+            array[ASSETSHIFT, POSITION, ROLE] of bool: rolerequirements;
+            array[POSITION, ASSETSHIFT] of bool: posrequirements;
+
+            % Volunteer Abilities
+            array[VOLUNTEER, QUALIFICATION] of bool: qualability;
+            array[VOLUNTEER, ROLE] of bool: roleability;
+
+            % Volunteer Availabilities
+            array[VOLUNTEER, ASSETSHIFT] of bool: availability;
+            array[ASSETSHIFT, ASSETSHIFT] of bool: clashes;
+
+            % Prioritisation of Volunteers
+            array[VOLUNTEER, ASSETSHIFT, ASSETSHIFT] of COEFFICIENTS: shiftcoefficient;
+
+            % Decision Variable
+            array[ASSETSHIFT, VOLUNTEER, POSITION] of var bool: assignment;
+            array[VOLUNTEER, ASSETSHIFT, ASSETSHIFT] of var int: shiftpair;
+
+
+            % Constraints
+            % The number of positions assigned should not exceed the number of positions needed for a shift.
+            constraint forall(a in ASSETSHIFT)(
             sum(p in POSITION)(posrequirements[p, a]) >= sum(p in POSITION, v in VOLUNTEER)(bool2int(assignment[a, v, p]))
-        );
+            );
 
-        % A volunteer should be assigned to at most one position per shift.
-        constraint forall(a in ASSETSHIFT, v in VOLUNTEER)(
+            % A volunteer should be assigned to at most one position per shift.
+            constraint forall(a in ASSETSHIFT, v in VOLUNTEER)(
             sum(p in POSITION)(bool2int(assignment[a, v, p])) <= 1
-        );
+            );
 
-        % A position should only be assigned to at most once for all shifts.
-        constraint forall(p in POSITION)(
+            % A position should only be assigned to at most once for all shifts.
+            constraint forall(p in POSITION)(
             sum(a in ASSETSHIFT, v in VOLUNTEER)(assignment[a, v, p]) <= 1
-        );
+            );
 
-        % If a volunteer either does not have the qualification or role for a position, then they should not be assigned to a shift.
-        constraint forall(a in ASSETSHIFT, p in POSITION, v in VOLUNTEER, r in ROLE, q in QUALIFICATION where ((qualrequirements[a, p, q] == true /\ qualability[v, q] == false) \/ (rolerequirements[a, p, r] == true /\ roleability[v, r] == false)))(
+            % If a volunteer either does not have the qualification or role for a position, then they should not be assigned to a shift.
+            constraint forall(a in ASSETSHIFT, p in POSITION, v in VOLUNTEER, r in ROLE, q in QUALIFICATION where ((qualrequirements[a, p, q] == true /\ qualability[v, q] == false) \/ (rolerequirements[a, p, r] == true /\ roleability[v, r] == false)))(
             bool2int(assignment[a, v, p]) == 0
-        );
+            );
 
-        % If a volutneer is not available for a shift, they should not be assigned in the shift.
-        constraint forall(v in VOLUNTEER, a in ASSETSHIFT where availability[v, a] == 0)(
+
+            % If a volutneer is not available for a shift, they should not be assigned in the shift.
+            constraint forall(v in VOLUNTEER, a in ASSETSHIFT where availability[v, a] == 0)(
             sum(p in POSITION)(assignment[a, v, p]) == 0 
-        );
+            );
 
-        % If a shift clashes with another shift, then the volunteer should not be assigned to both shifts.
-        constraint forall(aone in ASSETSHIFT, v in VOLUNTEER)(
+            % If a shift clashes with another shift, then the volunteer should not be assigned to both shifts.
+            constraint forall(aone in ASSETSHIFT, v in VOLUNTEER)(
             forall(atwo in ASSETSHIFT where clashes[aone, atwo] == true)(
                 not(sum(p in POSITION)(assignment[aone, v, p]) == true /\ sum(p in POSITION)(assignment[atwo, v, p]) == true)
             )
-        );
+            );
 
-        % Volunteers should only be assigned to a position that is needed for the shift. i.e. there should not be any positions assigned for a shift if it hasn't been 
-        % intended by the supervisor through customisation.
-        constraint forall(a in ASSETSHIFT, v in VOLUNTEER, p in POSITION)(
+
+            % Volunteers should only be assigned to a position that is needed for the shift. i.e. there should not be any positions assigned for a shift if it hasn't been 
+            % intended by the supervisor through customisation.
+            constraint forall(a in ASSETSHIFT, v in VOLUNTEER, p in POSITION)(
             not(assignment[a, v, p] == true /\ posrequirements[p, a] == false)
-        );
+            );
 
-        % Objective
-        solve maximize sum(a in ASSETSHIFT, v in VOLUNTEER, p in POSITION)(assignment[a,v,p]);
 
-        %~~~~~~~~~~~~~~~~~~~
-        % OUTPUT
-        output [ "Assignment: \n"] ++
+
+            %-----NEW CONSTRAINTS FOR SHIFT PRIORITISATION-------------------------------------------------------------------------------------------------------------------
+            %-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+            %-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            % If the volunteer is assigned to two shifts, then the coefficients for those two shift pairs are turned on.
+            constraint forall(v in VOLUNTEER, aone in ASSETSHIFT, atwo in ASSETSHIFT, pone in POSITION, ptwo in POSITION where (assignment[aone, v, pone] == 1 /\ assignment[atwo, v, ptwo] == 1))(
+            shiftpair[v, aone, atwo] == shiftcoefficient[v, aone, atwo] /\ shiftpair[v, atwo, aone] == shiftcoefficient[v, aone, atwo]
+            );
+
+            % If the volunteer is not assigned to two shifts, then the coefficients for those two shift pairs are turned off.
+            constraint forall(v in VOLUNTEER, aone in ASSETSHIFT, atwo in ASSETSHIFT, p in POSITION where (assignment[aone, v, p] == 1))(
+            shiftpair[v, aone, atwo] == shiftcoefficient[v, aone, atwo] /\ shiftpair[v, atwo, aone] == shiftcoefficient[v, atwo, aone]
+            );
+
+            % If a volunteer is not assigned to a shift, then they have the maximum penalty.
+            constraint forall(v in VOLUNTEER, aone in ASSETSHIFT, atwo in ASSETSHIFT where (sum(a in ASSETSHIFT, p in POSITION)(assignment[a, v, p]) == 0))(
+            shiftpair[v, aone, atwo] == max(COEFFICIENTS) /\ shiftpair[v, atwo, aone] == max(COEFFICIENTS)
+            );
+
+            % The value of each element of the decision variable is limited between the maximum and minimum coefficient values.
+            constraint forall(v in VOLUNTEER, aone in ASSETSHIFT, atwo in ASSETSHIFT)(
+            shiftpair[v, aone, atwo] <= max(COEFFICIENTS) /\ shiftpair[v, aone, atwo] >= min(COEFFICIENTS)
+            );
+
+            %-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+            %-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+            % Objective
+            solve maximize (sum(a in ASSETSHIFT, v in VOLUNTEER, p in POSITION)(bool2int(assignment[a,v,p])) - sum(v in VOLUNTEER, aone in ASSETSHIFT, atwo in ASSETSHIFT)(shiftpair[v, aone, atwo]));
+
+
+            %~~~~~~~~~~~~~~~~~~~
+            % OUTPUT
+            output [ "Assignment: \n"] ++
                 ["Asset Shift = " ++ show(a) ++ "\n"
-                ++
-                concat([ if show(assignment[a,v,p]) == "true"
-                then "\tVolunteer = " ++ show(v) ++ ", \tPosition = " ++ show(p) ++ "\n"
-                 endif
-                | v in VOLUNTEER, p in POSITION])
+                    ++
+                concat([ if (show(assignment[a,v,p]) == "true")
+                    then "\tVolunteer = " ++ show(v) ++ ", \tPosition = " ++ show(p) ++ "\n"
+                    endif
+                    | v in VOLUNTEER, p in POSITION])
                 | a in ASSETSHIFT]
         """
         return model_str
