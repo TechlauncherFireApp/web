@@ -5,6 +5,9 @@ from .utility import *
 from domain import session_scope
 from repository.asset_request_vehicle_repository import *
 
+from services.optimiser.input_processing import *
+
+
 # Validate a shift input
 def input_vehicles(value, name):
     # Validate that it is a dictionary
@@ -41,6 +44,7 @@ delete_parser = reqparse.RequestParser()
 delete_parser.add_argument('requestId', action='store', type=str)
 delete_parser.add_argument('vehicleId', action='store', type=str)
 
+
 # Make a New Request inside the DataBase
 class VehicleRequest(Resource):
     @marshal_with(resource_fields)
@@ -72,3 +76,91 @@ class VehicleRequest(Resource):
 vehicle_request_bp = Blueprint('vehicle_request', __name__)
 api = Api(vehicle_request_bp)
 api.add_resource(VehicleRequest, '/vehicle/request')
+
+a_fields = {
+    "number": fields.Integer
+}
+
+
+class GetInputA(Resource):
+    @marshal_with(a_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('requestID', type=int, required=True)
+        request_id = parser.parse_args()["requestID"]
+        with session_scope() as session:
+            result_A = get_input_A(session, request_id)
+            return {"number": result_A}
+
+
+r_fields = {"number": fields.Integer}
+
+
+class GetInputR(Resource):
+    @marshal_with(r_fields)
+    def get(self):
+        with session_scope() as session:
+            result_R = get_input_R(session)
+            return {"number": result_R}
+
+
+p_fields = {"number": fields.Integer}
+
+
+class GetInputP(Resource):
+    @marshal_with(p_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('requestID', type=int, required=True)
+        request_id = parser.parse_args()["requestID"]
+
+        with session_scope() as session:
+            result_P = get_input_P(session, request_id)
+            return {"number": result_P}
+
+
+v_fields = {"number": fields.Integer}
+
+
+class GetInputV(Resource):
+    @marshal_with(v_fields)
+    def get(self):
+        with session_scope() as session:
+            result_V = get_input_V(session)
+            return {"number": result_V}
+
+
+q_fields = {"number": fields.Integer}
+
+
+class GetInputQ(Resource):
+    @marshal_with(q_fields)
+    def get(self):
+        with session_scope() as session:
+            result_Q = get_input_Q(session)
+            return {"number": result_Q}
+
+
+vehicle_fields = {
+    "number": fields.Integer
+}
+
+
+class GetVehicleRequest(Resource):
+    @marshal_with(vehicle_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('requestID', type=int, required=True)
+        request_id = parser.parse_args()["requestID"]
+        with session_scope() as session:
+            result_vehicle = test_vehicle_list(session, request_id)
+            return {"number": result_vehicle}
+
+
+processing_api = Api(vehicle_request_bp, '/processing')
+processing_api.add_resource(GetInputA, '/getInputA')
+processing_api.add_resource(GetInputR, '/getInputR')
+processing_api.add_resource(GetInputP, '/getInputP')
+processing_api.add_resource(GetInputV, '/getInputV')
+processing_api.add_resource(GetInputQ, '/getInputQ')
+processing_api.add_resource(GetVehicleRequest, '/getVehicleRequest')
