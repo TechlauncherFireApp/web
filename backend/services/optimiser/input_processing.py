@@ -369,3 +369,9 @@ def test_vehicle_list(session, request_id):
     # print(get_input_clashes(session,323))
 
     return 1
+
+
+def get_input_coefficients(session,vehicle_id_A,vehicle_id_B):
+    pass
+    return None
+
