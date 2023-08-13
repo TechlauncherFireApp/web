@@ -1,4 +1,4 @@
-name: deploy-to-eb
+name: Build
 
 on:
   push:
@@ -49,56 +49,3 @@ jobs:
           release_name: fireapp-${{ steps.gitversion.outputs.semVer }}
           draft: false
           prerelease: false
-
-      # Zip the backend
-      - name: Create Backend ZIP deployment package
-        run: cd backend; zip -r ../backend.zip . ; cd ..
-
-      # Configure AWS Credentials
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
-          aws-region: "ap-southeast-2"
-
-      - name: Upload backend package to S3 bucket
-        run: aws s3 cp backend.zip s3://elasticbeanstalk-ap-southeast-2-517938983427/
-
-      - name: Create new ElasticBeanstalk Application Version
-        run: |
-          aws elasticbeanstalk create-application-version \
-          --application-name develop \
-          --source-bundle S3Bucket="elasticbeanstalk-ap-southeast-2-517938983427",S3Key="backend.zip" \
-          --version-label "${{ steps.gitversion.outputs.semVer }}" \
-          --description "commit-sha-${{ github.sha }}"
-
-       
-      - name: Deploy new ElasticBeanstalk Application Version
-        run: aws elasticbeanstalk update-environment --environment-name Develop-env --version-label "${{ steps.gitversion.outputs.semVer }}"
-          
-      # Setup node.js and install the package dependencies
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - run: cd ui; npm ci
-
-      # Build the code and zip it into a release
-      - run: cd ui; npm run build:dev
-
-      # Upload to the target s3 bucket
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
-          aws-region: "ap-southeast-2"
-
-      - name: Upload frontend package to S3 bucket
-        run: |
-          aws s3 cp \
-            --recursive \
-            --acl public-read\
-            --region ap-northeast-2 \
-            ./ui/build s3://fireapp-fireapp-dev-s3/
