@@ -427,11 +427,11 @@
         },
         "pyjwt": {
             "hashes": [
-                "sha256:a5c70a06e1f33d81ef25eecd50d50bd30e34de1ca8b2b9fa3fe0daaabcf69bf7",
-                "sha256:b70b15f89dc69b993d8a8d32c299032d5355c82f9b5b7e851d1a6d706dffe847"
+                "sha256:72d1d253f32dbd4f5c88eaf1fdc62f3a19f676ccbadb9dbc5d07e951b2b26daf",
+                "sha256:d42908208c699b3b973cbeb01a969ba6a96c821eefb1c5bfe4c390c01d67abba"
             ],
             "index": "pypi",
-            "version": "==2.0.1"
+            "version": "==2.4.0"
         },
         "python-dateutil": {
             "hashes": [
@@ -537,10 +537,9 @@
         },
         "starkbank-ecdsa": {
             "hashes": [
-                "sha256:fe7e36b580da097cc8c0a120e3b7ba335e3901b970a484fd5ce856c026ef7714"
+                "sha256:9399c3371b899d4a235b68a1ed7919d202fbf024bd2c863ae8ebdad343c2a63a"
             ],
-            "index": "pypi",
-            "version": "==2.0.1"
+            "version": "==2.2.0"
         },
         "tatsu": {
             "hashes": [
