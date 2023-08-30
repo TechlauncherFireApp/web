@@ -1,3 +1,5 @@
+<p align="center">⚠️ This repository is unmaintained ⚠️</p>
+
 # FireApp3.0
 
 Bushfire Volunteer Management Application (TL 20-S1-2-C Fire App), a web app to assist with firefighting scheduling 
